@@ -2,7 +2,11 @@
 Это репозиторий фронтенда
 
 ## Commands
-`npm run start` - запуск 
+`npm install` - установить зависимости
+
+`npm build` - собрать приложение
+
+`npm run start` - запуск сервера
 
 `npm run test:unit`- юнит тесты
 
