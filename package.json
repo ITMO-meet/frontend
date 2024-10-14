@@ -9,7 +9,7 @@
     "start": "serve dist",
     "lint": "eslint src/**/*.{js,jsx,ts,tsx}",
     "test:unit": "mocha -r ts-node/register tests/unit/**/*.spec.ts",
-    "test:unit:coverage": "nyc npm rum test:unit --reporter=text",
+    "test:unit:coverage": "c8 mocha -r ts-node/register tests/unit/**/*.spec.ts",
     "test:e2e": "mocha -r ts-node/register tests/e2e/**/*.spec.ts",
     "test:e2e:coverage": "nyc npm run test:e2e"
   },
@@ -24,6 +24,24 @@
     "include": [
       "src/**/*.tsx",
       "src/**/*.ts"
+    ],
+    "exclude": [
+      "dist",
+      "tests"
+    ],
+    "instrument": true,
+    "sourceMap": true,
+    "esm": true
+  },
+  "c8": {
+    "check-coverage": true,
+    "lines": 80,
+    "functions": 80,
+    "branches": 80,
+    "statements": 80,
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.tsx"
     ],
     "exclude": [
       "dist",
@@ -58,6 +76,7 @@
     "@types/mocha": "^10.0.9",
     "@typescript-eslint/eslint-plugin": "^8.8.1",
     "@typescript-eslint/parser": "^8.8.1",
+    "c8": "^10.1.2",
     "chai": "^5.1.1",
     "esbuild": "^0.24.0",
     "esbuild-css-modules-plugin": "^3.1.2",
