@@ -131,7 +131,7 @@ jobs:
 
   ensure-all-tests-passed:
     name: Ensure All Checks Passed
-    needs: [lint, unit-tests, e2e-tests, build]
+    needs: [lint, unit-tests, coverage, e2e-tests, build]
     runs-on: ubuntu-latest
 
     steps:
