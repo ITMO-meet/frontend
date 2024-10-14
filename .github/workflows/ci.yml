@@ -84,10 +84,13 @@ jobs:
 
       - name: Ensure 80% coverage
         run: |
-          COVERAGE=$(nyc report --reporter=text-summary | grep -Po '(?<=Lines\s+:\s+)\d+')
+          COVERAGE=$(npm run test:unit:coverage --silent | grep -A 1 'All files' | tail -n 1 | awk '{print $5}' | tr -d '%')
+          COVERAGE=${COVERAGE%.*}
           if [ "$COVERAGE" -lt 80 ]; then
-            echo "Test coverage is below 80%!"
+            echo "Test coverage is below 80%: $COVERAGE%"
             exit 1
+          else
+            echo "Test coverage: $COVERAGE%"
           fi
 
   e2e-tests:
