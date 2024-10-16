@@ -14,3 +14,9 @@ describe('Example.com Page', function() {
     await browser.close();
   });
 });
+
+describe('Fail', function() {
+  it('should have the correct title', async function() {
+    expect("123").to.equal('Example Domain');
+  });
+});
