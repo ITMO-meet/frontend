@@ -345,3 +345,4 @@ $RECYCLE.BIN/
 
 .nyc_output/
 coverage/
+dist/bundle.js
