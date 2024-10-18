@@ -11,4 +11,9 @@ describe('Math functions', () => {
         const result = add(2, 3);
         expect(result).to.be.a('number');
     });
+
+    it.only('skips other tests', () => {
+        expect(add(2, 3)).to.be.a('number');
+        expect(add(2, 3)).to.equal(5);
+    });
 });
