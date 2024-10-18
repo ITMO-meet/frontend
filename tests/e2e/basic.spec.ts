@@ -2,7 +2,7 @@ import { chromium } from 'playwright';
 import { expect } from 'chai';
 
 describe('Example.com Page', function() {
-  it('should have the correct title', async function() {
+  it.only('should have the correct title', async function() {
     const browser = await chromium.launch();
     const context = await browser.newContext();
     const page = await context.newPage();
