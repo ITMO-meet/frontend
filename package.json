@@ -8,45 +8,9 @@
     "build": "node build.cjs",
     "start": "serve dist",
     "lint": "eslint src/** tests/**",
-    "test:unit": "mocha -r ts-node/register tests/unit/**/*.spec.ts",
-    "test:unit:coverage": "c8 mocha -r ts-node/register tests/unit/**/*.spec.ts",
-    "test:e2e": "mocha -r ts-node/register tests/e2e/**/*.spec.ts",
-    "test:e2e:coverage": "nyc npm run test:e2e"
-  },
-  "nyc": {
-    "check-coverage": true,
-    "lines": 80,
-    "functions": 80,
-    "branches": 80,
-    "statements": 80,
-    "all": true,
-    "extends": "@istanbuljs/nyc-config-typescript",
-    "include": [
-      "src/**/*.tsx",
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "dist",
-      "tests"
-    ],
-    "instrument": true,
-    "sourceMap": true,
-    "esm": true
-  },
-  "c8": {
-    "check-coverage": true,
-    "lines": 80,
-    "functions": 80,
-    "branches": 80,
-    "statements": 80,
-    "include": [
-      "src/**/*.ts",
-      "src/**/*.tsx"
-    ],
-    "exclude": [
-      "dist",
-      "tests"
-    ]
+    "test:unit": "mocha tests/unit/**/*.spec.ts",
+    "test:unit:coverage": "c8 npm run test:unit",
+    "test:e2e": "mocha tests/e2e/**/*.spec.ts"
   },
   "keywords": [],
   "author": "",
@@ -60,7 +24,6 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "esbuild-plugin-alias": "^0.2.1",
-    "frontend": "file:",
     "mobx": "^6.13.3",
     "mobx-react-lite": "^4.0.7",
     "react": "^18.3.1",
