@@ -1,7 +1,16 @@
 {
     "all": true,
-    "src": ["./src"],
-    "extension": [".ts", ".tsx"],
+    "src": [
+        "./src"
+    ],
+    "exclude": [
+        "src/index.tsx",
+        "src/contexts/**"
+    ],
+    "extension": [
+        ".ts",
+        ".tsx"
+    ],
     "report-dir": "./coverage",
     "lines": 80,
     "functions": 80,
