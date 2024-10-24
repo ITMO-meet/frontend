@@ -1,9 +1,11 @@
 import Rollbar from 'rollbar';
 
+const accessToken = 'post_client_item_token'
+
 const rollbar = new Rollbar({
-  accessToken: 'post_client_item_token',
+  accessToken: accessToken,
   captureUncaught: true,
   captureUnhandledRejections: true,
 });
 
-export default rollbar;
+export { rollbar, accessToken };
