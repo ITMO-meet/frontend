@@ -3,6 +3,9 @@
     "src": [
         "./src"
     ],
+    "include": [
+        "src/**"
+    ],
     "exclude": [
         "src/index.tsx",
         "src/contexts/**"
