@@ -1,15 +1,18 @@
 import React from 'react';
-import "../styles/app.css"
+import Examples from './Examples';
+import { ThemeProvider } from '@mui/material';
+import theme from './theme';
+import { CssBaseline } from '@mui/material';
 
 function App() {
   return (
-    <div>
-      <img src='images/test_img.jpg'/>
-      <p className='title'>Welcome to My React App</p>
+    <div className='app'>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Examples /> 
+      </ThemeProvider>
     </div>
   )
 }
-
-
 
 export default App;

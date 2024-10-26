@@ -3,9 +3,13 @@
     "src": [
         "./src"
     ],
+    "include": [
+        "src/**"
+    ],
     "exclude": [
         "src/index.tsx",
-        "src/contexts/**"
+        "src/contexts/**",
+        "src/components/basic/IdProps.ts"
     ],
     "extension": [
         ".ts",
