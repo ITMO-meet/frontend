@@ -13,9 +13,9 @@ describe('Nav component', () => {
   test('renders all navigation actions', () => {
     render(<Nav />);
     expect(screen.getByRole('button', { name: 'Chats' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Likes' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Matches' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Tests' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Profile' })).toBeInTheDocument();
   });
 
@@ -27,9 +27,9 @@ describe('Nav component', () => {
 
   test('updates selected action', async () => {
     render(<Nav />);
-    const likesAction = screen.getByRole('button', { name: 'Likes' });
-    await userEvent.click(likesAction);
-    expect(likesAction).toHaveClass('Mui-selected');
+    const testsAction = screen.getByRole('button', { name: 'Tests' });
+    await userEvent.click(testsAction);
+    expect(testsAction).toHaveClass('Mui-selected');
 
     const searchAction = screen.getByRole('button', { name: 'Search' });
     expect(searchAction).not.toHaveClass('Mui-selected');
