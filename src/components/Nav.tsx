@@ -8,7 +8,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const Nav: React.FC = () => {
-    const [value, setValue] = React.useState(0);
+    const [value, setValue] = React.useState('search');
 
     return (
         <BottomNavigation
@@ -18,11 +18,11 @@ const Nav: React.FC = () => {
             }}
             showLabels
         >
-            <BottomNavigationAction label="Chats" icon={<ChatIcon />} />
-            <BottomNavigationAction label="Likes" icon={<FavoriteIcon />} />
-            <BottomNavigationAction label="Search" icon={<SearchIcon />} />
-            <BottomNavigationAction label="Matches" icon={<PeopleIcon />} />
-            <BottomNavigationAction label="Profile" icon={<AccountCircleIcon />} />
+            <BottomNavigationAction label="Chats" value="chats" icon={<ChatIcon />} />
+            <BottomNavigationAction label="Likes" value="likes" icon={<FavoriteIcon />} />
+            <BottomNavigationAction label="Search" value="search" icon={<SearchIcon />} />
+            <BottomNavigationAction label="Matches" value="matches" icon={<PeopleIcon />} />
+            <BottomNavigationAction label="Profile" value="profile" icon={<AccountCircleIcon />} />
         </BottomNavigation>
     );
 };
