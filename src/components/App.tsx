@@ -1,10 +1,8 @@
 import React from 'react';
-// import Examples from './Examples';
-import Auth from './Auth';
+import Examples from './Examples';
 import { ThemeProvider } from '@mui/material';
 import theme from './theme';
 import { CssBaseline } from '@mui/material';
-import Nav from './Nav';
 import '../styles/examples.css';
 
 function App() {
@@ -12,11 +10,7 @@ function App() {
     <div className='app'>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {/* <Examples /> */}
-        <Auth />
-        <div className='nav-container'>
-          <Nav />
-        </div>
+        <Examples />
       </ThemeProvider>
     </div>
   )
