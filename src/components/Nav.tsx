@@ -4,7 +4,7 @@ import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import ChatIcon from '@mui/icons-material/Chat';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import SearchIcon from '@mui/icons-material/Search';
-import PeopleIcon from '@mui/icons-material/People';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const Nav: React.FC = () => {
@@ -19,9 +19,9 @@ const Nav: React.FC = () => {
             showLabels
         >
             <BottomNavigationAction label="Chats" value="chats" icon={<ChatIcon />} />
-            <BottomNavigationAction label="Likes" value="likes" icon={<FavoriteIcon />} />
+            <BottomNavigationAction label="Matches" value="matches" icon={<FavoriteIcon />} />
             <BottomNavigationAction label="Search" value="search" icon={<SearchIcon />} />
-            <BottomNavigationAction label="Matches" value="matches" icon={<PeopleIcon />} />
+            <BottomNavigationAction label="Tests" value="tests" icon={<FormatListBulletedIcon />} />
             <BottomNavigationAction label="Profile" value="profile" icon={<AccountCircleIcon />} />
         </BottomNavigation>
     );
