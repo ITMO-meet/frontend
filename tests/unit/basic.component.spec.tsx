@@ -66,10 +66,10 @@ describe('InputText', () => {
     it('calls onChange handler', () => {
         const handleChange = jest.fn();
         render(<InputText onChange={handleChange} />);
-        
+
         const inputElement = screen.getByRole("textbox");
         fireEvent.change(inputElement, { target: { value: 'New Value' } });
-        
+
         expect(handleChange).toHaveBeenCalledTimes(1);
         expect(handleChange).toHaveBeenCalledWith(expect.objectContaining({
             target: expect.objectContaining({
