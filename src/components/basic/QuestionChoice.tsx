@@ -68,7 +68,7 @@ const styles = {
 
 interface QuestionChoiceProps extends IdProps {
   options?: string[]; // Список вариантов
-  onFinish?: (ans: string) => void; // Функция для обработки клика по кнопке
+  onFinish?: (ans: number) => void; // Функция для обработки клика по кнопке
 }
 
 export const QuestionChoice: React.FC<QuestionChoiceProps> = ({ options = defaultOptions, onFinish }) => {
@@ -77,7 +77,7 @@ export const QuestionChoice: React.FC<QuestionChoiceProps> = ({ options = defaul
   const handleOptionClick = (index: number) => setSelectedOption(index);
   const handleFinishClick = () => {
     if (onFinish && selectedOption !== null) {
-      onFinish(options[selectedOption]);
+      onFinish(selectedOption);
     }
   };
 
@@ -88,7 +88,7 @@ export const QuestionChoice: React.FC<QuestionChoiceProps> = ({ options = defaul
           const isSelected = selectedOption === index;
           return (
             <Box key={index} sx={styles.optionContainer}>
-              <Box   onClick={() => handleOptionClick(index)} sx={styles.circle(index, circleSizes[index], isSelected)}>
+              <Box className="option-choice" onClick={() => handleOptionClick(index)} sx={styles.circle(index, circleSizes[index], isSelected)}>
                 <Box sx={styles.innerCircle(index, circleSizes[index])} />
               </Box>
               <Typography color={theme.palette.primary.dark}>{option}</Typography>
