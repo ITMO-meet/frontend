@@ -4,9 +4,9 @@ import { TextField } from '@mui/material';
 import IdProps from './IdProps';
 
 interface InputTextProps extends IdProps {
-    width?: string,
-    label?: string
-    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
+    width?: string, // Ширина поля ввода
+    label?: string // Надпись в поле ввода
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void // Дейсвтие при изменении
 }
 
 const CustomInput = styled(TextField)<InputTextProps>(({ width, theme }) => ({
@@ -15,7 +15,7 @@ const CustomInput = styled(TextField)<InputTextProps>(({ width, theme }) => ({
     backgroundColor: theme.palette.secondary.light
 }));
 
-const InputText: React.FC<InputTextProps> = ({ ...props }) => {
+export const InputText: React.FC<InputTextProps> = ({ ...props }) => {
     return (
         <CustomInput variant="filled" {...props} />
     );

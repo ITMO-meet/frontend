@@ -3,9 +3,9 @@ import React from 'react';
 import IdProps from "./IdProps";
 
 interface ImageButtonProps extends IdProps {
-    radius?: string,
-    children?: React.ReactNode,
-    onClick?: () => void
+    radius?: string, // Радиус кнопки
+    children?: React.ReactNode, // Вложенный элемент
+    onClick?: () => void // Действие по клику
 }
 
 const CustomButton = styled(IconButton)<ImageButtonProps>(({ radius, theme }) => ({
@@ -16,7 +16,7 @@ const CustomButton = styled(IconButton)<ImageButtonProps>(({ radius, theme }) =>
     color: theme.palette.secondary.main
 }));
 
-const ImageButton: React.FC<ImageButtonProps> = ({ ...props }) => {
+export const ImageButton: React.FC<ImageButtonProps> = ({ ...props }) => {
     return (
         <CustomButton {...props} />
     );
