@@ -54,7 +54,7 @@ export const Quiz: React.FC<QuizProps> = ({ questions, onExit, onFinish }) => {
         }}>
             <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
                 {/* Кнопка закрытия теста */}
-                <ImageButton onClick={onExit}><Close /></ImageButton>
+                <ImageButton className="quiz-close" onClick={onExit}><Close /></ImageButton>
                 {/* Прогресс-бар */}
                 <LinearProgress 
                     variant="determinate" 
