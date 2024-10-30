@@ -8,14 +8,14 @@ const defaultOptions = [
   'Нет',
   '>',
   '>',
-  'Затрудняюсь ответить',
+  'Хм',
   '<',
   '<',
   'Да',
 ];
 
 const circleSizes = [
-  48, 40, 32, 24, 32, 40, 48
+  40, 32, 24, 20, 24, 32, 40, 48
 ]
 
 const gradients = [
@@ -33,6 +33,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    padding: '16px',
   },
   optionsContainer: {
     display: 'flex',
@@ -44,18 +45,21 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    marginBottom: '16px',
   },
   circle: (index: number, size: number, isSelected: boolean) => ({
     width: size,
     height: size,
     position: 'relative',
     borderRadius: '50%',
-    margin: `${size * 0.2}px auto`,
-    border: `${size * 0.2}px solid white`,
+    border: isSelected ? `${size * 0.1}px solid white` : `${size * 0.2}px solid white`,
     background: isSelected ? gradients[index] : "#fff",
+    transition: 'border 0.3s',
     '&:hover': {
       border: `${size * 0.1}px solid white`,
     },
+    marginBottom: `${circleSizes[0] - circleSizes[index] / 2}px`,
+    marginTop: `${circleSizes[0] - circleSizes[index] / 2}px`,
   }),
   innerCircle: (index: number, size: number) => ({
     borderRadius: '50%',
@@ -63,6 +67,15 @@ const styles = {
     inset: `-${size * 0.3}px`,
     background: gradients[index],
     zIndex: -1,
+  }),
+  button: (isSelected: boolean) => ({
+    marginTop: "16px",
+    animation: `pulse ${isSelected ? "2" : "0"}s infinite`,
+    '@keyframes pulse': {
+      '0%': { transform: 'scale(1)' },
+      '50%': { transform: 'scale(1.1)' },
+      '100%': { transform: 'scale(1)' },
+    },
   })
 };
 
@@ -74,12 +87,10 @@ interface QuestionChoiceProps extends IdProps {
 export const QuestionChoice: React.FC<QuestionChoiceProps> = ({ options = defaultOptions, onFinish }) => {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
-  const handleOptionClick = (index: number) => setSelectedOption(index);
-  const handleFinishClick = () => {
-    if (onFinish && selectedOption !== null) {
-      onFinish(selectedOption);
-    }
-  };
+  const handleFinish = () => {
+    setSelectedOption(null);
+    onFinish?.(selectedOption!);
+  }
 
   return (
     <Box sx={styles.choiceContainer}>
@@ -87,16 +98,21 @@ export const QuestionChoice: React.FC<QuestionChoiceProps> = ({ options = defaul
         {options.map((option, index) => {
           const isSelected = selectedOption === index;
           return (
+            // Вариант ответа
             <Box key={index} sx={styles.optionContainer}>
-              <Box className="option-choice" onClick={() => handleOptionClick(index)} sx={styles.circle(index, circleSizes[index], isSelected)}>
+              <Box className="option-choice" onClick={() => setSelectedOption(index)} sx={styles.circle(index, circleSizes[index], isSelected)}>
                 <Box sx={styles.innerCircle(index, circleSizes[index])} />
               </Box>
+              {/* Текст ответа */}
               <Typography color={theme.palette.primary.dark}>{option}</Typography>
             </Box>
           );
         })}
       </Box>
-      <RoundButton disabled={selectedOption === null} width="40%" onClick={handleFinishClick}>Continue</RoundButton>
+      {/* Кнопка */}
+      <RoundButton sx={styles.button(selectedOption !== null)} disabled={selectedOption === null} width="80%" onClick={handleFinish}>Continue</RoundButton>
     </Box>
   );
 };
+
+export default QuestionChoice;
