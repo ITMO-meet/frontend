@@ -18,14 +18,23 @@ const circleSizes = [
   40, 32, 24, 20, 24, 32, 40, 48
 ]
 
+// const gradients = [
+  // 'linear-gradient(to right, #D21616, #D21616)',
+  // 'linear-gradient(to right, #D21616, #ED7474)',
+  // 'linear-gradient(to right, #ED7474, #E98D0D)',
+  // 'linear-gradient(to right, #E98D0D, #E98D0D)',
+  // 'linear-gradient(to right, #E98D0D, #62E460)',
+  // 'linear-gradient(to right, #62E460, #129E39)',
+  // 'linear-gradient(to right, #129E39, #129E39)'
+// ]
 const gradients = [
-  'linear-gradient(to right, #D21616, #D21616)',
-  'linear-gradient(to right, #D21616, #ED7474)',
-  'linear-gradient(to right, #ED7474, #E98D0D)',
-  'linear-gradient(to right, #E98D0D, #E98D0D)',
-  'linear-gradient(to right, #E98D0D, #62E460)',
-  'linear-gradient(to right, #62E460, #129E39)',
-  'linear-gradient(to right, #129E39, #129E39)'
+  "#4c1cd2  ",
+  "#4238cc",
+  "#3955c7",
+  "#3070c2",
+  "#2986be",
+  "#219eba",
+  "#16c0b3",
 ]
 
 const styles = {
@@ -70,6 +79,9 @@ const styles = {
   }),
   button: (isSelected: boolean) => ({
     marginTop: "16px",
+    width: "100%",
+    display: 'flex',
+    justifyContent: 'center', // Добавлено для центрирования
     animation: `pulse ${isSelected ? "2" : "0"}s infinite`,
     '@keyframes pulse': {
       '0%': { transform: 'scale(1)' },
@@ -110,7 +122,9 @@ export const QuestionChoice: React.FC<QuestionChoiceProps> = ({ options = defaul
         })}
       </Box>
       {/* Кнопка */}
-      <RoundButton sx={styles.button(selectedOption !== null)} disabled={selectedOption === null} width="80%" onClick={handleFinish}>Continue</RoundButton>
+      <Box sx={styles.button(selectedOption !== null)}>
+        <RoundButton disabled={selectedOption === null} width="80%" onClick={handleFinish}>Continue</RoundButton>
+      </Box>
     </Box>
   );
 };

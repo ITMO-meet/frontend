@@ -21,7 +21,7 @@ interface QuizProps {
     onFinish: (answers: Answer[]) => void; // Функция при завершении теста 
 }
 
-const Quiz: React.FC<QuizProps> = ({ questions, onExit, onFinish }) => {
+export const Quiz: React.FC<QuizProps> = ({ questions, onExit, onFinish }) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswers, setSelectedAnswers] = useState<Answer[]>([]);
     const [isExiting, setIsExiting] = useState(false); // Состояние для управления анимацией выхода
@@ -63,7 +63,7 @@ const Quiz: React.FC<QuizProps> = ({ questions, onExit, onFinish }) => {
                 />
             </Box>
 
-            <Box sx={{ 
+            <Box key={currentQuestionIndex} sx={{ 
                 display: 'flex', 
                 flexDirection: 'column', 
                 justifyContent: 'center', 
@@ -72,7 +72,6 @@ const Quiz: React.FC<QuizProps> = ({ questions, onExit, onFinish }) => {
             }}>
                 {/* Анимация текста вопроса */}
                 <motion.div 
-                    key={currentQuestionIndex} // Ключ для обновления анимации при смене вопроса
                     initial={{ opacity: 0, y: -20 }} // Начальное состояние
                     animate={{ opacity: isExiting ? 0 : 1, y: isExiting ? -20 : 0 }} // Конечное состояние
                     exit={{ opacity: 0, y: 20 }} // Состояние при выходе
@@ -85,7 +84,6 @@ const Quiz: React.FC<QuizProps> = ({ questions, onExit, onFinish }) => {
 
                 {/* Анимация иконки вопроса */}
                 <motion.div 
-                    key={currentQuestionIndex} // Ключ для обновления анимации при смене вопроса
                     initial={{ scale: 0 }} // Начальное состояние
                     animate={{ scale: isExiting ? 0 : 1 }} // Конечное состояние
                     exit={{ scale: 0 }} // Состояние при выходе
