@@ -8,23 +8,28 @@ describe('Quiz component', () => {
   let mockOnExit: jest.Mock;
   let container: HTMLElement;
 
-  const questions1 = [
-    {
-      id: 1,
-      text: 'Question 1?',
-    },
-    {
-      id: 2,
-      text: 'Question 2?',
-    },
-  ];
+  const mockGetQuestions = (id: number) => {
+    if (id === 1) {
+      return [
+        {
+          id: 1,
+          text: 'Question 1?',
+        },
+      ]
+    } else {
+      return [
+        {
+          id: 1,
+          text: 'Question 1?',
+        },
+        {
+          id: 2,
+          text: 'Question 2?',
+        },
+      ];
+    }
+  }
 
-  const questions2 = [
-    {
-      id: 1,
-      text: 'Question 1?',
-    },
-  ]
 
   beforeEach(() => {
     mockOnFinish = jest.fn();
@@ -32,13 +37,13 @@ describe('Quiz component', () => {
   });
 
   it('renders the first question', () => {
-    ({ container } = render(<Quiz questions={questions1} onFinish={mockOnFinish} onExit={mockOnExit} />));
+    ({ container } = render(<Quiz quizId={2} getQuestions={mockGetQuestions} onFinish={mockOnFinish} onExit={mockOnExit} />));
 
     expect(screen.getByText('Question 1?')).toBeInTheDocument();
   });
 
   it('button disabled until choosen and disabled after click', () => {
-    ({ container } = render(<Quiz questions={questions1} onFinish={mockOnFinish} onExit={mockOnExit} />));
+    ({ container } = render(<Quiz quizId={2} getQuestions={mockGetQuestions} onFinish={mockOnFinish} onExit={mockOnExit} />));
 
     const firstOpt = container.getElementsByClassName("option-choice")[0]
     const button = screen.getByRole('button', { name: /Continue/i });
@@ -51,7 +56,7 @@ describe('Quiz component', () => {
   });
 
   it('calls onExit when exit button is clicked', () => {
-    ({ container } = render(<Quiz questions={questions1} onFinish={mockOnFinish} onExit={mockOnExit} />));
+    ({ container } = render(<Quiz quizId={2} getQuestions={mockGetQuestions} onFinish={mockOnFinish} onExit={mockOnExit} />));
 
     const exitButton = container.getElementsByClassName("quiz-close")[0]
     fireEvent.click(exitButton);
@@ -60,7 +65,7 @@ describe('Quiz component', () => {
   });
 
   it('calls onFinish when all questions are answered', async () => {
-    ({ container } = render(<Quiz questions={questions2} onFinish={mockOnFinish} onExit={mockOnExit} />));
+    ({ container } = render(<Quiz quizId={1} getQuestions={mockGetQuestions} onFinish={mockOnFinish} onExit={mockOnExit} />));
 
     const firstOpt = container.getElementsByClassName("option-choice")[0]
     const button = screen.getByRole('button', { name: /Continue/i });

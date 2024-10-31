@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, LinearProgress } from '@mui/material';
 import { QuestionMark, Close } from '@mui/icons-material';
 import QuestionChoice from '../basic/QuestionChoice';
@@ -16,17 +16,24 @@ interface Answer {
 }
 
 interface QuizProps {
-    questions: Question[]; // Список вопросов
+    quizId: number;
+    getQuestions: (id: number) => Question[];
     onExit: () => void; // Функция для выхода из теста
     onFinish: (answers: Answer[]) => void; // Функция при завершении теста 
 }
 
-export const Quiz: React.FC<QuizProps> = ({ questions, onExit, onFinish }) => {
+export const Quiz: React.FC<QuizProps> = ({ quizId, getQuestions, onExit, onFinish }) => {
+    const [questions, setQuestions] = useState<Question[]>([])
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswers, setSelectedAnswers] = useState<Answer[]>([]);
     const [isExiting, setIsExiting] = useState(false); // Состояние для управления анимацией выхода
 
     const currentQuestion = questions[currentQuestionIndex] || '';
+    const delay = 500; // Задержка для анимаций
+
+    useEffect(() => {
+        setQuestions(getQuestions(quizId));
+    }, [])
 
     const handleConfirm = (ansIndex: number) => {
         setSelectedAnswers([...selectedAnswers, { id: currentQuestion.id, answerIndex: ansIndex }]);
@@ -41,7 +48,7 @@ export const Quiz: React.FC<QuizProps> = ({ questions, onExit, onFinish }) => {
             if (currentQuestionIndex === questions.length - 1) {
                 onFinish([...selectedAnswers, { id: currentQuestion.id, answerIndex: ansIndex }]);
             }
-        }, 500); // Задержка, равная длительности анимации
+        }, delay); // Задержка, равная длительности анимации
     };
 
     return (
@@ -87,7 +94,7 @@ export const Quiz: React.FC<QuizProps> = ({ questions, onExit, onFinish }) => {
                     initial={{ scale: 0 }} // Начальное состояние
                     animate={{ scale: isExiting ? 0 : 1 }} // Конечное состояние
                     exit={{ scale: 0 }} // Состояние при выходе
-                    transition={{ duration: 0.5 }} // Длительность анимации
+                    transition={{ duration: delay / 1000 }} // Длительность анимации
                 >
                     <QuestionMark sx={{ fontSize: "100px" }} />
                 </motion.div>
