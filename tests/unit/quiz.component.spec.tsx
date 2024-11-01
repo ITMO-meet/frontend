@@ -4,6 +4,7 @@ import '@testing-library/jest-dom';
 import { Quiz } from '../../src/components/pages/Quiz';
 
 describe('Quiz component', () => {
+  let mockJestGetQuestions: jest.Mock;
   let mockOnFinish: jest.Mock;
   let mockOnExit: jest.Mock;
   let container: HTMLElement;
@@ -32,8 +33,20 @@ describe('Quiz component', () => {
 
 
   beforeEach(() => {
+    mockJestGetQuestions = jest.fn(mockGetQuestions);
     mockOnFinish = jest.fn();
     mockOnExit = jest.fn();
+  });
+
+  afterEach(() => {
+    jest.clearAllTimers(); // Очищает все таймеры
+  });
+
+  it('calls getQuestions', () => {
+    ({ container } = render(<Quiz quizId={1} getQuestions={mockJestGetQuestions} onFinish={mockOnFinish} onExit={mockOnExit} />));
+
+    expect(mockJestGetQuestions).toHaveBeenCalledTimes(1);
+    expect(mockJestGetQuestions).toHaveBeenCalledWith(1)
   });
 
   it('renders the first question', () => {
