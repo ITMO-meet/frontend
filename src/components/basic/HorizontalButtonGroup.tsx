@@ -18,7 +18,7 @@ const CustomButton = styled(Button)<{ selected: boolean }>(({ selected, theme })
 }));
 
 const HorizontalButtonGroup: React.FC<HorizontalButtonGroupProps> = ({ options, spacing, onButtonClick }) => {
-    const [selectedOption, setSelectedOption] = useState<string | null>(null);
+    const [selectedOption, setSelectedOption] = useState<string | null>(options[0]);
     return (
         <Box display="flex" gap={`${spacing}px`}>
             {options.map((option, index) => (
