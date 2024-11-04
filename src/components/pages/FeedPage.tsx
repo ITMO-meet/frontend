@@ -51,7 +51,7 @@ const icons = {
 };
 
 // Основной компонент SwipeableCard
-export const SwipeableCard: React.FC<Props> = ({ getNextPerson, onLike, onDislike, onSuperLike }) => {
+export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, onSuperLike }) => {
     const DURATION = 300; // Длительность анимации в миллисекундах
     const [swipeDirection, setSwipeDirection] = useState<string | null>(null); // Направление свайпа
     const [iconVisible, setIconVisible] = useState(false); // Видимость иконки
@@ -222,4 +222,4 @@ export const SwipeableCard: React.FC<Props> = ({ getNextPerson, onLike, onDislik
     );
 };
 
-export default SwipeableCard; // Экспорт компонента SwipeableCard
+export default FeedPage; // Экспорт компонента SwipeableCard
