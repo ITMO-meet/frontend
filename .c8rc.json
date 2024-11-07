@@ -9,7 +9,8 @@
     "exclude": [
         "src/index.tsx",
         "src/contexts/**",
-        "src/components/basic/IdProps.ts"
+        "src/components/basic/IdProps.ts",
+        "src/components/examples/**"
     ],
     "extension": [
         ".ts",
