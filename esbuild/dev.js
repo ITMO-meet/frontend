@@ -43,7 +43,7 @@ esbuild
     await ctx.watch();
     await ctx.serve({
       servedir: 'public',
-      port: 3000,
+      port: 3070,
       onRequest: ({ remoteAddress, method, path, status, timeInMS }) => {
         console.info(remoteAddress, status, `"${method} ${path}" [${timeInMS}ms]`);
       },

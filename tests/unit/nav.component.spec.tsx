@@ -1,7 +1,7 @@
 // Nav.test.tsx
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import Nav from '../../src/components/Nav';
+import Nav from '../../src/components/basic/Nav';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 
