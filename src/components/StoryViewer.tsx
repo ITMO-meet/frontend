@@ -149,7 +149,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ contacts, initialIndex, onClo
                 {currentContact.name}
               </Typography>
               <Box sx={{ flexGrow: 1 }} />
-              <IconButton onClick={onClose} sx={{ color: 'white' }}>
+              <IconButton onClick={onClose} sx={{ color: 'white', zIndex: 1300 }}>
                 <CloseIcon />
               </IconButton>
             </Box>
@@ -172,7 +172,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ contacts, initialIndex, onClo
             position: 'absolute',
             top: 0,
             left: 0,
-            width: '50%',
+            width: '30%',
             height: '100%',
           }}
           onClick={handlePrevStory}
@@ -182,7 +182,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ contacts, initialIndex, onClo
             position: 'absolute',
             top: 0,
             right: 0,
-            width: '50%',
+            width: '30%',
             height: '100%',
           }}
           onClick={handleNextStory}
