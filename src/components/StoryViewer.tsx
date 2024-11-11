@@ -3,7 +3,7 @@ import { Box, Avatar, Typography, IconButton, LinearProgress, Fade } from '@mui/
 import CloseIcon from '@mui/icons-material/Close';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import { Contact } from '../types';
+import { Contact } from './types';
 
 interface StoryViewerProps {
   contacts: Contact[];

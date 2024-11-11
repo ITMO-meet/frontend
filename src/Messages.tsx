@@ -7,15 +7,13 @@ import {
   TextField,
   InputAdornment,
   List,
-  ListItem,
-  ListItemText,
-  ListItemAvatar,
   Paper,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Message, ChatProps } from './types';
+import { Message, ChatProps } from './components/types';
+import UserMessage from './components/UserMessage';
 
 const Messages: React.FC<ChatProps> = ({ contacts }) => {
   const { id } = useParams<{ id: string }>();
@@ -45,7 +43,7 @@ const Messages: React.FC<ChatProps> = ({ contacts }) => {
       ]);
       setInputValue('');
       scrollToBottom();
-      // TODO: Implement actual message sending logic (e.g., API call)
+      // TODO: Implement actual message sending logic (e.g., API call or RabbitMQ)
     }
   };
 
@@ -97,37 +95,17 @@ const Messages: React.FC<ChatProps> = ({ contacts }) => {
       </Paper>
 
       {/* Messages List */}
-      <List sx={{ mt: 8, mb: 2, px: 2, overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' }}>
+      <List
+        sx={{
+          mt: 8,
+          mb: 2,
+          px: 2,
+          overflowY: 'auto',
+          maxHeight: 'calc(100vh - 200px)',
+        }}
+      >
         {messages.map((message, index) => (
-          <ListItem
-            key={index}
-            sx={{
-              display: 'flex',
-              justifyContent: message.sender === 'me' ? 'flex-end' : 'flex-start',
-            }}
-          >
-            {message.sender === 'them' && (
-              <ListItemAvatar>
-                <Avatar src={contact.pfp} />
-              </ListItemAvatar>
-            )}
-            <ListItemText
-              sx={{
-                maxWidth: '75%',
-                bgcolor: message.sender === 'me' ? '#DCF8C6' : '#FFFFFF',
-                borderRadius: 2,
-                p: 1,
-                mx: 1,
-                wordBreak: 'break-word',
-              }}
-              primary={message.text}
-            />
-            {message.sender === 'me' && (
-              <ListItemAvatar>
-                <Avatar src="https://randomuser.me/api/portraits/lego/1.jpg" /> {/* Placeholder for 'me' */}
-              </ListItemAvatar>
-            )}
-          </ListItem>
+          <UserMessage key={index} message={message} />
         ))}
         <div ref={messagesEndRef} />
       </List>

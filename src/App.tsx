@@ -6,6 +6,7 @@ import Nav from './components/basic/Nav';
 import ChatPage from './ChatPage';
 import MatchesPage from './MatchesPage';
 import SearchPage from './SearchPage';
+import LoginPage from './LoginPage';
 import TestsPage from './TestsPage';
 import ProfilePage from './ProfilePage';
 import Messages from './Messages';
@@ -80,7 +81,7 @@ function AppContent() {
           <Route path="/search" element={<SearchPage />} />
           <Route path="/tests" element={<TestsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="*" element={<div>Page not found</div>} />
+          <Route path="*" element={<LoginPage />} />
         </Routes>
       </Box>
       {!shouldHideNav && <Nav />}
