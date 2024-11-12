@@ -10,7 +10,7 @@ import LoginPage from './LoginPage';
 import TestsPage from './TestsPage';
 import ProfilePage from './ProfilePage';
 import Messages from './Messages';
-import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 
 const contacts = [
   {
@@ -59,9 +59,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
-        <AppContent />
-      </Router>
+      <AppContent />
     </ThemeProvider>
   );
 }

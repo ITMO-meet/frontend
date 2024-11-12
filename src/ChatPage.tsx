@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import ContactCard from './components/Contact';
 import Stories from './components/Stories';
 import AddStoryModal from './components/AddStoryModal';
-import {ChatProps} from './components/types';
+import {ChatProps} from './types';
 
 const ChatPage: React.FC<ChatProps> = ({ contacts }) => {
   const navigate = useNavigate();

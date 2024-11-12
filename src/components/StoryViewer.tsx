@@ -3,7 +3,7 @@ import { Box, Avatar, Typography, IconButton, LinearProgress, Fade } from '@mui/
 import CloseIcon from '@mui/icons-material/Close';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import { Contact } from './types';
+import { Contact } from '../types';
 
 interface StoryViewerProps {
   contacts: Contact[];
@@ -126,8 +126,8 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ contacts, initialIndex, onClo
                     index < currentStoryIndex
                       ? 100
                       : index === currentStoryIndex
-                      ? progress
-                      : 0
+                        ? progress
+                        : 0
                   }
                   sx={{
                     flexGrow: 1,
@@ -149,7 +149,11 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ contacts, initialIndex, onClo
                 {currentContact.name}
               </Typography>
               <Box sx={{ flexGrow: 1 }} />
-              <IconButton onClick={onClose} sx={{ color: 'white', zIndex: 1300 }}>
+              <IconButton
+                data-testid="close-button"
+                onClick={onClose}
+                sx={{ color: 'white', zIndex: 1300 }}
+              >
                 <CloseIcon />
               </IconButton>
             </Box>
@@ -168,6 +172,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ contacts, initialIndex, onClo
 
         {/* Clickable Areas */}
         <Box
+          data-testid="left-click-area"
           sx={{
             position: 'absolute',
             top: 0,
@@ -178,6 +183,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ contacts, initialIndex, onClo
           onClick={handlePrevStory}
         />
         <Box
+          data-testid="right-click-area"
           sx={{
             position: 'absolute',
             top: 0,

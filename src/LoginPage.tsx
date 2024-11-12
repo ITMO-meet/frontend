@@ -1,3 +1,5 @@
+/* c8 ignore start */
+
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 

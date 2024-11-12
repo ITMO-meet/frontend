@@ -1,4 +1,4 @@
-import { accessToken } from '../../src/Rollbar'; 
+import { accessToken } from '../../src/components/Rollbar';
 
 describe('Rollbar', () => {
   it('Access token must be hidden!', () => {

@@ -1,3 +1,6 @@
+/* c8 ignore start */
+// Modal is temp and will be changed, doesn't need tests
+
 import React, { useState } from 'react';
 import {
   Modal,

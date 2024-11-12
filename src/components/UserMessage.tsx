@@ -1,6 +1,6 @@
 import React from 'react';
 import { ListItem, Box } from '@mui/material';
-import { Message } from './types';
+import { Message } from '../types';
 
 const UserMessage: React.FC<{ message: Message }> = ({ message }) => {
   return (
