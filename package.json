@@ -8,7 +8,7 @@
     "start": "node esbuild/dev.js",
     "build": "node esbuild/prod.js",
     "lint": "eslint src/**/*.{js,mjs,cjs,ts,jsx,tsx} tests/**/*.{js,mjs,cjs,ts,jsx,tsx}",
-    "test:unit": "jest -c jest.unit.config.cjs --detectOpenHandles",
+    "test:unit": "jest -c jest.unit.config.cjs --detectOpenHandles --updateSnapshot",
     "test:unit:coverage": "c8 npm run test:unit",
     "test:e2e": "mocha tests/e2e/**/*.spec.*"
   },
@@ -31,6 +31,7 @@
     "mobx-react-lite": "^4.0.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0",
     "rollbar": "^2.26.4",
     "rollbar-react-native": "^1.0.0-beta.4",
     "ts-loader": "^9.5.1"
@@ -38,7 +39,7 @@
   "devDependencies": {
     "@eslint/js": "^9.12.0",
     "@playwright/test": "^1.48.2",
-    "@testing-library/jest-dom": "^6.6.2",
+    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "^14.5.2",
     "@types/chai": "^5.0.0",
@@ -53,7 +54,7 @@
     "chai": "^5.1.2",
     "esbuild": "^0.24.0",
     "esbuild-css-modules-plugin": "^3.1.2",
-    "esbuild-jest": "^0.5.0",
+    "esbuild-jest": "^0.4.0",
     "eslint": "^9.12.0",
     "eslint-plugin-mocha": "^10.5.0",
     "eslint-plugin-react": "^7.37.1",
