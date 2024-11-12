@@ -1,35 +1,3 @@
-/**
- * Компонент TargetSheetButton
- *
- * Этот компонент представляет собой кнопку, которая при нажатии открывает BottomSheet для выбора цели использования приложения знакомств.
- * BottomSheet отображает список опций, каждая из которых включает иконку, название и описание.
- * Пользователь может выбрать одну опцию, после чего нажать "Сохранить" для подтверждения выбора.
- * После сохранения выбранная опция передается в родительский компонент через callback `onSelect`.
- *
- * @component
- * @param {string} label - Текст, отображаемый на кнопке.
- * @param {JSX.Element} icon - Иконка, отображаемая рядом с текстом на кнопке.
- * @param {TargetOption[]} options - Массив доступных для выбора опций. Каждая опция включает иконку, метку и описание.
- * @param {function} onSelect - Функция обратного вызова, вызываемая при сохранении выбранной опции. Принимает объект `TargetOption`.
- *
- * @typedef {Object} TargetOption
- * @property {JSX.Element} icon - Иконка для отображения в опции.
- * @property {string} label - Название опции.
- * @property {string} description - Описание опции.
- *
- * @example
- * <TargetSheetButton
- *     label="Цель"
- *     icon={<SomeIcon />}
- *     options={[
- *         { icon: <Icon1 />, label: 'Даты', description: 'Сходить на свидания и повеселиться' },
- *         { icon: <Icon2 />, label: 'Романтические отношения', description: 'Найти свою вторую половину' },
- *         { icon: <Icon3 />, label: 'Дружба', description: 'Познакомиться с новыми друзьями' },
- *     ]}
- *     onSelect={(option) => console.log('Выбранная цель:', option)}
- * />
- */
-
 import React, { useState } from 'react';
 import { Box, Button, Typography, Dialog, DialogContent, DialogActions, styled } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -80,7 +48,10 @@ const TargetSheetButton: React.FC<TargetSheetButtonProps> = ({ label, icon, opti
     // Открыть BottomSheet
     const openBottomSheet = () => setBottomSheetOpen(true);
     // Закрыть BottomSheet
-    const closeBottomSheet = () => setBottomSheetOpen(false);
+    const closeBottomSheet = () => {
+        setTempSelectedOption(null); // Сбрасываем временную выбранную опцию
+        setBottomSheetOpen(false);
+    };
 
     // Установить временную опцию при клике по одной из опций
     const handleOptionClick = (option: TargetOption) => {
@@ -140,7 +111,9 @@ const TargetSheetButton: React.FC<TargetSheetButtonProps> = ({ label, icon, opti
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    {/* Кнопка для подтверждения выбранной опции */}
+                    <Button onClick={closeBottomSheet} fullWidth variant="outlined" color="primary">
+                        Отмена
+                    </Button>
                     <Button onClick={handleSave} fullWidth variant="contained" color="primary">
                         Сохранить
                     </Button>
