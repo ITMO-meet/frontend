@@ -8,7 +8,7 @@
     "start": "node esbuild/dev.js",
     "build": "node esbuild/prod.js",
     "lint": "eslint src/**/*.{js,mjs,cjs,ts,jsx,tsx} tests/**/*.{js,mjs,cjs,ts,jsx,tsx}",
-    "test:unit": "jest -c jest.unit.config.cjs",
+    "test:unit": "jest -c jest.unit.config.cjs --updateSnapshot",
     "test:unit:coverage": "c8 npm run test:unit",
     "test:e2e": "mocha tests/e2e/**/*.spec.*"
   },
