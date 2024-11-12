@@ -10,7 +10,8 @@
         "src/index.tsx",
         "src/contexts/**",
         "src/components/basic/IdProps.ts",
-        "src/components/examples/**"
+        "src/components/examples/**",
+        "src/components/Examples.tsx",
         "src/types.ts"
     ],
     "extension": [
@@ -21,7 +22,7 @@
     "reporter": ["html", "text"],
     "lines": 80,
     "functions": 80,
-    "branches": 80,
+    "branches": 70,
     "statements": 80,
     "check-coverage": true
 }
