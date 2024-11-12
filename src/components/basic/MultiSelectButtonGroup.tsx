@@ -4,8 +4,8 @@ import CheckIcon from '@mui/icons-material/Check';
 import IdProps from './IdProps';
 
 interface MultiSelectButtonsProps extends IdProps {
-  options: string[],
-  onClickOption: (selectedOpts: string[]) => void
+  options: string[], // Список вариантов
+  onClickOption: (selectedOpts: string[]) => void // Действие по клику
 }
 
 const CustomButton = styled(Button)<{ selected: boolean }>(({ selected, theme }) => ({
@@ -17,7 +17,7 @@ const CustomButton = styled(Button)<{ selected: boolean }>(({ selected, theme })
   },
 }));
 
-const MultiSelectButtonGroup: React.FC<MultiSelectButtonsProps> = ({ ...props }) => {
+export const MultiSelectButtonGroup: React.FC<MultiSelectButtonsProps> = ({ ...props }) => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   const handleToggle = (option: string) => {

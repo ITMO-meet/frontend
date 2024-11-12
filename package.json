@@ -8,7 +8,7 @@
     "start": "node esbuild/dev.js",
     "build": "node esbuild/prod.js",
     "lint": "eslint src/**/*.{js,mjs,cjs,ts,jsx,tsx} tests/**/*.{js,mjs,cjs,ts,jsx,tsx}",
-    "test:unit": "jest -c jest.unit.config.cjs --updateSnapshot",
+    "test:unit": "jest -c jest.unit.config.cjs --detectOpenHandles --updateSnapshot",
     "test:unit:coverage": "c8 npm run test:unit",
     "test:e2e": "mocha tests/e2e/**/*.spec.*"
   },
@@ -24,6 +24,7 @@
     "@rollbar/react": "^0.12.0-beta",
     "dotenv": "^16.4.5",
     "esbuild-plugin-alias": "^0.2.1",
+    "framer-motion": "^11.11.10",
     "frontend": "file:",
     "lightningcss": "^1.27.0",
     "mobx": "^6.13.3",
