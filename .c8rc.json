@@ -11,6 +11,7 @@
         "src/contexts/**",
         "src/components/basic/IdProps.ts",
         "src/components/examples/**"
+        "src/types.ts"
     ],
     "extension": [
         ".ts",

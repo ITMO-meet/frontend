@@ -7,4 +7,10 @@ module.exports = {
   testMatch: [
     '<rootDir>/tests/unit/**/*.[jt]s?(x)',
   ],
+  coverageReporters: ['text', 'html'],
+  coverageDirectory: 'coverage',
+  collectCoverageFrom: [
+    'src/**/*.{js,jsx,ts,tsx}',
+    '!src/**/*.d.ts'
+  ]
 };

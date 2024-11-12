@@ -1,17 +1,31 @@
-// Nav.test.tsx
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import Nav from '../../src/components/Nav';
+import Nav from '../../src/components/basic/Nav';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter, useNavigate } from 'react-router-dom';
+
+jest.mock('react-router-dom', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: jest.fn(),
+}));
 
 describe('Nav component', () => {
   test('renders Nav component without crashing', () => {
-    render(<Nav />);
+    render(
+      <MemoryRouter>
+        <Nav />
+      </MemoryRouter>
+    );
   });
 
   test('renders all navigation actions', () => {
-    render(<Nav />);
+    render(
+      <MemoryRouter>
+        <Nav />
+      </MemoryRouter>
+    );
     expect(screen.getByRole('button', { name: 'Chats' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Matches' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
@@ -20,18 +34,40 @@ describe('Nav component', () => {
   });
 
   test('initially selects "Search"', () => {
-    render(<Nav />);
+    render(
+      <MemoryRouter initialEntries={['/search']}>
+        <Nav />
+      </MemoryRouter>
+    );
     const searchAction = screen.getByRole('button', { name: 'Search' });
     expect(searchAction).toHaveClass('Mui-selected');
   });
 
-  test('updates selected action', async () => {
-    render(<Nav />);
-    const testsAction = screen.getByRole('button', { name: 'Tests' });
-    await userEvent.click(testsAction);
-    expect(testsAction).toHaveClass('Mui-selected');
+  test('initially selects "Chats"', () => {
+    render(
+      <MemoryRouter initialEntries={['/chats']}>
+        <Nav />
+      </MemoryRouter>
+    );
+    const chatsAction = screen.getByRole('button', { name: 'Chats' });
+    expect(chatsAction).toHaveClass('Mui-selected');
+  });
 
-    const searchAction = screen.getByRole('button', { name: 'Search' });
-    expect(searchAction).not.toHaveClass('Mui-selected');
+  test('updates selected action and navigates', async () => {
+    const user = userEvent.setup();
+
+    const navigateMock = jest.fn();
+    (useNavigate as jest.Mock).mockReturnValue(navigateMock);
+
+    render(
+      <MemoryRouter initialEntries={['/search']}>
+        <Nav />
+      </MemoryRouter>
+    );
+
+    const testsAction = screen.getByRole('button', { name: 'Tests' });
+    await user.click(testsAction);
+
+    expect(navigateMock).toHaveBeenCalledWith('/tests');
   });
 });
