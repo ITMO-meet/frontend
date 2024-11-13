@@ -115,7 +115,7 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
     });
 
     return (
-        <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ height: '90vh', display: 'flex', flexDirection: 'column' }}>
             <AppBar position="static">
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Typography fontSize="36px">Search</Typography> {/* Заголовок приложения */}
@@ -130,6 +130,7 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
                 <Card sx={{
                     width: "80%", // Ширина карточки
                     height: "80%", // Высота карточки
+                    borderRadius: '16px',
                     transform: swipeDirection === 'left' ? 'rotateZ(-20deg)' : swipeDirection === 'right' ? 'rotateZ(20deg)' : swipeDirection === 'up' ? 'translate(0, -200px)' : "none", // Применение трансформации в зависимости от направления свайпа
                     transition: swipeDirection === null ? 'none' : `transform ${DURATION / 1000}s`, // Плавный переход
                     transformOrigin: "bottom center", // Точка поворота для трансформации
