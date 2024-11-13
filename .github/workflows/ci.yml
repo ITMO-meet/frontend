@@ -80,9 +80,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Check test coverage
-        run: npm run test:unit:coverage -- --coverageReporters=text-summary
-
       - name: Ensure 80% Statements Coverage
         run: |
           COVERAGE=$(npm run test:unit:coverage -- --coverageReporters=text-summary | grep "All files" | awk -F'|' '{print $2}' | tr -d ' %')
