@@ -8,6 +8,7 @@ import theme from './theme';
 import InputText from './basic/InputText';
 import HorizontalButtonGroup from './basic/HorizontalButtonGroup';
 import MultiSelectButtonGroup from './basic/MultiSelectButtonGroup';
+import NavBar from './basic/NavBar';
 
 function Examples() {
   return (
@@ -25,6 +26,8 @@ function Examples() {
       <HorizontalButtonGroup options={["Man", "Woman", "Anyone"]} spacing={0} onButtonClick={console.log  }/>
       <br/>
       <MultiSelectButtonGroup onClickOption={console.log} options={["Opt1", "Opt2", "Opt3", "Opt4"]} />
+      <br/>
+      <NavBar/>
     </div>
   )
 }

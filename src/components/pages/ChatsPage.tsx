@@ -3,13 +3,13 @@ import React from 'react';
 import NavBar from '../basic/NavBar';
 
 
-const MatchesPage: React.FC = () => {
+const ChatsPage: React.FC = () => {
     return (
         <Box position="relative" minHeight="100vh" display="flex" flexDirection="column">
 
             {/* Header with Chats title */}
             <Box width="100%" position="fixed" top={0} bgcolor="white" display="flex" justifyContent="space-between" alignItems="center" p={2}>
-                <Typography variant="h5">Matches</Typography>
+                <Typography variant="h5">Chats</Typography>
             </Box>
 
             {/* Navigation Bar */}
@@ -20,4 +20,4 @@ const MatchesPage: React.FC = () => {
     );
 };
 
-export default MatchesPage;
+export default ChatsPage;

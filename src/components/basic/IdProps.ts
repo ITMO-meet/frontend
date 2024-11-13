@@ -3,4 +3,4 @@ export interface IdProps {
     className?: string // Класс элемента
 }
 
-export default IdProps
+export default IdProps;
