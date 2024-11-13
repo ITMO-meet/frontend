@@ -1,26 +1,25 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import MainFeatchersSection from '../../src/components/basic/MainFeatchersSection';
+import MainFeaturesSection from '../../src/components/basic/MainFeatchersSection';
 
-describe('MainFeatchersSection', () => {
-    test('renders MainFeatchersSection without crashing', () => {
-      render(<MainFeatchersSection />);
+describe('MainFeaturesSection', () => {
+    test('renders MainFeaturesSection without crashing', () => {
+        render(<MainFeaturesSection />);
     });
-  
+
     test('renders all main features', () => {
-      render(<MainFeatchersSection />);
-      expect(screen.getByText('Height')).toBeInTheDocument();
-      expect(screen.getByText('Worldview')).toBeInTheDocument();
-      expect(screen.getByText('Zodiac Sign')).toBeInTheDocument();
-      expect(screen.getByText('Children')).toBeInTheDocument();
-      expect(screen.getByText('Languages')).toBeInTheDocument();
-      expect(screen.getByText('Alcohol')).toBeInTheDocument();
-      expect(screen.getByText('Smoking')).toBeInTheDocument();
+        render(<MainFeaturesSection />);
+        expect(screen.getByText('Main Features')).toBeInTheDocument();
+        expect(screen.getByText('170 cm')).toBeInTheDocument();
+        expect(screen.getByText('Atheism')).toBeInTheDocument();
+        expect(screen.getByText('Aries')).toBeInTheDocument();
+        expect(screen.getByText('No but would like')).toBeInTheDocument();
+        expect(screen.getAllByText('Neutral').length).toBe(2);
     });
 
     test('renders all feature items', () => {
-        render(<MainFeatchersSection />);
+        render(<MainFeaturesSection />);
         const featureItems = [
             '170 cm',
             'Atheism',
@@ -37,7 +36,7 @@ describe('MainFeatchersSection', () => {
     });
 
     test('renders zodiac icon correctly', () => {
-        render(<MainFeatchersSection />);
+        render(<MainFeaturesSection />);
         const zodiacIcon = screen.getByText('♈️');
         expect(zodiacIcon).toBeInTheDocument();
     });

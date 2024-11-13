@@ -24,18 +24,44 @@
  */
 
 import React, { useState } from 'react';
-import { Box, Button, Dialog, DialogContent, DialogActions, Typography, Slider, TextField, IconButton } from '@mui/material';
+import { Box, Button, Dialog, DialogContent, DialogActions, Typography, Slider, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+
+interface SliderCategory {
+    type: 'slider';
+    label: string;
+    min: number;
+    max: number;
+}
+
+interface SelectCategory {
+    type: 'select';
+    label: string;
+    options: string[];
+}
+
+interface ButtonSelectCategory {
+    type: 'buttonSelect';
+    label: string;
+    options: string[];
+}
+
+interface LanguageSelectCategory {
+    type: 'languageSelect';
+    label: string;
+}
+
+type Category = SliderCategory | SelectCategory | ButtonSelectCategory | LanguageSelectCategory;
 
 interface DynamicCategoryDialogProps {
     open: boolean;
-    category: any;
+    category: Category;
     onClose: () => void;
-    onSave: (value: any) => void;
+    onSave: (value: string | number | string[] | null) => void;
 }
 
 const DynamicCategoryDialog: React.FC<DynamicCategoryDialogProps> = ({ open, category, onClose, onSave }) => {
-    const [value, setValue] = useState<any>(null);
+    const [value, setValue] = useState<string | number | string[] | null>(null);
 
     // Функция для сохранения выбранного значения и закрытия диалогового окна
     const handleSave = () => {
@@ -49,50 +75,37 @@ const DynamicCategoryDialog: React.FC<DynamicCategoryDialogProps> = ({ open, cat
             case 'slider':
                 return (
                     <Box>
-                        <Typography>{category.label}: {value || category.min}</Typography>
+                        <Typography>{`${category.label}: ${value ?? category.min}`}</Typography>
                         <Slider
-                            value={value || category.min}
+                            value={typeof value === 'number' ? value : category.min}
                             min={category.min}
                             max={category.max}
-                            onChange={(e, newValue) => setValue(newValue)}
+                            onChange={(e, newValue) => setValue(newValue as number)}
                         />
                     </Box>
                 );
             case 'select':
                 return (
                     <Box>
-                        {category.options.map((option: string, index: number) => (
-                            <Box
-                                key={index}
-                                onClick={() => setValue(option)}
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    padding: '8px',
-                                    borderRadius: '4px',
-                                    backgroundColor: value === option ? 'primary.main' : 'transparent',
-                                    color: value === option ? 'white' : 'text.primary',
-                                    cursor: 'pointer',
-                                    '&:hover': {
-                                        backgroundColor: 'grey.200'
-                                    }
-                                }}
-                            >
-                                <Typography>{option}</Typography>
-                            </Box>
-                        ))}
+                        <Typography>{category.label}</Typography>
+                        <select onChange={(e) => setValue(e.target.value)} value={value ?? ''}>
+                            {category.options.map((option, index) => (
+                                <option key={index} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </select>
                     </Box>
                 );
             case 'buttonSelect':
                 return (
                     <Box>
-                        {category.options.map((option: string, index: number) => (
+                        <Typography>{category.label}</Typography>
+                        {category.options.map((option, index) => (
                             <Button
                                 key={index}
                                 variant={value === option ? 'contained' : 'outlined'}
                                 onClick={() => setValue(option)}
-                                fullWidth
-                                sx={{ mt: 1 }}
                             >
                                 {option}
                             </Button>
@@ -102,22 +115,26 @@ const DynamicCategoryDialog: React.FC<DynamicCategoryDialogProps> = ({ open, cat
             case 'languageSelect':
                 return (
                     <Box>
-                        <Button onClick={() => console.log('Add language dialog')}>Добавить язык</Button>
-                        {value && value.map((lang: string, index: number) => (
-                            <Box
-                                key={index}
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="space-between"
-                                p={1}
-                                sx={{
-                                    mt: 1,
-                                    border: '1px solid #ddd',
-                                    borderRadius: '4px'
-                                }}
-                            >
-                                <Typography>{lang}</Typography>
-                                <IconButton onClick={() => setValue(value.filter((l: string) => l !== lang))}>
+                        <Typography>{category.label}</Typography>
+                        <Button onClick={() => setValue((prev) => (prev ? [...(prev as string[]), ''] : ['']))}>
+                            Добавить язык
+                        </Button>
+                        {(value as string[] | null)?.map((lang, index) => (
+                            <Box key={index} display="flex" alignItems="center">
+                                <input
+                                    type="text"
+                                    value={lang}
+                                    onChange={(e) => {
+                                        const newValue = [...(value as string[])];
+                                        newValue[index] = e.target.value;
+                                        setValue(newValue);
+                                    }}
+                                />
+                                <IconButton data-testid={`delete-button-${index}`} onClick={() => {
+                                    const newValue = [...(value as string[])];
+                                    newValue.splice(index, 1);
+                                    setValue(newValue);
+                                }}>
                                     <DeleteIcon />
                                 </IconButton>
                             </Box>
@@ -131,13 +148,10 @@ const DynamicCategoryDialog: React.FC<DynamicCategoryDialogProps> = ({ open, cat
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogContent>
-                <Typography variant="h6">{category.label}</Typography>
-                {renderContent()}
-            </DialogContent>
+            <DialogContent>{renderContent()}</DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>Отмена</Button>
-                <Button onClick={handleSave} variant="contained">Сохранить</Button>
+                <Button onClick={handleSave}>Сохранить</Button>
             </DialogActions>
         </Dialog>
     );

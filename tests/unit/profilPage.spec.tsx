@@ -1,23 +1,27 @@
 import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { BrowserRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import ProfilePage from '../../src/components/pages/ProfilePage';
+import EditProfilePage from '../../src/components/pages/EditProfilePage';
 
 describe('ProfilePage', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        console.log = jest.fn();
     });
 
     test('renders ProfilePage with all sections', () => {
         render(
-            <BrowserRouter>
-                <ProfilePage />
-            </BrowserRouter>
+            <MemoryRouter initialEntries={['/profile']}>
+                <Routes>
+                    <Route path="/profile" element={<ProfilePage />} />
+                </Routes>
+            </MemoryRouter>
         );
 
         // Проверка наличия заголовка
-        expect(screen.getAllByText('Profile')[0]).toBeInTheDocument();
+        expect(screen.getByText('Profile')).toBeInTheDocument();
 
         // Проверка наличия кнопки настроек
         expect(screen.getByTestId('SettingsIcon')).toBeInTheDocument();
@@ -33,33 +37,34 @@ describe('ProfilePage', () => {
 
         // Проверка наличия секции Languages
         expect(screen.getByText('Languages')).toBeInTheDocument();
-
-        // Проверка наличия кнопки Premium
-        expect(screen.getByText('Premium')).toBeInTheDocument();
     });
 
-    test('navigates to edit profile page on edit button click', () => {
+    test('navigates to edit profile page on edit button click', async () => {
         render(
-            <BrowserRouter>
-                <ProfilePage />
-            </BrowserRouter>
+            <MemoryRouter initialEntries={['/profile']}>
+                <Routes>
+                    <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/edit-profile" element={<EditProfilePage />} />
+                </Routes>
+            </MemoryRouter>
         );
 
         // Нажатие на кнопку редактирования
-        fireEvent.click(screen.getByTestId('EditIcon'));
+        fireEvent.click(screen.getAllByTestId('EditIcon')[0]);
 
-        // Проверка, что навигация выполнена (можно добавить мок-функцию для подтверждения)
-        // В данном случае мы просто проверяем, что функция навигации была вызвана
-        expect(screen.getAllByText('Profile')[0]).toBeInTheDocument();
+        // Проверка, что навигация выполнена
+        await waitFor(() => {
+            expect(screen.getByText('Edit Profile')).toBeInTheDocument();
+        });
     });
 
     test('logs Premium button click', () => {
-        console.log = jest.fn();
-
         render(
-            <BrowserRouter>
-                <ProfilePage />
-            </BrowserRouter>
+            <MemoryRouter initialEntries={['/profile']}>
+                <Routes>
+                    <Route path="/profile" element={<ProfilePage />} />
+                </Routes>
+            </MemoryRouter>
         );
 
         // Нажатие на кнопку Premium
@@ -70,12 +75,12 @@ describe('ProfilePage', () => {
     });
 
     test('logs Settings button click', () => {
-        console.log = jest.fn();
-
         render(
-            <BrowserRouter>
-                <ProfilePage />
-            </BrowserRouter>
+            <MemoryRouter initialEntries={['/profile']}>
+                <Routes>
+                    <Route path="/profile" element={<ProfilePage />} />
+                </Routes>
+            </MemoryRouter>
         );
 
         // Нажатие на кнопку настроек

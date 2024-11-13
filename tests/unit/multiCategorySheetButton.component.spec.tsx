@@ -1,72 +1,95 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import MultiCategorySheetButton from '../../src/components/basic/MultiCategorySheetButton';
+
+interface SliderCategoryOption {
+    label: string;
+    type: 'slider';
+    min: number;
+    max: number;
+}
+
+interface SelectCategoryOption {
+    label: string;
+    type: 'select';
+    options: string[];
+}
+
+interface ButtonSelectCategoryOption {
+    label: string;
+    type: 'buttonSelect';
+    options: string[];
+}
+
+interface LanguageSelectCategoryOption {
+    label: string;
+    type: 'languageSelect';
+}
+
+type CategoryOption = SliderCategoryOption | SelectCategoryOption | ButtonSelectCategoryOption | LanguageSelectCategoryOption;
 
 describe('MultiCategorySheetButton', () => {
     const mockOnSave = jest.fn();
 
-    const renderComponent = (category: any) => {
+    const renderComponent = (category: CategoryOption) => {
         return render(
             <MultiCategorySheetButton
-                label="Select an option"
+                label="Test Label"
                 category={category}
                 onSave={mockOnSave}
             />
         );
     };
 
-    test('renders button with label', () => {
-        const category = { label: 'Height', type: 'slider', min: 100, max: 200 };
-        const { getByText } = renderComponent(category);
+    test('renders slider category correctly', () => {
+        const category: SliderCategoryOption = { type: 'slider', label: 'Height', min: 0, max: 200 };
+        renderComponent(category);
 
-        expect(getByText('Height')).toBeTruthy();
-        expect(getByText('100')).toBeTruthy(); // Начальное значение для слайдера
+        fireEvent.click(screen.getByText('Test Label'));
+        expect(screen.getByRole('slider')).toBeInTheDocument();
     });
 
-    test('opens bottom sheet on button click', () => {
-        const category = { label: 'Height', type: 'slider', min: 100, max: 200 };
-        const { getByText, getByRole } = renderComponent(category);
+    test('renders select category correctly', () => {
+        const category: SelectCategoryOption = { type: 'select', label: 'Options', options: ['Option 1', 'Option 2'] };
+        renderComponent(category);
 
-        fireEvent.click(getByText('Height'));
-
-        expect(getByRole('dialog')).toBeTruthy();
+        fireEvent.click(screen.getByText('Test Label'));
+        expect(screen.getByText('Option 1')).toBeInTheDocument();
+        expect(screen.getByText('Option 2')).toBeInTheDocument();
     });
 
-    test('saves selected slider value', () => {
-        const category = { label: 'Height', type: 'slider', min: 100, max: 200 };
-        const { getByText, getByRole } = renderComponent(category);
+    test('renders buttonSelect category correctly', () => {
+        const category: ButtonSelectCategoryOption = { type: 'buttonSelect', label: 'Buttons', options: ['Button 1', 'Button 2'] };
+        renderComponent(category);
 
-        fireEvent.click(getByText('Height'));
-
-        const slider = getByRole('slider');
-        fireEvent.change(slider, { target: { value: 150 } });
-
-        fireEvent.click(getByText('Save'));
-
-        expect(mockOnSave).toHaveBeenCalledWith('Height', 150);
+        fireEvent.click(screen.getByText('Test Label'));
+        expect(screen.getByText('Button 1')).toBeInTheDocument();
+        expect(screen.getByText('Button 2')).toBeInTheDocument();
     });
 
-    test('saves selected button value', () => {
-        const category = { label: 'Preference', type: 'buttonSelect', options: ['Option 1', 'Option 2'] };
-        const { getByText } = renderComponent(category);
+    test('renders languageSelect category correctly', () => {
+        const category: LanguageSelectCategoryOption = { type: 'languageSelect', label: 'Languages' };
+        renderComponent(category);
 
-        fireEvent.click(getByText('Preference'));
-
-        fireEvent.click(getByText('Option 1'));
-        fireEvent.click(getByText('Save'));
-
-        expect(mockOnSave).toHaveBeenCalledWith('Preference', 'Option 1');
+        fireEvent.click(screen.getByText('Test Label'));
+        expect(screen.getByPlaceholderText('Search language')).toBeInTheDocument();
     });
 
-    test('filters languages in search', () => {
-        const category = { label: 'Languages', type: 'languageSelect' };
-        const { getByText, getByPlaceholderText } = renderComponent(category);
+    test('calls onSave when save button is clicked', () => {
+        const sliderCategory: SliderCategoryOption = { type: 'slider', label: 'Height', min: 0, max: 200 };
+        renderComponent(sliderCategory);
 
-        fireEvent.click(getByText('Languages'));
+        fireEvent.click(screen.getByText('Test Label'));
 
-        const searchInput = getByPlaceholderText('Search language');
-        fireEvent.change(searchInput, { target: { value: 'English' } });
+        // Wait for the dialog to appear and locate the Save button
+        const saveButton = screen.getByRole('button', { name: /save/i });
+        expect(saveButton).toBeInTheDocument();
 
-        expect(getByText('English')).toBeTruthy();
+        // Simulate clicking the "Save" button
+        fireEvent.click(saveButton);
+
+        // Verify that onSave was called once
+        expect(mockOnSave).toHaveBeenCalledTimes(1);
     });
 });

@@ -13,7 +13,7 @@
  */
 
 import React, { useState } from 'react';
-import { Box, Button, Typography, Dialog, DialogContent, DialogActions, Slider, TextField, IconButton, styled, Grid } from '@mui/material';
+import { Box, Button, Typography, Dialog, DialogContent, DialogActions, Slider, TextField, styled, Grid } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import MultiSelectButtonGroup from './MultiSelectButtonGroup';
 
