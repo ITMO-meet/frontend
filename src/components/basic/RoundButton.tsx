@@ -24,9 +24,16 @@ import { styled } from '@mui/material';
 import IdProps from './IdProps';
 
 interface RoundButtonProps extends IdProps {
+<<<<<<< HEAD
     width?: string;
     children?: React.ReactNode;
     onClick?: () => void;
+=======
+    disabled?: boolean, // Отключена ли кнопка
+    width?: string, // Ширина кнопки
+    children?: React.ReactNode, // Вложенные элементы
+    onClick?: () => void // Действие по клику
+>>>>>>> 968d60fea55ab33f8efba8f7bc5fa5a8db67b66e
 }
 
 const CustomButton = styled(Button)<RoundButtonProps>(({ width, theme }) => ({
@@ -39,7 +46,7 @@ const CustomButton = styled(Button)<RoundButtonProps>(({ width, theme }) => ({
     },
 }));
 
-const RoundButton: React.FC<RoundButtonProps> = ({ ...props }) => {
+export const RoundButton: React.FC<RoundButtonProps> = ({ ...props }) => {
     return (
         <CustomButton variant="contained" {...props}>
             {props.children}

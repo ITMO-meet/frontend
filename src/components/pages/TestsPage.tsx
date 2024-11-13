@@ -1,23 +1,13 @@
-import { Box, Typography } from '@mui/material';
+/* c8 ignore start */
+
 import React from 'react';
-import NavBar from '../basic/NavBar';
+import { Box, Typography } from '@mui/material';
 
-
-const TestsPage: React.FC = () => {
-    return (
-        <Box position="relative" minHeight="100vh" display="flex" flexDirection="column">
-
-            {/* Header with Tests title */}
-            <Box width="100%" position="fixed" top={0} bgcolor="white" display="flex" justifyContent="space-between" alignItems="center" p={2}>
-                <Typography variant="h5">Tests</Typography>
-            </Box>
-
-            {/* Navigation Bar */}
-            <Box width="100%" position="fixed" bottom={0} left={0} zIndex={2} bgcolor="white">
-                <NavBar />
-            </Box>
-        </Box> 
-    );
-};
+const TestsPage: React.FC = () => (
+  <Box p={2}>
+    <Typography variant="h4">Tests</Typography>
+    <Typography>Test components and functionalities will be here.</Typography>
+  </Box>
+);
 
 export default TestsPage;

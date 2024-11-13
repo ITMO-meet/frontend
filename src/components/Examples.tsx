@@ -1,6 +1,6 @@
 import React from 'react';
 import "../styles/examples.css"
-import WestIcon from '@mui/icons-material/West';    
+import WestIcon from '@mui/icons-material/West';
 import RoundButton from './basic/RoundButton';
 import ImageButton from './basic/ImageButton';
 import { Typography } from '@mui/material';

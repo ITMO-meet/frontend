@@ -25,9 +25,15 @@ import IdProps from './IdProps';
 
 // Интерфейс для свойств компонента InputText
 interface InputTextProps extends IdProps {
+<<<<<<< HEAD
     width?: string;
     label?: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+=======
+    width?: string, // Ширина поля ввода
+    label?: string // Надпись в поле ввода
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void // Дейсвтие при изменении
+>>>>>>> 968d60fea55ab33f8efba8f7bc5fa5a8db67b66e
 }
 
 // Стилизация текстового поля с использованием styled API Material-UI
@@ -37,8 +43,12 @@ const CustomInput = styled(TextField)<InputTextProps>(({ width, theme }) => ({
     backgroundColor: theme.palette.secondary.light, // Задний фон с использованием палитры темы
 }));
 
+<<<<<<< HEAD
 // Компонент InputText
 const InputText: React.FC<InputTextProps> = ({ ...props }) => {
+=======
+export const InputText: React.FC<InputTextProps> = ({ ...props }) => {
+>>>>>>> 968d60fea55ab33f8efba8f7bc5fa5a8db67b66e
     return (
         <CustomInput variant="filled" {...props} />
     );

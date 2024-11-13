@@ -23,9 +23,15 @@ import IdProps from "./IdProps";
 
 // Определение интерфейса пропсов для ImageButton
 interface ImageButtonProps extends IdProps {
+<<<<<<< HEAD
     radius?: string;                 // Радиус кнопки, необязательный параметр, по умолчанию "56px"
     children?: React.ReactNode;       // Вложенные элементы, например, иконка
     onClick?: () => void;             // Функция-обработчик клика, необязательная
+=======
+    radius?: string, // Радиус кнопки
+    children?: React.ReactNode, // Вложенный элемент
+    onClick?: () => void // Действие по клику
+>>>>>>> 968d60fea55ab33f8efba8f7bc5fa5a8db67b66e
 }
 
 // Стилизация кнопки с использованием Material-UI styled API
@@ -37,8 +43,12 @@ const CustomButton = styled(IconButton)<ImageButtonProps>(({ radius, theme }) =>
     color: theme.palette.secondary.main                 // Цвет текста или иконки из палитры темы
 }));
 
+<<<<<<< HEAD
 // Основной компонент, возвращающий стилизованную кнопку
 const ImageButton: React.FC<ImageButtonProps> = ({ ...props }) => {
+=======
+export const ImageButton: React.FC<ImageButtonProps> = ({ ...props }) => {
+>>>>>>> 968d60fea55ab33f8efba8f7bc5fa5a8db67b66e
     return (
         <CustomButton {...props} />
     );

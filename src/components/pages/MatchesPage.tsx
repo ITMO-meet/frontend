@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Box, Typography } from '@mui/material';
 import React from 'react';
 import NavBar from '../basic/NavBar';
@@ -19,5 +20,18 @@ const MatchesPage: React.FC = () => {
         </Box> 
     );
 };
+=======
+/* c8 ignore start */
+
+import React from 'react';
+import { Box, Typography } from '@mui/material';
+
+const MatchesPage: React.FC = () => (
+  <Box p={2}>
+    <Typography variant="h4">Matches</Typography>
+    <Typography>List of matches will appear here.</Typography>
+  </Box>
+);
+>>>>>>> 968d60fea55ab33f8efba8f7bc5fa5a8db67b66e
 
 export default MatchesPage;
