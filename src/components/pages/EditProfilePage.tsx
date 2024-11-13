@@ -75,7 +75,7 @@ const EditProfilePage: React.FC = () => {
         label: "Romantic relationships",
         icon: <FavoriteBorderIcon />,
     });
-    const [selectedFeatures, setSelectedFeatures] = useState<{ [key: string]: string | string[] }>({});
+    const [, setSelectedFeatures] = useState<{ [key: string]: string | string[] }>({});
 
     const handleInterestClick = (selectedOpts: string[]) => {
         console.log('Selected interests:', selectedOpts);

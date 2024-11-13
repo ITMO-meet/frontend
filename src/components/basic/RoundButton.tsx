@@ -27,6 +27,7 @@ interface RoundButtonProps extends IdProps {
     width?: string;
     children?: React.ReactNode;
     onClick?: () => void;
+    disabled?: boolean;
 }
 
 const CustomButton = styled(Button)<RoundButtonProps>(({ width, theme }) => ({

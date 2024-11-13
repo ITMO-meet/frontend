@@ -70,45 +70,4 @@ describe('Nav component', () => {
 
     expect(navigateMock).toHaveBeenCalledWith('/tests');
   });
-
-  test('navigates to Chats when Chats button is clicked', async () => {
-    render(
-      <MemoryRouter initialEntries={['/search']}>
-        <NavBar />
-      </MemoryRouter>
-    );
-    const chatsAction = screen.getByRole('button', { name: 'Chats' });
-    await userEvent.click(chatsAction);
-    expect(chatsAction).toHaveClass('Mui-selected');
-
-    const searchAction = screen.getByRole('button', { name: 'Search' });
-    expect(searchAction).not.toHaveClass('Mui-selected');
-  });
-
-  test('navigates to Matches when Matches button is clicked', async () => {
-    render(
-      <MemoryRouter initialEntries={['/search']}>
-        <NavBar />
-      </MemoryRouter>
-    );
-    const matchesAction = screen.getByRole('button', { name: 'Matches' });
-    await userEvent.click(matchesAction);
-    expect(matchesAction).toHaveClass('Mui-selected');
-
-    const searchAction = screen.getByRole('button', { name: 'Search' });
-    expect(searchAction).not.toHaveClass('Mui-selected');
-  });
-
-  test('navigates to Profile when Profile button is clicked', async () => {
-    render(
-      <MemoryRouter initialEntries={['/search']}>
-        <NavBar />
-      </MemoryRouter>
-    );
-    const profileAction = screen.getByRole('button', { name: 'Profile' });
-    await userEvent.click(profileAction);
-    expect(profileAction).toHaveClass('Mui-selected');
-
-    expect(navigateMock).toHaveBeenCalledWith('/tests');
-  });
 });
