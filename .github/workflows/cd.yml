@@ -1,0 +1,20 @@
+name: CD Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**.ts'
+      - '**.tsx'
+      - '**.js'
+      - '**.jsx'
+      - '**.json'
+      - '**.html'
+      - '.github/workflows/**'
+  push:
+    branches:
+      - main
+
+jobs:
+  
