@@ -28,18 +28,18 @@ describe('Nav component', () => {
     );
     expect(screen.getByRole('button', { name: 'Chats' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Matches' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Feed' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Tests' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Profile' })).toBeInTheDocument();
   });
 
-  test('initially selects "Search"', () => {
+  test('initially selects "Feed"', () => {
     render(
-      <MemoryRouter initialEntries={['/search']}>
+      <MemoryRouter initialEntries={['/feed']}>
         <Nav />
       </MemoryRouter>
     );
-    const searchAction = screen.getByRole('button', { name: 'Search' });
+    const searchAction = screen.getByRole('button', { name: 'Feed' });
     expect(searchAction).toHaveClass('Mui-selected');
   });
 
@@ -60,7 +60,7 @@ describe('Nav component', () => {
     (useNavigate as jest.Mock).mockReturnValue(navigateMock);
 
     render(
-      <MemoryRouter initialEntries={['/search']}>
+      <MemoryRouter initialEntries={['/feed']}>
         <Nav />
       </MemoryRouter>
     );

@@ -4,49 +4,49 @@ import App from '../../src/App';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
 
-jest.mock('../../src/ChatPage', () => {
+jest.mock('../../src/components/pages/ChatPage', () => {
   return {
     __esModule: true,
     default: () => <div data-testid="chat-page">ChatPage Component</div>,
   };
 });
 
-jest.mock('../../src/MatchesPage', () => {
+jest.mock('../../src/components/pages/MatchesPage', () => {
   return {
     __esModule: true,
     default: () => <div data-testid="matches-page">MatchesPage Component</div>,
   };
 });
 
-jest.mock('../../src/SearchPage', () => {
+jest.mock('../../src/components/pages/FeedPage', () => {
   return {
     __esModule: true,
-    default: () => <div data-testid="search-page">SearchPage Component</div>,
+    default: () => <div data-testid="feed-page">FeedPage Component</div>,
   };
 });
 
-jest.mock('../../src/LoginPage', () => {
+jest.mock('../../src/components/pages/LoginPage', () => {
   return {
     __esModule: true,
     default: () => <div data-testid="login-page">LoginPage Component</div>,
   };
 });
 
-jest.mock('../../src/TestsPage', () => {
+jest.mock('../../src/components/pages/TestsPage', () => {
   return {
     __esModule: true,
     default: () => <div data-testid="tests-page">TestsPage Component</div>,
   };
 });
 
-jest.mock('../../src/ProfilePage', () => {
+jest.mock('../../src/components/pages/ProfilePage', () => {
   return {
     __esModule: true,
     default: () => <div data-testid="profile-page">ProfilePage Component</div>,
   };
 });
 
-jest.mock('../../src/Messages', () => {
+jest.mock('../../src/components/Messages', () => {
   return {
     __esModule: true,
     default: () => <div data-testid="messages">Messages Component</div>,
@@ -90,10 +90,10 @@ describe('App Component', () => {
     expect(screen.getByTestId('nav')).toBeInTheDocument();
   });
 
-  it('renders SearchPage at "/search" and shows Nav', () => {
-    renderAppWithPath('/search');
+  it('renders FeedPage at "/feed" and shows Nav', () => {
+    renderAppWithPath('/feed');
 
-    expect(screen.getByTestId('search-page')).toBeInTheDocument();
+    expect(screen.getByTestId('feed-page')).toBeInTheDocument();
     expect(screen.getByTestId('nav')).toBeInTheDocument();
   });
 

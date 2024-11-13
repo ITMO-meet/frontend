@@ -31,8 +31,8 @@
     "mobx-react-lite": "^4.0.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-swipeable": "^7.0.1",
     "react-router-dom": "^6.28.0",
+    "react-swipeable": "^7.0.2",
     "rollbar": "^2.26.4",
     "rollbar-react-native": "^1.0.0-beta.4",
     "ts-loader": "^9.5.1"

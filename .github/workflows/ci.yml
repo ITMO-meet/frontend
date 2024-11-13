@@ -80,18 +80,16 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Check test coverage
-        run: npm run test:unit:coverage
-
-      - name: Ensure 80% coverage
+      - name: Ensure 80% Statements Coverage
         run: |
-          COVERAGE=$(npm run test:unit:coverage --silent | grep -A 1 'All files' | tail -n 1 | awk '{print $5}' | tr -d '%')
+          COVERAGE=$(npm run test:unit:coverage -- --coverageReporters=text-summary | grep "All files" | awk -F'|' '{print $2}' | tr -d ' %')
           COVERAGE=${COVERAGE%.*}
-          if [ "$COVERAGE" -lt 70 ]; then
+          echo "Statements Coverage: $COVERAGE%"
+          if [ "$COVERAGE" -lt 80 ]; then
             echo "Test coverage is below 80%: $COVERAGE%"
             exit 1
           else
-            echo "Test coverage: $COVERAGE%"
+            echo "Test coverage meets the requirement: $COVERAGE%"
           fi
 
   e2e-tests:

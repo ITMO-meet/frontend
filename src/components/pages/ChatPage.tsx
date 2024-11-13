@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Box, Typography, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import ContactCard from './components/Contact';
-import Stories from './components/Stories';
-import AddStoryModal from './components/AddStoryModal';
-import {ChatProps} from './types';
+import ContactCard from '../Contact';
+import Stories from '../Stories';
+import AddStoryModal from '../AddStoryModal';
+import {ChatProps} from '../../types';
 
 const ChatPage: React.FC<ChatProps> = ({ contacts }) => {
   const navigate = useNavigate();
