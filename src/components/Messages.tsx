@@ -12,8 +12,8 @@ import {
 import SendIcon from '@mui/icons-material/Send';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Message, ChatProps } from './types';
-import UserMessage from './components/UserMessage';
+import { Message, ChatProps } from '../types';
+import UserMessage from './UserMessage';
 
 const Messages: React.FC<ChatProps> = ({ contacts }) => {
   const { id } = useParams<{ id: string }>();

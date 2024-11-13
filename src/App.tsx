@@ -9,7 +9,7 @@ import FeedPage from './components/pages/FeedPage';
 import LoginPage from './components/pages/LoginPage';
 import TestsPage from './components/pages/TestsPage';
 import ProfilePage from './components/pages/ProfilePage';
-import Messages from './Messages';
+import Messages from './components/Messages';
 import { Routes, Route, useLocation } from 'react-router-dom';
 
 const contacts = [
@@ -103,7 +103,7 @@ function AppContent() {
           <Route path="/chats" element={<ChatPage contacts={contacts} />} />
           <Route path="/chat/:id" element={<Messages contacts={contacts} />} />
           <Route path="/matches" element={<MatchesPage />} />
-          <Route path="/search" element={<FeedPage getNextPerson={getNext} onLike={console.log} onDislike={console.log} onSuperLike={console.log} />} />
+          <Route path="/feed" element={<FeedPage getNextPerson={getNext} onLike={console.log} onDislike={console.log} onSuperLike={console.log} />} />
           <Route path="/tests" element={<TestsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="*" element={<LoginPage />} />

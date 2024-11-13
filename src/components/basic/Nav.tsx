@@ -13,7 +13,7 @@ const Nav: React.FC = () => {
 
   const getCurrentValue = () => {
     if (location.pathname.startsWith('/matches')) return 'matches';
-    if (location.pathname.startsWith('/search')) return 'search';
+    if (location.pathname.startsWith('/feed')) return 'feed';
     if (location.pathname.startsWith('/tests')) return 'tests';
     if (location.pathname.startsWith('/profile')) return 'profile';
     if (location.pathname.startsWith('/chats')) return 'chats';
@@ -39,7 +39,7 @@ const Nav: React.FC = () => {
     >
       <BottomNavigationAction label="Chats" value="chats" icon={<ChatIcon />} />
       <BottomNavigationAction label="Matches" value="matches" icon={<FavoriteIcon />} />
-      <BottomNavigationAction label="Search" value="search" icon={<SearchIcon />} />
+      <BottomNavigationAction label="Feed" value="feed" icon={<SearchIcon />} />
       <BottomNavigationAction label="Tests" value="tests" icon={<FormatListBulletedIcon />} />
       <BottomNavigationAction label="Profile" value="profile" icon={<AccountCircleIcon />} />
     </BottomNavigation>
