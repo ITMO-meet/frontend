@@ -132,7 +132,7 @@ const EditProfilePage: React.FC = () => {
         <Box position="relative" minHeight="100vh" display="flex" flexDirection="column">
             {/* Header */}
             <Box width="100%" color="white" display="flex" alignItems="center" p={2}>
-                <IconButton onClick={() => console.log('Back to Profile')} sx={{ color: 'grey.800' }}>
+                <IconButton data-testid="BackToProfile" onClick={() => console.log('Back to Profile')} sx={{ color: 'grey.800' }}>
                     <WestIcon />
                 </IconButton>
             </Box>
@@ -182,9 +182,9 @@ const EditProfilePage: React.FC = () => {
                 <Box mt={2} width="100%">
                     <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>Interests</Typography>
                     <Box>
-                        <MultiSelectButtonGroup 
+                        <MultiSelectButtonGroup
                             options={['Traveling', 'Books', 'Music', 'Dancing', 'Modeling', 'Coffee', 'Rave', 'Hiking']}
-                            onClickOption={handleInterestClick} 
+                            onClickOption={handleInterestClick}
                         />
                     </Box>
                 </Box>

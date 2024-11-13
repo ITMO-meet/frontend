@@ -21,7 +21,7 @@ describe('ProfilePage', () => {
         );
 
         // Проверка наличия заголовка
-        expect(screen.getByText('Profile')).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: 'Profile' })).toBeInTheDocument();
 
         // Проверка наличия кнопки настроек
         expect(screen.getByTestId('SettingsIcon')).toBeInTheDocument();
@@ -54,7 +54,7 @@ describe('ProfilePage', () => {
 
         // Проверка, что навигация выполнена
         await waitFor(() => {
-            expect(screen.getByText('Edit Profile')).toBeInTheDocument();
+            expect(screen.getByTestId('WestIcon')).toBeInTheDocument();
         });
     });
 

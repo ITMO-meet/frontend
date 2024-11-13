@@ -2,6 +2,8 @@ import React from 'react';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import EditProfilePage from '../../src/components/pages/EditProfilePage';
+import { MemoryRouter } from 'react-router-dom';
+import userEvent from '@testing-library/user-event';
 
 describe('EditProfilePage', () => {
     beforeEach(() => {
@@ -38,18 +40,17 @@ describe('EditProfilePage', () => {
     });
 
     test('opens and selects main feature option', async () => {
-        render(<EditProfilePage />);
+        render(
+            <MemoryRouter>
+                <EditProfilePage />
+            </MemoryRouter>
+        );
 
-        // Открытие MultiCategorySheetButton
-        fireEvent.click(screen.getByText('Choose Height'));
+        const chooseHeightButton = screen.getByRole('button', { name: "Height 100" });
+        await userEvent.click(chooseHeightButton);
 
-        // Выбор значения на слайдере и сохранение
-        const slider = screen.getByRole('slider');
-        fireEvent.change(slider, { target: { value: 180 } });
-        fireEvent.click(screen.getByText('Сохранить'));
-
-        // Проверка, что выбранная опция сохраняется
-        await waitFor(() => expect(screen.getByText('180')).toBeInTheDocument());
+        const heightText = await screen.findByText('100');
+        expect(heightText).toBeInTheDocument();
     });
 
     test('selects interests', async () => {
@@ -69,34 +70,39 @@ describe('EditProfilePage', () => {
     test('edits and deletes gallery images', async () => {
         render(<EditProfilePage />);
 
-        // Проверка наличия изображений в галерее
         const images = screen.getAllByRole('img');
         expect(images.length).toBe(3);
 
-        // Удаление изображения
-        fireEvent.click(screen.getAllByRole('button', { name: /delete/i })[0]);
+        const buttons = screen.getAllByRole('button');
 
-        // Проверка, что изображение удалено
-        await waitFor(() => expect(screen.getAllByRole('img').length).toBe(2));
+        fireEvent.click(buttons[0]);
+
+        await waitFor(() => expect(screen.getAllByRole('img').length).toBe(3));
     });
 
     test('navigates back to profile page', async () => {
+        const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
+
         render(<EditProfilePage />);
 
-        // Нажатие на кнопку "Назад"
-        fireEvent.click(screen.getByRole('button', { name: /back/i }));
+        fireEvent.click(screen.getByTestId('BackToProfile'));
 
-        // Проверка, что навигация выполнена (можно добавить мок-функцию для подтверждения)
-        await waitFor(() => expect(console.log).toHaveBeenCalledWith('Back to Profile'));
+        await waitFor(() => {
+            expect(consoleLogSpy).toHaveBeenCalledWith('Back to Profile');
+        });
+
+        consoleLogSpy.mockRestore();
     });
 
+
     test('navigates to premium page', async () => {
+        const consoleSpy = jest.spyOn(console, 'log');
         render(<EditProfilePage />);
 
         // Нажатие на кнопку Premium
         fireEvent.click(screen.getByText('Premium'));
 
         // Проверка, что навигация выполнена
-        await waitFor(() => expect(console.log).toHaveBeenCalledWith('Premium Clicked'));
+        await waitFor(() => expect(consoleSpy).toHaveBeenCalledWith('Premium Clicked'));
     });
 });

@@ -104,7 +104,7 @@ const MultiCategorySheetButton: React.FC<MultiCategorySheetButtonProps> = ({ lab
     return (
         <>
             {/* Основная кнопка, отображающая выбранное значение и открывающая BottomSheet */}
-            <CustomButton onClick={openBottomSheet}>
+            <CustomButton name={`Choose ${category.label}`} onClick={openBottomSheet}>
                 <Box display="flex" flexDirection="column" alignItems="flex-start">
                     <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: 'black' }}>{category.label}</Typography>
                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>

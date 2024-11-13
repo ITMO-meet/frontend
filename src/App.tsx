@@ -9,6 +9,7 @@ import FeedPage from './components/pages/FeedPage';
 import LoginPage from './components/pages/LoginPage';
 import TestsPage from './components/pages/TestsPage';
 import ProfilePage from './components/pages/ProfilePage';
+import EditProfilePage from './components/pages/EditProfilePage';
 import Messages from './components/Messages';
 import { Routes, Route, useLocation } from 'react-router-dom';
 
@@ -106,6 +107,7 @@ function AppContent() {
           <Route path="/feed" element={<FeedPage getNextPerson={getNext} onLike={console.log} onDislike={console.log} onSuperLike={console.log} />} />
           <Route path="/tests" element={<TestsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/edit-profile" element={<EditProfilePage />} />
           <Route path="*" element={<LoginPage />} />
         </Routes>
       </Box>

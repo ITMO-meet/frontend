@@ -100,7 +100,6 @@ const ProfilePage: React.FC = () => {
 
             {/* Основное содержимое профиля */}
             <Box p={3} sx={{ backgroundColor: '#ffffff', flexGrow: 1, zIndex: 1 }}>
-                
                 {/* Основная информация с кнопкой редактирования */}
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h5" sx={{ fontWeight: 'bold' }}>Alisa Pipisa, 20</Typography>
