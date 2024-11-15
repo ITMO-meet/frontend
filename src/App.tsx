@@ -12,6 +12,9 @@ import ProfilePage from './components/pages/ProfilePage';
 import EditProfilePage from './components/pages/EditProfilePage';
 import Messages from './components/Messages';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { ErrorBoundary, Provider } from '@rollbar/react';
+import { rollbarConfig } from './contexts/RollbarConfig';
+import { FallbackUI } from './components/FallbackUI';
 
 const contacts = [
   {
@@ -79,10 +82,14 @@ const people = [
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AppContent />
-    </ThemeProvider>
+    <Provider config={rollbarConfig}>
+      <ErrorBoundary level={"error"} fallbackUI={FallbackUI}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <AppContent />
+        </ThemeProvider>
+      </ErrorBoundary>
+    </Provider>
   );
 }
 
