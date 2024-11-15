@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { ThemeProvider } from '@mui/material';
 import theme from './components/theme';
 import { CssBaseline, Box } from '@mui/material';
@@ -12,70 +12,14 @@ import ProfilePage from './components/pages/ProfilePage';
 import EditProfilePage from './components/pages/EditProfilePage';
 import Messages from './components/Messages';
 import { Routes, Route, useLocation } from 'react-router-dom';
-
-const contacts = [
-  {
-    id: '1',
-    name: 'Alice',
-    pfp: 'https://randomuser.me/api/portraits/women/1.jpg',
-    lastMessage: 'Hey, how are you?',
-    stories: [{
-      id: '1',
-      image: 'https://source.unsplash.com/random/800x600',
-      expiresAt: Date.now() + 24 * 60 * 60 * 1000,
-    }],
-  },
-  {
-    id: '2',
-    name: 'Bob',
-    pfp: 'https://randomuser.me/api/portraits/men/1.jpg',
-    lastMessage: 'See you soon!',
-    stories: [],
-  },
-  {
-    id: '3',
-    name: 'Charlie',
-    pfp: 'https://randomuser.me/api/portraits/men/2.jpg',
-    lastMessage: 'Let’s catch up tomorrow.',
-    stories: [{
-      id: '1',
-      image: 'https://source.unsplash.com/random/800x600',
-      expiresAt: Date.now() + 24 * 60 * 60 * 1000,
-    }],
-  },
-  {
-    id: '4',
-    name: 'Diana',
-    pfp: 'https://randomuser.me/api/portraits/women/2.jpg',
-    lastMessage: 'Happy Birthday!',
-    stories: [{
-      id: '1',
-      image: 'https://source.unsplash.com/random/800x600',
-      expiresAt: Date.now() + 24 * 60 * 60 * 1000,
-    }],
-  },
-];
-
-const people = [
-  {
-    id: 1,
-    name: 'Jane Smith1',
-    description: 'Product Designer',
-    imageUrl: 'https://steamuserimages-a.akamaihd.net/ugc/1844789643806854188/FB581EAD503907F56A009F85371F6FB09A467FEC/?imw=512&imh=497&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true',
-  },
-  {
-    id: 2,
-    name: 'Jane Smith2',
-    description: 'Product Designer',
-    imageUrl: 'https://i.pinimg.com/736x/56/21/7b/56217b1ef6a69a2583ff13655d48bc53.jpg',
-  },
-  {
-    id: 3,
-    name: 'Jane Smith3',
-    description: 'Product Designer',
-    imageUrl: 'https://avatars.yandex.net/get-music-content/5878680/7bee58da.a.25445174-1/m1000x1000?webp=false',
-  },
-];
+import {Contact, Person} from "./types";
+import {
+    fetchContacts,
+    fetchPeople,
+    likePerson,
+    dislikePerson,
+    superlikePerson,
+} from "./api/apiClient";
 
 function App() {
   return (
@@ -91,11 +35,72 @@ function AppContent() {
 
   const shouldHideNav = /^\/.+\/[^/]+$/.test(location.pathname);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const getNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % people.length);
-    return people[currentIndex];
-  }
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [people, setPeople] = useState<Person[]>([]);
+
+
+  const currentUserId = 1;
+
+    const handleLike = async (person: Person) => {
+        try {
+            await likePerson(person.id, currentUserId);
+            console.log(`Liked person ${person.id}`);
+        } catch (error) {
+            console.error('Error liking person:', error);
+        }
+    };
+
+
+    const handleDislike = async (person: Person) => {
+        try {
+            await dislikePerson(person.id, currentUserId);
+            console.log(`Disliked person ${person.id}`);
+        } catch (error) {
+            console.error('Error disliking person:', error);
+        }
+    };
+
+    const handleSuperLike = async (person: Person) => {
+        try {
+            await superlikePerson(person.id, currentUserId);
+            console.log(`Superliked person ${person.id}`);
+        } catch (error) {
+            console.error('Error superliking person:', error);
+        }
+    };
+
+
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                console.log('Fetching contacts');
+                const fetchedContacts = await fetchContacts();
+                console.log('Fetched contacts:', fetchedContacts);
+                setContacts(fetchedContacts);
+
+                console.log('Fetching people');
+                const fetchedPeople = await fetchPeople();
+                console.log('Fetched people:', fetchedPeople);
+                setPeople(fetchedPeople);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        loadData();
+    }, []);
+
+
+
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const getNext = () => {
+        if (people.length === 0) {
+            return null; // Return null if no people are available
+        }
+        const person = people[currentIndex];
+        setCurrentIndex((prev) => (prev + 1) % people.length);
+        return person;
+    };
 
   return (
     <>
@@ -104,7 +109,7 @@ function AppContent() {
           <Route path="/chats" element={<ChatPage contacts={contacts} />} />
           <Route path="/chat/:id" element={<Messages contacts={contacts} />} />
           <Route path="/matches" element={<MatchesPage />} />
-          <Route path="/feed" element={<FeedPage getNextPerson={getNext} onLike={console.log} onDislike={console.log} onSuperLike={console.log} />} />
+          <Route path="/feed" element={<FeedPage getNextPerson={getNext} onLike={handleLike} onDislike={handleDislike} onSuperLike={handleSuperLike} />} />
           <Route path="/tests" element={<TestsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
