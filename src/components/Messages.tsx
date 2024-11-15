@@ -16,9 +16,10 @@ import { Message, ChatProps } from '../types';
 import UserMessage from './UserMessage';
 
 const Messages: React.FC<ChatProps> = ({ contacts }) => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const contact = contacts.find((c) => c.id === id);
+    const { id } = useParams<{ id: string }>();
+    const contactId = Number(id); // Convert URL param to number
+    const navigate = useNavigate();
+    const contact = contacts.find((c) => c.id === contactId);
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
