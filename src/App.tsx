@@ -16,6 +16,7 @@ import { ErrorBoundary, Provider } from '@rollbar/react';
 import { rollbarConfig } from './contexts/RollbarConfig';
 import { FallbackUI } from './components/FallbackUI';
 import RegisterPage from './components/pages/RegisterPage';
+import Quiz from './components/pages/Quiz';
 
 const contacts = [
   {
@@ -81,6 +82,29 @@ const people = [
   },
 ];
 
+const mockGetQuestions = (id: number) => {
+  console.log(id);
+  if (id === 1) {
+    return [
+      {
+        id: 1,
+        text: 'Question 1?',
+      },
+    ]
+  } else {
+    return [
+      {
+        id: 1,
+        text: 'Question 1?',
+      },
+      {
+        id: 2,
+        text: 'Question 2?',
+      },
+    ];
+  }
+}
+
 function App() {
   return (
     <Provider config={rollbarConfig}>
@@ -114,6 +138,7 @@ function AppContent() {
           <Route path="/matches" element={<MatchesPage />} />
           <Route path="/feed" element={<FeedPage getNextPerson={getNext} onLike={console.log} onDislike={console.log} onSuperLike={console.log} />} />
           <Route path="/tests" element={<TestsPage />} />
+          <Route path="/tests/:id" element={<Quiz getQuestions={mockGetQuestions} onExit={console.log} onFinish={console.log} />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
           <Route path="/register" element={<RegisterPage />} />

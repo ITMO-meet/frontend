@@ -9,6 +9,7 @@ import GoalStep from '../registerSteps/GoalStep';
 import PhotoStep from '../registerSteps/PhotoStep';
 import TagsStep from '../registerSteps/TagsStep';
 import UsernameStep from '../registerSteps/UsernameStep';
+import { useNavigate } from 'react-router-dom';
 
 const steps = [
 	'username',
@@ -20,11 +21,11 @@ const steps = [
 ];
 
 const RegisterPage: React.FC = () => {
+	const navigate = useNavigate();
 	const [currentStep, setCurrentStep] = useState(0);
 	const [userData, setUserData] = useState<object>({});
 
 	const handleNext = (data: object) => {
-		console.log(data);
 		const newData = { ...userData, ...data }
 		setUserData(newData);
 		setCurrentStep((prev) => prev + 1);
@@ -39,6 +40,10 @@ const RegisterPage: React.FC = () => {
 
 	const handleFinish = (data: object) => {
 		console.log('Registration complete:', data);
+		// TODO: send data
+		// TODO: pass initinl test id
+		const initialTestId = 1;
+		navigate(`/tests/${initialTestId}`);
 	};
 
 	const renderStep = () => {

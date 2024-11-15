@@ -4,6 +4,7 @@ import { QuestionMark, Close } from '@mui/icons-material';
 import QuestionChoice from '../basic/QuestionChoice';
 import ImageButton from '../basic/ImageButton';
 import { motion } from 'framer-motion';
+import { useParams } from 'react-router-dom';
 
 interface Question {
     id: number;
@@ -16,13 +17,13 @@ interface Answer {
 }
 
 interface QuizProps {
-    quizId: number;
     getQuestions: (id: number) => Question[];
     onExit: () => void; // Функция для выхода из теста
     onFinish: (answers: Answer[]) => void; // Функция при завершении теста 
 }
 
-export const Quiz: React.FC<QuizProps> = ({ quizId, getQuestions, onExit, onFinish }) => {
+export const Quiz: React.FC<QuizProps> = ({ getQuestions, onExit, onFinish }) => {
+    const id = Number(useParams().id);
     const [questions, setQuestions] = useState<Question[]>([])
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswers, setSelectedAnswers] = useState<Answer[]>([]);
@@ -32,7 +33,7 @@ export const Quiz: React.FC<QuizProps> = ({ quizId, getQuestions, onExit, onFini
     const delay = 500; // Задержка для анимаций
 
     useEffect(() => {
-        setQuestions(getQuestions(quizId));
+        setQuestions(getQuestions(id));
     }, [])
 
     const handleConfirm = (ansIndex: number) => {
@@ -55,9 +56,9 @@ export const Quiz: React.FC<QuizProps> = ({ quizId, getQuestions, onExit, onFini
         <Box sx={{ 
             display: 'flex', 
             flexDirection: 'column', 
-            height: '100vh', // Занять всю высоту экрана
+            height: '90vh', // Занять всю высоту экрана
             justifyContent: 'space-between', // Разделить пространство между элементами
-            padding: 2 // Добавить отступы
+            padding: 2, // Добавить отступы
         }}>
             <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
                 {/* Кнопка закрытия теста */}
@@ -99,7 +100,6 @@ export const Quiz: React.FC<QuizProps> = ({ quizId, getQuestions, onExit, onFini
                     <QuestionMark sx={{ fontSize: "100px" }} />
                 </motion.div>
             </Box>
-
             {/* Выбор ответа */}
             <QuestionChoice onFinish={handleConfirm} />
         </Box>
