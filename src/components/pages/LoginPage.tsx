@@ -22,7 +22,7 @@ export const LoginPage: React.FC = () => {
       return;
     }
     // TODO: check if id + password correct
-    // TODO: check if user should complete registration
+    // TODO: check if user should complete registration -> navigate("/registration")
 
     navigate("/chats");
   };
