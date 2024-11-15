@@ -20,7 +20,7 @@ const steps = [
 	'goal',
 ];
 
-const RegisterPage: React.FC = () => {
+export const RegisterPage: React.FC = () => {
 	const navigate = useNavigate();
 	const [currentStep, setCurrentStep] = useState(0);
 	const [userData, setUserData] = useState<object>({});
