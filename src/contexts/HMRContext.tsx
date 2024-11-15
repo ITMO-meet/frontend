@@ -1,4 +1,5 @@
 import React, { createContext, useEffect } from 'react'
+import {getConfig} from "../api/config";
 
 type Props = {
     children?: React.ReactNode,
@@ -9,7 +10,8 @@ const HMRContext = createContext(null);
 const HMRProvider = ({ children }: Props) => {
     useEffect(() => {
         if (process.env.NODE_ENV !== "production") {
-            const eventSource = new EventSource('esbuild');
+            const { HMR_URL } = getConfig();
+            const eventSource = new EventSource(HMR_URL);
             eventSource.addEventListener('change', (event) => {
                 const updatedFiles = JSON.parse(event.data);
 
