@@ -11,7 +11,7 @@ import TestsPage from './components/pages/TestsPage';
 import ProfilePage from './components/pages/ProfilePage';
 import EditProfilePage from './components/pages/EditProfilePage';
 import Messages from './components/Messages';
-import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import { ErrorBoundary, Provider } from '@rollbar/react';
 import { rollbarConfig } from './contexts/RollbarConfig';
 import { FallbackUI } from './components/FallbackUI';
@@ -83,7 +83,6 @@ const people = [
 ];
 
 const mockGetQuestions = (id: number) => {
-  console.log(id);
   if (id === 1) {
     return [
       {
@@ -119,6 +118,7 @@ function App() {
 }
 
 function AppContent() {
+  const navigate = useNavigate();
   const location = useLocation();
 
   const shouldHideNav = /^\/.+\/[^/]+$/.test(location.pathname) || /register/.test(location.pathname);
@@ -138,7 +138,7 @@ function AppContent() {
           <Route path="/matches" element={<MatchesPage />} />
           <Route path="/feed" element={<FeedPage getNextPerson={getNext} onLike={console.log} onDislike={console.log} onSuperLike={console.log} />} />
           <Route path="/tests" element={<TestsPage />} />
-          <Route path="/tests/:id" element={<Quiz getQuestions={mockGetQuestions} onExit={console.log} onFinish={console.log} />} />
+          <Route path="/tests/:id" element={<Quiz getQuestions={mockGetQuestions} onExit={() => navigate("/chats")} onFinish={console.log} />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
           <Route path="/register" element={<RegisterPage />} />
