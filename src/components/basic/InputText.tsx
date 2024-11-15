@@ -27,6 +27,7 @@ import IdProps from './IdProps';
 interface InputTextProps extends IdProps {
     width?: string;
     label?: string;
+    type?: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 

@@ -54,7 +54,7 @@ const NavBar: React.FC = () => {
         >
             <BottomNavigationAction label="Chats" value="chats" icon={<ChatIcon />} />
             <BottomNavigationAction label="Matches" value="matches" icon={<FavoriteIcon />} />
-            <BottomNavigationAction label="Search" value="search" icon={<SearchIcon />} />
+            <BottomNavigationAction label="Feed" value="feed" icon={<SearchIcon />} />
             <BottomNavigationAction label="Tests" value="tests" icon={<FormatListBulletedIcon />} />
             <BottomNavigationAction label="Profile" value="profile" icon={<AccountCircleIcon />} />
         </BottomNavigation>

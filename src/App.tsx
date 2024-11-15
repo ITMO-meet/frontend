@@ -11,10 +11,11 @@ import TestsPage from './components/pages/TestsPage';
 import ProfilePage from './components/pages/ProfilePage';
 import EditProfilePage from './components/pages/EditProfilePage';
 import Messages from './components/Messages';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { ErrorBoundary, Provider } from '@rollbar/react';
 import { rollbarConfig } from './contexts/RollbarConfig';
 import { FallbackUI } from './components/FallbackUI';
+import RegisterPage from './components/pages/RegisterPage';
 
 const contacts = [
   {
@@ -96,7 +97,7 @@ function App() {
 function AppContent() {
   const location = useLocation();
 
-  const shouldHideNav = /^\/.+\/[^/]+$/.test(location.pathname);
+  const shouldHideNav = /^\/.+\/[^/]+$/.test(location.pathname) || /register/.test(location.pathname);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const getNext = () => {
@@ -115,7 +116,9 @@ function AppContent() {
           <Route path="/tests" element={<TestsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
-          <Route path="*" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Box>
       {!shouldHideNav && <Nav />}
