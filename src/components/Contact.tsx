@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Typography, Card, CardActionArea, CardContent, Avatar, Stack } from '@mui/material';
 import { Contact } from '../types';
 
-const ContactCard: React.FC<{ contact: Contact, handleClick: (id: string) => void }> = ({ contact, handleClick }) => {
+const ContactCard: React.FC<{ contact: Contact, handleClick: (id: number) => void }> = ({ contact, handleClick }) => {
     return <Card
           key={contact.id}
           sx={{
