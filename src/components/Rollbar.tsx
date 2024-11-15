@@ -1,6 +1,10 @@
 import Rollbar from 'rollbar';
+import { getConfig } from '../api/config';
 
-const accessToken = 'post_client_item_token'
+
+const { ROLLBAR_ACCESS_TOKEN } = getConfig();
+
+const accessToken = ROLLBAR_ACCESS_TOKEN;
 
 const rollbar = new Rollbar({
   accessToken: accessToken,
