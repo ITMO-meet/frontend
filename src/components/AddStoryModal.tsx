@@ -9,6 +9,7 @@ import {
   Button,
   TextField,
 } from '@mui/material';
+import { addStory } from '../api/apiClient';
 
 interface AddStoryModalProps {
   open: boolean;
@@ -18,11 +19,15 @@ interface AddStoryModalProps {
 const AddStoryModal: React.FC<AddStoryModalProps> = ({ open, onClose }) => {
   const [storyUrl, setStoryUrl] = useState('');
 
-  const handleSubmit = () => {
-    console.log('New story URL:', storyUrl);
-    setStoryUrl('');
-    onClose();
-  };
+    const handleSubmit = async () => {
+        try {
+            await addStory(storyUrl);
+            setStoryUrl('');
+            onClose();
+        } catch (error) {
+            console.error('Error adding story:', error);
+        }
+    };
 
   return (
     <Modal
