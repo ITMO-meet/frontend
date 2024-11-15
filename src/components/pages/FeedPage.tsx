@@ -20,18 +20,12 @@ import ImageButton from '../basic/ImageButton';
 import RoundButton from '../basic/RoundButton';
 import theme from '../theme';
 import HorizontalButtonGroup from '../basic/HorizontalButtonGroup';
+import { Person } from '../../types';
 
-// Интерфейс для представления информации о человеке
-interface Person {
-    id: number; // Уникальный идентификатор
-    imageUrl: string; // Ссылка на изображение
-    name: string; // Имя человека
-    description: string; // Описание человека
-}
 
 // Интерфейс для свойств компонента SwipeableCard
 interface Props {
-    getNextPerson: () => Person; // Функция для получения информации о следующем человеке
+    getNextPerson: () => Person | null; // Функция для получения информации о следующем человеке
     onLike: (person: Person) => void; // Функция для лайков
     onSuperLike: (person: Person) => void; // Функция для суперлайков
     onDislike: (person: Person) => void; // Функция для "не понравилось"
@@ -55,34 +49,19 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
     const DURATION = 300; // Длительность анимации в миллисекундах
     const [swipeDirection, setSwipeDirection] = useState<string | null>(null); // Направление свайпа
     const [iconVisible, setIconVisible] = useState(false); // Видимость иконки
-    const [person, setPerson] = useState<Person>({ id: 0, name: "", description: "", imageUrl: "" }); // Текущий человек
+    const [person, setPerson] = useState<Person | null>(null);
 
     const [drawerOpen, setDrawerOpen] = useState(false); // Открытие/закрытие Drawer
     const [distance, setDistance] = useState<number>(100); // Дистанция до 100
     const [age, setAge] = useState<number[]>([18, 60]); // Возраст от 18 до 60
 
-    // Эффект для получения следующего человека при монтировании компонента
-    useEffect(() => {
-        setPerson(getNextPerson()); // Установка следующего человека
-    }, []); // Зависимость от функции получения следующего человека
-
-    // Функция для переключения состояния Drawer
-    const toggleDrawer = (open: boolean) => () => {
-        setDrawerOpen(open);
-    };
-
-    // Обработчик изменения дистанции
-    const handleDistanceChange = (event: Event, newValue: number | number[]) => {
-        setDistance(newValue as number); // Установка новой дистанции
-    };
-
-    // Обработчик изменения возраста
-    const handleAgeChange = (event: Event, newValue: number | number[]) => {
-        setAge(newValue as number[]); // Установка нового возраста
-    };
 
     // Обработчик свайпа
     const handleSwipe = (dir: string) => {
+        if (!person) {
+            return;
+        }
+
         setSwipeDirection(dir); // Установка направления свайпа
         setIconVisible(true); // Показ иконки в процессе свайпа
 
@@ -113,6 +92,42 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
         onSwipedRight: () => handleSwipe('right'), // Обработка свайпа вправо
         onSwipedUp: () => handleSwipe('up'), // Обработка свайпа вверх
     });
+
+
+
+
+
+    // Эффект для получения следующего человека при монтировании компонента
+    useEffect(() => {
+        setPerson(getNextPerson()); // Установка следующего человека
+    }, []); // Зависимость от функции получения следующего человека
+
+    if (!person) {
+        return (
+            <Box sx={{ height: '90vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Typography>No more people to display.</Typography>
+            </Box>
+        );
+    }
+
+    // Функция для переключения состояния Drawer
+    const toggleDrawer = (open: boolean) => () => {
+        setDrawerOpen(open);
+    };
+
+    // Обработчик изменения дистанции
+    const handleDistanceChange = (event: Event, newValue: number | number[]) => {
+        setDistance(newValue as number); // Установка новой дистанции
+    };
+
+    // Обработчик изменения возраста
+    const handleAgeChange = (event: Event, newValue: number | number[]) => {
+        setAge(newValue as number[]); // Установка нового возраста
+    };
+
+
+
+
 
     return (
         <Box sx={{ height: '90vh', display: 'flex', flexDirection: 'column' }}>
