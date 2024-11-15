@@ -7,7 +7,7 @@ interface Props {
     resetError: () => void;
 }
 
-export const DisplayError: React.FC<Props> = ({ error, resetError }) => {
+export const FallbackUI: React.FC<Props> = ({ resetError }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
