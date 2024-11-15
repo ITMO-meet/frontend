@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { Contact } from '../types';
-
+import { markStoryAsViewed } from '../api/apiClient';
 interface StoryViewerProps {
   contacts: Contact[];
   initialIndex: number;
@@ -22,6 +22,16 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ contacts, initialIndex, onClo
 
   useEffect(() => {
     startProgress();
+
+      // Mark current story as viewed
+      const markAsViewed = async () => {
+          try {
+              await markStoryAsViewed(currentStory.id);
+              } catch (error) {
+              console.error('Error marking story as viewed:', error);
+              }
+          };
+      markAsViewed();
 
     return () => {
       if (timer.current) {
