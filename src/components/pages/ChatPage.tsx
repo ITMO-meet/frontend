@@ -4,70 +4,78 @@ import { useNavigate } from 'react-router-dom';
 import ContactCard from '../Contact';
 import Stories from '../Stories';
 import AddStoryModal from '../AddStoryModal';
-import {ChatProps} from '../../types';
+import { Contact } from '../../types';
 
-const ChatPage: React.FC<ChatProps> = ({ contacts }) => {
-  const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isAddStoryOpen, setIsAddStoryOpen] = useState(false);
+interface ChatPageProps {
+    contacts: Contact[];
+}
 
-  const handleClick = (id: string) => {
-    navigate(`/chat/${id}`);
-  };
+const ChatPage: React.FC<ChatPageProps> = ({ contacts }) => {
+    const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isAddStoryOpen, setIsAddStoryOpen] = useState(false);
 
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+    const handleClick = (id: number) => {
+        navigate(`/chat/${id}`);
+    };
 
-  const handleAddStory = () => {
-    setIsAddStoryOpen(true);
-  };
+    const filteredContacts = contacts.filter((contact) =>
+        contact.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
-  const handleCloseAddStory = () => {
-    setIsAddStoryOpen(false);
-  };
+    const handleAddStory = () => {
+        setIsAddStoryOpen(true);
+    };
 
-  return (
-    <Box sx={{ mt: 2, mx: 2 }}>
-      <Typography variant="h5" sx={{ textAlign: 'center', mb: 2 }}>
-        Chats
-      </Typography>
+    const handleCloseAddStory = () => {
+        setIsAddStoryOpen(false);
+    };
 
-      <Box sx={{ mb: 2 }}>
-        <TextField
-          fullWidth
-          label="Search Contacts"
-          variant="outlined"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </Box>
+    return (
+        <Box sx={{ mt: 2, mx: 2 }}>
+            <Typography variant="h5" sx={{ textAlign: 'center', mb: 2 }}>
+                Chats
+            </Typography>
 
-      <Typography variant="h6" sx={{ mb: 1 }}>
-        Activities
-      </Typography>
+            <Box sx={{ mb: 2 }}>
+                <TextField
+                    fullWidth
+                    label="Search Contacts"
+                    variant="outlined"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
+            </Box>
 
-      <Stories contacts={contacts} onAddStory={handleAddStory} />
+            <Typography variant="h6" sx={{ mb: 1 }}>
+                Activities
+            </Typography>
 
-      <Typography variant="h6" sx={{ mb: 1, mt: 2 }}>
-        Messages
-      </Typography>
+            <Stories onAddStory={handleAddStory} />
 
-      {filteredContacts.map((contact) => (
-        <ContactCard key={contact.id} contact={contact} handleClick={handleClick} />
-      ))}
+            <Typography variant="h6" sx={{ mb: 1, mt: 2 }}>
+                Messages
+            </Typography>
 
-      {filteredContacts.length === 0 && (
-        <Typography variant="body1" sx={{ textAlign: 'center', mt: 2 }}>
-          No contacts found.
-        </Typography>
-      )}
+            {filteredContacts.map((contact) => (
+                <ContactCard
+                    key={contact.id}
+                    contact={contact}
+                    handleClick={handleClick}
+                />
+            ))}
 
-      {isAddStoryOpen && (
-        <AddStoryModal open={isAddStoryOpen} onClose={handleCloseAddStory} />
-      )}
-    </Box>
-  );
+            {filteredContacts.length === 0 && (
+                <Typography variant="body1" sx={{ textAlign: 'center', mt: 2 }}>
+                    No contacts found.
+                </Typography>
+            )}
+
+            {isAddStoryOpen && (
+                <AddStoryModal open={isAddStoryOpen} onClose={handleCloseAddStory} />
+            )}
+        </Box>
+    );
 };
 
 export default ChatPage;
