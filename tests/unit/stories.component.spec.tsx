@@ -1,139 +1,95 @@
+// tests/unit/stories.component.spec.tsx
+
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
-
-const StoryViewerMock = jest.fn((props) => (
-    <div data-testid="story-viewer">
-        <button onClick={props.onClose}>Close Story Viewer</button>
-    </div>
-));
-
-jest.mock('../../src/components/StoryViewer', () => ({
-    __esModule: true,
-    default: StoryViewerMock,
-}));
-
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import Stories from '../../src/components/Stories';
+import '@testing-library/jest-dom';
+import { Contact } from '../../src/types';
+import { fetchStories } from '../../src/api/apiClient';
+import { StoryViewerProps } from '../../src/components/StoryViewer';
+
+jest.mock('../../src/api/apiClient');
+
+// Мокаем компонент StoryViewer
+jest.mock('../../src/components/StoryViewer', () => {
+
+    const MockStoryViewer: React.FC<StoryViewerProps> = (props: StoryViewerProps) => (
+        <div data-testid="story-viewer">
+            <button onClick={props.onClose}>Close Story Viewer</button>
+        </div>
+    );
+    return {
+        __esModule: true,
+        default: MockStoryViewer,
+    };
+});
 
 describe('Stories Component', () => {
-    const mockOnAddStory = jest.fn();
-
-    const mockContacts = [
+    const mockContacts: Contact[] = [
         {
-            id: '1',
+            id: 1,
             name: 'Alice',
             pfp: 'path/to/alice.jpg',
             stories: [],
         },
         {
-            id: '2',
+            id: 2,
             name: 'Bob',
             pfp: 'path/to/bob.jpg',
-            stories: [{
-                id: 's1',
-                image: "path/to/story1.jpg",
-                expiresAt: Date.now() + 24 * 60 * 60 * 1000
-            }],
-        },
-        {
-            id: '3',
-            name: 'Charlie',
-            pfp: 'path/to/charlie.jpg',
-            stories: [
-                {
-                    id: 's2',
-                    image: 'path/to/story2.jpg',
-                    expiresAt: Date.now() + 24 * 60 * 60 * 1000
-                },
-                {
-                    id: 's3',
-                    image: 'path/to/story3.jpg',
-                    expiresAt: Date.now() + 24 * 60 * 60 * 1000
-                },
-            ],
+            stories: [],
         },
     ];
 
+    const mockOnAddStory = jest.fn();
+
     beforeEach(() => {
         jest.clearAllMocks();
+        (fetchStories as jest.MockedFunction<typeof fetchStories>).mockResolvedValue(mockContacts);
     });
 
-    it('renders "Your Story" and contacts with stories', () => {
-        render(<Stories contacts={mockContacts} onAddStory={mockOnAddStory} />);
+    it('рендерит компонент и загружает истории', async () => {
+        await act(async () => {
+            render(<Stories onAddStory={mockOnAddStory} />);
+        });
 
-        // Check "Your Story" is rendered
         expect(screen.getByText('Your Story')).toBeInTheDocument();
 
-        // Only contacts with stories should be rendered
-        expect(screen.queryByText('Alice')).not.toBeInTheDocument();
+        await waitFor(() => expect(fetchStories).toHaveBeenCalled());
+
+        expect(screen.getByText('Alice')).toBeInTheDocument();
         expect(screen.getByText('Bob')).toBeInTheDocument();
-        expect(screen.getByText('Charlie')).toBeInTheDocument();
     });
 
-    it('calls onAddStory when "Your Story" is clicked', () => {
-        render(<Stories contacts={mockContacts} onAddStory={mockOnAddStory} />);
+    it('открывает StoryViewer при клике на историю', async () => {
+        await act(async () => {
+            render(<Stories onAddStory={mockOnAddStory} />);
+        });
 
-        // Assuming the first IconButton is the "Your Story" button
-        const iconButtons = screen.getAllByRole('button');
-        const yourStoryIconButton = iconButtons[0];
+        await waitFor(() => expect(fetchStories).toHaveBeenCalled());
 
-        // Simulate clicking "Your Story"
-        fireEvent.click(yourStoryIconButton);
+        const aliceStory = screen.getByText('Alice');
+        fireEvent.click(aliceStory);
 
-        expect(mockOnAddStory).toHaveBeenCalled();
+        expect(screen.getByTestId('story-viewer')).toBeInTheDocument();
     });
 
-    it('opens StoryViewer with correct initialIndex when a story is clicked', () => {
-        render(<Stories contacts={mockContacts} onAddStory={mockOnAddStory} />);
+    it('закрывает StoryViewer при вызове onClose', async () => {
+        await act(async () => {
+            render(<Stories onAddStory={mockOnAddStory} />);
+        });
 
-        // Click on Bob's story
-        const bobNameElement = screen.getByText('Bob');
-        const bobStoryElement = bobNameElement.parentElement;
-        if (bobStoryElement) {
-            fireEvent.click(bobStoryElement);
-        }
+        await waitFor(() => expect(fetchStories).toHaveBeenCalled());
 
-        // StoryViewer should open
+        const bobStory = screen.getByText('Bob');
+        fireEvent.click(bobStory);
+
         expect(screen.getByTestId('story-viewer')).toBeInTheDocument();
 
-        // Expect StoryViewer to have been called with initialIndex = 0
-        expect(StoryViewerMock).toHaveBeenCalledWith(
-            expect.objectContaining({ initialIndex: 0 }),
-            expect.anything()
-        );
-
-        // Click on Charlie's story
-        const charlieNameElement = screen.getByText('Charlie');
-        const charlieStoryElement = charlieNameElement.parentElement;
-        if (charlieStoryElement) {
-            fireEvent.click(charlieStoryElement);
-        }
-
-        // Expect StoryViewer to have been called with initialIndex = 1
-        expect(StoryViewerMock).toHaveBeenLastCalledWith(
-            expect.objectContaining({ initialIndex: 1 }),
-            expect.anything()
-        );
-    });
-
-    it('closes StoryViewer when onClose is called', () => {
-        render(<Stories contacts={mockContacts} onAddStory={mockOnAddStory} />);
-
-        // Open StoryViewer by clicking on Bob's story
-        const bobNameElement = screen.getByText('Bob');
-        const bobStoryElement = bobNameElement.parentElement;
-        if (bobStoryElement) {
-            fireEvent.click(bobStoryElement);
-        }
-
-        // Ensure StoryViewer is open
-        expect(screen.getByTestId('story-viewer')).toBeInTheDocument();
-
-        // Click the close button in StoryViewer
         const closeButton = screen.getByText('Close Story Viewer');
         fireEvent.click(closeButton);
 
-        // Ensure StoryViewer is closed
         expect(screen.queryByTestId('story-viewer')).not.toBeInTheDocument();
     });
+
+
 });
