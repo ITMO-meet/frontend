@@ -5,34 +5,34 @@ import StoryViewer from '../../src/components/StoryViewer';
 describe('StoryViewer Component', () => {
     const mockContacts = [
         {
-            id: '1',
+            id: 1,
             name: 'John Doe',
             pfp: 'path/to/avatar1.jpg',
             stories: [
                 {
-                    id: '1',
+                    id: 1,
                     image: 'path/to/story1.jpg',
                     expiresAt: Date.now() + 24 * 60 * 60 * 1000
                 },
                 {
-                    id: '1',
+                    id: 1,
                     image: 'path/to/story2.jpg',
                     expiresAt: Date.now() + 24 * 60 * 60 * 1000
                 },
             ],
         },
         {
-            id: '2',
+            id: 2,
             name: 'Jane Smith',
             pfp: 'path/to/avatar2.jpg',
             stories: [
                 {
-                    id: '1',
+                    id: 1,
                     image: 'path/to/story3.jpg',
                     expiresAt: Date.now() + 24 * 60 * 60 * 1000
                 },
                 {
-                    id: '1',
+                    id: 1,
                     image: 'path/to/story4.jpg',
                     expiresAt: Date.now() + 24 * 60 * 60 * 1000
                 },

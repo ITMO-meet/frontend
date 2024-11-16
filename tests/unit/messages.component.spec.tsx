@@ -28,13 +28,13 @@ jest.mock('../../src/components/UserMessage', () => {
 describe('Messages Component', () => {
   const mockContacts = [
     {
-      id: '1',
+      id: 1,
       name: 'John Doe',
       pfp: 'avatar1.jpg',
       stories: [],
     },
     {
-      id: '2',
+      id: 2,
       name: 'Jane Smith',
       pfp: 'avatar2.jpg',
       stories: [],
@@ -56,7 +56,7 @@ describe('Messages Component', () => {
   });
 
   it('renders "Contact not found" when contact does not exist', () => {
-    (useParams as jest.Mock).mockReturnValue({ id: '3' });
+    (useParams as jest.Mock).mockReturnValue({ id: 3 });
     render(
       <MemoryRouter>
         <Messages contacts={mockContacts} />
@@ -66,7 +66,7 @@ describe('Messages Component', () => {
   });
 
   it('renders the component with initial messages when contact exists', () => {
-    (useParams as jest.Mock).mockReturnValue({ id: '1' });
+    (useParams as jest.Mock).mockReturnValue({ id: 1 });
     render(
       <MemoryRouter>
         <Messages contacts={mockContacts} />
@@ -78,7 +78,7 @@ describe('Messages Component', () => {
   });
 
   it('updates messages when a new message is sent via send button', () => {
-    (useParams as jest.Mock).mockReturnValue({ id: '1' });
+    (useParams as jest.Mock).mockReturnValue({ id: 1 });
     render(
       <MemoryRouter>
         <Messages contacts={mockContacts} />
@@ -96,7 +96,7 @@ describe('Messages Component', () => {
   });
 
   it('updates messages when a new message is sent via Enter key', () => {
-    (useParams as jest.Mock).mockReturnValue({ id: '1' });
+    (useParams as jest.Mock).mockReturnValue({ id: 1 });
     render(
       <MemoryRouter>
         <Messages contacts={mockContacts} />
@@ -112,7 +112,7 @@ describe('Messages Component', () => {
   });
 
   it('does not send a message if input is empty or whitespace', () => {
-    (useParams as jest.Mock).mockReturnValue({ id: '1' });
+    (useParams as jest.Mock).mockReturnValue({ id: 1 });
     render(
       <MemoryRouter>
         <Messages contacts={mockContacts} />
@@ -131,7 +131,7 @@ describe('Messages Component', () => {
   });
 
   it('navigates back when back button is clicked', () => {
-    (useParams as jest.Mock).mockReturnValue({ id: '1' });
+    (useParams as jest.Mock).mockReturnValue({ id: 1 });
     render(
       <MemoryRouter>
         <Messages contacts={mockContacts} />
@@ -147,7 +147,7 @@ describe('Messages Component', () => {
   });
 
   it('calls scrollIntoView when messages are updated', () => {
-    (useParams as jest.Mock).mockReturnValue({ id: '1' });
+    (useParams as jest.Mock).mockReturnValue({ id: 1 });
     render(
       <MemoryRouter>
         <Messages contacts={mockContacts} />

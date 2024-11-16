@@ -346,3 +346,4 @@ $RECYCLE.BIN/
 .nyc_output/
 coverage/
 build/
+/.env

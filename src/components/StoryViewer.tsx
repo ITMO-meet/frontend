@@ -5,7 +5,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { Contact } from '../types';
 import { markStoryAsViewed } from '../api/apiClient';
-interface StoryViewerProps {
+export interface StoryViewerProps {
   contacts: Contact[];
   initialIndex: number;
   onClose: () => void;

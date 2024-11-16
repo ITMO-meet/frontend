@@ -10,9 +10,9 @@ jest.mock('react-router-dom', () => ({
 }));
 
 interface MockContactProps {
-  handleClick: (id: string) => void;
+  handleClick: (id: number) => void;
   contact: {
-    id: string;
+    id: number;
     name: string;
   };
 }
@@ -58,8 +58,8 @@ jest.mock('../../src/components/AddStoryModal', () => ({
 
 describe('ChatPage Component', () => {
   const mockContacts = [
-    { id: '1', name: 'John Doe', pfp: 'path/to/avatar1.jpg', lastMessage: 'Hello!', stories: [] },
-    { id: '2', name: 'Jane Smith', pfp: 'path/to/avatar2.jpg', lastMessage: 'How are you?', stories: [] },
+    { id: 1, name: 'John Doe', pfp: 'path/to/avatar1.jpg', lastMessage: 'Hello!', stories: [] },
+    { id: 2, name: 'Jane Smith', pfp: 'path/to/avatar2.jpg', lastMessage: 'How are you?', stories: [] },
   ];
 
   const mockNavigate = jest.fn();
