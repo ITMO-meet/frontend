@@ -4,6 +4,13 @@ import '@testing-library/jest-dom';
 import EditProfilePage from '../../src/components/pages/EditProfilePage';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
+import { useLocation } from 'react-router-dom';
+
+function LocationDisplay() {
+    const location = useLocation();
+    return <div data-testid="location-display">{location.pathname}</div>;
+}
+
 
 describe('EditProfilePage', () => {
     beforeEach(() => {
@@ -11,7 +18,11 @@ describe('EditProfilePage', () => {
     });
 
     test('renders EditProfilePage with all sections', () => {
-        render(<EditProfilePage />);
+        render(
+            <MemoryRouter initialEntries={['/edit-profile']}>
+                <EditProfilePage />
+            </MemoryRouter>
+        );
 
         // Проверка наличия заголовка
         expect(screen.getByText('Alisa Pipisa, 20')).toBeInTheDocument();
@@ -26,7 +37,11 @@ describe('EditProfilePage', () => {
     });
 
     test('opens and selects target option', async () => {
-        render(<EditProfilePage />);
+        render(
+            <MemoryRouter initialEntries={['/edit-profile']}>
+                <EditProfilePage />
+            </MemoryRouter>
+        );
 
         // Открытие TargetSheetButton
         fireEvent.click(screen.getByText('Romantic relationships'));
@@ -54,7 +69,11 @@ describe('EditProfilePage', () => {
     });
 
     test('selects interests', async () => {
-        render(<EditProfilePage />);
+        render(
+            <MemoryRouter initialEntries={['/edit-profile']}>
+                <EditProfilePage />
+            </MemoryRouter>
+        );
 
         // Выбор интересов
         fireEvent.click(screen.getByText('Traveling'));
@@ -68,7 +87,11 @@ describe('EditProfilePage', () => {
     });
 
     test('edits and deletes gallery images', async () => {
-        render(<EditProfilePage />);
+        render(
+            <MemoryRouter initialEntries={['/edit-profile']}>
+                <EditProfilePage />
+            </MemoryRouter>
+        );
 
         const images = screen.getAllByRole('img');
         expect(images.length).toBe(3);
@@ -81,23 +104,27 @@ describe('EditProfilePage', () => {
     });
 
     test('navigates back to profile page', async () => {
-        const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
-
-        render(<EditProfilePage />);
+        render(
+            <MemoryRouter initialEntries={['/edit-profile']}>
+                <EditProfilePage />
+                <LocationDisplay />
+            </MemoryRouter>
+        );
 
         fireEvent.click(screen.getByTestId('BackToProfile'));
 
         await waitFor(() => {
-            expect(consoleLogSpy).toHaveBeenCalledWith('Back to Profile');
+            expect(screen.getByTestId('location-display')).toHaveTextContent('/profile');
         });
-
-        consoleLogSpy.mockRestore();
     });
-
 
     test('navigates to premium page', async () => {
         const consoleSpy = jest.spyOn(console, 'log');
-        render(<EditProfilePage />);
+        render(
+            <MemoryRouter initialEntries={['/edit-profile']}>
+                <EditProfilePage />
+            </MemoryRouter>
+        );
 
         // Нажатие на кнопку Premium
         fireEvent.click(screen.getByText('Premium'));

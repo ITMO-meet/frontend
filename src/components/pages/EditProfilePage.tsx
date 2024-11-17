@@ -43,6 +43,7 @@ import WineBarIcon from '@mui/icons-material/WineBar';
 import PeopleIcon from '@mui/icons-material/People';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import MultiCategorySheetButton from '../basic/MultiCategorySheetButton';
+import { useNavigate } from 'react-router-dom';
 
 interface SliderCategoryOption {
     label: string;
@@ -71,6 +72,8 @@ interface LanguageSelectCategoryOption {
 type CategoryOption = SliderCategoryOption | SelectCategoryOption | ButtonSelectCategoryOption | LanguageSelectCategoryOption;
 
 const EditProfilePage: React.FC = () => {
+    const navigate = useNavigate();
+
     const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>({
         label: "Romantic relationships",
         icon: <FavoriteBorderIcon />,
@@ -132,7 +135,7 @@ const EditProfilePage: React.FC = () => {
         <Box position="relative" minHeight="100vh" display="flex" flexDirection="column">
             {/* Header */}
             <Box width="100%" color="white" display="flex" alignItems="center" p={2}>
-                <IconButton data-testid="BackToProfile" onClick={() => console.log('Back to Profile')} sx={{ color: 'grey.800' }}>
+                <IconButton data-testid="BackToProfile" onClick={() => navigate('/profile')} sx={{ color: 'grey.800' }}>
                     <WestIcon />
                 </IconButton>
             </Box>
