@@ -17,5 +17,11 @@ export default [
     rules: {
       "mocha/no-exclusive-tests": "error",
     },
-  }
+  }, 
+  {
+    files: ['tests/**/*.spec.tsx'], 
+    rules: {
+      '@typescript-eslint/no-unused-expressions': 'off',  // expect().be.true should work in test
+    },
+  },
 ];
