@@ -104,6 +104,21 @@ const mockGetQuestions = (id: number) => {
   }
 }
 
+const shouldHideNav = (pathname: string): boolean => {
+  const hiddenRoutes = ['/login', '/register', '/edit-profile'];
+  const hiddenRoutesRegex = /^\/.+\/[^/]+$/;
+
+  if (hiddenRoutes.includes(pathname)) {
+    return true;
+  }
+
+  if (hiddenRoutesRegex.test(pathname)) {
+    return true;
+  }
+
+  return false;
+};
+
 function App() {
   return (
     <Provider config={rollbarConfig}>
@@ -120,8 +135,7 @@ function App() {
 function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
-
-  const shouldHideNav = /^\/.+\/[^/]+$/.test(location.pathname) || /register/.test(location.pathname);
+  const hideNav = shouldHideNav(location.pathname);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const getNext = () => {
@@ -146,7 +160,7 @@ function AppContent() {
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Box>
-      {!shouldHideNav && <Nav />}
+      {!hideNav && <Nav />}
     </>
   );
 }

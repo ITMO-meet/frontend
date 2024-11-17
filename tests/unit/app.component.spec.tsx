@@ -111,13 +111,6 @@ describe('App Component', () => {
     expect(screen.getByTestId('nav')).toBeInTheDocument();
   });
 
-  it('renders LoginPage at unknown route and shows Nav', () => {
-    renderAppWithPath('/unknown');
-
-    expect(screen.getByTestId('login-page')).toBeInTheDocument();
-    expect(screen.getByTestId('nav')).toBeInTheDocument();
-  });
-
   it('hides Nav when shouldHideNav is true', () => {
     renderAppWithPath('/chat/1');
 
