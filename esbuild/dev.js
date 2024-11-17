@@ -71,4 +71,4 @@ const openBrowser = (url) => {
   }
 };
 
-openBrowser('http://localhost:3000');
+openBrowser('http://localhost:3070');
