@@ -120,7 +120,7 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', background: "white" }}>
                     <Typography color="primary" fontSize="36px">Search</Typography> {/* Заголовок приложения */}
                     <IconButton edge="end" color="inherit" onClick={toggleDrawer(true)}>
-                        <MoreVertIcon /> {/* Кнопка для открытия Drawer */}
+                        <MoreVertIcon color='primary' /> {/* Кнопка для открытия Drawer */}
                     </IconButton>
                 </Toolbar>
             </AppBar>
