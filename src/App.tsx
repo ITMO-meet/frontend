@@ -9,8 +9,14 @@ import FeedPage from './components/pages/FeedPage';
 import LoginPage from './components/pages/LoginPage';
 import TestsPage from './components/pages/TestsPage';
 import ProfilePage from './components/pages/ProfilePage';
+import EditProfilePage from './components/pages/EditProfilePage';
 import Messages from './components/Messages';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate, useNavigate } from 'react-router-dom';
+import { ErrorBoundary, Provider } from '@rollbar/react';
+import { rollbarConfig } from './contexts/RollbarConfig';
+import { FallbackUI } from './components/FallbackUI';
+import RegisterPage from './components/pages/RegisterPage';
+import Quiz from './components/pages/Quiz';
 
 const contacts = [
   {
@@ -76,19 +82,60 @@ const people = [
   },
 ];
 
+const mockGetQuestions = (id: number) => {
+  if (id === 1) {
+    return [
+      {
+        id: 1,
+        text: 'Question 1?',
+      },
+    ]
+  } else {
+    return [
+      {
+        id: 1,
+        text: 'Question 1?',
+      },
+      {
+        id: 2,
+        text: 'Question 2?',
+      },
+    ];
+  }
+}
+
+const shouldHideNav = (pathname: string): boolean => {
+  const hiddenRoutes = ['/login', '/register', '/edit-profile'];
+  const hiddenRoutesRegex = /^\/.+\/[^/]+$/;
+
+  if (hiddenRoutes.includes(pathname)) {
+    return true;
+  }
+
+  if (hiddenRoutesRegex.test(pathname)) {
+    return true;
+  }
+
+  return false;
+};
+
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AppContent />
-    </ThemeProvider>
+    <Provider config={rollbarConfig}>
+      <ErrorBoundary level={"error"} fallbackUI={FallbackUI}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <AppContent />
+        </ThemeProvider>
+      </ErrorBoundary>
+    </Provider>
   );
 }
 
 function AppContent() {
+  const navigate = useNavigate();
   const location = useLocation();
-
-  const shouldHideNav = /^\/.+\/[^/]+$/.test(location.pathname);
+  const hideNav = shouldHideNav(location.pathname);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const getNext = () => {
@@ -105,11 +152,15 @@ function AppContent() {
           <Route path="/matches" element={<MatchesPage />} />
           <Route path="/feed" element={<FeedPage getNextPerson={getNext} onLike={console.log} onDislike={console.log} onSuperLike={console.log} />} />
           <Route path="/tests" element={<TestsPage />} />
+          <Route path="/tests/:id" element={<Quiz getQuestions={mockGetQuestions} onExit={() => navigate("/chats")} onFinish={console.log} />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="*" element={<LoginPage />} />
+          <Route path="/edit-profile" element={<EditProfilePage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Box>
-      {!shouldHideNav && <Nav />}
+      {!hideNav && <Nav />}
     </>
   );
 }
