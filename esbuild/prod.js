@@ -1,8 +1,6 @@
 import dotenv from 'dotenv';
 import esbuild from 'esbuild';
 import CssModulesPlugin from 'esbuild-css-modules-plugin';
-import { glob } from 'glob';
-import process from 'node:process';
 import sh from 'shelljs';
 
 dotenv.config();
@@ -13,9 +11,15 @@ if (sh.test('-e', directory)) {
   sh.rm('-rf', directory);
 }
 sh.mkdir(directory);
-sh.cp('public/index.html', directory);
-sh.cp('public/manifest.json', directory);
-sh.cp('public/favicon.png', directory);
+
+const staticFiles = ['public/index.html', 'public/manifest.json', 'public/favicon.png'];
+staticFiles.forEach((file) => {
+  if (sh.test('-e', file)) {
+    sh.cp(file, directory);
+  } else {
+    console.warn(`Warning: ${file} not found, skipping.`);
+  }
+});
 
 const config = {
   logLevel: 'info',
@@ -51,27 +55,12 @@ const config = {
   splitting: true,
 };
 
-const run = async () => {
-  await esbuild.build(config).catch((e) => {
-    console.error(e);
+esbuild
+  .build(config)
+  .then(() => {
+    console.log('Build completed successfully.');
+  })
+  .catch((e) => {
+    console.error('Build failed:', e);
     process.exit(1);
   });
-
-  const jsFile = await glob(`${directory}/js/*.?(m)js`, { posix: true });
-  const cssFile = await glob(`${directory}/js/*.css`, { posix: true });
-
-  if (jsFile.length) {
-    jsFile.forEach((js) => {
-      console.log(js);
-      sh.sed('-i', '\./build/bundle\.js', js.replace(directory, '.'), `${directory}/index.html`);
-    });
-  }
-
-  if (cssFile.length) {
-    cssFile.forEach((css) => {
-      sh.sed('-i', '\./build/bundle\.css', css.replace(directory, '.'), `${directory}/index.html`);
-    });
-  }
-};
-
-run();
