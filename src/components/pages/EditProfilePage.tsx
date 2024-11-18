@@ -44,7 +44,6 @@ import PeopleIcon from '@mui/icons-material/People';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import MultiCategorySheetButton from '../basic/MultiCategorySheetButton';
 import { useNavigate } from 'react-router-dom';
-import { usePremium } from '../../contexts/PremiumContext';
 
 interface SliderCategoryOption {
     label: string;
@@ -73,7 +72,6 @@ interface LanguageSelectCategoryOption {
 type CategoryOption = SliderCategoryOption | SelectCategoryOption | ButtonSelectCategoryOption | LanguageSelectCategoryOption;
 
 const EditProfilePage: React.FC = () => {
-    const { isPremium } = usePremium();
     const navigate = useNavigate();
 
     const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>({
