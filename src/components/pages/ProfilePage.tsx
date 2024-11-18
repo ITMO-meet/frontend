@@ -39,8 +39,10 @@ import RoundButton from '../basic/RoundButton';
 import ImageButton from '../basic/ImageButton';
 import NavBar from '../basic/NavBar';
 import PhotoListing from '../basic/PhotoListing';
+import { usePremium } from '../../contexts/PremiumContext';
 
 const ProfilePage: React.FC = () => {
+    const { isPremium } = usePremium();
     const navigate = useNavigate();
 
     // Обработчик для перехода на страницу редактирования профиля
@@ -50,6 +52,7 @@ const ProfilePage: React.FC = () => {
 
     // Обработчик для нажатия кнопки Premium
     const handlePremiumClick = () => {
+        navigate('/premium');
         console.log('Premium button clicked');
     };
 
@@ -107,6 +110,14 @@ const ProfilePage: React.FC = () => {
                         <EditIcon />
                     </ImageButton>
                 </Box>
+
+                {/* Премиум-пометка */}
+                {isPremium && (
+                    <Box mt={2} p={2} sx={{ backgroundColor: '#FFD700', borderRadius: '8px', textAlign: 'center' }}>
+                        <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#000' }}>У вас премиум-аккаунт!
+                        </Typography>
+                    </Box>
+                )}
 
                 {/* Секция Bio */}
                 <Box mt={2} width="100%">
