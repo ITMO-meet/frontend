@@ -4,6 +4,8 @@ import '@testing-library/jest-dom';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import ProfilePage from '../../src/components/pages/ProfilePage';
 import EditProfilePage from '../../src/components/pages/EditProfilePage';
+import PremiumPage from '../../src/components/pages/PremiumPage';
+import { PremiumProvider } from '../../src/contexts/PremiumContext';
 
 describe('ProfilePage', () => {
     beforeEach(() => {
@@ -13,11 +15,13 @@ describe('ProfilePage', () => {
 
     test('renders ProfilePage with all sections', () => {
         render(
-            <MemoryRouter initialEntries={['/profile']}>
-                <Routes>
-                    <Route path="/profile" element={<ProfilePage />} />
-                </Routes>
-            </MemoryRouter>
+            <PremiumProvider>
+                <MemoryRouter initialEntries={['/profile']}>
+                    <Routes>
+                        <Route path="/profile" element={<ProfilePage />} />
+                    </Routes>
+                </MemoryRouter>
+            </PremiumProvider>
         );
 
         // Проверка наличия заголовка
@@ -37,16 +41,21 @@ describe('ProfilePage', () => {
 
         // Проверка наличия секции Languages
         expect(screen.getByText('Languages')).toBeInTheDocument();
+
+        // Проверка наличия кнопки Premium
+        expect(screen.getByText('Premium')).toBeInTheDocument();
     });
 
     test('navigates to edit profile page on edit button click', async () => {
         render(
-            <MemoryRouter initialEntries={['/profile']}>
-                <Routes>
-                    <Route path="/profile" element={<ProfilePage />} />
-                    <Route path="/edit-profile" element={<EditProfilePage />} />
-                </Routes>
-            </MemoryRouter>
+            <PremiumProvider>
+                <MemoryRouter initialEntries={['/profile']}>
+                    <Routes>
+                        <Route path="/profile" element={<ProfilePage />} />
+                        <Route path="/edit-profile" element={<EditProfilePage />} />
+                    </Routes>
+                </MemoryRouter>
+            </PremiumProvider>
         );
 
         // Нажатие на кнопку редактирования
@@ -58,29 +67,36 @@ describe('ProfilePage', () => {
         });
     });
 
-    test('logs Premium button click', () => {
+    test('navigates to premium page on Premium button click', async () => {
         render(
-            <MemoryRouter initialEntries={['/profile']}>
-                <Routes>
-                    <Route path="/profile" element={<ProfilePage />} />
-                </Routes>
-            </MemoryRouter>
+            <PremiumProvider>
+                <MemoryRouter initialEntries={['/profile']}>
+                    <Routes>
+                        <Route path="/profile" element={<ProfilePage />} />
+                        <Route path="/premium" element={<PremiumPage />} />
+                    </Routes>
+                </MemoryRouter>
+            </PremiumProvider>
         );
 
         // Нажатие на кнопку Premium
         fireEvent.click(screen.getByText('Premium'));
 
-        // Проверка, что логирование выполнено
-        expect(console.log).toHaveBeenCalledWith('Premium button clicked');
+        // Проверка, что навигация выполнена
+        await waitFor(() => {
+            expect(screen.getByText('Это премиум. Вау!')).toBeInTheDocument();
+        });
     });
 
     test('logs Settings button click', () => {
         render(
-            <MemoryRouter initialEntries={['/profile']}>
-                <Routes>
-                    <Route path="/profile" element={<ProfilePage />} />
-                </Routes>
-            </MemoryRouter>
+            <PremiumProvider>
+                <MemoryRouter initialEntries={['/profile']}>
+                    <Routes>
+                        <Route path="/profile" element={<ProfilePage />} />
+                    </Routes>
+                </MemoryRouter>
+            </PremiumProvider>
         );
 
         // Нажатие на кнопку настроек
