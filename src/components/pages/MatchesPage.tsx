@@ -107,10 +107,12 @@ const MatchesPage: React.FC = () => {
                     onClick={handlePrevPhoto}
                     sx={{
                         position: 'absolute',
-                        left: 0,
+                        left: '-40px',
                         top: '50%',
                         transform: 'translateY(-50%)',
                         zIndex: 2,
+                        padding: '50px',
+                        backgroundColor: 'transparent',
                     }}
                 >
                     <ArrowBackIosIcon />
@@ -131,10 +133,12 @@ const MatchesPage: React.FC = () => {
                     onClick={handleNextPhoto}
                     sx={{
                         position: 'absolute',
-                        right: 0,
+                        right: '-40px',
                         top: '50%',
                         transform: 'translateY(-50%)',
                         zIndex: 2,
+                        padding: '50px',
+                        backgroundColor: 'transparent',
                     }}
                 >
                     <ArrowForwardIosIcon />
@@ -142,7 +146,14 @@ const MatchesPage: React.FC = () => {
             </Box>
 
             {/* Фичи и интересы */}
-            <Paper sx={{ p: 2, mb: 2 }}>
+            <Paper
+                sx={{
+                    p: 2,
+                    mb: 2,
+                    bgcolor: '#f5f5f5', // Светло-серый цвет
+                    borderRadius: '12px', // Скругленные края
+                }}
+            >
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
                     Main Features
                 </Typography>
