@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Box, Typography, IconButton, Paper } from '@mui/material';
+import { Box, Typography, IconButton, Paper, Avatar, List, ListItem, ListItemAvatar, ListItemText, Divider } from '@mui/material';
 import ListIcon from '@mui/icons-material/List';
+import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import StraightenIcon from '@mui/icons-material/Straighten';
@@ -18,6 +19,7 @@ const matches = [
     {
         id: 1,
         name: 'Test user1',
+        avatar: 'https://randomwordgenerator.com/img/picture-generator/54e7d7404853a914f1dc8460962e33791c3ad6e04e507440752972d29e4bc3_640.jpg',
         photos: [
             'https://randomwordgenerator.com/img/picture-generator/54e7d7404853a914f1dc8460962e33791c3ad6e04e507440752972d29e4bc3_640.jpg',
             'https://randomwordgenerator.com/img/picture-generator/54e2d34b4a52aa14f1dc8460962e33791c3ad6e04e507749742c78d59e45cc_640.jpg',
@@ -42,6 +44,7 @@ const matches = [
     {
         id: 2,
         name: 'Test user2',
+        avatar: 'https://randomwordgenerator.com/img/picture-generator/53e9d7444b50b10ff3d8992cc12c30771037dbf852547849752678d5964e_640.jpg',
         photos: [
             'https://randomwordgenerator.com/img/picture-generator/53e9d7444b50b10ff3d8992cc12c30771037dbf852547849752678d5964e_640.jpg',
             'https://randomwordgenerator.com/img/picture-generator/52e9d2474854a514f1dc8460962e33791c3ad6e04e50744172297cdd944fc2_640.jpg',
@@ -64,6 +67,7 @@ const matches = [
 const MatchesPage: React.FC = () => {
     const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
     const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+    const [isListVisible, setIsListVisible] = useState(false);
 
     const currentMatch = matches[currentMatchIndex];
 
@@ -85,14 +89,95 @@ const MatchesPage: React.FC = () => {
         setCurrentPhotoIndex((prevIndex) => (prevIndex - 1 + currentMatch.photos.length) % currentMatch.photos.length);
     };
 
+    const handleSelectMatch = (index: number) => {
+        setCurrentMatchIndex(index);
+        setCurrentPhotoIndex(0);
+        setIsListVisible(false);
+    };
+
     return (
         <Box display="flex" flexDirection="column" minHeight="100vh" p={2}>
             {/* Header */}
             <Box display="flex" alignItems="center" mb={2}>
-                <IconButton sx={{ mr: 2 }}>
+                <IconButton onClick={() => setIsListVisible(true)} sx={{ mr: 2 }}>
                     <ListIcon />
                 </IconButton>
             </Box>
+
+            {/* Список метчей */}
+            {isListVisible && (
+                <Box
+                    position="fixed"
+                    top={0}
+                    left={0}
+                    width="100%"
+                    height="100%"
+                    bgcolor="rgba(0, 0, 0, 0.5)"
+                    zIndex={10}
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                    <Paper sx={{ width: '80%', maxHeight: '80%', overflowY: 'auto', borderRadius: '12px', p: 4 }}>
+                        {/* Заголовок */}
+                        <Box position="relative" display="flex" alignItems="center" justifyContent="center" mb={2}>
+                            {/* Текст "Match list" */}
+                            <Typography
+                                variant="h5"
+                                sx={{
+                                    fontWeight: 'bold',
+                                    textAlign: 'center',
+                                    position: 'absolute',
+                                }}
+                            >
+                                Match list
+                            </Typography>
+
+                            {/* Кнопка закрытия */}
+                            <IconButton
+                                onClick={() => setIsListVisible(false)}
+                                sx={{
+                                    position: 'absolute',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    right: 0,
+                                }}
+                            >
+                                <CloseIcon />
+                            </IconButton>
+                        </Box>
+
+                        {/* Список */}
+                        <List>
+                            {matches.map((match, index) => (
+                                <React.Fragment key={match.id}>
+                                    <ListItem
+                                        component="button"
+                                        onClick={() => handleSelectMatch(index)}
+                                        sx={{
+                                            textAlign: 'left',
+                                            width: '100%',
+                                            backgroundColor: 'transparent',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                        }}
+                                    >
+                                        <ListItemAvatar>
+                                            <Avatar
+                                                src={match.avatar}
+                                                alt={match.name}
+                                                sx={{ width: 48, height: 48 }}
+                                            />
+                                        </ListItemAvatar>
+                                        <ListItemText primary={match.name} />
+                                    </ListItem>
+                                    <Divider />
+                                </React.Fragment>
+                            ))}
+                        </List>
+                    </Paper>
+                </Box>
+            )}
 
             {/* Username */}
             <Box display="flex" minHeight="10px">
