@@ -105,6 +105,11 @@ const EditProfilePage: React.FC = () => {
         console.log(`Selected ${category}: ${Array.isArray(option) ? option.join(', ') : option}`);
     };
 
+    const handlePremiumClick = () => {
+        navigate('/premium');
+        console.log('Premium button clicked from edit');
+    }
+
     const targetOptions = [
         { icon: <WineBarIcon />, label: 'Dates', description: 'Go on dates and have a good time' },
         { icon: <FavoriteBorderIcon />, label: 'Romantic relationships', description: 'Find a soulmate and create a happy relationship' },
@@ -226,8 +231,8 @@ const EditProfilePage: React.FC = () => {
                 </Box>
 
                 {/* Premium Button Section */}
-                <Box mt={4} width="100%" display="flex" justifyContent="center">
-                    <RoundButton onClick={() => console.log('Premium Clicked')}>Premium</RoundButton>
+                <Box mt={4} width="100%" display="flex" justifyContent="center" pb={8}>
+                    <RoundButton onClick={handlePremiumClick}>Premium</RoundButton>
                 </Box>
             </Box>
         </Box>

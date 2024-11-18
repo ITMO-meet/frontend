@@ -17,6 +17,8 @@ import { rollbarConfig } from './contexts/RollbarConfig';
 import { FallbackUI } from './components/FallbackUI';
 import RegisterPage from './components/pages/RegisterPage';
 import Quiz from './components/pages/Quiz';
+import { PremiumProvider } from './contexts/PremiumContext';
+import PremiumPage from './components/pages/PremiumPage';
 
 const contacts = [
   {
@@ -104,13 +106,30 @@ const mockGetQuestions = (id: number) => {
   }
 }
 
+const shouldHideNav = (pathname: string): boolean => {
+  const hiddenRoutes = ['/login', '/register', '/edit-profile'];
+  const hiddenRoutesRegex = /^\/.+\/[^/]+$/;
+
+  if (hiddenRoutes.includes(pathname)) {
+    return true;
+  }
+
+  if (hiddenRoutesRegex.test(pathname)) {
+    return true;
+  }
+
+  return false;
+};
+
 function App() {
   return (
     <Provider config={rollbarConfig}>
       <ErrorBoundary level={"error"} fallbackUI={FallbackUI}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <AppContent />
+          <PremiumProvider>
+            <AppContent />
+          </PremiumProvider>
         </ThemeProvider>
       </ErrorBoundary>
     </Provider>
@@ -120,8 +139,7 @@ function App() {
 function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
-
-  const shouldHideNav = /^\/.+\/[^/]+$/.test(location.pathname) || /register/.test(location.pathname);
+  const hideNav = shouldHideNav(location.pathname);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const getNext = () => {
@@ -141,12 +159,13 @@ function AppContent() {
           <Route path="/tests/:id" element={<Quiz getQuestions={mockGetQuestions} onExit={() => navigate("/chats")} onFinish={console.log} />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
+          <Route path="/premium" element={<PremiumPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Box>
-      {!shouldHideNav && <Nav />}
+      {!hideNav && <Nav />}
     </>
   );
 }
