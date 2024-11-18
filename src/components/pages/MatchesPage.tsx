@@ -99,7 +99,7 @@ const MatchesPage: React.FC = () => {
         <Box display="flex" flexDirection="column" minHeight="100vh" p={2}>
             {/* Header */}
             <Box display="flex" alignItems="center" mb={2}>
-                <IconButton onClick={() => setIsListVisible(true)} sx={{ mr: 2 }}>
+                <IconButton aria-label="Open match list" onClick={() => setIsListVisible(true)} sx={{ mr: 2 }}>
                     <ListIcon />
                 </IconButton>
             </Box>
@@ -133,6 +133,7 @@ const MatchesPage: React.FC = () => {
                             </Typography>
 
                             <IconButton
+                                aria-label="Close match list"
                                 onClick={() => setIsListVisible(false)}
                                 sx={{
                                     position: 'absolute',
@@ -187,6 +188,7 @@ const MatchesPage: React.FC = () => {
             {/* Фотографии */}
             <Box mb={2} sx={{ position: 'relative', textAlign: 'center' }}>
                 <IconButton
+                    aria-label="Previous Photo"
                     onClick={handlePrevPhoto}
                     sx={{
                         position: 'absolute',
@@ -213,6 +215,7 @@ const MatchesPage: React.FC = () => {
                 />
 
                 <IconButton
+                    aria-label="Next Photo"
                     onClick={handleNextPhoto}
                     sx={{
                         position: 'absolute',
@@ -286,13 +289,13 @@ const MatchesPage: React.FC = () => {
 
             {/* Навигация */}
             <Box display="flex" justifyContent="space-between" mt="auto">
-                <IconButton onClick={handlePrevMatch}>
+                <IconButton aria-label="Previous match" onClick={handlePrevMatch}>
                     <ArrowBackIosIcon />
                 </IconButton>
                 <Typography>
                     Match {currentMatchIndex + 1} of {matches.length}
                 </Typography>
-                <IconButton onClick={handleNextMatch}>
+                <IconButton aria-label="Next match" onClick={handleNextMatch}>
                     <ArrowForwardIosIcon />
                 </IconButton>
             </Box>
