@@ -1,8 +1,8 @@
 import React from 'react';
-import {Box, Typography, Button} from '@mui/material';
+import {Box, Typography, Button, IconButton} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { usePremium } from '../../contexts/PremiumContext';
-import RoundButton from '../basic/RoundButton';
+import WestIcon from '@mui/icons-material/West'
 
 const PremiumPage: React.FC = () => {
     const { setPremium } = usePremium();
@@ -17,9 +17,9 @@ const PremiumPage: React.FC = () => {
         <Box sx={{ p: 4, textAlign: 'center'}}>
             {/* Back button */}
             <Box display="flex" justifyContent="flex-start" mb={3}>
-                <RoundButton onClick={() => navigate('/profile')} width="50px">
-                    <Typography sx={{ fontSize: '24px', fontWeight: 'bold'}}>←</Typography>
-                </RoundButton>
+                <IconButton onClick={() => navigate('/profile')} sx={{ color: 'grey.800' }}>
+                    <WestIcon />
+                </IconButton>
             </Box>
 
             {/* Описание */}
