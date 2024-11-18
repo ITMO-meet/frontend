@@ -119,9 +119,8 @@ const MatchesPage: React.FC = () => {
                     alignItems="center"
                 >
                     <Paper sx={{ width: '80%', maxHeight: '80%', overflowY: 'auto', borderRadius: '12px', p: 4 }}>
-                        {/* Заголовок */}
+                        {/* Header */}
                         <Box position="relative" display="flex" alignItems="center" justifyContent="center" mb={2}>
-                            {/* Текст "Match list" */}
                             <Typography
                                 variant="h5"
                                 sx={{
@@ -133,7 +132,6 @@ const MatchesPage: React.FC = () => {
                                 Match list
                             </Typography>
 
-                            {/* Кнопка закрытия */}
                             <IconButton
                                 onClick={() => setIsListVisible(false)}
                                 sx={{
@@ -235,8 +233,8 @@ const MatchesPage: React.FC = () => {
                 sx={{
                     p: 2,
                     mb: 2,
-                    bgcolor: '#f5f5f5', // Светло-серый цвет
-                    borderRadius: '12px', // Скругленные края
+                    bgcolor: '#f5f5f5',
+                    borderRadius: '12px',
                 }}
             >
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
