@@ -27,6 +27,8 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import BookIcon from '@mui/icons-material/Book';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import CelebrationIcon from '@mui/icons-material/Celebration';
+import { PremiumProvider } from './contexts/PremiumContext';
+import PremiumPage from './components/pages/PremiumPage';
 
 const contacts = [
   {
@@ -187,7 +189,9 @@ function App() {
       <ErrorBoundary level={"error"} fallbackUI={FallbackUI}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <AppContent />
+          <PremiumProvider>
+            <AppContent />
+          </PremiumProvider>
         </ThemeProvider>
       </ErrorBoundary>
     </Provider>
@@ -217,6 +221,7 @@ function AppContent() {
           <Route path="/tests/:id" element={<Quiz getQuestions={mockGetQuestions} onExit={() => navigate("/chats")} onFinish={console.log} />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
+          <Route path="/premium" element={<PremiumPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
