@@ -4,89 +4,42 @@ import ListIcon from '@mui/icons-material/List';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import StraightenIcon from '@mui/icons-material/Straighten';
-import ChurchIcon from '@mui/icons-material/Church';
-import ChildCareIcon from '@mui/icons-material/ChildCare';
-import LocalBarIcon from '@mui/icons-material/LocalBar';
-import SmokingRoomsIcon from '@mui/icons-material/SmokingRooms';
-import MusicNoteIcon from '@mui/icons-material/MusicNote';
-import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
-import BookIcon from '@mui/icons-material/Book';
-import RestaurantIcon from '@mui/icons-material/Restaurant';
-import CelebrationIcon from '@mui/icons-material/Celebration';
 
-const matches = [
-    {
-        id: 1,
-        name: 'Test user1',
-        avatar: 'https://randomwordgenerator.com/img/picture-generator/54e7d7404853a914f1dc8460962e33791c3ad6e04e507440752972d29e4bc3_640.jpg',
-        photos: [
-            'https://randomwordgenerator.com/img/picture-generator/54e7d7404853a914f1dc8460962e33791c3ad6e04e507440752972d29e4bc3_640.jpg',
-            'https://randomwordgenerator.com/img/picture-generator/54e2d34b4a52aa14f1dc8460962e33791c3ad6e04e507749742c78d59e45cc_640.jpg',
-            'https://randomwordgenerator.com/img/picture-generator/57e9dc434b5ba414f1dc8460962e33791c3ad6e04e50744172297bd5934cc4_640.jpg',
-        ],
-        mainFeatures: [
-            { text: '170 cm', icon: <StraightenIcon /> },
-            { text: 'Atheism', icon: <ChurchIcon /> },
-            { text: 'Aries', icon: <Typography sx={{ fontSize: 20 }}>♈️</Typography> },
-            { text: 'No but would like', icon: <ChildCareIcon /> },
-            { text: 'Neutral', icon: <LocalBarIcon /> },
-            { text: 'Neutral', icon: <SmokingRoomsIcon /> },
-        ],
-        interests: [
-            { text: 'Music', icon: <MusicNoteIcon /> },
-            { text: 'GYM', icon: <FitnessCenterIcon /> },
-            { text: 'Reading', icon: <BookIcon /> },
-            { text: 'Cooking', icon: <RestaurantIcon /> },
-            { text: 'Raves', icon: <CelebrationIcon /> },
-        ],
-    },
-    {
-        id: 2,
-        name: 'Test user2',
-        avatar: 'https://randomwordgenerator.com/img/picture-generator/53e9d7444b50b10ff3d8992cc12c30771037dbf852547849752678d5964e_640.jpg',
-        photos: [
-            'https://randomwordgenerator.com/img/picture-generator/53e9d7444b50b10ff3d8992cc12c30771037dbf852547849752678d5964e_640.jpg',
-            'https://randomwordgenerator.com/img/picture-generator/52e9d2474854a514f1dc8460962e33791c3ad6e04e50744172297cdd944fc2_640.jpg',
-        ],
-        mainFeatures: [
-            { text: '165 cm', icon: <StraightenIcon /> },
-            { text: 'Catholicism', icon: <ChurchIcon /> },
-            { text: 'Libra', icon: <Typography sx={{ fontSize: 20 }}>♎</Typography> },
-            { text: 'Already have', icon: <ChildCareIcon /> },
-            { text: 'Positive', icon: <LocalBarIcon /> },
-            { text: 'Negative', icon: <SmokingRoomsIcon /> },
-        ],
-        interests: [
-            { text: 'Traveling', icon: <MusicNoteIcon /> },
-            { text: 'Painting', icon: <FitnessCenterIcon /> },
-        ],
-    },
-];
+interface MatchesPageProps {
+    people: Array<{
+        id: number;
+        name: string;
+        imageUrl: string;
+        photos: string[];
+        mainFeatures: { text: string; icon: JSX.Element }[];
+        interests: { text: string; icon: JSX.Element }[];
+    }>;
+}
 
-const MatchesPage: React.FC = () => {
+const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
     const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
     const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
     const [isListVisible, setIsListVisible] = useState(false);
 
-    const currentMatch = matches[currentMatchIndex];
+    const currentMatch = people[currentMatchIndex];
+    const allPhotos = [currentMatch.imageUrl, ...currentMatch.photos];
 
     const handleNextMatch = () => {
-        setCurrentMatchIndex((prevIndex) => (prevIndex + 1) % matches.length);
+        setCurrentMatchIndex((prevIndex) => (prevIndex + 1) % people.length);
         setCurrentPhotoIndex(0);
     };
 
     const handlePrevMatch = () => {
-        setCurrentMatchIndex((prevIndex) => (prevIndex - 1 + matches.length) % matches.length);
+        setCurrentMatchIndex((prevIndex) => (prevIndex - 1 + people.length) % people.length);
         setCurrentPhotoIndex(0);
     };
 
     const handleNextPhoto = () => {
-        setCurrentPhotoIndex((prevIndex) => (prevIndex + 1) % currentMatch.photos.length);
+        setCurrentPhotoIndex((prevIndex) => (prevIndex + 1) % allPhotos.length);
     };
 
     const handlePrevPhoto = () => {
-        setCurrentPhotoIndex((prevIndex) => (prevIndex - 1 + currentMatch.photos.length) % currentMatch.photos.length);
+        setCurrentPhotoIndex((prevIndex) => (prevIndex - 1 + allPhotos.length) % allPhotos.length);
     };
 
     const handleSelectMatch = (index: number) => {
@@ -119,7 +72,6 @@ const MatchesPage: React.FC = () => {
                     alignItems="center"
                 >
                     <Paper sx={{ width: '80%', maxHeight: '80%', overflowY: 'auto', borderRadius: '12px', p: 4 }}>
-                        {/* Header */}
                         <Box position="relative" display="flex" alignItems="center" justifyContent="center" mb={2}>
                             <Typography
                                 variant="h5"
@@ -148,8 +100,8 @@ const MatchesPage: React.FC = () => {
 
                         {/* Список */}
                         <List>
-                            {matches.map((match, index) => (
-                                <React.Fragment key={match.id}>
+                            {people.map((person, index) => (
+                                <React.Fragment key={person.id}>
                                     <ListItem
                                         component="button"
                                         onClick={() => handleSelectMatch(index)}
@@ -163,12 +115,12 @@ const MatchesPage: React.FC = () => {
                                     >
                                         <ListItemAvatar>
                                             <Avatar
-                                                src={match.avatar}
-                                                alt={match.name}
+                                                src={person.imageUrl}
+                                                alt={person.name}
                                                 sx={{ width: 48, height: 48 }}
                                             />
                                         </ListItemAvatar>
-                                        <ListItemText primary={match.name} />
+                                        <ListItemText primary={person.name} />
                                     </ListItem>
                                     <Divider />
                                 </React.Fragment>
@@ -205,7 +157,7 @@ const MatchesPage: React.FC = () => {
 
                 <Box
                     component="img"
-                    src={currentMatch.photos[currentPhotoIndex]}
+                    src={allPhotos[currentPhotoIndex]}
                     alt={`${currentMatch.name} photo ${currentPhotoIndex + 1}`}
                     sx={{
                         maxWidth: '100%',
@@ -293,7 +245,7 @@ const MatchesPage: React.FC = () => {
                     <ArrowBackIosIcon />
                 </IconButton>
                 <Typography>
-                    Match {currentMatchIndex + 1} of {matches.length}
+                    Match {currentMatchIndex + 1} of {people.length}
                 </Typography>
                 <IconButton aria-label="Next match" onClick={handleNextMatch}>
                     <ArrowForwardIosIcon />
