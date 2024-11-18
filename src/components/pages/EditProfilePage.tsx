@@ -44,6 +44,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import MultiCategorySheetButton from '../basic/MultiCategorySheetButton';
 import { useNavigate } from 'react-router-dom';
+import { usePremium } from '../../contexts/PremiumContext';
 
 interface SliderCategoryOption {
     label: string;
@@ -72,6 +73,7 @@ interface LanguageSelectCategoryOption {
 type CategoryOption = SliderCategoryOption | SelectCategoryOption | ButtonSelectCategoryOption | LanguageSelectCategoryOption;
 
 const EditProfilePage: React.FC = () => {
+    const { isPremium } = usePremium();
     const navigate = useNavigate();
 
     const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>({
@@ -104,6 +106,11 @@ const EditProfilePage: React.FC = () => {
         }));
         console.log(`Selected ${category}: ${Array.isArray(option) ? option.join(', ') : option}`);
     };
+
+    const handlePremiumClick = () => {
+        navigate('/premium');
+        console.log('Premium button clicked from edit');
+    }
 
     const targetOptions = [
         { icon: <WineBarIcon />, label: 'Dates', description: 'Go on dates and have a good time' },
@@ -226,8 +233,8 @@ const EditProfilePage: React.FC = () => {
                 </Box>
 
                 {/* Premium Button Section */}
-                <Box mt={4} width="100%" display="flex" justifyContent="center">
-                    <RoundButton onClick={() => console.log('Premium Clicked')}>Premium</RoundButton>
+                <Box mt={4} width="100%" display="flex" justifyContent="center" pb={8}>
+                    <RoundButton onClick={handlePremiumClick}>Premium</RoundButton>
                 </Box>
             </Box>
         </Box>

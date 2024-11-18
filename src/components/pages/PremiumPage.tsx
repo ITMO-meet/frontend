@@ -17,7 +17,7 @@ const PremiumPage: React.FC = () => {
         <Box sx={{ p: 4, textAlign: 'center'}}>
             {/* Back button */}
             <Box display="flex" justifyContent="flex-start" mb={3}>
-                <IconButton onClick={() => navigate('/profile')} sx={{ color: 'grey.800' }}>
+                <IconButton onClick={() => navigate('/profile')} sx={{ color: 'grey.800' }} aria-label="back">
                     <WestIcon />
                 </IconButton>
             </Box>
