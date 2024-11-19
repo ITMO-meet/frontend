@@ -3,6 +3,7 @@ import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import MatchesPage from '../../src/components/pages/MatchesPage';
 import { MemoryRouter } from 'react-router-dom';
+import { PremiumContext } from '../../src/contexts/PremiumContext';
 
 const mockPeople = [
     {
@@ -44,25 +45,34 @@ describe('MatchesPage', () => {
         jest.clearAllMocks();
     });
 
-    test('renders MatchesPage with all sections', () => {
+    const renderWithPremium = (isPremium: boolean) => {
         render(
             <MemoryRouter>
-                <MatchesPage people={mockPeople} />
+                <PremiumContext.Provider value={{ isPremium, setPremium: jest.fn() }}>
+                    <MatchesPage people={mockPeople} />
+                </PremiumContext.Provider>
             </MemoryRouter>
         );
+    };
+
+    test('renders premium block if user does not have premium', () => {
+        renderWithPremium(false);
+
+        expect(screen.getByText('Метчи разблокируются после покупки премиума.')).toBeInTheDocument();
+        const button = screen.getByRole('button', { name: /Просмотреть план/i });
+        expect(button).toBeInTheDocument();
+    });
+
+    test('renders MatchesPage with all sections if user has premium', () => {
+        renderWithPremium(true);
 
         expect(screen.getByText('Jane Smith1')).toBeInTheDocument();
-
         const currentPhoto = screen.getByAltText('Jane Smith1 photo 1');
         expect(currentPhoto).toBeInTheDocument();
     });
 
     test('opens and closes the match list', async () => {
-        render(
-            <MemoryRouter>
-                <MatchesPage people={mockPeople} />
-            </MemoryRouter>
-        );
+        renderWithPremium(true);
 
         const openListButton = screen.getByRole('button', { name: /open match list/i });
         fireEvent.click(openListButton);
@@ -79,11 +89,7 @@ describe('MatchesPage', () => {
     });
 
     test('selects a match from the list', async () => {
-        render(
-            <MemoryRouter>
-                <MatchesPage people={mockPeople} />
-            </MemoryRouter>
-        );
+        renderWithPremium(true);
 
         fireEvent.click(screen.getByRole('button', { name: /open match list/i }));
 
@@ -99,11 +105,7 @@ describe('MatchesPage', () => {
     });
 
     test('navigates between matches', async () => {
-        render(
-            <MemoryRouter>
-                <MatchesPage people={mockPeople} />
-            </MemoryRouter>
-        );
+        renderWithPremium(true);
 
         const nextMatchButton = screen.getByRole('button', { name: /next match/i });
         const prevMatchButton = screen.getByRole('button', { name: /previous match/i });
@@ -120,11 +122,7 @@ describe('MatchesPage', () => {
     });
 
     test('navigates between photos', async () => {
-        render(
-            <MemoryRouter>
-                <MatchesPage people={mockPeople} />
-            </MemoryRouter>
-        );
+        renderWithPremium(true);
 
         const nextPhotoButton = screen.getByRole('button', { name: /next photo/i });
         const prevPhotoButton = screen.getByRole('button', { name: /previous photo/i });

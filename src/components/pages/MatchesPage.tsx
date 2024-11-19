@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Box, Typography, IconButton, Paper, Avatar, List, ListItem, ListItemAvatar, ListItemText, Divider } from '@mui/material';
+import { Box, Typography, IconButton, Paper, Avatar, List, ListItem, ListItemAvatar, ListItemText, Divider, Button } from '@mui/material';
 import ListIcon from '@mui/icons-material/List';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { usePremium } from '../../contexts/PremiumContext';
+import { useNavigate } from 'react-router-dom';
 
 interface MatchesPageProps {
     people: Array<{
@@ -20,6 +22,9 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
     const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
     const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
     const [isListVisible, setIsListVisible] = useState(false);
+
+    const { isPremium } = usePremium();
+    const navigate = useNavigate();
 
     const currentMatch = people[currentMatchIndex];
     const allPhotos = [currentMatch.imageUrl, ...currentMatch.photos];
@@ -47,6 +52,36 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
         setCurrentPhotoIndex(0);
         setIsListVisible(false);
     };
+
+    if (!isPremium) {
+        return (
+            <Box
+                display='flex'
+                flexDirection={'column'}
+                justifyContent={'center'}
+                alignItems={'center'}
+                height="100vh"
+                textAlign={'center'}
+                p={2}>
+                <Typography variant='h5' sx={{
+                    mb: 2,
+                    fontWeight: 'bold'
+                }}>
+                    Метчи разблокируются после покупки премиума.
+                </Typography>
+                <Typography sx={{ mb: 4 }}>
+                    Оформить премиум можно в лично кабинете или по кнопке ниже. Премиум позволит просматривать метчи и многое другое.
+                </Typography>
+                <Button
+                    variant='contained'
+                    color="primary"
+                    onClick={() => navigate('/premium')}
+                >
+                    Просмотреть план
+                </Button>
+            </Box>
+        );
+    }
 
     return (
         <Box display="flex" flexDirection="column" minHeight="100vh" p={2}>
