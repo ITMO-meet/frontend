@@ -36,11 +36,11 @@ jobs:
         with:
           context: .
           push: true
-          tags: archont/itmo-meet-frontend:latest
+          # tags: archont/itmo-meet-frontend:latest
           # Tag with commit SHA
-          # tags: |
-          #   archont/itmo-meet-frontend:latest
-          #   archont/itmo-meet-frontend:${{ github.sha }}
+          tags: |
+            archont/itmo-meet-frontend:latest
+            archont/itmo-meet-frontend:${{ github.sha }}
 
   deploy:
     name: Deploy to Server

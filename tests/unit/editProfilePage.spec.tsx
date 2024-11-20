@@ -2,9 +2,11 @@ import React from 'react';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import EditProfilePage from '../../src/components/pages/EditProfilePage';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { useLocation } from 'react-router-dom';
+import PremiumPage from '../../src/components/pages/PremiumPage';
+import { PremiumProvider } from '../../src/contexts/PremiumContext';
 
 function LocationDisplay() {
     const location = useLocation();
@@ -19,9 +21,11 @@ describe('EditProfilePage', () => {
 
     test('renders EditProfilePage with all sections', () => {
         render(
-            <MemoryRouter initialEntries={['/edit-profile']}>
-                <EditProfilePage />
-            </MemoryRouter>
+            <PremiumProvider>
+                <MemoryRouter initialEntries={['/edit-profile']}>
+                    <EditProfilePage />
+                </MemoryRouter>
+            </PremiumProvider>
         );
 
         // Проверка наличия заголовка
@@ -38,9 +42,11 @@ describe('EditProfilePage', () => {
 
     test('opens and selects target option', async () => {
         render(
-            <MemoryRouter initialEntries={['/edit-profile']}>
-                <EditProfilePage />
-            </MemoryRouter>
+            <PremiumProvider>
+                <MemoryRouter initialEntries={['/edit-profile']}>
+                    <EditProfilePage />
+                </MemoryRouter>
+            </PremiumProvider>
         );
 
         // Открытие TargetSheetButton
@@ -56,9 +62,11 @@ describe('EditProfilePage', () => {
 
     test('opens and selects main feature option', async () => {
         render(
-            <MemoryRouter>
-                <EditProfilePage />
-            </MemoryRouter>
+            <PremiumProvider>
+                <MemoryRouter>
+                    <EditProfilePage />
+                </MemoryRouter>
+            </PremiumProvider>
         );
 
         const chooseHeightButton = screen.getByRole('button', { name: "Height 100" });
@@ -70,9 +78,11 @@ describe('EditProfilePage', () => {
 
     test('selects interests', async () => {
         render(
-            <MemoryRouter initialEntries={['/edit-profile']}>
-                <EditProfilePage />
-            </MemoryRouter>
+            <PremiumProvider>
+                <MemoryRouter initialEntries={['/edit-profile']}>
+                    <EditProfilePage />
+                </MemoryRouter>
+            </PremiumProvider>
         );
 
         // Выбор интересов
@@ -88,9 +98,11 @@ describe('EditProfilePage', () => {
 
     test('edits and deletes gallery images', async () => {
         render(
-            <MemoryRouter initialEntries={['/edit-profile']}>
-                <EditProfilePage />
-            </MemoryRouter>
+            <PremiumProvider>
+                <MemoryRouter initialEntries={['/edit-profile']}>
+                    <EditProfilePage />
+                </MemoryRouter>
+            </PremiumProvider>
         );
 
         const images = screen.getAllByRole('img');
@@ -105,10 +117,12 @@ describe('EditProfilePage', () => {
 
     test('navigates back to profile page', async () => {
         render(
-            <MemoryRouter initialEntries={['/edit-profile']}>
-                <EditProfilePage />
-                <LocationDisplay />
-            </MemoryRouter>
+            <PremiumProvider>
+                <MemoryRouter initialEntries={['/edit-profile']}>
+                    <EditProfilePage />
+                    <LocationDisplay />
+                </MemoryRouter>
+            </PremiumProvider>
         );
 
         fireEvent.click(screen.getByTestId('BackToProfile'));
@@ -118,18 +132,24 @@ describe('EditProfilePage', () => {
         });
     });
 
-    test('navigates to premium page', async () => {
-        const consoleSpy = jest.spyOn(console, 'log');
+    test('navigates to premium page on Premium button click', async () => {
         render(
-            <MemoryRouter initialEntries={['/edit-profile']}>
-                <EditProfilePage />
-            </MemoryRouter>
+            <PremiumProvider>
+                <MemoryRouter initialEntries={['/edit-profile']}>
+                    <Routes>
+                        <Route path="/edit-profile" element={<EditProfilePage />} />
+                        <Route path="/premium" element={<PremiumPage />} />
+                    </Routes>
+                </MemoryRouter>
+            </PremiumProvider>
         );
-
+    
         // Нажатие на кнопку Premium
         fireEvent.click(screen.getByText('Premium'));
-
+    
         // Проверка, что навигация выполнена
-        await waitFor(() => expect(consoleSpy).toHaveBeenCalledWith('Premium Clicked'));
+        await waitFor(() => {
+            expect(screen.getByText('Это премиум. Вау!')).toBeInTheDocument();
+        });
     });
 });
