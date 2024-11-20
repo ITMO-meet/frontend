@@ -22,18 +22,16 @@ staticFiles.forEach((file) => {
 });
 
 const config = {
-  logLevel: 'info',
-  entryPoints: {
-    main: 'src/index.tsx',
-  },
-  platform: 'node',
+  entryPoints: ['src/index.tsx'],
   bundle: true,
-  define: {
-    NODE_ENV: 'production',
-  },
   minify: true,
   sourcemap: false,
-  plugins: [CssModulesPlugin()],
+  platform: 'browser',
+  format: 'esm',
+  outdir: directory,
+  entryNames: 'bundle',
+  outExtension: { '.js': '.js' },
+  plugins: [CssModulesPlugin({ inject: false })],
   loader: {
     '.eot': 'dataurl',
     '.woff': 'dataurl',
@@ -44,15 +42,6 @@ const config = {
     '.jpg': 'dataurl',
     '.gif': 'dataurl',
   },
-  outdir: directory,
-  entryNames: 'js/[name]-[hash]',
-  assetNames: 'static/[name]-[hash]',
-  outExtension: {
-    '.js': '.mjs',
-  },
-  pure: ['console.log'],
-  format: 'esm',
-  splitting: true,
 };
 
 esbuild
