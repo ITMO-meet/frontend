@@ -10,7 +10,7 @@ interface StoriesProps {
   onAddStory: () => void;
 }
 
-const Stories: React.FC<StoriesProps> = ({ contacts, onAddStory }) => {
+const Stories: React.FC<StoriesProps> = ({ contacts }) => {
   const [openStoryViewer, setOpenStoryViewer] = useState(false);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const navigate = useNavigate();

@@ -30,7 +30,6 @@ import CelebrationIcon from '@mui/icons-material/Celebration';
 import { PremiumProvider } from './contexts/PremiumContext';
 import PremiumPage from './components/pages/PremiumPage';
 import AddStoryPage from './components/pages/AddStoryPage';
-import { Add } from '@mui/icons-material';
 
 const contacts = [
   {
