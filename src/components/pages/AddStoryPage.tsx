@@ -3,26 +3,23 @@ import { Box, Typography, IconButton, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import CropIcon from "@mui/icons-material/Crop";
-import ReactCrop, { Crop, PixelCrop, centerCrop, makeAspectCrop } from "react-image-crop";
+import ReactCrop, { Crop, PixelCrop, centerCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { canvasPreview } from "./canvasPreview";
 import { useDebounceEffect } from "./useDebounceEffect";
 
-function centerAspectCrop(
+function centerInitialCrop(
   mediaWidth: number,
-  mediaHeight: number,
-  aspect: number
-) {
+  mediaHeight: number
+): Crop {
   return centerCrop(
-    makeAspectCrop(
-      {
-        unit: "%",
-        width: 90,
-      },
-      aspect,
-      mediaWidth,
-      mediaHeight
-    ),
+    {
+      unit: "%",
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100,
+    },
     mediaWidth,
     mediaHeight
   );
@@ -37,10 +34,8 @@ const AddStoryPage: React.FC = () => {
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [croppedImageUrl, setCroppedImageUrl] = useState<string>("");
-  const [scale, setScale] = useState<number>(1);
-  const [rotate, setRotate] = useState<number>(0);
-  const [aspect, setAspect] = useState<number | undefined>(1);
-
+  const [scale] = useState<number>(1);
+  const [rotate] = useState<number>(0);
   const [isCropping, setIsCropping] = useState(false);
 
   const handleCancel = () => {
@@ -64,6 +59,7 @@ const AddStoryPage: React.FC = () => {
         setUpImg(reader.result as string);
         setCroppedImageUrl("");
         setIsCropping(false);
+        setCrop(undefined);
       });
       reader.readAsDataURL(file);
     }
@@ -71,7 +67,7 @@ const AddStoryPage: React.FC = () => {
 
   const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const { width, height } = e.currentTarget;
-    setCrop(centerAspectCrop(width, height, aspect || 1));
+    setCrop(centerInitialCrop(width, height));
   };
 
   useDebounceEffect(
@@ -82,7 +78,7 @@ const AddStoryPage: React.FC = () => {
         imgRef.current &&
         previewCanvasRef.current
       ) {
-        canvasPreview(
+        await canvasPreview(
           imgRef.current,
           previewCanvasRef.current,
           completedCrop,
@@ -94,9 +90,14 @@ const AddStoryPage: React.FC = () => {
         canvas.toBlob((blob) => {
           if (blob) {
             const url = URL.createObjectURL(blob);
-            setCroppedImageUrl(url);
+            setCroppedImageUrl((prevUrl) => {
+              if (prevUrl) {
+                URL.revokeObjectURL(prevUrl);
+              }
+              return url;
+            });
           }
-        });
+        }, "image/png");
       }
     },
     100,
@@ -180,16 +181,14 @@ const AddStoryPage: React.FC = () => {
         {isCropping && (
           <ReactCrop
             crop={crop}
-            onChange={(_, percentCrop) => setCrop(percentCrop)}
+            onChange={(newCrop) => setCrop(newCrop)}
             onComplete={(c) => setCompletedCrop(c)}
-            aspect={aspect}
           >
             <img
               ref={imgRef}
               alt="Crop me"
               src={upImg}
               style={{
-                transform: `scale(${scale}) rotate(${rotate}deg)`,
                 maxWidth: "100%",
                 maxHeight: "80vh",
                 objectFit: "contain",
@@ -210,6 +209,11 @@ const AddStoryPage: React.FC = () => {
             }}
           />
         )}
+
+        <canvas
+          ref={previewCanvasRef}
+          style={{ display: 'none' }}
+        />
       </Box>
 
       <Box
