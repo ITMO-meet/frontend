@@ -1,8 +1,7 @@
 import React, { useRef, useState } from "react";
-import { Box, Typography, Button, TextField } from '@mui/material';
+import { Box, Typography, IconButton, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
-
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 
 const AddStoryPage: React.FC = () => {
     const navigate = useNavigate();
@@ -11,7 +10,7 @@ const AddStoryPage: React.FC = () => {
 
     const handleCancel = () => {
         navigate('/chats');
-    }
+    };
 
     const handleUpload = () => {
         if (uploadedImage) {
@@ -21,6 +20,7 @@ const AddStoryPage: React.FC = () => {
             alert('Please upload an image first!');
         }
     };
+
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
@@ -53,41 +53,73 @@ const AddStoryPage: React.FC = () => {
     return (
         <Box
             sx={{
+                position: "relative",
+                height: "100vh",
+                width: "100%",
                 display: "flex",
                 flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                height: "100vh",
-                padding: 2,
-                textAlign: "center",
+                justifyContent: "space-between",
             }}
         >
-            <Typography variant="h4" sx={{ mb: 4 }}>
-                Add a Story
-            </Typography>
-
-            <TextField
-                type="file"
-                inputProps={{ accept: "image/*" }}
-                sx={{ mb: 4 }}
-                onChange={handleFileChange}
-            />
-
-            <canvas
-                ref={canvasRef}
-                style={{
-                    border: "1px solid #ccc",
-                    maxWidth: "100%",
-                    marginBottom: "20px",
+            <Box
+                sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    padding: "16px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    backgroundColor: "rgba(255, 255, 255, 0.9)",
                 }}
-            ></canvas>
+            >
+                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                    Add a Story
+                </Typography>
+                <IconButton component="label" sx={{ color: "primary.main" }}>
+                    <FileUploadIcon fontSize="large" />
+                    <input
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={handleFileChange}
+                    />
+                </IconButton>
+            </Box>
 
-            <Box display="flex" gap={2}>
-                <Button variant="contained" color="primary" onClick={handleUpload}>
-                    Upload
-                </Button>
+            <Box
+                sx={{
+                    flex: 1,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: '20px',
+                    borderRadius: '12px',
+                }}
+            >
+                <canvas
+                    ref={canvasRef}
+                    style={{
+                        border: "1px solid #ccc",
+                        maxWidth: "100%",
+                        maxHeight: "80vh",
+                    }}
+                ></canvas>
+            </Box>
+
+            <Box
+                sx={{
+                    padding: "16px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                }}
+            >
                 <Button variant="contained" color="secondary" onClick={handleCancel}>
                     Cancel
+                </Button>
+                <Button variant="contained" color="primary" onClick={handleUpload}>
+                    Upload
                 </Button>
             </Box>
         </Box>
