@@ -29,6 +29,8 @@ import RestaurantIcon from '@mui/icons-material/Restaurant';
 import CelebrationIcon from '@mui/icons-material/Celebration';
 import { PremiumProvider } from './contexts/PremiumContext';
 import PremiumPage from './components/pages/PremiumPage';
+import AddStoryPage from './components/pages/AddStoryPage';
+import { Add } from '@mui/icons-material';
 
 const contacts = [
   {
@@ -214,6 +216,7 @@ function AppContent() {
       <Box sx={{ pb: 7 }}>
         <Routes>
           <Route path="/chats" element={<ChatPage contacts={contacts} />} />
+          <Route path="/add-story" element={<AddStoryPage />} />
           <Route path="/chat/:id" element={<Messages contacts={contacts} />} />
           <Route path="/matches" element={<MatchesPage people={people} />} />
           <Route path="/feed" element={<FeedPage getNextPerson={getNext} onLike={console.log} onDislike={console.log} onSuperLike={console.log} />} />
