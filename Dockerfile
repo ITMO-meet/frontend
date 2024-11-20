@@ -3,7 +3,6 @@ FROM node:lts-alpine AS builder
 WORKDIR /app
 
 # Install dependencies
-ENV NODE_ENV=development
 COPY package.json package-lock.json ./
 RUN npm install
 
