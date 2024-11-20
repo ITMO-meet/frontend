@@ -29,6 +29,7 @@ const AddStoryPage: React.FC = () => {
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const [upImg, setUpImg] = useState<string>("");
+  const [displayedImage, setDisplayedImage] = useState<string>("");
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [croppedImageUrl, setCroppedImageUrl] = useState<string>("");
@@ -42,7 +43,7 @@ const AddStoryPage: React.FC = () => {
   };
 
   const handleUpload = () => {
-    if (croppedImageUrl || upImg) {
+    if (displayedImage) {
       alert("Story uploaded successfully!");
       navigate("/chats");
     } else {
@@ -55,7 +56,9 @@ const AddStoryPage: React.FC = () => {
     if (file) {
       const reader = new FileReader();
       reader.addEventListener("load", () => {
-        setUpImg(reader.result as string);
+        const imgSrc = reader.result as string;
+        setUpImg(imgSrc);
+        setDisplayedImage(imgSrc);
         setCroppedImageUrl("");
         setIsCropping(false);
         setCrop(undefined);
@@ -70,22 +73,44 @@ const AddStoryPage: React.FC = () => {
     setCrop(centerInitialCrop(width, height));
   };
 
-  const applyRotation = () => {
-    if (imgRef.current && previewCanvasRef.current) {
-      const canvas = previewCanvasRef.current;
-      canvasPreview(
-        imgRef.current,
-        canvas,
-        { unit: "px", x: 0, y: 0, width: imgRef.current.width, height: imgRef.current.height },
-        1,
-        rotate
-      );
+  const getRotatedImage = (
+    imageSrc: string,
+    rotation: number
+  ): Promise<string> => {
+    return new Promise((resolve) => {
+      const image = new Image();
+      image.src = imageSrc;
+      image.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const angleInRadians = (rotation * Math.PI) / 180;
 
-      const newImage = new Image();
-      newImage.src = canvas.toDataURL();
-      newImage.onload = () => setCroppedImageUrl(newImage.src);
-      setIsRotating(false);
+        const sin = Math.abs(Math.sin(angleInRadians));
+        const cos = Math.abs(Math.cos(angleInRadians));
+        const width = image.width;
+        const height = image.height;
+        const newWidth = width * cos + height * sin;
+        const newHeight = width * sin + height * cos;
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+
+        if (ctx) {
+          ctx.translate(newWidth / 2, newHeight / 2);
+          ctx.rotate(angleInRadians);
+          ctx.drawImage(image, -width / 2, -height / 2);
+          resolve(canvas.toDataURL());
+        }
+      };
+    });
+  };
+
+  const applyRotation = async () => {
+    if (rotate !== 0) {
+      const rotatedImgSrc = await getRotatedImage(displayedImage, rotate);
+      setDisplayedImage(rotatedImgSrc);
+      setRotate(0);
     }
+    setIsRotating(false);
   };
 
   useDebounceEffect(
@@ -101,7 +126,7 @@ const AddStoryPage: React.FC = () => {
           previewCanvasRef.current,
           completedCrop,
           scale,
-          rotate
+          0
         );
 
         const canvas = previewCanvasRef.current;
@@ -119,7 +144,7 @@ const AddStoryPage: React.FC = () => {
       }
     },
     100,
-    [completedCrop, scale, rotate]
+    [completedCrop, scale]
   );
 
   return (
@@ -160,11 +185,14 @@ const AddStoryPage: React.FC = () => {
               onChange={handleFileChange}
             />
           </IconButton>
-          {upImg && (
+          {displayedImage && (
             <>
               <IconButton
                 sx={{ color: "secondary.main" }}
-                onClick={() => {
+                onClick={async () => {
+                  if (rotate !== 0) {
+                    await applyRotation();
+                  }
                   setIsCropping(true);
                 }}
               >
@@ -172,7 +200,9 @@ const AddStoryPage: React.FC = () => {
               </IconButton>
               <IconButton
                 sx={{ color: "secondary.main" }}
-                onClick={() => setIsRotating(true)}
+                onClick={() => {
+                  setIsRotating(true);
+                }}
               >
                 <RotateLeftIcon fontSize="large" />
               </IconButton>
@@ -193,9 +223,9 @@ const AddStoryPage: React.FC = () => {
           padding: "16px",
         }}
       >
-        {upImg && !isCropping && !croppedImageUrl && !isRotating && (
+        {displayedImage && !isCropping && !isRotating && (
           <img
-            src={upImg}
+            src={displayedImage}
             alt="Uploaded"
             style={{
               maxWidth: "100%",
@@ -217,7 +247,7 @@ const AddStoryPage: React.FC = () => {
             <img
               ref={imgRef}
               alt="Crop me"
-              src={upImg}
+              src={displayedImage}
               style={{
                 maxWidth: "100%",
                 maxHeight: "100%",
@@ -234,12 +264,14 @@ const AddStoryPage: React.FC = () => {
             <img
               ref={imgRef}
               alt="Rotate me"
-              src={upImg}
+              src={displayedImage}
               style={{
                 maxWidth: "90%",
                 maxHeight: "70vh",
                 objectFit: "contain",
                 borderRadius: "16px",
+                transform: `rotate(${rotate}deg)`,
+                transition: "transform 0.1s linear",
               }}
             />
             <Slider
@@ -252,24 +284,9 @@ const AddStoryPage: React.FC = () => {
               sx={{ mt: 2, width: "80%" }}
             />
             <Button variant="contained" color="primary" onClick={applyRotation}>
-              Apply Rotation
+              Accept
             </Button>
           </Box>
-        )}
-
-        {croppedImageUrl && !isCropping && !isRotating && (
-          <img
-            alt="Cropped"
-            src={croppedImageUrl}
-            style={{
-              maxWidth: "100%",
-              maxHeight: "100%",
-              objectFit: "contain",
-              borderRadius: "16px",
-              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-              border: "2px solid #ddd",
-            }}
-          />
         )}
 
         <canvas ref={previewCanvasRef} style={{ display: "none" }} />
@@ -289,9 +306,16 @@ const AddStoryPage: React.FC = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => setIsCropping(false)}
+            onClick={() => {
+              setIsCropping(false);
+              if (croppedImageUrl) {
+                setDisplayedImage(croppedImageUrl);
+                setUpImg(croppedImageUrl);
+                setCrop(undefined);
+              }
+            }}
           >
-            Apply Crop
+            Accept
           </Button>
         )}
         <Button variant="contained" color="primary" onClick={handleUpload}>
