@@ -208,7 +208,7 @@ const AddStoryPage: React.FC = () => {
           const lines = box.text.split("\n");
           const lineHeight = fontSize * 1.2;
 
-          lines.forEach((line, index) => {
+          lines.forEach((line: string, index: number) => {
             ctx.fillText(
               line,
               0,
@@ -239,8 +239,7 @@ const AddStoryPage: React.FC = () => {
           previewCanvasRef.current,
           completedCrop,
           scale,
-          0,
-          textBoxes
+          0
         );
 
         const canvas = previewCanvasRef.current;
@@ -493,7 +492,7 @@ const AddStoryPage: React.FC = () => {
               position: "absolute",
             }}
             enableUserSelectHack={false}
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent<HTMLDivElement>) => {
               e.stopPropagation();
               if (isDeletingText) {
                 setTextBoxes(textBoxes.filter((tb) => tb.id !== box.id));
