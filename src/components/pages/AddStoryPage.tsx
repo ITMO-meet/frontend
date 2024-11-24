@@ -92,6 +92,7 @@ const AddStoryPage: React.FC = () => {
           source={imageToEdit}
           onBeforeSave={() => false}
 
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           onSave={(imageData) => {
             //console.log( imageData.imageBase64);
             alert("Image saved!");
@@ -103,7 +104,11 @@ const AddStoryPage: React.FC = () => {
           annotationsCommon={{
             fill: "#ff0000",
           }}
-          Text={{ text: "Placeholder" }}
+          Text={{
+            text: "Placeholder",
+            fontFamily: "Tahoma",
+            fontSize: 30,
+          }}
           Rotate={{ angle: 90, componentType: 'slider' }}
           Crop={{
             ratio: "custom",
