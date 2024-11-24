@@ -29,7 +29,7 @@ import RestaurantIcon from '@mui/icons-material/Restaurant';
 import CelebrationIcon from '@mui/icons-material/Celebration';
 import { PremiumProvider } from './contexts/PremiumContext';
 import PremiumPage from './components/pages/PremiumPage';
-import AddStoryPage from './components/pages/AddStoryPageTest';
+import AddStoryPage from './components/pages/AddStoryPage';
 const contacts = [
   {
     id: '1',

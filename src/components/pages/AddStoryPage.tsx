@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { Box, Typography, IconButton, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
-import FilerobotImageEditor from "react-filerobot-image-editor";
+import FilerobotImageEditor, {
+  TABS,
+} from "react-filerobot-image-editor";
 
 const AddStoryPage: React.FC = () => {
   const navigate = useNavigate();
@@ -20,12 +22,6 @@ const AddStoryPage: React.FC = () => {
       };
       reader.readAsDataURL(file);
     }
-  };
-
-  const handleSave = (editedImageUrl: string) => {
-    setImageToEdit(editedImageUrl);
-    setIsEditing(false);
-    alert("Image saved successfully!");
   };
 
   const handleCancel = () => {
@@ -94,20 +90,42 @@ const AddStoryPage: React.FC = () => {
       {isEditing && imageToEdit && (
         <FilerobotImageEditor
           source={imageToEdit}
-          onSave={({ base64 }) => handleSave(base64)}
+          onBeforeSave={() => false}
+
+          onSave={(imageData) => {
+            //console.log( imageData.imageBase64);
+            alert("Image saved!");
+            setIsEditing(false);
+            navigate("/chats");
+          }}
+
           onClose={() => setIsEditing(false)}
           annotationsCommon={{
             fill: "#ff0000",
           }}
-          Text={{ text: "Your text here" }}
-          Rotate={{ angle: 0 }}
-          Crop={{ aspectRatio: 1 }}
+          Text={{ text: "Placeholder" }}
+          Rotate={{ angle: 90, componentType: 'slider' }}
+          Crop={{
+            ratio: "custom",
+            presetsItems: [
+              {
+                titleKey: '4:3',
+                ratio: 4 / 3,
+              },
+              {
+                titleKey: '21:9',
+                ratio: 21 / 9,
+              },
+            ],
+          }}
           theme={{
             colors: {
               primaryBg: "#000",
               primary: "#1e90ff",
             },
           }}
+          tabsIds={[TABS.ADJUST, TABS.ANNOTATE, TABS.FILTERS, TABS.FINETUNE, TABS.RESIZE]}
+          savingPixelRatio={0} previewPixelRatio={0}
         />
       )}
     </Box>
