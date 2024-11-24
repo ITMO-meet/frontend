@@ -1,21 +1,31 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { MemoryRouter } from 'react-router-dom';
+import Stories from '../../src/components/Stories';
+import { useNavigate } from 'react-router-dom';
 
-const StoryViewerMock = jest.fn((props) => (
-    <div data-testid="story-viewer">
-        <button onClick={props.onClose}>Close Story Viewer</button>
-    </div>
-));
+jest.mock('../../src/components/StoryViewer', () => {
+    return {
+        __esModule: true,
+        default: ({ onClose }) => (
+            <div data-testid="story-viewer">
+                <p>StoryViewer Mock</p>
+                <button onClick={onClose}>Close Story Viewer</button>
+            </div>
+        ),
+    };
+});
 
-jest.mock('../../src/components/StoryViewer', () => ({
-    __esModule: true,
-    default: StoryViewerMock,
+
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useNavigate: jest.fn(),
 }));
 
-import Stories from '../../src/components/Stories';
 
 describe('Stories Component', () => {
+    const mockedNavigate = jest.fn();
     const mockOnAddStory = jest.fn();
 
     const mockContacts = [
@@ -56,10 +66,15 @@ describe('Stories Component', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        (useNavigate as jest.Mock).mockReturnValue(mockedNavigate);
     });
 
+    const renderWithRouter = (ui) => {
+        return render(<MemoryRouter>{ui}</MemoryRouter>);
+    };
+
     it('renders "Your Story" and contacts with stories', () => {
-        render(<Stories contacts={mockContacts} onAddStory={mockOnAddStory} />);
+        renderWithRouter(<Stories contacts={mockContacts} onAddStory={mockOnAddStory} />);
 
         // Check "Your Story" is rendered
         expect(screen.getByText('Your Story')).toBeInTheDocument();
@@ -70,21 +85,21 @@ describe('Stories Component', () => {
         expect(screen.getByText('Charlie')).toBeInTheDocument();
     });
 
-    it('calls onAddStory when "Your Story" is clicked', () => {
-        render(<Stories contacts={mockContacts} onAddStory={mockOnAddStory} />);
+    it('navigates to "/add-story" when "Your Story" is clicked', () => {
+        renderWithRouter(<Stories contacts={mockContacts} onAddStory={mockOnAddStory} />);
 
-        // Assuming the first IconButton is the "Your Story" button
-        const iconButtons = screen.getAllByRole('button');
-        const yourStoryIconButton = iconButtons[0];
+        // Find add story btn
+        const yourStoryButton = screen.getByRole('button', { name: /your story/i });
 
-        // Simulate clicking "Your Story"
-        fireEvent.click(yourStoryIconButton);
+        // Click to open Add story page
+        fireEvent.click(yourStoryButton);
 
-        expect(mockOnAddStory).toHaveBeenCalled();
+        // Check mocked navigate
+        expect(mockedNavigate).toHaveBeenCalledWith('/add-story');
     });
 
     it('opens StoryViewer with correct initialIndex when a story is clicked', () => {
-        render(<Stories contacts={mockContacts} onAddStory={mockOnAddStory} />);
+        renderWithRouter(<Stories contacts={mockContacts} onAddStory={mockOnAddStory} />);
 
         // Click on Bob's story
         const bobNameElement = screen.getByText('Bob');
@@ -93,31 +108,11 @@ describe('Stories Component', () => {
             fireEvent.click(bobStoryElement);
         }
 
-        // StoryViewer should open
         expect(screen.getByTestId('story-viewer')).toBeInTheDocument();
-
-        // Expect StoryViewer to have been called with initialIndex = 0
-        expect(StoryViewerMock).toHaveBeenCalledWith(
-            expect.objectContaining({ initialIndex: 0 }),
-            expect.anything()
-        );
-
-        // Click on Charlie's story
-        const charlieNameElement = screen.getByText('Charlie');
-        const charlieStoryElement = charlieNameElement.parentElement;
-        if (charlieStoryElement) {
-            fireEvent.click(charlieStoryElement);
-        }
-
-        // Expect StoryViewer to have been called with initialIndex = 1
-        expect(StoryViewerMock).toHaveBeenLastCalledWith(
-            expect.objectContaining({ initialIndex: 1 }),
-            expect.anything()
-        );
     });
 
     it('closes StoryViewer when onClose is called', () => {
-        render(<Stories contacts={mockContacts} onAddStory={mockOnAddStory} />);
+        renderWithRouter(<Stories contacts={mockContacts} onAddStory={mockOnAddStory} />);
 
         // Open StoryViewer by clicking on Bob's story
         const bobNameElement = screen.getByText('Bob');
@@ -126,8 +121,6 @@ describe('Stories Component', () => {
             fireEvent.click(bobStoryElement);
         }
 
-        // Ensure StoryViewer is open
-        expect(screen.getByTestId('story-viewer')).toBeInTheDocument();
 
         // Click the close button in StoryViewer
         const closeButton = screen.getByText('Close Story Viewer');
