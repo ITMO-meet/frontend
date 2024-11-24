@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import AddStoryPage from '../../src/components/pages/AddStoryPage';
 import { MemoryRouter } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,12 +17,26 @@ jest.mock('react-filerobot-image-editor', () => {
         </div>
     );
     MockedImageEditor.displayName = 'MockedImageEditor';
-    return MockedImageEditor;
+
+    const TABS = {
+        ADJUST: 'adjust',
+        ANNOTATE: 'annotate',
+        FILTERS: 'filters',
+        FINETUNE: 'finetune',
+        RESIZE: 'resize',
+    };
+
+    return { __esModule: true, default: MockedImageEditor, TABS };
 });
 
+import AddStoryPage from '../../src/components/pages/AddStoryPage';
 
 describe('AddStoryPage', () => {
     const mockedNavigate = jest.fn();
+
+    beforeAll(() => {
+        window.alert = jest.fn();
+    });
 
     beforeEach(() => {
         jest.clearAllMocks();

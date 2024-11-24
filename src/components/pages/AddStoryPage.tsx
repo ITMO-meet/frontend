@@ -6,6 +6,7 @@ import FilerobotImageEditor, {
   TABS,
 } from "react-filerobot-image-editor";
 
+
 const AddStoryPage: React.FC = () => {
   const navigate = useNavigate();
 
@@ -18,7 +19,7 @@ const AddStoryPage: React.FC = () => {
       const reader = new FileReader();
       reader.onload = () => {
         setImageToEdit(reader.result as string);
-        setIsEditing(true);
+        setIsEditing(false);
       };
       reader.readAsDataURL(file);
     }
@@ -54,6 +55,7 @@ const AddStoryPage: React.FC = () => {
               accept="image/*"
               hidden
               onChange={handleFileChange}
+              aria-label="file upload"
             />
           </IconButton>
 
