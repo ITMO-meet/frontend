@@ -1,11 +1,10 @@
-# Stage 1: Build the application
 FROM node:lts-alpine AS builder
 
 WORKDIR /app
 
 # Install dependencies
-COPY package.json ./
-RUN npm install --frozen-lockfile
+COPY package.json package-lock.json ./
+RUN npm install
 
 # Copy source code
 COPY . .
