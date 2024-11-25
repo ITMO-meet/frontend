@@ -9,7 +9,7 @@ dotenv.config();
 const config = {
   logLevel: 'info',
   entryPoints: ['src/index.tsx'],
-  outfile: 'public/build/bundle.js',
+  outfile: 'public/bundle.js',
   bundle: true,
   define: {
     NODE_ENV: 'development',
