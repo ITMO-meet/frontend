@@ -3,15 +3,17 @@ import { Box, Avatar, Typography, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { Contact } from '../types';
 import StoryViewer from './StoryViewer';
+import { useNavigate } from 'react-router-dom';
 
 interface StoriesProps {
   contacts: Contact[];
   onAddStory: () => void;
 }
 
-const Stories: React.FC<StoriesProps> = ({ contacts, onAddStory }) => {
+const Stories: React.FC<StoriesProps> = ({ contacts }) => {
   const [openStoryViewer, setOpenStoryViewer] = useState(false);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
+  const navigate = useNavigate();
 
   const handleStoryClick = (index: number) => {
     setCurrentStoryIndex(index);
@@ -21,6 +23,10 @@ const Stories: React.FC<StoriesProps> = ({ contacts, onAddStory }) => {
   const handleCloseStoryViewer = () => {
     setOpenStoryViewer(false);
   };
+
+  const handleAddStory = () => {
+    navigate('/add-story');
+  }
 
   const storiesWithContent = contacts.filter(contact => contact.stories.length > 0);
 
@@ -39,7 +45,7 @@ const Stories: React.FC<StoriesProps> = ({ contacts, onAddStory }) => {
         {/* Your Story */}
         <Box sx={{ position: 'relative', mr: 2 }}>
           <IconButton
-            onClick={onAddStory}
+            onClick={handleAddStory}
             sx={{
               width: 70,
               height: 70,
