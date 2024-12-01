@@ -1,13 +1,15 @@
-import ReactGA from 'react-ga4'
+import ReactGA from 'react-ga4';
+console.log("Analytics loaded");
 
 export const initGA = () => {
-    ReactGA.initialize("G-X2Q5JXX87Z"); // TODO: remove hardcode tag
+
+    ReactGA.default.initialize('G-X2Q5JXX87Z');
 };
 
-export const trackPageView = (page: string) => {
-    ReactGA.send({ hitType: "pageview", page });
+export const logPageView = (page: string) => {
+    ReactGA.default.send({ hitType: 'pageview', page });
 };
 
-export const trackEvent = (category: string, action: string, label?: string) => {
-    ReactGA.event({ category, action, label });
+export const logEvent = (category: string, action: string, label?: string) => {
+    ReactGA.default.event({ category, action, label });
 };

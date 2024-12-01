@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ThemeProvider } from '@mui/material';
 import theme from './components/theme';
 import { CssBaseline, Box, Typography } from '@mui/material';
@@ -30,6 +30,7 @@ import CelebrationIcon from '@mui/icons-material/Celebration';
 import { PremiumProvider } from './contexts/PremiumContext';
 import PremiumPage from './components/pages/PremiumPage';
 import AddStoryPage from './components/pages/AddStoryPage';
+import { initGA, logPageView } from './analytics';
 const contacts = [
   {
     id: '1',
@@ -203,6 +204,15 @@ function AppContent() {
   const location = useLocation();
   const hideNav = shouldHideNav(location.pathname);
 
+  useEffect(() => {
+    initGA();
+    console.log("GA init");
+  }, []);
+
+  useEffect(() => {
+    logPageView(location.pathname);
+  }, [location.pathname]);
+  
   const [currentIndex, setCurrentIndex] = useState(0);
   const getNext = () => {
     setCurrentIndex((prev) => (prev + 1) % people.length);
