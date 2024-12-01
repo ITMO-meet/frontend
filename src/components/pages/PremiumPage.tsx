@@ -3,6 +3,7 @@ import {Box, Typography, Button, IconButton} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { usePremium } from '../../contexts/PremiumContext';
 import WestIcon from '@mui/icons-material/West'
+import { logEvent } from '../../analytics';
 
 const PremiumPage: React.FC = () => {
     const { setPremium } = usePremium();
@@ -10,6 +11,7 @@ const PremiumPage: React.FC = () => {
 
     const handleBuy = () => {
         setPremium(true); // update profile
+        logEvent("Premium", "Premium bought", "Premium Button");
         navigate('/profile');
     };
 
