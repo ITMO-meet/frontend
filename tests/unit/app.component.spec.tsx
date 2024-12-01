@@ -4,6 +4,11 @@ import App from '../../src/App';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
 
+jest.mock('../../src/analytics', () => ({
+    initGA: jest.fn(),
+    logPageView: jest.fn(),
+}));
+
 jest.mock('../../src/components/pages/ChatPage', () => {
   return {
     __esModule: true,

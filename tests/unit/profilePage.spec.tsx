@@ -6,6 +6,12 @@ import ProfilePage from '../../src/components/pages/ProfilePage';
 import EditProfilePage from '../../src/components/pages/EditProfilePage';
 import PremiumPage from '../../src/components/pages/PremiumPage';
 import { PremiumProvider } from '../../src/contexts/PremiumContext';
+import { logEvent, logPageView } from '../../src/analytics'
+
+jest.mock('../../src/analytics', () => ({
+    logEvent: jest.fn(),
+    logPageView: jest.fn(),
+}));
 
 describe('ProfilePage', () => {
     beforeEach(() => {
@@ -44,6 +50,8 @@ describe('ProfilePage', () => {
 
         // Проверка наличия кнопки Premium
         expect(screen.getByText('Premium')).toBeInTheDocument();
+
+        expect(logPageView).toHaveBeenCalledWith('/profile');
     });
 
     test('navigates to edit profile page on edit button click', async () => {
@@ -65,6 +73,7 @@ describe('ProfilePage', () => {
         await waitFor(() => {
             expect(screen.getByTestId('WestIcon')).toBeInTheDocument();
         });
+        expect(logEvent).toHaveBeenCalledWith('Profile', 'To profile edit', 'Edit Profile Button');
     });
 
     test('navigates to premium page on Premium button click', async () => {
@@ -86,6 +95,7 @@ describe('ProfilePage', () => {
         await waitFor(() => {
             expect(screen.getByText('Это премиум. Вау!')).toBeInTheDocument();
         });
+        expect(logEvent).toHaveBeenCalledWith('Profile', 'To premium click', 'Premium Button');
     });
 
     test('logs Settings button click', () => {
