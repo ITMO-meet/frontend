@@ -5,6 +5,11 @@ import PremiumPage from '../../src/components/pages/PremiumPage';
 import { MemoryRouter } from 'react-router-dom';
 import { PremiumProvider } from '../../src/contexts/PremiumContext';
 import { useLocation } from 'react-router-dom';
+import { logEvent } from '../../src/analytics'
+
+jest.mock('../../src/analytics', () => ({
+    logEvent: jest.fn(),
+}));
 
 function LocationDisplay() {
     const location = useLocation();
@@ -80,6 +85,8 @@ describe('PremiumPage', () => {
         await waitFor(() => {
             expect(screen.getByTestId('location-display')).toHaveTextContent('/profile');
         });
+
+        expect(logEvent).toHaveBeenCalledWith('Premium', 'Premium bought', 'Premium Button');
     });
 
     test('ensures premium status is set to true after purchase', async () => {

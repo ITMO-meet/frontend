@@ -4,6 +4,11 @@ import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
 import Stories from '../../src/components/Stories';
 import { useNavigate } from 'react-router-dom';
+import { logEvent } from '../../src/analytics'
+
+jest.mock('../../src/analytics', () => ({
+    logEvent: jest.fn(),
+}));
 
 jest.mock('../../src/components/StoryViewer', () => {
     return {
@@ -96,6 +101,7 @@ describe('Stories Component', () => {
 
         // Check mocked navigate
         expect(mockedNavigate).toHaveBeenCalledWith('/add-story');
+        expect(logEvent).toHaveBeenCalledWith('Stories', 'Add story clicked', 'Add Story Button');
     });
 
     it('opens StoryViewer with correct initialIndex when a story is clicked', () => {
@@ -109,6 +115,7 @@ describe('Stories Component', () => {
         }
 
         expect(screen.getByTestId('story-viewer')).toBeInTheDocument();
+        expect(logEvent).toHaveBeenCalledWith('Stories', 'View story clicked', 'View Story Button');
     });
 
     it('closes StoryViewer when onClose is called', () => {

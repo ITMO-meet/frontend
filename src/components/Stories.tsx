@@ -4,6 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { Contact } from '../types';
 import StoryViewer from './StoryViewer';
 import { useNavigate } from 'react-router-dom';
+import { logEvent } from '../analytics';
 
 interface StoriesProps {
   contacts: Contact[];
@@ -16,6 +17,7 @@ const Stories: React.FC<StoriesProps> = ({ contacts }) => {
   const navigate = useNavigate();
 
   const handleStoryClick = (index: number) => {
+    logEvent("Stories", "View story clicked", "View Story Button");
     setCurrentStoryIndex(index);
     setOpenStoryViewer(true);
   };
@@ -26,6 +28,7 @@ const Stories: React.FC<StoriesProps> = ({ contacts }) => {
 
   const handleAddStory = () => {
     navigate('/add-story');
+    logEvent("Stories", "Add story clicked", "Add Story Button");
   }
 
   const storiesWithContent = contacts.filter(contact => contact.stories.length > 0);
