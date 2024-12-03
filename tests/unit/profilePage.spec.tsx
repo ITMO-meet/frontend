@@ -7,6 +7,7 @@ import EditProfilePage from '../../src/components/pages/EditProfilePage';
 import PremiumPage from '../../src/components/pages/PremiumPage';
 import { PremiumProvider } from '../../src/contexts/PremiumContext';
 import { logEvent, logPageView } from '../../src/analytics'
+import SettingsPage from '../../src/components/pages/SettingsPage';
 
 jest.mock('../../src/analytics', () => ({
     logEvent: jest.fn(),
@@ -98,12 +99,13 @@ describe('ProfilePage', () => {
         expect(logEvent).toHaveBeenCalledWith('Profile', 'To premium click', 'Premium Button');
     });
 
-    test('logs Settings button click', () => {
+    test('logs Settings button click', async () => {
         render(
             <PremiumProvider>
                 <MemoryRouter initialEntries={['/profile']}>
                     <Routes>
                         <Route path="/profile" element={<ProfilePage />} />
+                        <Route path="/settings" element={<SettingsPage />} />
                     </Routes>
                 </MemoryRouter>
             </PremiumProvider>
@@ -113,6 +115,8 @@ describe('ProfilePage', () => {
         fireEvent.click(screen.getByTestId('SettingsIcon'));
 
         // Проверка, что логирование выполнено
-        expect(console.log).toHaveBeenCalledWith('Settings clicked');
+        await waitFor(() => {
+            expect(screen.getByText('Настройки')).toBeInTheDocument();
+        });
     });
 });

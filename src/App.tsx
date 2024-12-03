@@ -30,6 +30,7 @@ import CelebrationIcon from '@mui/icons-material/Celebration';
 import { PremiumProvider } from './contexts/PremiumContext';
 import PremiumPage from './components/pages/PremiumPage';
 import AddStoryPage from './components/pages/AddStoryPage';
+import SettingsPage from './components/pages/SettingsPage';
 import { initGA, logPageView } from './analytics';
 const contacts = [
   {
@@ -170,7 +171,7 @@ const mockGetQuestions = (id: number) => {
 }
 
 const shouldHideNav = (pathname: string): boolean => {
-  const hiddenRoutes = ['/login', '/register', '/edit-profile'];
+  const hiddenRoutes = ['/login', '/register', '/edit-profile', '/settings'];
   const hiddenRoutesRegex = /^\/.+\/[^/]+$/;
 
   if (hiddenRoutes.includes(pathname)) {
@@ -231,6 +232,7 @@ function AppContent() {
           <Route path="/tests" element={<TestsPage />} />
           <Route path="/tests/:id" element={<Quiz getQuestions={mockGetQuestions} onExit={() => navigate("/chats")} onFinish={console.log} />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
           <Route path="/premium" element={<PremiumPage />} />
           <Route path="/register" element={<RegisterPage />} />

@@ -111,10 +111,10 @@ const EditProfilePage: React.FC = () => {
     }
 
     const targetOptions = [
-        { icon: <WineBarIcon />, label: 'Dates', description: 'Go on dates and have a good time' },
-        { icon: <FavoriteBorderIcon />, label: 'Romantic relationships', description: 'Find a soulmate and create a happy relationship' },
-        { icon: <PeopleIcon />, label: 'Friendship', description: 'Find friends and acquaintances, communicate and arrange meetings' },
-        { icon: <ChatBubbleOutlineIcon />, label: 'Casual Chat', description: 'Communicate, share thoughts and ideas without restrictions' },
+        { icon: <WineBarIcon />, label: 'Dates', description: 'Looking for dates', onClick: () => handleTargetSelect({ icon: <WineBarIcon />, label: 'Dates' }) },
+        { icon: <FavoriteBorderIcon />, label: 'Romantic relationships', description: 'Looking for romantic relationships', onClick: () => handleTargetSelect({ icon: <FavoriteBorderIcon />, label: 'Romantic relationships' }) },
+        { icon: <PeopleIcon />, label: 'Friendship', description: 'Looking for friendship', onClick: () => handleTargetSelect({ icon: <PeopleIcon />, label: 'Friendship' }) },
+        { icon: <ChatBubbleOutlineIcon />, label: 'Casual Chat', description: 'Looking for casual chat', onClick: () => handleTargetSelect({ icon: <ChatBubbleOutlineIcon />, label: 'Casual Chat' }) },
     ];
 
     const categoriesConfig: CategoryOption[] = [
