@@ -36,7 +36,7 @@ describe('SettingsPage', () => {
         expect(mockNavigate).toHaveBeenCalledWith('/profile');
     });
 
-    it('opens and closes the notifications dialog', () => {
+    it('opens and closes the notifications dialog', async () => {
         const notificationsItem = screen.getByText('Уведомления', { selector: 'p' });
         fireEvent.click(notificationsItem);
 
@@ -46,7 +46,7 @@ describe('SettingsPage', () => {
         const closeButton = screen.getByText('Закрыть');
         fireEvent.click(closeButton);
 
-        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+        await waitForElementToBeRemoved(() => screen.queryByRole('dialog'));
     });
 
     it('toggles the notifications switch', () => {
@@ -60,7 +60,7 @@ describe('SettingsPage', () => {
         expect(switchElement).not.toBeChecked();
     });
 
-    it('opens and closes the language dialog', () => {
+    it('opens and closes the language dialog', async () => {
         const languageItem = screen.getByText('Язык', { selector: 'p' });
         fireEvent.click(languageItem);
 
@@ -70,7 +70,7 @@ describe('SettingsPage', () => {
         const closeButton = screen.getByText('Закрыть');
         fireEvent.click(closeButton);
 
-        expect(screen.queryByText('Выберите язык')).not.toBeInTheDocument();
+        await waitForElementToBeRemoved(() => screen.queryByText('Выберите язык'));
     });
 
     it('changes the selected language', () => {
@@ -84,7 +84,7 @@ describe('SettingsPage', () => {
         expect(updatedLanguage).toBeInTheDocument();
     });
 
-    it('opens and closes the problem dialog', () => {
+    it('opens and closes the problem dialog', async () => {
         const problemItem = screen.getByText('Сообщить о проблеме', { selector: 'p' });
         fireEvent.click(problemItem);
 
@@ -94,7 +94,7 @@ describe('SettingsPage', () => {
         const closeButton = screen.getByText('Закрыть');
         fireEvent.click(closeButton);
 
-        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+        await waitForElementToBeRemoved(() => screen.queryByRole('dialog'));
     });
 
     it('submits a problem description', async () => {

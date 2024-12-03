@@ -22,10 +22,7 @@ import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useNavigate } from 'react-router-dom';
 
-interface SettingsPageProps {
-}
-
-const SettingsPage: React.FC<SettingsPageProps> = () => {
+const SettingsPage: React.FC = () => {
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
     const [selectedLanguage, setSelectedLanguage] = useState('Русский');
     const [isNotificationsDialogOpen, setNotificationsDialogOpen] = useState(false);
@@ -59,7 +56,7 @@ const SettingsPage: React.FC<SettingsPageProps> = () => {
         setProblemDialogOpen(false);
     };
 
-    function handleExit(_event: React.MouseEvent<HTMLButtonElement>): void {
+    function handleExit(): void {
         navigate('/login');
     }
 
