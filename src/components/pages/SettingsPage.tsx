@@ -60,7 +60,7 @@ const SettingsPage: React.FC<SettingsPageProps> = () => {
     };
 
     function handleExit(event: React.MouseEvent<HTMLButtonElement>): void {
-        throw new Error('Function not implemented.');
+        navigate('/login');
     }
 
     return (

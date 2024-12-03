@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitForElementToBeRemoved } from '@testing-library/react';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 import SettingsPage from '../../src/components/pages/SettingsPage';
 import '@testing-library/jest-dom';
@@ -94,7 +94,7 @@ describe('SettingsPage', () => {
         const closeButton = screen.getByText('Закрыть');
         fireEvent.click(closeButton);
 
-        expect(screen.queryByText('Сообщить о проблеме')).not.toBeInTheDocument();
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
     it('submits a problem description', () => {
@@ -108,10 +108,12 @@ describe('SettingsPage', () => {
         expect(submitButton).not.toBeDisabled();
 
         fireEvent.click(submitButton);
-        expect(screen.queryByText('Сообщить о проблеме')).not.toBeInTheDocument();
+
+        // Check that the dialog is closed
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
-    it('opens and closes the exit dialog', () => {
+    it('opens and closes the exit dialog', async () => {
         const exitItem = screen.getByText('Выйти');
         fireEvent.click(exitItem);
 
@@ -121,7 +123,8 @@ describe('SettingsPage', () => {
         const noButton = screen.getByText('Нет');
         fireEvent.click(noButton);
 
-        expect(screen.queryByText('Вы уверены, что хотите выйти?')).not.toBeInTheDocument();
+        // Wait for the dialog to be removed
+        await waitForElementToBeRemoved(() => screen.queryByRole('dialog'));
     });
 
     it('handles the exit confirmation', () => {
@@ -130,5 +133,8 @@ describe('SettingsPage', () => {
 
         const yesButton = screen.getByText('Да');
         fireEvent.click(yesButton);
+
+        // Проверяем, что произошел переход на страницу входа
+        expect(mockNavigate).toHaveBeenCalledWith('/login');
     });
 });
