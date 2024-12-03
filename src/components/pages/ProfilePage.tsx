@@ -20,7 +20,7 @@
  * - Компонент предназначен для отображения профиля пользователя с возможностью редактирования.
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -40,18 +40,23 @@ import ImageButton from '../basic/ImageButton';
 import NavBar from '../basic/NavBar';
 import PhotoListing from '../basic/PhotoListing';
 import { usePremium } from '../../contexts/PremiumContext';
+import { logEvent, logPageView } from '../../analytics';
 
 const ProfilePage: React.FC = () => {
     const { isPremium } = usePremium();
     const navigate = useNavigate();
 
+    useEffect(() => { logPageView("/profile"); }, []);
+
     // Обработчик для перехода на страницу редактирования профиля
     const handleEditClick = () => {
+        logEvent("Profile", "To profile edit", "Edit Profile Button")
         navigate('/edit-profile');
     };
 
     // Обработчик для нажатия кнопки Premium
     const handlePremiumClick = () => {
+        logEvent("Profile", "To premium click", "Premium Button")
         navigate('/premium');
         console.log('Premium button clicked');
     };
