@@ -37,16 +37,16 @@ describe('SettingsPage', () => {
     });
 
     it('opens and closes the notifications dialog', () => {
-        const notificationsItem = screen.getByText('Уведомления');
+        const notificationsItem = screen.getByText('Уведомления', { selector: 'p' });
         fireEvent.click(notificationsItem);
 
-        const dialogTitle = screen.getByText('Уведомления');
+        const dialogTitle = screen.getByText('Уведомления', { selector: 'h2' });
         expect(dialogTitle).toBeInTheDocument();
 
         const closeButton = screen.getByText('Закрыть');
         fireEvent.click(closeButton);
 
-        expect(screen.queryByText('Уведомления')).not.toBeInTheDocument();
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
     it('toggles the notifications switch', () => {
@@ -61,7 +61,7 @@ describe('SettingsPage', () => {
     });
 
     it('opens and closes the language dialog', () => {
-        const languageItem = screen.getByText('Язык');
+        const languageItem = screen.getByText('Язык', { selector: 'p' });
         fireEvent.click(languageItem);
 
         const dialogTitle = screen.getByText('Выберите язык');
@@ -74,21 +74,21 @@ describe('SettingsPage', () => {
     });
 
     it('changes the selected language', () => {
-        const languageItem = screen.getByText('Язык');
+        const languageItem = screen.getByText('Язык', { selector: 'p' });
         fireEvent.click(languageItem);
 
-        const englishOption = screen.getByText('Английский');
+        const englishOption = screen.getByText('Английский', { selector: 'span' });
         fireEvent.click(englishOption);
 
-        const updatedLanguage = screen.getByText('Английский');
+        const updatedLanguage = screen.getByText('Английский', { selector: 'p' });
         expect(updatedLanguage).toBeInTheDocument();
     });
 
     it('opens and closes the problem dialog', () => {
-        const problemItem = screen.getByText('Сообщить о проблеме');
+        const problemItem = screen.getByText('Сообщить о проблеме', { selector: 'p' });
         fireEvent.click(problemItem);
 
-        const dialogTitle = screen.getByText('Сообщить о проблеме');
+        const dialogTitle = screen.getByText('Сообщить о проблеме', { selector: 'h2' });
         expect(dialogTitle).toBeInTheDocument();
 
         const closeButton = screen.getByText('Закрыть');
@@ -97,8 +97,8 @@ describe('SettingsPage', () => {
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
-    it('submits a problem description', () => {
-        const problemItem = screen.getByText('Сообщить о проблеме');
+    it('submits a problem description', async () => {
+        const problemItem = screen.getByText('Сообщить о проблеме', { selector: 'p' });
         fireEvent.click(problemItem);
 
         const textField = screen.getByLabelText('Опишите проблему');
@@ -109,8 +109,8 @@ describe('SettingsPage', () => {
 
         fireEvent.click(submitButton);
 
-        // Check that the dialog is closed
-        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+        // Ждем, пока диалог будет удален из DOM
+        await waitForElementToBeRemoved(() => screen.queryByRole('dialog'));
     });
 
     it('opens and closes the exit dialog', async () => {

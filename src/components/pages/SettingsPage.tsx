@@ -59,7 +59,7 @@ const SettingsPage: React.FC<SettingsPageProps> = () => {
         setProblemDialogOpen(false);
     };
 
-    function handleExit(event: React.MouseEvent<HTMLButtonElement>): void {
+    function handleExit(_event: React.MouseEvent<HTMLButtonElement>): void {
         navigate('/login');
     }
 
