@@ -235,6 +235,23 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
             </Paper>
 
             {/* Block section */}
+            <Box
+                textAlign={'center'}
+                mt={2}
+            >
+                <Button
+                    variant='contained'
+                    color='error'
+                    startIcon={<BlockIcon />}
+                    onClick={() => console.log("User blocked")}
+                    sx={{
+                        fontWeight: 'bold',
+                        fontSize: '16px',
+                        borderRadius: '10px',
+                        padding: '10px 20px',
+                    }}
+                >Block user</Button>
+            </Box>
         </Box>
     );
 };

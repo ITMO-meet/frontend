@@ -109,8 +109,8 @@ const people = [
     ],
     itmo: [
       { text: "1", icon: <SchoolIcon /> }, // course
-      { text: "ПИиКТ", icon: <HomeIcon />}, // faculty
-      { text: "Pxxxxx", icon: <GroupIcon />}, // group
+      { text: "ПИиКТ", icon: <HomeIcon /> }, // faculty
+      { text: "Pxxxxx", icon: <GroupIcon /> }, // group
       { text: "123456", icon: <BadgeIcon /> }, // itmo id
     ],
   },
@@ -135,6 +135,12 @@ const people = [
       { text: 'Traveling', icon: <MusicNoteIcon /> },
       { text: 'Painting', icon: <FitnessCenterIcon /> },
     ],
+    itmo: [
+      { text: "2", icon: <SchoolIcon /> }, // course
+      { text: "ИТиП", icon: <HomeIcon /> }, // faculty
+      { text: "Pxxxx", icon: <GroupIcon /> }, // group
+      { text: "654321", icon: <BadgeIcon /> }, // itmo id
+    ],
   },
   {
     id: 3,
@@ -156,6 +162,12 @@ const people = [
     interests: [
       { text: 'Traveling', icon: <MusicNoteIcon /> },
       { text: 'Painting', icon: <FitnessCenterIcon /> },
+    ],
+    itmo: [
+      { text: "1", icon: <SchoolIcon /> }, // course
+      { text: "ИДУ", icon: <HomeIcon /> }, // faculty
+      { text: "Pxxxx", icon: <GroupIcon /> }, // group
+      { text: "852456", icon: <BadgeIcon /> }, // itmo id
     ],
   },
 ];
