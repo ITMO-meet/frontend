@@ -233,7 +233,7 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
                         textTransform: 'none',
                         padding: '10px 16px',
                     }}
-                    onClick={() => console.log("View profile")}
+                    onClick={() => navigate(`/user-profile/${currentMatch.id}`)}
                 >
                     View Profile
                 </Button>

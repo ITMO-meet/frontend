@@ -32,6 +32,7 @@ import PremiumPage from './components/pages/PremiumPage';
 import AddStoryPage from './components/pages/AddStoryPage';
 import SettingsPage from './components/pages/SettingsPage';
 import { initGA, logPageView } from './analytics';
+import UserProfilePage from './components/pages/UserProfilePage';
 const contacts = [
   {
     id: '1',
@@ -213,7 +214,7 @@ function AppContent() {
   useEffect(() => {
     logPageView(location.pathname);
   }, [location.pathname]);
-  
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const getNext = () => {
     setCurrentIndex((prev) => (prev + 1) % people.length);
@@ -234,6 +235,7 @@ function AppContent() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
+          <Route path="/user-profile/:id" element={<UserProfilePage people={people} />} />
           <Route path="/premium" element={<PremiumPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
