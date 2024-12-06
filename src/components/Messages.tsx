@@ -122,7 +122,7 @@ const Messages: React.FC<ChatProps> = ({ contacts }) => {
       >
         <TextField
           fullWidth
-          placeholder="Type a message"
+          placeholder="Type a message!"
           variant="outlined"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
