@@ -59,7 +59,15 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
 
             {/* Username */}
             <Box display="flex" minHeight="10px">
-                <Typography variant="h5" sx={{ fontWeight: 'bold', textAlign: 'left', flexGrow: 1 }}>
+                <Typography
+                    variant="h4"
+                    sx={{
+                        fontWeight: 'bold',
+                        fontFamily: "'Roboto', sans-serif",
+                        letterSpacing: '1.2px',
+                        textShadow: '0px 2px 4px rgba(0, 0, 0, 0.6)',
+                    }}
+                >
                     {currentUser.name}
                 </Typography>
             </Box>
