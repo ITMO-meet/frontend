@@ -4,6 +4,7 @@ import ListIcon from '@mui/icons-material/List';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { usePremium } from '../../contexts/PremiumContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -216,6 +217,26 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
                 >
                     <ArrowForwardIosIcon />
                 </IconButton>
+            </Box>
+
+            {/* Просмотр профиля */}
+            <Box
+                textAlign='center'
+                mb={2}
+            >
+                <Button
+                    variant='contained'
+                    color="secondary"
+                    sx={{
+                        fontWeight: 'bold',
+                        borderRadius: '8px',
+                        textTransform: 'none',
+                        padding: '10px 16px',
+                    }}
+                    onClick={() => console.log("View profile")}
+                >
+                    View Profile
+                </Button>
             </Box>
 
             {/* Фичи и интересы */}
