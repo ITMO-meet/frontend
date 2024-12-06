@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Box, Typography, IconButton, Paper } from '@mui/material';
+import { Box, Typography, IconButton, Paper, Button } from '@mui/material';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useNavigate, useParams } from 'react-router-dom';
-
+import BlockIcon from '@mui/icons-material/Block';
 
 interface UserProfilePageProps {
     people: Array<{
@@ -186,29 +186,55 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
                     ITMO
                 </Typography>
-                <Box display="flex" flexDirection="column" gap={1}>
-                    {currentUser.itmo.map((item, id) => (
-                        <Box
-                            key={id}
-                            display="flex"
-                            alignItems="center"
-                            sx={{
-                                bgcolor: 'rgba(214, 231, 255, 0.8)',
-                                border: '1px solid rgba(214, 231, 255, 0.8)',
-                                borderRadius: '8px',
-                                padding: '8px',
-                                gap: '8px',
-                            }}
+                {isStudent ? (
+                    <Box display="flex" flexDirection="column" gap={1}>
+                        {currentUser.itmo.map((item, id) => (
+                            <Box
+                                key={id}
+                                display="flex"
+                                alignItems="center"
+                                sx={{
+                                    bgcolor: 'rgba(214, 231, 255, 0.8)',
+                                    border: '1px solid rgba(214, 231, 255, 0.8)',
+                                    borderRadius: '8px',
+                                    padding: '8px',
+                                    gap: '8px',
+                                }}
+                            >
+                                {item.icon}
+                                <Typography>
+                                    {id === 0 ? 'LVL: ' : id === 1 ? 'Faculty: ' : id === 2 ? 'Group: ' : 'ITMO ID: '}
+                                    {item.text}
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                ) : (
+                    <Typography
+                        variant="h6"
+                        textAlign="center"
+                        sx={{
+                            color: 'primary',
+                            fontStyle: 'bold',
+                        }}
+                    >
+                        Person not a student ;c
+                    </Typography>
+                )}
+                {isStudent && (
+                    <Box textAlign={'center'} mt={2}>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={() => console.log("view schedule")}
                         >
-                            {item.icon}
-                            <Typography>
-                                {id === 0 ? 'LVL: ' : id === 1 ? 'Faculty: ' : id === 2 ? 'Group: ' : 'ITMO ID: '}
-                                {item.text}
-                            </Typography>
-                        </Box>
-                    ))}
-                </Box>
+                            View schedule
+                        </Button>
+                    </Box>
+                )}
             </Paper>
+
+            {/* Block section */}
         </Box>
     );
 };
