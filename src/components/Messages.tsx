@@ -91,7 +91,7 @@ const Messages: React.FC<ChatProps> = ({ contacts }) => {
           <ArrowBackIosIcon />
         </IconButton>
         <Box
-          onClick={() => console.log("View profile clicked")}
+          onClick={() => navigate(`/user-profile/${contact.id}`)}
           sx={{
             display: 'flex',
             alignItems: 'center',
