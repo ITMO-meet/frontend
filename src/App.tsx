@@ -33,6 +33,11 @@ import AddStoryPage from './components/pages/AddStoryPage';
 import SettingsPage from './components/pages/SettingsPage';
 import { initGA, logPageView } from './analytics';
 import UserProfilePage from './components/pages/UserProfilePage';
+import SchoolIcon from '@mui/icons-material/School';
+import HomeIcon from '@mui/icons-material/Home';
+import BadgeIcon from '@mui/icons-material/Badge';
+import GroupIcon from '@mui/icons-material/Group';
+
 const contacts = [
   {
     id: '1',
@@ -101,6 +106,12 @@ const people = [
       { text: 'Reading', icon: <BookIcon /> },
       { text: 'Cooking', icon: <RestaurantIcon /> },
       { text: 'Raves', icon: <CelebrationIcon /> },
+    ],
+    itmo: [
+      { text: "1", icon: <SchoolIcon /> }, // course
+      { text: "ПИиКТ", icon: <HomeIcon />}, // faculty
+      { text: "Pxxxxx", icon: <GroupIcon />}, // group
+      { text: "123456", icon: <BadgeIcon /> }, // itmo id
     ],
   },
   {

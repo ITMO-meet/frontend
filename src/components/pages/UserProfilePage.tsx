@@ -24,7 +24,6 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
     const { id } = useParams<{ id: string }>();
     const currentUser = id ? people.find((person) => person.id === Number(id)) : null;
 
-
     if (!currentUser) {
         return (
             <Typography variant="h6" textAlign="center">
@@ -32,10 +31,8 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
             </Typography>
         );
     }
-
     const allPhotos = [currentUser.imageUrl, ...currentUser.photos];
-
-
+    const [isStudent, setIsStudent] = useState(true); // PLACEHOLDER. RN only for students
 
     const handleNextPhoto = () => {
         setCurrentPhotoIndex((prevIndex) => (prevIndex + 1) % allPhotos.length);
@@ -62,7 +59,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
 
             {/* Username */}
             <Box display="flex" minHeight="10px">
-                <Typography variant="h5" sx={{ fontWeight: 'bold', textAlign: 'center', flexGrow: 1 }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', textAlign: 'left', flexGrow: 1 }}>
                     {currentUser.name}
                 </Typography>
             </Box>
@@ -164,6 +161,42 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
                         >
                             {interest.icon}
                             <Typography>{interest.text}</Typography>
+                        </Box>
+                    ))}
+                </Box>
+            </Paper>
+
+            {/* Вуз */}
+            <Paper
+                sx={{
+                    p: 2,
+                    mb: 2,
+                    bgcolor: '#f5f5f5',
+                    borderRadius: '12px',
+                }}
+            >
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                    ITMO
+                </Typography>
+                <Box display="flex" flexDirection="column" gap={1}>
+                    {currentUser.itmo.map((item, id) => (
+                        <Box
+                            key={id}
+                            display="flex"
+                            alignItems="center"
+                            sx={{
+                                bgcolor: 'rgba(214, 231, 255, 0.8)',
+                                border: '1px solid rgba(214, 231, 255, 0.8)',
+                                borderRadius: '8px',
+                                padding: '8px',
+                                gap: '8px',
+                            }}
+                        >
+                            {item.icon}
+                            <Typography>
+                                {id === 0 ? 'LVL: ' : id === 1 ? 'Faculty: ' : id === 2 ? 'Group: ' : 'ITMO ID: '}
+                                {item.text}
+                            </Typography>
                         </Box>
                     ))}
                 </Box>
