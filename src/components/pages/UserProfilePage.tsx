@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Box, Typography, IconButton, Paper, Avatar, List, ListItem, ListItemAvatar, ListItemText, Divider, Button } from '@mui/material';
+import { Box, Typography, IconButton, Paper } from '@mui/material';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { usePremium } from '../../contexts/PremiumContext';
 import { useNavigate, useParams } from 'react-router-dom';
+
 
 interface UserProfilePageProps {
     people: Array<{
@@ -17,6 +17,8 @@ interface UserProfilePageProps {
 }
 
 const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
+    const navigate = useNavigate();
+
     const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
 
     const { id } = useParams<{ id: string }>();
@@ -43,13 +45,17 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
         setCurrentPhotoIndex((prevIndex) => (prevIndex - 1 + allPhotos.length) % allPhotos.length);
     };
 
-
-
+    const handleGoBack = () => {
+        navigate(-1)
+    };
 
     return (
         <Box display="flex" flexDirection="column" minHeight="100vh" p={2}>
-            <Box display="flex" minHeight="10px">
-                <Typography variant='h4' sx={{ fontWeight: 'bold', textAlign: 'left' }}>
+            <Box display="flex" alignItems="center" mb={2}>
+                <IconButton onClick={handleGoBack} sx={{ mr: 2 }}>
+                    <ArrowBackIosIcon />
+                </IconButton>
+                <Typography variant='h4' sx={{ fontWeight: 'bold' }}>
                     Profile
                 </Typography>
             </Box>
