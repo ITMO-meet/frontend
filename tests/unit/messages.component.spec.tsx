@@ -85,7 +85,7 @@ describe('Messages Component', () => {
       </MemoryRouter>
     );
 
-    const inputField = screen.getByPlaceholderText('Type a message');
+    const inputField = screen.getByPlaceholderText('Type a message!');
     fireEvent.change(inputField, { target: { value: 'Hello there!' } });
     expect(inputField).toHaveValue('Hello there!');
 
@@ -103,7 +103,7 @@ describe('Messages Component', () => {
       </MemoryRouter>
     );
 
-    const inputField = screen.getByPlaceholderText('Type a message');
+    const inputField = screen.getByPlaceholderText('Type a message!');
     fireEvent.change(inputField, { target: { value: 'Testing Enter key' } });
     fireEvent.keyDown(inputField, { key: 'Enter', code: 'Enter' });
 
@@ -119,7 +119,7 @@ describe('Messages Component', () => {
       </MemoryRouter>
     );
 
-    const inputField = screen.getByPlaceholderText('Type a message');
+    const inputField = screen.getByPlaceholderText('Type a message!');
     fireEvent.change(inputField, { target: { value: '   ' } });
     const sendButton = screen.getAllByRole('button').find(
       (button) => button.firstChild?.nodeName === 'svg'
@@ -154,7 +154,7 @@ describe('Messages Component', () => {
       </MemoryRouter>
     );
 
-    const inputField = screen.getByPlaceholderText('Type a message');
+    const inputField = screen.getByPlaceholderText('Type a message!');
     fireEvent.change(inputField, { target: { value: 'Scroll test' } });
     fireEvent.keyDown(inputField, { key: 'Enter', code: 'Enter' });
 
