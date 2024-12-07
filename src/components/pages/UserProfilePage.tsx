@@ -13,6 +13,8 @@ interface UserProfilePageProps {
         photos: string[];
         mainFeatures: { text: string; icon: JSX.Element }[];
         interests: { text: string; icon: JSX.Element }[];
+        itmo: {text: string; icon: JSX.Element}[];
+        isStudent: boolean;
     }>;
 }
 
@@ -32,7 +34,6 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
         );
     }
     const allPhotos = [currentUser.imageUrl, ...currentUser.photos];
-    const [isStudent, setIsStudent] = useState(true); // PLACEHOLDER. RN only for students
 
     const handleNextPhoto = () => {
         setCurrentPhotoIndex((prevIndex) => (prevIndex + 1) % allPhotos.length);
@@ -186,7 +187,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
                     ITMO
                 </Typography>
-                {isStudent ? (
+                {currentUser.isStudent ? (
                     <Box display="flex" flexDirection="column" gap={1}>
                         {currentUser.itmo.map((item, id) => (
                             <Box
@@ -203,7 +204,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
                             >
                                 {item.icon}
                                 <Typography>
-                                    {id === 0 ? 'LVL: ' : id === 1 ? 'Faculty: ' : id === 2 ? 'Group: ' : 'ITMO ID: '}
+                                    {id === 0 ? 'LVL: ' : id === 1 ? 'Faculty: ' : id === 2 ?  'ITMO ID: ' : ''}
                                     {item.text}
                                 </Typography>
                             </Box>
@@ -221,7 +222,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
                         Person not a student ;c
                     </Typography>
                 )}
-                {isStudent && (
+                {currentUser.isStudent && (
                     <Box textAlign={'center'} mt={2}>
                         <Button
                             variant="contained"
