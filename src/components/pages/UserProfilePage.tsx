@@ -13,7 +13,7 @@ interface UserProfilePageProps {
         photos: string[];
         mainFeatures: { text: string; icon: JSX.Element }[];
         interests: { text: string; icon: JSX.Element }[];
-        itmo: {text: string; icon: JSX.Element}[];
+        itmo: { text: string; icon: JSX.Element }[];
         isStudent: boolean;
     }>;
 }
@@ -50,7 +50,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
     return (
         <Box display="flex" flexDirection="column" minHeight="100vh" p={2}>
             <Box display="flex" alignItems="center" mb={2}>
-                <IconButton onClick={handleGoBack} sx={{ mr: 2 }}>
+                <IconButton onClick={handleGoBack} sx={{ mr: 2 }} aria-label="Go back">
                     <ArrowBackIosIcon />
                 </IconButton>
                 <Typography variant='h4' sx={{ fontWeight: 'bold' }}>
@@ -204,7 +204,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
                             >
                                 {item.icon}
                                 <Typography>
-                                    {id === 0 ? 'LVL: ' : id === 1 ? 'Faculty: ' : id === 2 ?  'ITMO ID: ' : ''}
+                                    {id === 0 ? 'LVL: ' : id === 1 ? 'Faculty: ' : id === 2 ? 'ITMO ID: ' : ''}
                                     {item.text}
                                 </Typography>
                             </Box>
