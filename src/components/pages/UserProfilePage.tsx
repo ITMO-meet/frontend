@@ -227,7 +227,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
                         <Button
                             variant="contained"
                             color="secondary"
-                            onClick={() => console.log("view schedule")}
+                            onClick={() => navigate('/schedule', { state: { itmoId: currentUser.itmo[2]?.text } })}
                         >
                             View schedule
                         </Button>
