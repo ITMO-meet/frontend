@@ -90,8 +90,19 @@ const Messages: React.FC<ChatProps> = ({ contacts }) => {
         <IconButton onClick={() => navigate(-1)}>
           <ArrowBackIosIcon />
         </IconButton>
-        <Avatar src={contact.pfp} sx={{ width: 40, height: 40, mx: 1 }} />
-        <Typography variant="h6">{contact.name}</Typography>
+        <Box
+          onClick={() => navigate(`/user-profile/${contact.id}`)}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            flexGrow: 1,
+            cursor: 'pointer',
+            ml: 1,
+          }}
+        >
+          <Avatar src={contact.pfp} sx={{ width: 40, height: 40, mx: 1 }} />
+          <Typography variant="h6">{contact.name}</Typography>
+        </Box>
       </Paper>
 
       {/* Messages List */}
