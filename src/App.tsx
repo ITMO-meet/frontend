@@ -36,6 +36,7 @@ import UserProfilePage from './components/pages/UserProfilePage';
 import SchoolIcon from '@mui/icons-material/School';
 import HomeIcon from '@mui/icons-material/Home';
 import BadgeIcon from '@mui/icons-material/Badge';
+import CalendarPage from './components/pages/CalendarPage';
 
 const contacts = [
   {
@@ -258,6 +259,7 @@ function AppContent() {
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
           <Route path="/user-profile/:id" element={<UserProfilePage people={people} />} />
+          <Route path="/schedule" element={<CalendarPage />} />
           <Route path="/premium" element={<PremiumPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
