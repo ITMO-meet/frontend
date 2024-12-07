@@ -36,7 +36,6 @@ import UserProfilePage from './components/pages/UserProfilePage';
 import SchoolIcon from '@mui/icons-material/School';
 import HomeIcon from '@mui/icons-material/Home';
 import BadgeIcon from '@mui/icons-material/Badge';
-import GroupIcon from '@mui/icons-material/Group';
 
 const contacts = [
   {
