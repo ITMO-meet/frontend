@@ -3,22 +3,38 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Box, Typography, CircularProgress } from '@mui/material';
+import { useLocation } from 'react-router-dom'
 
 const localizer = momentLocalizer(moment);
+const getToken = async (itmoId: string): Promise<string> => {
+    console.log(`getting token for itmo id: ${itmoId}`);
+    const mockedToken = 'Bearer xxx';
+    return new Promise((resolve) => setTimeout(() => resolve(mockedToken), 1000));
+};
+
 
 const CalendarPage: React.FC = () => {
     const [events, setEvents] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
+    const location = useLocation();
+    const { itmoId } = location.state || {};
+
+
     useEffect(() => {
+        if (!itmoId) {
+            console.error('ITMO ID is missing');
+            return;
+        }
         const fetchSchedule = async () => {
             setLoading(true);
 
-            const token = 'Bearer xxx';
-            const dateStart = '2024-09-01';
+            const dateStart = '2024-09-01'; // TODO: fix to normal dates ;)
             const dateEnd = '2025-02-01';
 
             try {
+                const token = await getToken(itmoId);
+
                 const response = await fetch(
                     `https://my.itmo.ru/api/schedule/schedule/personal?date_start=${dateStart}&date_end=${dateEnd}`,
                     {
@@ -55,7 +71,17 @@ const CalendarPage: React.FC = () => {
         };
 
         fetchSchedule();
-    }, []);
+    }, [itmoId]);
+
+    if (!itmoId) {
+        return (
+            <Box p={2}>
+                <Typography variant="h6" textAlign="center">
+                    ITMO ID is missing. Please return to the previous page.
+                </Typography>
+            </Box>
+        );
+    }
 
     return (
         <Box p={2}>
