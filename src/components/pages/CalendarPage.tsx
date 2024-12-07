@@ -3,33 +3,59 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Box, Typography, CircularProgress } from '@mui/material';
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom';
+
 
 const localizer = momentLocalizer(moment);
-const getToken = async (itmoId: string): Promise<string> => {
-    console.log(`getting token for itmo id: ${itmoId}`);
-    const mockedToken = 'Bearer xxx';
-    return new Promise((resolve) => setTimeout(() => resolve(mockedToken), 1000));
+
+const getToken = async (itmoId: string): Promise<string> => { // eslint-disable-line @typescript-eslint/no-unused-vars
+    return Promise.resolve('Bearer xxx'); // TODO: FIX FOR BACKEND
 };
 
+interface Lesson {
+    subject: string;
+    room: string | null;
+    building: string | null;
+    time_start: string;
+    time_end: string;
+}
+
+interface Day {
+    date: string;
+    lessons: Lesson[];
+}
+
+export interface Event {
+    title: string;
+    start: Date;
+    end: Date;
+    location: string;
+}
 
 const CalendarPage: React.FC = () => {
-    const [events, setEvents] = useState<any[]>([]);
+    const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
     const location = useLocation();
     const { itmoId } = location.state || {};
 
+    if (!itmoId) {
+        return (
+            <Box p={2}>
+                <Typography variant="h6" textAlign="center">
+                    ITMO ID is missing ;c
+                </Typography>
+            </Box>
+        );
+    }
 
     useEffect(() => {
-        if (!itmoId) {
-            console.error('ITMO ID is missing');
-            return;
-        }
         const fetchSchedule = async () => {
             setLoading(true);
+            setError(null);
 
-            const dateStart = '2024-09-01'; // TODO: fix to normal dates ;)
+            const dateStart = '2024-09-01'; // TODO: fix to dynamic dates (WONTFIX UNTIL NEW YEAR)
             const dateEnd = '2025-02-01';
 
             try {
@@ -48,11 +74,11 @@ const CalendarPage: React.FC = () => {
                 if (!response.ok) {
                     throw new Error('Error fetching schedule');
                 }
+                setLoading(false);
 
                 const data = await response.json();
-                console.log(data);
-                const parsedEvents = data.data.flatMap((day: any) =>
-                    day.lessons.map((lesson: any) => ({
+                const parsedEvents = data.data.flatMap((day: Day) =>
+                    day.lessons.map((lesson: Lesson) => ({
                         title: `${lesson.subject} (${lesson.room || 'Online(?)'}, ${lesson.building || ''})`,
                         start: new Date(`${day.date}T${lesson.time_start}`),
                         end: new Date(`${day.date}T${lesson.time_end}`),
@@ -64,7 +90,8 @@ const CalendarPage: React.FC = () => {
 
                 setEvents(parsedEvents);
             } catch (error) {
-                console.error('Error:', error);
+                console.error(error); // Log the error
+                setError('Error fetching schedule');
             } finally {
                 setLoading(false);
             }
@@ -73,11 +100,11 @@ const CalendarPage: React.FC = () => {
         fetchSchedule();
     }, [itmoId]);
 
-    if (!itmoId) {
+    if (error) {
         return (
             <Box p={2}>
-                <Typography variant="h6" textAlign="center">
-                    ITMO ID is missing. Please return to the previous page.
+                <Typography variant='h6' textAlign='center'>
+                    Error occurred: {error}
                 </Typography>
             </Box>
         );
@@ -109,6 +136,7 @@ const CalendarPage: React.FC = () => {
                         day: 'Day',
                     }}
                     views={['month', 'day', 'agenda']}
+                    data-testid="calendar"
                 />
             )}
         </Box>
