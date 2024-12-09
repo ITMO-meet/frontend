@@ -218,6 +218,26 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
                 </IconButton>
             </Box>
 
+            {/* Просмотр профиля */}
+            <Box
+                textAlign='center'
+                mb={2}
+            >
+                <Button
+                    variant='contained'
+                    color="secondary"
+                    sx={{
+                        fontWeight: 'bold',
+                        borderRadius: '8px',
+                        textTransform: 'none',
+                        padding: '10px 16px',
+                    }}
+                    onClick={() => navigate(`/user-profile/${currentMatch.id}`)}
+                >
+                    View Profile
+                </Button>
+            </Box>
+
             {/* Фичи и интересы */}
             <Paper
                 sx={{

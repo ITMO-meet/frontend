@@ -30,7 +30,14 @@ import CelebrationIcon from '@mui/icons-material/Celebration';
 import { PremiumProvider } from './contexts/PremiumContext';
 import PremiumPage from './components/pages/PremiumPage';
 import AddStoryPage from './components/pages/AddStoryPage';
+import SettingsPage from './components/pages/SettingsPage';
 import { initGA, logPageView } from './analytics';
+import UserProfilePage from './components/pages/UserProfilePage';
+import SchoolIcon from '@mui/icons-material/School';
+import HomeIcon from '@mui/icons-material/Home';
+import BadgeIcon from '@mui/icons-material/Badge';
+import CalendarPage from './components/pages/CalendarPage';
+
 const contacts = [
   {
     id: '1',
@@ -100,6 +107,12 @@ const people = [
       { text: 'Cooking', icon: <RestaurantIcon /> },
       { text: 'Raves', icon: <CelebrationIcon /> },
     ],
+    itmo: [
+      { text: "1", icon: <SchoolIcon /> }, // course
+      { text: "ПИиКТ", icon: <HomeIcon /> }, // faculty
+      { text: "123456", icon: <BadgeIcon /> }, // itmo id
+    ],
+    isStudent: true,
   },
   {
     id: 2,
@@ -122,6 +135,12 @@ const people = [
       { text: 'Traveling', icon: <MusicNoteIcon /> },
       { text: 'Painting', icon: <FitnessCenterIcon /> },
     ],
+    itmo: [
+      { text: "2", icon: <SchoolIcon /> }, // course
+      { text: "ИТиП", icon: <HomeIcon /> }, // faculty
+      { text: "654321", icon: <BadgeIcon /> }, // itmo id
+    ],
+    isStudent: true,
   },
   {
     id: 3,
@@ -144,6 +163,12 @@ const people = [
       { text: 'Traveling', icon: <MusicNoteIcon /> },
       { text: 'Painting', icon: <FitnessCenterIcon /> },
     ],
+    itmo: [
+      { text: "1", icon: <SchoolIcon /> }, // course
+      { text: "ИДУ", icon: <HomeIcon /> }, // faculty
+      { text: "852456", icon: <BadgeIcon /> }, // itmo id
+    ],
+    isStudent: true,
   },
 ];
 
@@ -170,7 +195,7 @@ const mockGetQuestions = (id: number) => {
 }
 
 const shouldHideNav = (pathname: string): boolean => {
-  const hiddenRoutes = ['/login', '/register', '/edit-profile'];
+  const hiddenRoutes = ['/login', '/register', '/edit-profile', '/settings'];
   const hiddenRoutesRegex = /^\/.+\/[^/]+$/;
 
   if (hiddenRoutes.includes(pathname)) {
@@ -212,7 +237,7 @@ function AppContent() {
   useEffect(() => {
     logPageView(location.pathname);
   }, [location.pathname]);
-  
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const getNext = () => {
     setCurrentIndex((prev) => (prev + 1) % people.length);
@@ -231,7 +256,10 @@ function AppContent() {
           <Route path="/tests" element={<TestsPage />} />
           <Route path="/tests/:id" element={<Quiz getQuestions={mockGetQuestions} onExit={() => navigate("/chats")} onFinish={console.log} />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
+          <Route path="/user-profile/:id" element={<UserProfilePage people={people} />} />
+          <Route path="/schedule" element={<CalendarPage />} />
           <Route path="/premium" element={<PremiumPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />

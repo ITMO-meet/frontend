@@ -98,7 +98,7 @@ const ProfilePage: React.FC = () => {
             {/* Заголовок с кнопкой настроек поверх фотографии */}
             <Box width="100%" bgcolor="transparent" display="flex" justifyContent="space-between" alignItems="center" p={2} position="absolute" top={0} zIndex={2}>
                 <Typography variant="h5" color="white">Profile</Typography>
-                <ImageButton onClick={() => console.log('Settings clicked')} >
+                <ImageButton onClick={() => navigate('/settings')} >
                     <SettingsIcon sx={{ color: 'rgba(52, 87, 169)' }} />
                 </ImageButton>
             </Box>
