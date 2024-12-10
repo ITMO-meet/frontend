@@ -23,14 +23,13 @@ const steps = [
 export const RegisterPage: React.FC = () => {
 	const navigate = useNavigate();
 	const [currentStep, setCurrentStep] = useState(0);
-	const [userData, setUserData] = useState<object>({});
 
-	const handleNext = (data: object) => {
-		const newData = { ...userData, ...data }
-		setUserData(newData);
+	const isu = Number(localStorage.getItem('isu') || '0');
+
+	const handleNext = async () => {
 		setCurrentStep((prev) => prev + 1);
 		if (currentStep === steps.length - 1) {
-			handleFinish(newData);
+			handleFinish();
 		}
 	};
 
@@ -38,10 +37,8 @@ export const RegisterPage: React.FC = () => {
 		setCurrentStep((prev) => Math.max(prev - 1, 0));
 	};
 
-	const handleFinish = (data: object) => {
-		console.log('Registration complete:', data);
-		// TODO: send data
-		// TODO: pass initinl test id
+	const handleFinish = () => {
+		// После завершения регистрации отправляем на тесты
 		const initialTestId = 1;
 		navigate(`/tests/${initialTestId}`);
 	};
@@ -49,17 +46,17 @@ export const RegisterPage: React.FC = () => {
 	const renderStep = () => {
 		switch (steps[currentStep]) {
 			case 'username':
-				return <UsernameStep onNext={handleNext} />;
+				return <UsernameStep isu={isu} onNext={handleNext} />;
 			case 'gender':
-				return <GenderStep onNext={handleNext} />;
+				return <GenderStep isu={isu} onNext={handleNext} />;
 			case 'tags':
-				return <TagsStep onNext={handleNext} />;
+				return <TagsStep isu={isu} onNext={handleNext} />;
 			case 'photo':
-				return <PhotoStep onNext={handleNext} />;
+				return <PhotoStep isu={isu} onNext={handleNext} />;
 			case 'additional-photos':
-				return <AdditionalPhotosStep onNext={handleNext} />;
+				return <AdditionalPhotosStep isu={isu} onNext={handleNext} />;
 			case 'goal':
-				return <GoalStep onNext={handleNext} />;
+				return <GoalStep isu={isu} onNext={handleNext} />;
 			default:
 				return null;
 		}
