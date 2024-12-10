@@ -37,6 +37,7 @@ import SchoolIcon from '@mui/icons-material/School';
 import HomeIcon from '@mui/icons-material/Home';
 import BadgeIcon from '@mui/icons-material/Badge';
 import CalendarPage from './components/pages/CalendarPage';
+import { ErrorProvider } from './contexts/ErrorContext';
 
 const contacts = [
   {
@@ -213,12 +214,14 @@ function App() {
   return (
     <Provider config={rollbarConfig}>
       <ErrorBoundary level={"error"} fallbackUI={FallbackUI}>
+        <ErrorProvider>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <PremiumProvider>
             <AppContent />
           </PremiumProvider>
         </ThemeProvider>
+        </ErrorProvider>
       </ErrorBoundary>
     </Provider>
   );
