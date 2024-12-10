@@ -1,41 +1,61 @@
 // TagsStep.tsx
-import { Box, Typography } from '@mui/material'; // Импортируем компоненты из MUI
-import React, { useState } from 'react'; // Импортируем React и хук useState
-import MultiSelectButtonGroup from '../basic/MultiSelectButtonGroup'; // Импортируем компонент для выбора нескольких кнопок
-import RoundButton from '../basic/RoundButton'; // Импортируем компонент круглой кнопки
+import { Box, Typography, Button } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { selectTags, fetchTags } from '../../api/register';
+import { useError } from '../../contexts/ErrorContext';
 
-// Определяем доступные теги для выбора
-const tags = ['Спорт', 'Музыка', 'Путешествия', 'Чтение'];
-
-// Определяем интерфейс для пропсов компонента
 interface TagsStepProps {
-  onNext: (data: { tags: string[] }) => void; // Функция, которая будет вызвана при переходе к следующему шагу с выбранными тегами
+    isu: number;
+    onNext: () => void;
 }
 
-// Основной компонент TagsStep
-const TagsStep: React.FC<TagsStepProps> = ({ onNext }) => {
-  const [selectedTags, setSelectedTags] = useState<string[]>([]); // Хук состояния для хранения выбранных тегов
+const TagsStep: React.FC<TagsStepProps> = ({ isu, onNext }) => {
+    const { showError } = useError();
+    const [allTags, setAllTags] = useState<string[]>([]);
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  // Функция для обработки отправки данных
-  const handleSubmit = () => {
-    onNext({ tags: selectedTags }); // Вызываем функцию onNext с выбранными тегами
-  };
+    useEffect(() => {
+        fetchTags().then(setAllTags).catch(err => showError(err.message));
+    }, [showError]);
 
-  return (
-    <Box style={{ padding: '20px' }}> {/* Обертка с отступами */}
-      <Typography variant="h5" align='center' sx={{ marginBottom: "20px" }}>Main Interests</Typography> {/* Заголовок */}
-      <MultiSelectButtonGroup 
-        options={tags} // Передаем доступные теги в компонент выбора
-        onClickOption={setSelectedTags} // Обновляем состояние при выборе тегов
-      />
-      <RoundButton 
-        onClick={handleSubmit} // Обработчик клика по кнопке
-        sx={{ width: "100%", marginTop: "20px" }} // Стили для кнопки
-      >
-        Next
-      </RoundButton>
-    </Box>
-  );
+    const toggleTag = (tag: string) => {
+        setSelectedTags((prev) =>
+            prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+        );
+    };
+
+    const handleSubmit = async () => {
+        if (selectedTags.length === 0) {
+            showError('Please select at least one tag');
+            return;
+        }
+        try {
+            await selectTags({ isu, tags: selectedTags });
+            onNext();
+        } catch(e: any) {
+            showError(e.message);
+        }
+    };
+
+    return (
+        <Box padding="20px">
+            <Typography variant="h5" align="center" mb={2}>Select Tags</Typography>
+            <Box display="flex" flexWrap="wrap" gap={1} justifyContent="center">
+                {allTags.map(tag => (
+                    <Button
+                        key={tag}
+                        variant={selectedTags.includes(tag) ? 'contained' : 'outlined'}
+                        onClick={() => toggleTag(tag)}
+                    >
+                        {tag}
+                    </Button>
+                ))}
+            </Box>
+            <Button onClick={handleSubmit} disabled={selectedTags.length === 0} fullWidth sx={{mt:2}}>
+                Next
+            </Button>
+        </Box>
+    );
 };
 
-export default TagsStep; // Экспортируем компонент для использования в других частях приложения
+export default TagsStep;

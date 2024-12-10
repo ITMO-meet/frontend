@@ -1,72 +1,55 @@
 // GoalStep.tsx
-import { Box, Card, CardContent, Typography } from '@mui/material'; // Импортируем необходимые компоненты из MUI
-import React from 'react'; // Импортируем React
-import RoundButton from '../basic/RoundButton'; // Импортируем компонент круглой кнопки
-import theme from '../theme'; // Импортируем тему для стилизации
+import { Box, Typography, Button } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { selectRelationship, fetchPreferences } from '../../api/register';
+import { useError } from '../../contexts/ErrorContext';
 
-// Массив с целями, каждая цель имеет уникальный id, заголовок и описание
-const goals = [
-  { id: 1, title: 'Знакомства', description: 'Найти новых друзей и знакомых.' },
-  { id: 2, title: 'Отношения', description: 'Построить романтические отношения.' },
-  { id: 3, title: 'Дружба', description: 'Найти верных друзей.' },
-  { id: 4, title: 'Общение', description: 'Улучшить навыки общения.' },
-];
-
-// Определяем интерфейс для пропсов компонента
 interface GoalStepProps {
-  onNext: (data: { goal: string }) => void; // Функция, которая будет вызвана при выборе цели
+    isu: number;
+    onNext: () => void;
 }
 
-// Основной компонент GoalStep
-const GoalStep: React.FC<GoalStepProps> = ({ onNext }) => {
-  const [selectedGoal, setSelectedGoal] = React.useState<number | null>(null); // Хук состояния для хранения выбранной цели
+const GoalStep: React.FC<GoalStepProps> = ({ isu, onNext }) => {
+    const { showError } = useError();
+    const [allGoals, setAllGoals] = useState<string[]>([]);
+    const [goal, setGoal] = useState('');
 
-  // Функция для обработки выбора цели
-  const handleGoalSelect = (goalId: number) => {
-    setSelectedGoal(goalId); // Устанавливаем выбранную цель
-  };
+    useEffect(() => {
+        fetchPreferences().then(setAllGoals).catch(err => showError(err.message));
+    }, [showError]);
 
-  // Функция для обработки отправки данных
-  const handleSubmit = () => {
-    if (selectedGoal !== null) { // Проверяем, что цель выбрана
-      const selectedGoalData = goals.find(goal => goal.id === selectedGoal); // Находим выбранную цель по id
-      if (selectedGoalData) {
-        onNext({ goal: selectedGoalData.title }); // Вызываем функцию onNext с заголовком выбранной цели
-      }
-    }
-  };
+    const handleSubmit = async () => {
+        if (!goal) {
+            showError('Please select your relationship preference');
+            return;
+        }
+        try {
+            await selectRelationship({ isu, relationship_preference: [goal] });
+            onNext();
+        } catch(e: any) {
+            showError(e.message);
+        }
+    };
 
-  return (
-    <Box style={{ padding: '20px' }}> {/* Обертка с отступами */}
-      <Typography variant="h5" align='center' sx={{ marginBottom: "20px" }}>What are you looking for?</Typography> {/* Заголовок */}
-      <Typography variant="h6" align='center' sx={{ marginBottom: "20px" }}>It can be changed at any time</Typography> {/* Подзаголовок с инструкцией */}
-      {goals.map(({ id, title, description }) => ( // Перебираем массив целей и отображаем их
-        <Card
-          key={id} // Уникальный ключ для каждого элемента
-          onClick={() => handleGoalSelect(id)} // Обработчик клика для выбора цели
-          style={{
-            margin: '10px 0', // Отступы между карточками
-            cursor: 'pointer', // Указатель при наведении
-            background: selectedGoal === id ? theme.palette.secondary.light : "white", // Изменяем фон выбранной карточки
-          }}
-        >
-          <CardContent>
-            <Typography variant="h6">{title}</Typography> {/* Заголовок цели */}
-            <Typography variant="body2" color="textSecondary">
-              {description} {/* Описание цели */}
-            </Typography>
-          </CardContent>
-        </Card>
-      ))}
-      <RoundButton 
-        disabled={selectedGoal === null} // Кнопка отключена, если цель не выбрана
-        onClick={handleSubmit} // Обработчик клика по кнопке
-        sx={{ width: "100%", marginTop: "20px" }} // Стили для кнопки
-      >
-        Next
-      </RoundButton>
-    </Box>
-  );
+    return (
+        <Box padding="20px">
+            <Typography variant="h5" align="center" mb={2}>What are you looking for?</Typography>
+            <Box display="flex" justifyContent="center" gap={1} flexWrap="wrap">
+                {allGoals.map(g => (
+                    <Button
+                        key={g}
+                        variant={g === goal ? 'contained' : 'outlined'}
+                        onClick={() => setGoal(g)}
+                    >
+                        {g}
+                    </Button>
+                ))}
+            </Box>
+            <Button onClick={handleSubmit} disabled={!goal} fullWidth sx={{mt:2}}>
+                Next
+            </Button>
+        </Box>
+    );
 };
 
-export default GoalStep; // Экспортируем компонент для использования в других частях приложения
+export default GoalStep;
