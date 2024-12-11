@@ -9,6 +9,7 @@ interface UserProfilePageProps {
     people: Array<{
         isu: number;
         username: string;
+        bio: string;
         logo: string;
         photos: string[];
         mainFeatures: { text: string; icon: JSX.Element }[];
@@ -128,6 +129,22 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
                     borderRadius: '12px',
                 }}
             >
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                    Bio
+                </Typography>
+                <Typography
+                    sx={{
+                        mb: 2,
+                        fontStyle: 'italic',
+                        bgcolor: 'rgba(245, 245, 245, 0.8)',
+                        borderRadius: '8px',
+                        p: 2,
+                        fontSize: '16px',
+                        border: '1px solid rgba(214, 231, 255, 0.8)',
+                    }}
+                >
+                    {currentUser.bio || "No bio available"}
+                </Typography>
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
                     Main Features
                 </Typography>
