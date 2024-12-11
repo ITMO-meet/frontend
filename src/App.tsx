@@ -37,6 +37,10 @@ import SchoolIcon from '@mui/icons-material/School';
 import HomeIcon from '@mui/icons-material/Home';
 import BadgeIcon from '@mui/icons-material/Badge';
 import CalendarPage from './components/pages/CalendarPage';
+import MonitorWeightIcon from '@mui/icons-material/MonitorWeight';
+import MaleIcon from '@mui/icons-material/Male';
+import FemaleIcon from '@mui/icons-material/Female';
+import CakeIcon from '@mui/icons-material/Cake';
 
 const contacts = [
   {
@@ -171,6 +175,128 @@ const people = [
     isStudent: true,
   },
 ];
+
+const people2 = [
+  {
+    isu: 123456,
+    username: 'Jane Smith1',
+    bio: 'Test bio for User1',
+    logo: 'https://steamuserimages-a.akamaihd.net/ugc/1844789643806854188/FB581EAD503907F56A009F85371F6FB09A467FEC/?imw=512&imh=497&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true',
+    photos: [
+      'https://randomwordgenerator.com/img/picture-generator/54e7d7404853a914f1dc8460962e33791c3ad6e04e507440752972d29e4bc3_640.jpg',
+      'https://randomwordgenerator.com/img/picture-generator/54e2d34b4a52aa14f1dc8460962e33791c3ad6e04e507749742c78d59e45cc_640.jpg',
+    ],
+    mainFeatures: [  // брать из person_params
+      { text: '175 cm', icon: <StraightenIcon /> },   // person_params.height
+      { text: 'Aries', icon: <Typography sx={{ fontSize: 20 }}>♈️</Typography> }, // person_params.zodiac_sign
+      { text: '70.5 kg', icon: <MonitorWeightIcon /> }, // peson_params.weight
+      { text: 'Atheism', icon: <ChurchIcon /> },
+      { text: 'No but would like', icon: <ChildCareIcon /> },
+      { text: 'Neutral', icon: <LocalBarIcon /> },
+      { text: 'Neutral', icon: <SmokingRoomsIcon /> },
+      { text: 'Male', icon: <MaleIcon /> }, // peson_params.gender
+      { text: '2005-12-12', icon: <CakeIcon /> }// peson_params.birthdate
+    ],
+    interests: [
+      { text: 'Music', icon: <MusicNoteIcon /> }, // tags with is_special = 0
+      { text: 'GYM', icon: <FitnessCenterIcon /> },
+    ],
+    itmo: [
+      { text: "1", icon: <SchoolIcon /> },  // person_params.course, course
+      { text: "ПИиКТ", icon: <HomeIcon /> },// person_params.faculty
+      { text: "123456", icon: <BadgeIcon /> }, // itmo id. TODO: use isu from user, not from here duh
+    ],
+    gender_preferences: [ // Not used YET
+      { text: "everyone", icon: "gender_preferences_placeholder" } // preferences.gender_preferences
+    ],
+    relationship_preferences: [
+      { text: "id тега", // tags with is_special = 1
+        icon: "relationship_preferences_placeholder" // preferences.relationship_preferences
+      }
+    ],
+    isStudent: true // always true
+  },
+  {
+    isu: 789852,
+    username: 'Jane Smith2',
+    bio: 'Test bio for User2',
+    logo: 'https://i.pinimg.com/736x/56/21/7b/56217b1ef6a69a2583ff13655d48bc53.jpg',
+    photos: [
+      'https://randomwordgenerator.com/img/picture-generator/53e9d7444b50b10ff3d8992cc12c30771037dbf852547849752678d5964e_640.jpg',
+      'https://randomwordgenerator.com/img/picture-generator/52e9d2474854a514f1dc8460962e33791c3ad6e04e50744172297cdd944fc2_640.jpg',
+    ],
+    mainFeatures: [  // брать из person_params
+      { text: '165 cm', icon: <StraightenIcon /> },   // person_params.height
+      { text: 'Aries', icon: <Typography sx={{ fontSize: 20 }}>♈️</Typography> }, // person_params.zodiac_sign
+      { text: '60.5 kg', icon: <MonitorWeightIcon /> }, // peson_params.weight
+      { text: 'Atheism', icon: <ChurchIcon /> },
+      { text: 'No but would like', icon: <ChildCareIcon /> },
+      { text: 'Neutral', icon: <LocalBarIcon /> },
+      { text: 'Neutral', icon: <SmokingRoomsIcon /> },
+      { text: 'Male', icon: <MaleIcon /> }, // peson_params.gender
+      { text: '2000-12-12', icon: <CakeIcon /> }// peson_params.birthdate
+    ],
+    interests: [
+      { text: 'Music', icon: <MusicNoteIcon /> }, // tags with is_special = 0
+      { text: 'GYM', icon: <FitnessCenterIcon /> },
+      { text: 'Painting', icon: <FitnessCenterIcon /> },
+    ],
+    itmo: [
+      { text: "2", icon: <SchoolIcon /> },  // person_params.course, course
+      { text: "ИТиП", icon: <HomeIcon /> },// person_params.faculty
+      { text: "789852", icon: <BadgeIcon /> }, // itmo id. TODO: use isu from user, not from here duh
+    ],
+    gender_preferences: [ // Not used YET
+      { text: "everyone", icon: "gender_preferences_placeholder" } // preferences.gender_preferences
+    ],
+    relationship_preferences: [
+      { text: "id тега", // tags with is_special = 1
+        icon: "relationship_preferences_placeholder" // preferences.relationship_preferences
+      }
+    ],
+    isStudent: true // always true
+  },
+  {
+    isu: 159753,
+    username: 'Jane Smith3',
+    bio: 'Test bio for User3',
+    logo: 'https://avatars.yandex.net/get-music-content/5878680/7bee58da.a.25445174-1/m1000x1000?webp=false',
+    photos: [
+      'https://randomwordgenerator.com/img/picture-generator/53e9d7444b50b10ff3d8992cc12c30771037dbf852547849752678d5964e_640.jpg',
+      'https://randomwordgenerator.com/img/picture-generator/52e9d2474854a514f1dc8460962e33791c3ad6e04e50744172297cdd944fc2_640.jpg',
+    ],
+    mainFeatures: [  // брать из person_params
+      { text: '195 cm', icon: <StraightenIcon /> },   // person_params.height
+      { text: 'Aries', icon: <Typography sx={{ fontSize: 20 }}>♈️</Typography> }, // person_params.zodiac_sign
+      { text: '69.5 kg', icon: <MonitorWeightIcon /> }, // peson_params.weight
+      { text: 'Catholicism', icon: <ChurchIcon /> },
+      { text: 'No but would like', icon: <ChildCareIcon /> },
+      { text: 'Neutral', icon: <LocalBarIcon /> },
+      { text: 'Neutral', icon: <SmokingRoomsIcon /> },
+      { text: 'Female', icon: <FemaleIcon /> }, // peson_params.gender
+      { text: '2005-12-12', icon: <CakeIcon /> }// peson_params.birthdate
+    ],
+    interests: [
+      { text: 'Music', icon: <MusicNoteIcon /> }, // tags with is_special = 0
+      { text: 'GYM', icon: <FitnessCenterIcon /> },
+      { text: 'Traveling', icon: <MusicNoteIcon /> },
+    ],
+    itmo: [
+      { text: "1", icon: <SchoolIcon /> },  // person_params.course, course
+      { text: "ИДУ", icon: <HomeIcon /> },// person_params.faculty
+      { text: "159753", icon: <BadgeIcon /> }, // itmo id. TODO: use isu from user, not from here duh
+    ],
+    gender_preferences: [ // Not used YET
+      { text: "everyone", icon: "gender_preferences_placeholder" } // preferences.gender_preferences
+    ],
+    relationship_preferences: [
+      { text: "id тега", // tags with is_special = 1
+        icon: "relationship_preferences_placeholder" // preferences.relationship_preferences
+      }
+    ],
+    isStudent: true // always true
+  }
+]
 
 const mockGetQuestions = (id: number) => {
   if (id === 1) {
