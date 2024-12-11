@@ -369,8 +369,9 @@ function AppContent() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const getNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % people.length);
-    return people[currentIndex];
+    //setCurrentIndex((prev) => (prev + 1) % people.length);
+    setCurrentIndex((prev) => (prev + 1) % people2.length);
+    return people2[currentIndex];
   }
 
   return (
