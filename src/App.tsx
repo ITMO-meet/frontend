@@ -210,7 +210,8 @@ const people2 = [
       { text: "everyone", icon: "gender_preferences_placeholder" } // preferences.gender_preferences
     ],
     relationship_preferences: [
-      { text: "id тега", // tags with is_special = 1
+      {
+        text: "id тега", // tags with is_special = 1
         icon: "relationship_preferences_placeholder" // preferences.relationship_preferences
       }
     ],
@@ -250,7 +251,8 @@ const people2 = [
       { text: "everyone", icon: "gender_preferences_placeholder" } // preferences.gender_preferences
     ],
     relationship_preferences: [
-      { text: "id тега", // tags with is_special = 1
+      {
+        text: "id тега", // tags with is_special = 1
         icon: "relationship_preferences_placeholder" // preferences.relationship_preferences
       }
     ],
@@ -290,7 +292,8 @@ const people2 = [
       { text: "everyone", icon: "gender_preferences_placeholder" } // preferences.gender_preferences
     ],
     relationship_preferences: [
-      { text: "id тега", // tags with is_special = 1
+      {
+        text: "id тега", // tags with is_special = 1
         icon: "relationship_preferences_placeholder" // preferences.relationship_preferences
       }
     ],
