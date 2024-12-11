@@ -388,7 +388,7 @@ function AppContent() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
-          <Route path="/user-profile/:id" element={<UserProfilePage people={people} />} />
+          <Route path="/user-profile/:id" element={<UserProfilePage people={people2} />} />
           <Route path="/schedule" element={<CalendarPage />} />
           <Route path="/premium" element={<PremiumPage />} />
           <Route path="/register" element={<RegisterPage />} />
