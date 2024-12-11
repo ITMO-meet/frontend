@@ -4,16 +4,16 @@ import { FeedPage } from '../../src/components/pages/FeedPage';
 import '@testing-library/jest-dom';
 
 const person1 = {
-    id: 1,
-    imageUrl: 'https://example.com/image.jpg',
-    name: 'John Doe',
-    description: 'A sample person',
+    isu: 1,
+    logo: 'https://example.com/image.jpg',
+    username: 'John Doe',
+    bio: 'A sample person',
 }
 const person2 = {
-    id: 2,
-    imageUrl: 'https://example.com/image.jpg',
-    name: 'John Doe2',
-    description: 'A sample person2',
+    isu: 2,
+    logo: 'https://example.com/image.jpg',
+    username: 'John Doe2',
+    bio: 'A sample person2',
 }
 
 describe('FeedPage', () => {
