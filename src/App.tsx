@@ -198,13 +198,13 @@ const messages = [
 
 const stories = [
   {
-    _id: '6739c9f339fddecc6b8a44d8',
+    id: '6739c9f339fddecc6b8a44d8',
     isu: 386871,
     url: 'meet/stories/386871_cd6e05dc-36ee-457b-aa02-c0a01d3041ec.jpg',
     expiration_date: 1731926899,
   },
   {
-    _id: '6739c9f339fddecc6b8a44d9',
+    id: '6739c9f339fddecc6b8a44d9',
     isu: 123456,
     url: 'meet/stories/123456_cd6e05dc-36ee-457b-aa02-c0a01d3041ec.jpg',
     expiration_date: 1731926899,
