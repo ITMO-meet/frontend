@@ -381,7 +381,7 @@ function AppContent() {
           <Route path="/chats" element={<ChatPage contacts={contacts} />} />
           <Route path="/add-story" element={<AddStoryPage />} />
           <Route path="/chat/:id" element={<Messages contacts={contacts} />} />
-          <Route path="/matches" element={<MatchesPage people={people} />} />
+          <Route path="/matches" element={<MatchesPage people={people2} />} />
           <Route path="/feed" element={<FeedPage getNextPerson={getNext} onLike={console.log} onDislike={console.log} onSuperLike={console.log} />} />
           <Route path="/tests" element={<TestsPage />} />
           <Route path="/tests/:id" element={<Quiz getQuestions={mockGetQuestions} onExit={() => navigate("/chats")} onFinish={console.log} />} />
