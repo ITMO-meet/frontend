@@ -177,6 +177,40 @@ const contacts = [
 //   },
 // ];
 
+const messages = [
+  {
+    id: '673104c693cce2c89fabb2d1',
+    chat_id: 'c4a127c4-0f9c-4b90-ab32-0548e019d26f',
+    sender_id: 386871,
+    receiver_id: 123456,
+    text: 'test_mess1',
+    timestamp: '2024-11-10T19:08:54.786+00:00',
+  },
+  {
+    id: '873104c693cce2c89fabb2d2',
+    chat_id: 'c4a127c4-0f9c-4b90-ab32-0548e019d26f',
+    sender_id: 123456,
+    receiver_id: 386871,
+    text: 'test_mess2',
+    timestamp: '2024-11-10T19:10:00.786+00:00',
+  },
+];
+
+const stories = [
+  {
+    _id: '6739c9f339fddecc6b8a44d8',
+    isu: 386871,
+    url: 'meet/stories/386871_cd6e05dc-36ee-457b-aa02-c0a01d3041ec.jpg',
+    expiration_date: 1731926899,
+  },
+  {
+    _id: '6739c9f339fddecc6b8a44d9',
+    isu: 123456,
+    url: 'meet/stories/123456_cd6e05dc-36ee-457b-aa02-c0a01d3041ec.jpg',
+    expiration_date: 1731926899,
+  },
+];
+
 const people = [
   {
     isu: 123456,
@@ -370,7 +404,6 @@ function AppContent() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const getNext = () => {
-    //setCurrentIndex((prev) => (prev + 1) % people.length);
     setCurrentIndex((prev) => (prev + 1) % people.length);
     return people[currentIndex];
   }
