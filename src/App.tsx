@@ -85,98 +85,99 @@ const contacts = [
   },
 ];
 
-const people = [
-  {
-    id: 1,
-    name: 'Jane Smith1',
-    description: 'Product Designer',
-    imageUrl: 'https://steamuserimages-a.akamaihd.net/ugc/1844789643806854188/FB581EAD503907F56A009F85371F6FB09A467FEC/?imw=512&imh=497&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true',
-    photos: [
-      'https://randomwordgenerator.com/img/picture-generator/54e7d7404853a914f1dc8460962e33791c3ad6e04e507440752972d29e4bc3_640.jpg',
-      'https://randomwordgenerator.com/img/picture-generator/54e2d34b4a52aa14f1dc8460962e33791c3ad6e04e507749742c78d59e45cc_640.jpg',
-      'https://randomwordgenerator.com/img/picture-generator/57e9dc434b5ba414f1dc8460962e33791c3ad6e04e50744172297bd5934cc4_640.jpg',
-    ],
-    mainFeatures: [
-      { text: '170 cm', icon: <StraightenIcon /> },
-      { text: 'Atheism', icon: <ChurchIcon /> },
-      { text: 'Aries', icon: <Typography sx={{ fontSize: 20 }}>♈️</Typography> },
-      { text: 'No but would like', icon: <ChildCareIcon /> },
-      { text: 'Neutral', icon: <LocalBarIcon /> },
-      { text: 'Neutral', icon: <SmokingRoomsIcon /> },
-    ],
-    interests: [
-      { text: 'Music', icon: <MusicNoteIcon /> },
-      { text: 'GYM', icon: <FitnessCenterIcon /> },
-      { text: 'Reading', icon: <BookIcon /> },
-      { text: 'Cooking', icon: <RestaurantIcon /> },
-      { text: 'Raves', icon: <CelebrationIcon /> },
-    ],
-    itmo: [
-      { text: "1", icon: <SchoolIcon /> }, // course
-      { text: "ПИиКТ", icon: <HomeIcon /> }, // faculty
-      { text: "123456", icon: <BadgeIcon /> }, // itmo id
-    ],
-    isStudent: true,
-  },
-  {
-    id: 2,
-    name: 'Jane Smith2',
-    description: 'Product Designer',
-    imageUrl: 'https://i.pinimg.com/736x/56/21/7b/56217b1ef6a69a2583ff13655d48bc53.jpg',
-    photos: [
-      'https://randomwordgenerator.com/img/picture-generator/53e9d7444b50b10ff3d8992cc12c30771037dbf852547849752678d5964e_640.jpg',
-      'https://randomwordgenerator.com/img/picture-generator/52e9d2474854a514f1dc8460962e33791c3ad6e04e50744172297cdd944fc2_640.jpg',
-    ],
-    mainFeatures: [
-      { text: '165 cm', icon: <StraightenIcon /> },
-      { text: 'Catholicism', icon: <ChurchIcon /> },
-      { text: 'Libra', icon: <Typography sx={{ fontSize: 20 }}>♎</Typography> },
-      { text: 'Already have', icon: <ChildCareIcon /> },
-      { text: 'Positive', icon: <LocalBarIcon /> },
-      { text: 'Negative', icon: <SmokingRoomsIcon /> },
-    ],
-    interests: [
-      { text: 'Traveling', icon: <MusicNoteIcon /> },
-      { text: 'Painting', icon: <FitnessCenterIcon /> },
-    ],
-    itmo: [
-      { text: "2", icon: <SchoolIcon /> }, // course
-      { text: "ИТиП", icon: <HomeIcon /> }, // faculty
-      { text: "654321", icon: <BadgeIcon /> }, // itmo id
-    ],
-    isStudent: true,
-  },
-  {
-    id: 3,
-    name: 'Jane Smith3',
-    description: 'Product Designer',
-    imageUrl: 'https://avatars.yandex.net/get-music-content/5878680/7bee58da.a.25445174-1/m1000x1000?webp=false',
-    photos: [
-      'https://randomwordgenerator.com/img/picture-generator/53e9d7444b50b10ff3d8992cc12c30771037dbf852547849752678d5964e_640.jpg',
-      'https://randomwordgenerator.com/img/picture-generator/52e9d2474854a514f1dc8460962e33791c3ad6e04e50744172297cdd944fc2_640.jpg',
-    ],
-    mainFeatures: [
-      { text: '195 cm', icon: <StraightenIcon /> },
-      { text: 'Catholicism', icon: <ChurchIcon /> },
-      { text: 'Libra', icon: <Typography sx={{ fontSize: 20 }}>♎</Typography> },
-      { text: 'Already have', icon: <ChildCareIcon /> },
-      { text: 'Positive', icon: <LocalBarIcon /> },
-      { text: 'Negative', icon: <SmokingRoomsIcon /> },
-    ],
-    interests: [
-      { text: 'Traveling', icon: <MusicNoteIcon /> },
-      { text: 'Painting', icon: <FitnessCenterIcon /> },
-    ],
-    itmo: [
-      { text: "1", icon: <SchoolIcon /> }, // course
-      { text: "ИДУ", icon: <HomeIcon /> }, // faculty
-      { text: "852456", icon: <BadgeIcon /> }, // itmo id
-    ],
-    isStudent: true,
-  },
-];
+// deprecated. let it be just in case
+// const people = [
+//   {
+//     id: 1,
+//     name: 'Jane Smith1',
+//     description: 'Product Designer',
+//     imageUrl: 'https://steamuserimages-a.akamaihd.net/ugc/1844789643806854188/FB581EAD503907F56A009F85371F6FB09A467FEC/?imw=512&imh=497&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true',
+//     photos: [
+//       'https://randomwordgenerator.com/img/picture-generator/54e7d7404853a914f1dc8460962e33791c3ad6e04e507440752972d29e4bc3_640.jpg',
+//       'https://randomwordgenerator.com/img/picture-generator/54e2d34b4a52aa14f1dc8460962e33791c3ad6e04e507749742c78d59e45cc_640.jpg',
+//       'https://randomwordgenerator.com/img/picture-generator/57e9dc434b5ba414f1dc8460962e33791c3ad6e04e50744172297bd5934cc4_640.jpg',
+//     ],
+//     mainFeatures: [
+//       { text: '170 cm', icon: <StraightenIcon /> },
+//       { text: 'Atheism', icon: <ChurchIcon /> },
+//       { text: 'Aries', icon: <Typography sx={{ fontSize: 20 }}>♈️</Typography> },
+//       { text: 'No but would like', icon: <ChildCareIcon /> },
+//       { text: 'Neutral', icon: <LocalBarIcon /> },
+//       { text: 'Neutral', icon: <SmokingRoomsIcon /> },
+//     ],
+//     interests: [
+//       { text: 'Music', icon: <MusicNoteIcon /> },
+//       { text: 'GYM', icon: <FitnessCenterIcon /> },
+//       { text: 'Reading', icon: <BookIcon /> },
+//       { text: 'Cooking', icon: <RestaurantIcon /> },
+//       { text: 'Raves', icon: <CelebrationIcon /> },
+//     ],
+//     itmo: [
+//       { text: "1", icon: <SchoolIcon /> }, // course
+//       { text: "ПИиКТ", icon: <HomeIcon /> }, // faculty
+//       { text: "123456", icon: <BadgeIcon /> }, // itmo id
+//     ],
+//     isStudent: true,
+//   },
+//   {
+//     id: 2,
+//     name: 'Jane Smith2',
+//     description: 'Product Designer',
+//     imageUrl: 'https://i.pinimg.com/736x/56/21/7b/56217b1ef6a69a2583ff13655d48bc53.jpg',
+//     photos: [
+//       'https://randomwordgenerator.com/img/picture-generator/53e9d7444b50b10ff3d8992cc12c30771037dbf852547849752678d5964e_640.jpg',
+//       'https://randomwordgenerator.com/img/picture-generator/52e9d2474854a514f1dc8460962e33791c3ad6e04e50744172297cdd944fc2_640.jpg',
+//     ],
+//     mainFeatures: [
+//       { text: '165 cm', icon: <StraightenIcon /> },
+//       { text: 'Catholicism', icon: <ChurchIcon /> },
+//       { text: 'Libra', icon: <Typography sx={{ fontSize: 20 }}>♎</Typography> },
+//       { text: 'Already have', icon: <ChildCareIcon /> },
+//       { text: 'Positive', icon: <LocalBarIcon /> },
+//       { text: 'Negative', icon: <SmokingRoomsIcon /> },
+//     ],
+//     interests: [
+//       { text: 'Traveling', icon: <MusicNoteIcon /> },
+//       { text: 'Painting', icon: <FitnessCenterIcon /> },
+//     ],
+//     itmo: [
+//       { text: "2", icon: <SchoolIcon /> }, // course
+//       { text: "ИТиП", icon: <HomeIcon /> }, // faculty
+//       { text: "654321", icon: <BadgeIcon /> }, // itmo id
+//     ],
+//     isStudent: true,
+//   },
+//   {
+//     id: 3,
+//     name: 'Jane Smith3',
+//     description: 'Product Designer',
+//     imageUrl: 'https://avatars.yandex.net/get-music-content/5878680/7bee58da.a.25445174-1/m1000x1000?webp=false',
+//     photos: [
+//       'https://randomwordgenerator.com/img/picture-generator/53e9d7444b50b10ff3d8992cc12c30771037dbf852547849752678d5964e_640.jpg',
+//       'https://randomwordgenerator.com/img/picture-generator/52e9d2474854a514f1dc8460962e33791c3ad6e04e50744172297cdd944fc2_640.jpg',
+//     ],
+//     mainFeatures: [
+//       { text: '195 cm', icon: <StraightenIcon /> },
+//       { text: 'Catholicism', icon: <ChurchIcon /> },
+//       { text: 'Libra', icon: <Typography sx={{ fontSize: 20 }}>♎</Typography> },
+//       { text: 'Already have', icon: <ChildCareIcon /> },
+//       { text: 'Positive', icon: <LocalBarIcon /> },
+//       { text: 'Negative', icon: <SmokingRoomsIcon /> },
+//     ],
+//     interests: [
+//       { text: 'Traveling', icon: <MusicNoteIcon /> },
+//       { text: 'Painting', icon: <FitnessCenterIcon /> },
+//     ],
+//     itmo: [
+//       { text: "1", icon: <SchoolIcon /> }, // course
+//       { text: "ИДУ", icon: <HomeIcon /> }, // faculty
+//       { text: "852456", icon: <BadgeIcon /> }, // itmo id
+//     ],
+//     isStudent: true,
+//   },
+// ];
 
-const people2 = [
+const people = [
   {
     isu: 123456,
     username: 'Jane Smith1',
@@ -370,8 +371,8 @@ function AppContent() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const getNext = () => {
     //setCurrentIndex((prev) => (prev + 1) % people.length);
-    setCurrentIndex((prev) => (prev + 1) % people2.length);
-    return people2[currentIndex];
+    setCurrentIndex((prev) => (prev + 1) % people.length);
+    return people[currentIndex];
   }
 
   return (
@@ -381,14 +382,14 @@ function AppContent() {
           <Route path="/chats" element={<ChatPage contacts={contacts} />} />
           <Route path="/add-story" element={<AddStoryPage />} />
           <Route path="/chat/:id" element={<Messages contacts={contacts} />} />
-          <Route path="/matches" element={<MatchesPage people={people2} />} />
+          <Route path="/matches" element={<MatchesPage people={people} />} />
           <Route path="/feed" element={<FeedPage getNextPerson={getNext} onLike={console.log} onDislike={console.log} onSuperLike={console.log} />} />
           <Route path="/tests" element={<TestsPage />} />
           <Route path="/tests/:id" element={<Quiz getQuestions={mockGetQuestions} onExit={() => navigate("/chats")} onFinish={console.log} />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
-          <Route path="/user-profile/:id" element={<UserProfilePage people={people2} />} />
+          <Route path="/user-profile/:id" element={<UserProfilePage people={people} />} />
           <Route path="/schedule" element={<CalendarPage />} />
           <Route path="/premium" element={<PremiumPage />} />
           <Route path="/register" element={<RegisterPage />} />
