@@ -3,7 +3,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, useParams, useNavigate } from 'react-router-dom';
 import '@testing-library/jest-dom';
 import Messages from '../../src/components/Messages';
-import { Message } from '../../src/types';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
