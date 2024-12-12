@@ -187,11 +187,19 @@ const messages = [
     timestamp: '2024-11-10T19:08:54.786+00:00',
   },
   {
+    id: '673104c693cce2c89fabb2d1',
+    chat_id: 'c4a127c4-0f9c-4b90-ab32-0548e019d26f',
+    sender_id: 123456,
+    receiver_id: 386871,
+    text: 'test_mess2',
+    timestamp: '2024-11-10T19:08:54.786+00:00',
+  },
+  {
     id: '873104c693cce2c89fabb2d2',
     chat_id: 'c4a127c4-0f9c-4b90-ab32-0548e019d26f',
     sender_id: 386871,
     receiver_id: 789852,
-    text: 'test_mess2',
+    text: 'test_mess3',
     timestamp: '2024-11-10T19:10:00.786+00:00',
   },
 ];

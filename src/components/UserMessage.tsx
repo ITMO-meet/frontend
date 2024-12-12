@@ -1,8 +1,14 @@
 import React from 'react';
 import { ListItem, Box } from '@mui/material';
-import { Message } from '../types';
 
-const UserMessage: React.FC<{ message: Message }> = ({ message }) => {
+interface UserMessageProps {
+  message: {
+    sender: 'me' | 'them';
+    text: string;
+  };
+}
+
+const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
   return (
     <ListItem
       sx={{
