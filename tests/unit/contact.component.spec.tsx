@@ -3,19 +3,19 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ContactCard from '../../src/components/Contact';
 
+
 describe('ContactCard Component', () => {
   const mockContact = {
-    id: '1',
-    name: 'John Doe',
-    pfp: 'path/to/avatar.jpg',
-    lastMessage: 'Hello, how are you?',
-    stories: [],
+    isu: 123456,
+    username: 'John Doe',
+    logo: 'path/to/avatar.jpg',
   };
 
+  const mockLastMessage = 'Hello, how are you?';
   const mockHandleClick = jest.fn();
 
   beforeEach(() => {
-    render(<ContactCard contact={mockContact} handleClick={mockHandleClick} />);
+    render(<ContactCard person={mockContact} lastMessage={mockLastMessage} handleClick={mockHandleClick} />);
   });
 
   it('renders the contact name', () => {
@@ -31,10 +31,10 @@ describe('ContactCard Component', () => {
     expect(avatar).toHaveAttribute('src', 'path/to/avatar.jpg');
   });
 
-  it('calls handleClick with correct id when clicked', () => {
+  it('calls handleClick with correct isu when clicked', () => {
     const cardActionArea = screen.getByRole('button');
     fireEvent.click(cardActionArea);
     expect(mockHandleClick).toHaveBeenCalledTimes(1);
-    expect(mockHandleClick).toHaveBeenCalledWith('1');
+    expect(mockHandleClick).toHaveBeenCalledWith(123456);
   });
 });
