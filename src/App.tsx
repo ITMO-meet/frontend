@@ -42,48 +42,49 @@ import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import CakeIcon from '@mui/icons-material/Cake';
 
-const contacts = [
-  {
-    id: '1',
-    name: 'Alice',
-    pfp: 'https://randomuser.me/api/portraits/women/1.jpg',
-    lastMessage: 'Hey, how are you?',
-    stories: [{
-      id: '1',
-      image: 'https://source.unsplash.com/random/800x600',
-      expiresAt: Date.now() + 24 * 60 * 60 * 1000,
-    }],
-  },
-  {
-    id: '2',
-    name: 'Bob',
-    pfp: 'https://randomuser.me/api/portraits/men/1.jpg',
-    lastMessage: 'See you soon!',
-    stories: [],
-  },
-  {
-    id: '3',
-    name: 'Charlie',
-    pfp: 'https://randomuser.me/api/portraits/men/2.jpg',
-    lastMessage: 'Let’s catch up tomorrow.',
-    stories: [{
-      id: '1',
-      image: 'https://source.unsplash.com/random/800x600',
-      expiresAt: Date.now() + 24 * 60 * 60 * 1000,
-    }],
-  },
-  {
-    id: '4',
-    name: 'Diana',
-    pfp: 'https://randomuser.me/api/portraits/women/2.jpg',
-    lastMessage: 'Happy Birthday!',
-    stories: [{
-      id: '1',
-      image: 'https://source.unsplash.com/random/800x600',
-      expiresAt: Date.now() + 24 * 60 * 60 * 1000,
-    }],
-  },
-];
+// deprecated. let it be just in case
+// const contacts = [
+//   {
+//     id: '1',
+//     name: 'Alice',
+//     pfp: 'https://randomuser.me/api/portraits/women/1.jpg',
+//     lastMessage: 'Hey, how are you?',
+//     stories: [{
+//       id: '1',
+//       image: 'https://source.unsplash.com/random/800x600',
+//       expiresAt: Date.now() + 24 * 60 * 60 * 1000,
+//     }],
+//   },
+//   {
+//     id: '2',
+//     name: 'Bob',
+//     pfp: 'https://randomuser.me/api/portraits/men/1.jpg',
+//     lastMessage: 'See you soon!',
+//     stories: [],
+//   },
+//   {
+//     id: '3',
+//     name: 'Charlie',
+//     pfp: 'https://randomuser.me/api/portraits/men/2.jpg',
+//     lastMessage: 'Let’s catch up tomorrow.',
+//     stories: [{
+//       id: '1',
+//       image: 'https://source.unsplash.com/random/800x600',
+//       expiresAt: Date.now() + 24 * 60 * 60 * 1000,
+//     }],
+//   },
+//   {
+//     id: '4',
+//     name: 'Diana',
+//     pfp: 'https://randomuser.me/api/portraits/women/2.jpg',
+//     lastMessage: 'Happy Birthday!',
+//     stories: [{
+//       id: '1',
+//       image: 'https://source.unsplash.com/random/800x600',
+//       expiresAt: Date.now() + 24 * 60 * 60 * 1000,
+//     }],
+//   },
+// ];
 
 // deprecated. let it be just in case
 // const people = [
