@@ -309,7 +309,7 @@ const people = [
       'https://randomwordgenerator.com/img/picture-generator/52e9d2474854a514f1dc8460962e33791c3ad6e04e50744172297cdd944fc2_640.jpg',
     ],
     mainFeatures: [  // брать из person_params
-      { text: '195 cm', icon: <StraightenIcon /> },   // person_params.height
+      { text: '295 cm', icon: <StraightenIcon /> },   // person_params.height
       { text: 'Aries', icon: <Typography sx={{ fontSize: 20 }}>♈️</Typography> }, // person_params.zodiac_sign
       { text: '69.5 kg', icon: <MonitorWeightIcon /> }, // peson_params.weight
       { text: 'Catholicism', icon: <ChurchIcon /> },
