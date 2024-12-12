@@ -189,8 +189,8 @@ const messages = [
   {
     id: '873104c693cce2c89fabb2d2',
     chat_id: 'c4a127c4-0f9c-4b90-ab32-0548e019d26f',
-    sender_id: 123456,
-    receiver_id: 386871,
+    sender_id: 386871,
+    receiver_id: 789852,
     text: 'test_mess2',
     timestamp: '2024-11-10T19:10:00.786+00:00',
   },
@@ -199,14 +199,14 @@ const messages = [
 const stories = [
   {
     id: '6739c9f339fddecc6b8a44d8',
-    isu: 386871,
-    url: 'meet/stories/386871_cd6e05dc-36ee-457b-aa02-c0a01d3041ec.jpg',
+    isu: 789852,
+    url: 'https://www.avsimrus.com/file_images/110/img25865_1.jpg',
     expiration_date: 1731926899,
   },
   {
     id: '6739c9f339fddecc6b8a44d9',
     isu: 123456,
-    url: 'meet/stories/123456_cd6e05dc-36ee-457b-aa02-c0a01d3041ec.jpg',
+    url: 'https://www.avsim.su/w/images/0/09/003_006.jpg',
     expiration_date: 1731926899,
   },
 ];
@@ -412,9 +412,11 @@ function AppContent() {
     <>
       <Box sx={{ pb: 7 }}>
         <Routes>
-          <Route path="/chats" element={<ChatPage contacts={contacts} />} />
+          <Route path="/chats" element={<ChatPage people={people} stories={stories} messages={messages} />} />
+          {/* <Route path="/chats" element={<ChatPage contacts={contacts} />} /> */ }
           <Route path="/add-story" element={<AddStoryPage />} />
-          <Route path="/chat/:id" element={<Messages contacts={contacts} />} />
+          <Route path="/chat/:id" element={<Messages people={people} messages={messages} />} />
+          {/* <Route path="/chat/:id" element={<Messages contacts={contacts} />} /> */ }
           <Route path="/matches" element={<MatchesPage people={people} />} />
           <Route path="/feed" element={<FeedPage getNextPerson={getNext} onLike={console.log} onDislike={console.log} onSuperLike={console.log} />} />
           <Route path="/tests" element={<TestsPage />} />
