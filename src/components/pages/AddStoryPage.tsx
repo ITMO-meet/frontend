@@ -27,6 +27,7 @@ const AddStoryPage: React.FC = () => {
     navigate("/chats");
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSave = (editedImage: string) => {
     //console.log( imageData.imageBase64);
     alert("Image saved!");
