@@ -11,8 +11,12 @@ const PhotoEditor: React.FC<PhotoEditorProps> = ({ image, onSave, onClose }) => 
     return (
         <FilerobotImageEditor
             source={image}
+            savingPixelRatio={1}
+            previewPixelRatio={1}
             onSave={(ImageData) => {
-                onSave(ImageData.imageBase64);
+                if (ImageData.imageBase64) {
+                    onSave(ImageData.imageBase64);
+                }
                 onClose();
             }}
             onClose={onClose}
