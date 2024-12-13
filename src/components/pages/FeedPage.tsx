@@ -23,10 +23,10 @@ import HorizontalButtonGroup from '../basic/HorizontalButtonGroup';
 
 // Интерфейс для представления информации о человеке
 interface Person {
-    id: number; // Уникальный идентификатор
-    imageUrl: string; // Ссылка на изображение
-    name: string; // Имя человека
-    description: string; // Описание человека
+    isu: number; // Уникальный идентификатор
+    logo: string; // Ссылка на изображение
+    username: string; // Имя человека
+    bio: string; // Описание человека
 }
 
 // Интерфейс для свойств компонента SwipeableCard
@@ -55,7 +55,7 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
     const DURATION = 300; // Длительность анимации в миллисекундах
     const [swipeDirection, setSwipeDirection] = useState<string | null>(null); // Направление свайпа
     const [iconVisible, setIconVisible] = useState(false); // Видимость иконки
-    const [person, setPerson] = useState<Person>({ id: 0, name: "", description: "", imageUrl: "" }); // Текущий человек
+    const [person, setPerson] = useState<Person>({ isu: 0, username: "", bio: "", logo: "" }); // Текущий человек
 
     const [drawerOpen, setDrawerOpen] = useState(false); // Открытие/закрытие Drawer
     const [distance, setDistance] = useState<number>(100); // Дистанция до 100
@@ -139,7 +139,7 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
                     flexDirection: "column", // Вертикальная ориентация
                     justifyContent: "space-between", // Распределение пространства между элементами
                 }}>
-                    <CardMedia component="img" image={person.imageUrl} alt={person.name} /> {/* Изображение человека */}
+                    <CardMedia component="img" image={person.logo} alt={person.username} /> {/* Изображение человека */}
                     {iconVisible && (
                         <Box sx={{
                             position: 'absolute',
@@ -154,8 +154,8 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
                         </Box>
                     )}
                     <CardContent>
-                        <Typography variant="h5">{person.name}</Typography> {/* Имя человека */}
-                        <Typography variant="body2">{person.description}</Typography> {/* Описание человека */}
+                        <Typography variant="h5">{person.username}</Typography> {/* Имя человека */}
+                        <Typography variant="body2">{person.bio}</Typography> {/* Описание человека */}
                     </CardContent>
                 </Card>
             </Box>

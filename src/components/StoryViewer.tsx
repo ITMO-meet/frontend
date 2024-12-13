@@ -3,23 +3,30 @@ import { Box, Avatar, Typography, IconButton, LinearProgress, Fade } from '@mui/
 import CloseIcon from '@mui/icons-material/Close';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import { Contact } from '../types';
 
 interface StoryViewerProps {
-  contacts: Contact[];
+  storiesWithContent: Array<{
+    person: {
+      isu: number;
+      username: string;
+      logo: string;
+    };
+    story: {
+      id: string;
+      url: string;
+      expiration_date: number;
+    };
+  }>;
   initialIndex: number;
   onClose: () => void;
 }
 
-const StoryViewer: React.FC<StoryViewerProps> = ({ contacts, initialIndex, onClose }) => {
-  const [currentContactIndex, setCurrentContactIndex] = useState(initialIndex);
-  const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
+const StoryViewer: React.FC<StoryViewerProps> = ({ storiesWithContent, initialIndex, onClose }) => {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [progress, setProgress] = useState(0);
   const timer = useRef<NodeJS.Timeout | null>(null);
 
-  const currentContact = contacts[currentContactIndex];
-  const currentStory = currentContact.stories[currentStoryIndex];
-
+  const currentEntry = storiesWithContent[currentIndex]
   useEffect(() => {
     startProgress();
 
@@ -28,7 +35,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ contacts, initialIndex, onClo
         clearInterval(timer.current);
       }
     };
-  }, [currentStoryIndex, currentContactIndex]);
+  }, [currentIndex]);
 
   const startProgress = () => {
     setProgress(0);
@@ -47,22 +54,16 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ contacts, initialIndex, onClo
   };
 
   const handleNextStory = () => {
-    if (currentStoryIndex < currentContact.stories.length - 1) {
-      setCurrentStoryIndex(currentStoryIndex + 1);
-    } else if (currentContactIndex < contacts.length - 1) {
-      setCurrentContactIndex(currentContactIndex + 1);
-      setCurrentStoryIndex(0);
+    if (currentIndex < storiesWithContent.length - 1) {
+      setCurrentIndex(currentIndex + 1);
     } else {
       onClose();
     }
   };
 
   const handlePrevStory = () => {
-    if (currentStoryIndex > 0) {
-      setCurrentStoryIndex(currentStoryIndex - 1);
-    } else if (currentContactIndex > 0) {
-      setCurrentContactIndex(currentContactIndex - 1);
-      setCurrentStoryIndex(contacts[currentContactIndex - 1].stories.length - 1);
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
     } else {
       onClose();
     }
@@ -92,7 +93,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ contacts, initialIndex, onClo
         }}
       >
         <img
-          src={currentStory.image}
+          src={currentEntry.story.url}
           alt="Story"
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           onMouseDown={handlePause}
@@ -118,14 +119,14 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ contacts, initialIndex, onClo
           <Box>
             {/* Progress Bars */}
             <Box sx={{ display: 'flex' }}>
-              {currentContact.stories.map((story, index) => (
+              {storiesWithContent.map((_, index) => (
                 <LinearProgress
                   key={index}
                   variant="determinate"
                   value={
-                    index < currentStoryIndex
+                    index < currentIndex
                       ? 100
-                      : index === currentStoryIndex
+                      : index === currentIndex
                         ? progress
                         : 0
                   }
@@ -144,9 +145,9 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ contacts, initialIndex, onClo
 
             {/* User Info */}
             <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-              <Avatar src={currentContact.pfp} alt={currentContact.name} />
+              <Avatar src={currentEntry.person.logo} alt={currentEntry.person.username} />
               <Typography variant="body1" sx={{ ml: 1 }}>
-                {currentContact.name}
+                {currentEntry.person.username}
               </Typography>
               <Box sx={{ flexGrow: 1 }} />
               <IconButton
