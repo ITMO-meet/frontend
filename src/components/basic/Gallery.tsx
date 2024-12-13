@@ -4,14 +4,15 @@ import { Avatar, Box, IconButton } from '@mui/material';
 import React from 'react';
 
 interface GalleryProps {
-  galleryImages: string[]; 
+  galleryImages: string[];
   handleDeleteImage: (index: number) => void;
   handleLoadImage: (index: number, url: string) => void;
+  handleEditImage: (index: number) => void;
   columns: number; // Количество колонок
   rows: number; // Количество строк
 }
 
-const Gallery: React.FC<GalleryProps> = ({ galleryImages, handleDeleteImage, handleLoadImage, columns, rows }) => {
+const Gallery: React.FC<GalleryProps> = ({ galleryImages, handleDeleteImage, handleLoadImage, handleEditImage, columns, rows }) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -39,38 +40,61 @@ const Gallery: React.FC<GalleryProps> = ({ galleryImages, handleDeleteImage, han
                 bgcolor: src ? 'transparent' : 'grey.300',
               }}
             />
-            <IconButton
-              size="small"
-              onClick={() => handleDeleteImage(index)}
-              sx={{
-                position: 'absolute',
-                top: 4,
-                right: 4,
-                backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                color: 'black'
-              }}
-            >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              size="small"
-              component="label"
-              sx={{
-                position: 'absolute',
-                top: 4,
-                left: 4,
-                backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                color: 'black'
-              }}
-            >
-              <EditIcon fontSize="small" />
-              <input
-                type="file"
-                accept="image/*"
-                hidden
-                onChange={(event) => handleFileChange(event, index)}
-              />
-            </IconButton>
+            {/* Кнопка удаления */}
+            {src && (
+              <IconButton
+                size="small"
+                onClick={() => handleDeleteImage(index)}
+                sx={{
+                  position: 'absolute',
+                  top: 4,
+                  right: 4,
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  color: 'black'
+                }}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            )}
+
+            {/* Кнопка редактирования / загрузки */}
+            {!src ? (
+              // Если нет картинки - показываем кнопку с загрузкой файла
+              <IconButton
+                size="small"
+                component="label"
+                sx={{
+                  position: 'absolute',
+                  top: 4,
+                  left: 4,
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  color: 'black'
+                }}
+              >
+                <EditIcon fontSize="small" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={(event) => handleFileChange(event, index)}
+                />
+              </IconButton>
+            ) : (
+              // Если картинка есть - по нажатию открываем редактор
+              <IconButton
+                size="small"
+                onClick={() => handleEditImage(index)}
+                sx={{
+                  position: 'absolute',
+                  top: 4,
+                  left: 4,
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  color: 'black'
+                }}
+              >
+                <EditIcon fontSize="small" />
+              </IconButton>
+            )}
           </Box>
         ))}
       </Box>

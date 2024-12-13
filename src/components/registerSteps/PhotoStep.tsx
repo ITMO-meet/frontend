@@ -16,32 +16,23 @@ const PhotoStep: React.FC<PhotoStepProps> = ({ onNext }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [imageToEdit, setImageToEdit] = useState<string | null>(null);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const image = reader.result as string;
-        setGalleryImages([image]);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleLoadImage = (index: number, url: string) => {
+    const newGal = [...galleryImages];
+    newGal[index] = url;
+    setGalleryImages(newGal);
   };
 
   // Функция для удаления изображения по индексу
   const handleDeleteImage = (index: number) => {
-    setGalleryImages((prev) => prev.map((p, i) => i !== index ? p : "")); // Заменяем изображение на пустую строку
+    const newGal = [...galleryImages];
+    newGal[index] = "";
+    setGalleryImages(newGal);
   };
 
-  // Функция для редактирования изображения по индексу
-  // const handleEditImage = (index: number, url: string) => {
-  //   const newGal = [...galleryImages]; // Создаем копию текущего состояния галереи
-  //   newGal[index] = url; // Обновляем изображение по указанному индексу
-  //   setGalleryImages(newGal); // Обновляем состояние галереи
-  // };
-  const handleEditImage = () => {
-    if (galleryImages[0]) {
-      setImageToEdit(galleryImages[0]);
+
+  const handleEditImage = (index: number) => {
+    if (galleryImages[index]) {
+      setImageToEdit(galleryImages[index]);
       setIsEditing(true);
     }
   };
@@ -73,24 +64,10 @@ const PhotoStep: React.FC<PhotoStepProps> = ({ onNext }) => {
             columns={1}
             rows={1}
             galleryImages={galleryImages}
-            handleDeleteImage={() => setGalleryImages([""])}
-            handleLoadImage={() => { }}
+            handleDeleteImage={handleDeleteImage}
+            handleLoadImage={handleLoadImage}
+            handleEditImage={handleEditImage}
           />
-          <Box sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-            <Button variant="contained" component="label">
-              Upload Photo
-              <input type="file" accept="image/*" hidden onChange={handleFileChange} />
-            </Button>
-            {galleryImages[0] && (
-              <Button
-                variant="outlined"
-                sx={{ marginLeft: "10px" }}
-                onClick={handleEditImage}
-              >
-                Edit Photo
-              </Button>
-            )}
-          </Box>
           <Button
             variant="contained"
             color="primary"
@@ -106,7 +83,10 @@ const PhotoStep: React.FC<PhotoStepProps> = ({ onNext }) => {
       {isEditing && imageToEdit && (
         <PhotoEditor
           image={imageToEdit}
-          onSave={handleSaveEditedImage}
+          onSave={(edited) => {
+            handleSaveEditedImage(edited);
+            setIsEditing(false);
+          }}
           onClose={() => setIsEditing(false)}
         />
       )}
