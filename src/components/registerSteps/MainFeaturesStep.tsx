@@ -1,7 +1,6 @@
 // UsernameStep.tsx
-import { Box, FormControl, InputLabel, MenuItem, Select, Slider, TextField, Typography } from '@mui/material'; // Импортируем компоненты из MUI
+import { Box, FormControl, MenuItem, Select, Slider, Typography } from '@mui/material'; // Импортируем компоненты из MUI
 import React, { useState } from 'react'; // Импортируем React и хук useState
-import InputText from '../basic/InputText'; // Импортируем компонент для ввода текста
 import RoundButton from '../basic/RoundButton'; // Импортируем компонент круглой кнопки
 
 // Определяем интерфейс для пропсов компонента
@@ -27,6 +26,8 @@ const MainFeaturesStep: React.FC<MainFeaturesStepProps> = ({ onNext }) => {
             {/* Слайдер для роста */}
             <Typography gutterBottom sx={{ marginTop: "20px" }}>Height: {height}</Typography>
             <Slider
+                data-testid="height-slider"
+                name="height"
                 value={height}
                 onChange={(e, newValue) => setHeight(newValue as number)}
                 min={100}
@@ -38,6 +39,8 @@ const MainFeaturesStep: React.FC<MainFeaturesStepProps> = ({ onNext }) => {
             {/* Слайдер для веса */}
             <Typography gutterBottom sx={{ marginTop: "20px" }}>Weight: {weight} kg</Typography>
             <Slider
+                data-testid="height-slider"
+                name="weight"
                 value={weight}
                 onChange={(e, newValue) => setWeight(newValue as number)}
                 min={30}
@@ -50,6 +53,7 @@ const MainFeaturesStep: React.FC<MainFeaturesStepProps> = ({ onNext }) => {
             <FormControl fullWidth>
                 <Typography gutterBottom sx={{ marginTop: "20px" }}>Zodiac Sign</Typography>
                 <Select
+                    name='zodiac'
                     value={zodiac}
                     onChange={(e) => setZodiac(e.target.value as string)}
                     sx={{ marginY: "10px" }}
