@@ -70,6 +70,7 @@ const PhotoStep: React.FC<PhotoStepProps> = ({ onNext }) => {
           />
           <RoundButton
             sx={{ width: "100%", marginTop: "20px" }} // Стили для кнопки
+            disabled={galleryImages[0] === ''} // Кнопка отключена, если первое изображение пустое
             onClick={handleSubmit}
           >
             Next
