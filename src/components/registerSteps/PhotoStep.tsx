@@ -1,5 +1,5 @@
 // PhotoStep.tsx
-import { Box, Typography, Button } from '@mui/material'; // Импортируем компоненты из MUI
+import { Box, Typography } from '@mui/material'; // Импортируем компоненты из MUI
 import React, { useState } from 'react'; // Импортируем React и хук useState
 import Gallery from '../basic/Gallery'; // Импортируем компонент галереи для отображения изображений
 import RoundButton from '../basic/RoundButton'; // Импортируем компонент круглой кнопки
