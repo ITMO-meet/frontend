@@ -13,6 +13,7 @@ const PhotoEditor: React.FC<PhotoEditorProps> = ({ image, onSave, onClose }) => 
             source={image}
             savingPixelRatio={1}
             previewPixelRatio={1}
+            onBeforeSave={() => false}
             onSave={(ImageData) => {
                 if (ImageData.imageBase64) {
                     onSave(ImageData.imageBase64);
