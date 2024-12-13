@@ -25,3 +25,11 @@
 `npm run test:e2e` - e2e тесты
 
 `npm run lint` - eslint
+
+`npx cap init` - init cap (project file) for apk build
+
+`npx cap add android` - add Android as target platform
+
+`npx cap sync` - sync between apk and web project
+
+`npx cap open android` - open android studio with project
