@@ -3,6 +3,7 @@ import { Box, Typography } from '@mui/material'; // Импортируем ко�
 import React, { useState } from 'react'; // Импортируем React и хук useState
 import Gallery from '../basic/Gallery'; // Импортируем компонент галереи для отображения изображений
 import RoundButton from '../basic/RoundButton'; // Импортируем компонент круглой кнопки
+import PhotoEditor from '../pages/PhotoEditor';
 
 // Определяем интерфейс для пропсов компонента
 interface PhotoStepProps {
@@ -12,17 +13,32 @@ interface PhotoStepProps {
 // Основной компонент PhotoStep
 const PhotoStep: React.FC<PhotoStepProps> = ({ onNext }) => {
   const [galleryImages, setGalleryImages] = useState<string[]>([""]); // Хук состояния для хранения изображений в галерее
+  const [isEditing, setIsEditing] = useState(false);
+  const [imageToEdit, setImageToEdit] = useState<string | null>(null);
+
+  const handleLoadImage = (index: number, url: string) => {
+    const newGal = [...galleryImages];
+    newGal[index] = url;
+    setGalleryImages(newGal);
+  };
 
   // Функция для удаления изображения по индексу
   const handleDeleteImage = (index: number) => {
-    setGalleryImages((prev) => prev.map((p, i) => i !== index ? p : "")); // Заменяем изображение на пустую строку
+    const newGal = [...galleryImages];
+    newGal[index] = "";
+    setGalleryImages(newGal);
   };
 
-  // Функция для редактирования изображения по индексу
-  const handleEditImage = (index: number, url: string) => {
-    const newGal = [...galleryImages]; // Создаем копию текущего состояния галереи
-    newGal[index] = url; // Обновляем изображение по указанному индексу
-    setGalleryImages(newGal); // Обновляем состояние галереи
+
+  const handleEditImage = (index: number) => {
+    if (galleryImages[index]) {
+      setImageToEdit(galleryImages[index]);
+      setIsEditing(true);
+    }
+  };
+
+  const handleSaveEditedImage = (editedImage: string) => {
+    setGalleryImages([editedImage]);
   };
 
   // Функция для обработки отправки данных
@@ -33,23 +49,45 @@ const PhotoStep: React.FC<PhotoStepProps> = ({ onNext }) => {
   };
 
   return (
-    <Box style={{ padding: '20px' }}> {/* Обертка с отступами */}
-      <Typography variant="h5" align='center' sx={{ marginBottom: "20px" }}>Upload your photo</Typography> {/* Заголовок */}
-      <Typography variant="h6" align='center' sx={{ marginBottom: "20px" }}>Make sure the photo of your face is clear so that it can be easily verified</Typography> {/* Подзаголовок с инструкцией */}
-      <Gallery 
-        columns={1} // Указываем количество колонок для отображения изображений
-        rows={1} // Указываем количество строк для отображения изображений
-        galleryImages={galleryImages} // Передаем изображения в галерею
-        handleDeleteImage={handleDeleteImage} // Передаем функцию для удаления изображений
-        handleLoadImage={handleEditImage} // Передаем функцию для загрузки/редактирования изображений
-      />
-      <RoundButton 
-        onClick={handleSubmit} // Обработчик клика по кнопке
-        disabled={galleryImages[0] === ''} // Кнопка отключена, если первое изображение пустое
-        sx={{ width: "100%", marginTop: "20px" }} // Стили для кнопки
-      >
-        Next
-      </RoundButton>
+    <Box style={{ padding: "20px" }}>
+      <Typography variant="h5" align="center" sx={{ marginBottom: "20px" }}>
+        Upload your photo
+      </Typography>
+      <Typography variant="h6" align="center" sx={{ marginBottom: "20px" }}>
+        Make sure the photo of your face is clear so that it can be easily
+        verified
+      </Typography>
+
+      {!isEditing && (
+        <>
+          <Gallery
+            columns={1}
+            rows={1}
+            galleryImages={galleryImages}
+            handleDeleteImage={handleDeleteImage}
+            handleLoadImage={handleLoadImage}
+            handleEditImage={handleEditImage}
+          />
+          <RoundButton
+            sx={{ width: "100%", marginTop: "20px" }} // Стили для кнопки
+            disabled={galleryImages[0] === ''} // Кнопка отключена, если первое изображение пустое
+            onClick={handleSubmit}
+          >
+            Next
+          </RoundButton>
+        </>
+      )}
+
+      {isEditing && imageToEdit && (
+        <PhotoEditor
+          image={imageToEdit}
+          onSave={(edited) => {
+            handleSaveEditedImage(edited);
+            setIsEditing(false);
+          }}
+          onClose={() => setIsEditing(false)}
+        />
+      )}
     </Box>
   );
 };
