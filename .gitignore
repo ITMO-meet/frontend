@@ -363,11 +363,8 @@ build/
 
 # Ignore local properties and configurations
 /android/local.properties
-/android/.idea/libraries/
-/android/.idea/workspace.xml
-/android/.idea/tasks.xml
-/android/.idea/misc.xml
-/android/.idea/modules.xml
+/android/.idea/*
+
 
 # Ignore generated files
 /android/.cxx/
