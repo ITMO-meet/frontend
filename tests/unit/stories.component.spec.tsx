@@ -10,17 +10,15 @@ jest.mock('../../src/analytics', () => ({
     logEvent: jest.fn(),
 }));
 
-jest.mock('../../src/components/StoryViewer', () => {
-    return {
-        __esModule: true,
-        default: ({ onClose }) => (
-            <div data-testid="story-viewer">
-                <p>StoryViewer Mock</p>
-                <button onClick={onClose}>Close Story Viewer</button>
-            </div>
-        ),
-    };
-});
+jest.mock('../../src/components/StoryViewer', () => ({
+    __esModule: true,
+    default: ({ onClose }: { onClose: () => void }) => (
+        <div data-testid="story-viewer">
+            <p>StoryViewer Mock</p>
+            <button onClick={onClose}>Close Story Viewer</button>
+        </div>
+    ),
+}));
 
 
 jest.mock('react-router-dom', () => ({
@@ -33,39 +31,36 @@ describe('Stories Component', () => {
     const mockedNavigate = jest.fn();
     const mockOnAddStory = jest.fn();
 
+    const mockStories = [
+        {
+            id: 's1',
+            isu: 1,
+            url: 'path/to/story1.jpg',
+            expiration_date: Date.now() + 24 * 60 * 60 * 1000,
+        },
+        {
+            id: 's2',
+            isu: 2,
+            url: 'path/to/story2.jpg',
+            expiration_date: Date.now() + 24 * 60 * 60 * 1000,
+        },
+    ];
+
     const mockContacts = [
         {
-            id: '1',
-            name: 'Alice',
-            pfp: 'path/to/alice.jpg',
-            stories: [],
+            isu: 1,
+            username: 'Alice',
+            logo: 'path/to/alice.jpg'
         },
         {
-            id: '2',
-            name: 'Bob',
-            pfp: 'path/to/bob.jpg',
-            stories: [{
-                id: 's1',
-                image: "path/to/story1.jpg",
-                expiresAt: Date.now() + 24 * 60 * 60 * 1000
-            }],
+            isu: 2,
+            username: 'Bob',
+            logo: 'path/to/bob.jpg'
         },
         {
-            id: '3',
-            name: 'Charlie',
-            pfp: 'path/to/charlie.jpg',
-            stories: [
-                {
-                    id: 's2',
-                    image: 'path/to/story2.jpg',
-                    expiresAt: Date.now() + 24 * 60 * 60 * 1000
-                },
-                {
-                    id: 's3',
-                    image: 'path/to/story3.jpg',
-                    expiresAt: Date.now() + 24 * 60 * 60 * 1000
-                },
-            ],
+            isu: 3,
+            username: 'Charlie',
+            logo: 'path/to/charlie.jpg'
         },
     ];
 
@@ -79,19 +74,19 @@ describe('Stories Component', () => {
     };
 
     it('renders "Your Story" and contacts with stories', () => {
-        renderWithRouter(<Stories contacts={mockContacts} onAddStory={mockOnAddStory} />);
+        renderWithRouter(<Stories people={mockContacts} stories={mockStories} onAddStory={mockOnAddStory} />);
 
         // Check "Your Story" is rendered
         expect(screen.getByText('Your Story')).toBeInTheDocument();
 
         // Only contacts with stories should be rendered
-        expect(screen.queryByText('Alice')).not.toBeInTheDocument();
+        expect(screen.getByText('Alice')).toBeInTheDocument();
         expect(screen.getByText('Bob')).toBeInTheDocument();
-        expect(screen.getByText('Charlie')).toBeInTheDocument();
+        expect(screen.queryByText('Charlie')).not.toBeInTheDocument(); // No story for Charlie
     });
 
     it('navigates to "/add-story" when "Your Story" is clicked', () => {
-        renderWithRouter(<Stories contacts={mockContacts} onAddStory={mockOnAddStory} />);
+        renderWithRouter(<Stories people={mockContacts} stories={mockStories} onAddStory={mockOnAddStory} />);
 
         // Find add story btn
         const yourStoryButton = screen.getByRole('button', { name: /your story/i });
@@ -105,13 +100,13 @@ describe('Stories Component', () => {
     });
 
     it('opens StoryViewer with correct initialIndex when a story is clicked', () => {
-        renderWithRouter(<Stories contacts={mockContacts} onAddStory={mockOnAddStory} />);
+        renderWithRouter(<Stories people={mockContacts} stories={mockStories} onAddStory={mockOnAddStory} />);
 
-        // Click on Bob's story
-        const bobNameElement = screen.getByText('Bob');
-        const bobStoryElement = bobNameElement.parentElement;
-        if (bobStoryElement) {
-            fireEvent.click(bobStoryElement);
+        // Click on Alice's story
+        const aliceElement = screen.getByText('Alice');
+        const aliceStoryElement = aliceElement.parentElement;
+        if (aliceStoryElement) {
+            fireEvent.click(aliceStoryElement);
         }
 
         expect(screen.getByTestId('story-viewer')).toBeInTheDocument();
@@ -119,13 +114,13 @@ describe('Stories Component', () => {
     });
 
     it('closes StoryViewer when onClose is called', () => {
-        renderWithRouter(<Stories contacts={mockContacts} onAddStory={mockOnAddStory} />);
+        renderWithRouter(<Stories people={mockContacts} stories={mockStories} onAddStory={mockOnAddStory} />);
 
-        // Open StoryViewer by clicking on Bob's story
-        const bobNameElement = screen.getByText('Bob');
-        const bobStoryElement = bobNameElement.parentElement;
-        if (bobStoryElement) {
-            fireEvent.click(bobStoryElement);
+        // Open StoryViewer by clicking on Alice's story
+        const aliceElement = screen.getByText('Alice');
+        const aliceStoryElement = aliceElement.parentElement;
+        if (aliceStoryElement) {
+            fireEvent.click(aliceStoryElement);
         }
 
 

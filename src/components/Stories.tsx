@@ -1,23 +1,41 @@
 import React, { useState } from 'react';
 import { Box, Avatar, Typography, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { Contact } from '../types';
 import StoryViewer from './StoryViewer';
 import { useNavigate } from 'react-router-dom';
 import { logEvent } from '../analytics';
 
 interface StoriesProps {
-  contacts: Contact[];
+  stories: Array<{
+    id: string;
+    isu: number;
+    url: string;
+    expiration_date: number;
+  }>;
+  people: Array<{
+    isu: number;
+    username: string;
+    logo: string;
+  }>;
   onAddStory: () => void;
 }
 
-const Stories: React.FC<StoriesProps> = ({ contacts }) => {
+const Stories: React.FC<StoriesProps> = ({ stories, people}) => {
   const [openStoryViewer, setOpenStoryViewer] = useState(false);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const navigate = useNavigate();
 
+  const storiesWithContent = stories
+    .map((story) => {
+      const person = people.find((p) => p.isu === story.isu);
+      return person
+        ? { story, person }
+        : null;
+    })
+    .filter((entry): entry is { story: typeof stories[0]; person: typeof people[0] } => entry !== null);
+
   const handleStoryClick = (index: number) => {
-    logEvent("Stories", "View story clicked", "View Story Button");
+    logEvent('Stories', 'View story clicked', 'View Story Button');
     setCurrentStoryIndex(index);
     setOpenStoryViewer(true);
   };
@@ -28,10 +46,8 @@ const Stories: React.FC<StoriesProps> = ({ contacts }) => {
 
   const handleAddStory = () => {
     navigate('/add-story');
-    logEvent("Stories", "Add story clicked", "Add Story Button");
-  }
-
-  const storiesWithContent = contacts.filter(contact => contact.stories.length > 0);
+    logEvent('Stories', 'Add story clicked', 'Add Story Button');
+  };
 
   return (
     <>
@@ -87,9 +103,9 @@ const Stories: React.FC<StoriesProps> = ({ contacts }) => {
         </Box>
 
         {/* Other Stories */}
-        {storiesWithContent.map((contact, index) => (
+        {storiesWithContent.map((entry, index) => (
           <Box
-            key={contact.id}
+            key={entry.story.id}
             sx={{ position: 'relative', mr: 2, cursor: 'pointer' }}
             onClick={() => handleStoryClick(index)}
           >
@@ -106,8 +122,8 @@ const Stories: React.FC<StoriesProps> = ({ contacts }) => {
               }}
             >
               <Avatar
-                src={contact.pfp}
-                alt={contact.name}
+                src={entry.person.logo}
+                alt={entry.person.username}
                 sx={{
                   width: 66,
                   height: 66,
@@ -115,7 +131,7 @@ const Stories: React.FC<StoriesProps> = ({ contacts }) => {
               />
             </Box>
             <Typography variant="caption" align="center" display="block">
-              {contact.name}
+              {entry.person.username}
             </Typography>
           </Box>
         ))}
@@ -124,7 +140,7 @@ const Stories: React.FC<StoriesProps> = ({ contacts }) => {
       {/* Story Viewer */}
       {openStoryViewer && (
         <StoryViewer
-          contacts={storiesWithContent}
+          storiesWithContent={storiesWithContent}
           initialIndex={currentStoryIndex}
           onClose={handleCloseStoryViewer}
         />
