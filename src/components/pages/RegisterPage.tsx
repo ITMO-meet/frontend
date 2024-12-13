@@ -10,9 +10,13 @@ import PhotoStep from '../registerSteps/PhotoStep';
 import TagsStep from '../registerSteps/TagsStep';
 import UsernameStep from '../registerSteps/UsernameStep';
 import { useNavigate } from 'react-router-dom';
+import BioStep from '../registerSteps/BioStep';
+import MainFeaturesStep from '../registerSteps/MainFeaturesStep';
 
 const steps = [
 	'username',
+	'bio',
+	'main-feats',
 	'gender',
 	'tags',
 	'photo',
@@ -50,6 +54,10 @@ export const RegisterPage: React.FC = () => {
 		switch (steps[currentStep]) {
 			case 'username':
 				return <UsernameStep onNext={handleNext} />;
+			case 'bio': 
+				return <BioStep onNext={handleNext} />;
+			case 'main-feats':
+				return <MainFeaturesStep onNext={handleNext} />;
 			case 'gender':
 				return <GenderStep onNext={handleNext} />;
 			case 'tags':
@@ -70,6 +78,7 @@ export const RegisterPage: React.FC = () => {
 			<Typography variant="h4" align="center" gutterBottom>
 				Registration
 			</Typography>
+			{/* Back button */}
 			<div style={{ marginTop: '20px', minHeight: '60px' }}>
 				{currentStep === 0 ? (<Box/>) : (<ImageButton onClick={handleBack}><WestIcon /></ImageButton>)}
 			</div>
