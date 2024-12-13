@@ -288,7 +288,7 @@ const people = [
       { text: "ИТиП", icon: <HomeIcon /> },// person_params.faculty
       { text: "789852", icon: <BadgeIcon /> }, // itmo id. TODO: use isu from user, not from here duh
     ],
-    gender_preferences: [ // Not used YET
+    gender_preferences: [ // Not used for now
       { text: "everyone", icon: "gender_preferences_placeholder" } // preferences.gender_preferences
     ],
     relationship_preferences: [
