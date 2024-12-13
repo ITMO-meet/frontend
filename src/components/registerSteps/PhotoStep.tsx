@@ -1,8 +1,9 @@
 // PhotoStep.tsx
-import { Box, Typography } from '@mui/material'; // Импортируем компоненты из MUI
+import { Box, Typography, Button } from '@mui/material'; // Импортируем компоненты из MUI
 import React, { useState } from 'react'; // Импортируем React и хук useState
 import Gallery from '../basic/Gallery'; // Импортируем компонент галереи для отображения изображений
 import RoundButton from '../basic/RoundButton'; // Импортируем компонент круглой кнопки
+import PhotoEditor from '../pages/PhotoEditor';
 
 // Определяем интерфейс для пропсов компонента
 interface PhotoStepProps {
@@ -12,6 +13,20 @@ interface PhotoStepProps {
 // Основной компонент PhotoStep
 const PhotoStep: React.FC<PhotoStepProps> = ({ onNext }) => {
   const [galleryImages, setGalleryImages] = useState<string[]>([""]); // Хук состояния для хранения изображений в галерее
+  const [isEditing, setIsEditing] = useState(false);
+  const [imageToEdit, setImageToEdit] = useState<string | null>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const image = reader.result as string;
+        setGalleryImages([image]);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Функция для удаления изображения по индексу
   const handleDeleteImage = (index: number) => {
@@ -19,10 +34,20 @@ const PhotoStep: React.FC<PhotoStepProps> = ({ onNext }) => {
   };
 
   // Функция для редактирования изображения по индексу
-  const handleEditImage = (index: number, url: string) => {
-    const newGal = [...galleryImages]; // Создаем копию текущего состояния галереи
-    newGal[index] = url; // Обновляем изображение по указанному индексу
-    setGalleryImages(newGal); // Обновляем состояние галереи
+  // const handleEditImage = (index: number, url: string) => {
+  //   const newGal = [...galleryImages]; // Создаем копию текущего состояния галереи
+  //   newGal[index] = url; // Обновляем изображение по указанному индексу
+  //   setGalleryImages(newGal); // Обновляем состояние галереи
+  // };
+  const handleEditImage = () => {
+    if (galleryImages[0]) {
+      setImageToEdit(galleryImages[0]);
+      setIsEditing(true);
+    }
+  };
+
+  const handleSaveEditedImage = (editedImage: string) => {
+    setGalleryImages([editedImage]);
   };
 
   // Функция для обработки отправки данных
@@ -33,23 +58,58 @@ const PhotoStep: React.FC<PhotoStepProps> = ({ onNext }) => {
   };
 
   return (
-    <Box style={{ padding: '20px' }}> {/* Обертка с отступами */}
-      <Typography variant="h5" align='center' sx={{ marginBottom: "20px" }}>Upload your photo</Typography> {/* Заголовок */}
-      <Typography variant="h6" align='center' sx={{ marginBottom: "20px" }}>Make sure the photo of your face is clear so that it can be easily verified</Typography> {/* Подзаголовок с инструкцией */}
-      <Gallery 
-        columns={1} // Указываем количество колонок для отображения изображений
-        rows={1} // Указываем количество строк для отображения изображений
-        galleryImages={galleryImages} // Передаем изображения в галерею
-        handleDeleteImage={handleDeleteImage} // Передаем функцию для удаления изображений
-        handleLoadImage={handleEditImage} // Передаем функцию для загрузки/редактирования изображений
-      />
-      <RoundButton 
-        onClick={handleSubmit} // Обработчик клика по кнопке
-        disabled={galleryImages[0] === ''} // Кнопка отключена, если первое изображение пустое
-        sx={{ width: "100%", marginTop: "20px" }} // Стили для кнопки
-      >
-        Next
-      </RoundButton>
+    <Box style={{ padding: "20px" }}>
+      <Typography variant="h5" align="center" sx={{ marginBottom: "20px" }}>
+        Upload your photo
+      </Typography>
+      <Typography variant="h6" align="center" sx={{ marginBottom: "20px" }}>
+        Make sure the photo of your face is clear so that it can be easily
+        verified
+      </Typography>
+
+      {!isEditing && (
+        <>
+          <Gallery
+            columns={1}
+            rows={1}
+            galleryImages={galleryImages}
+            handleDeleteImage={() => setGalleryImages([""])}
+            handleLoadImage={() => { }}
+          />
+          <Box sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+            <Button variant="contained" component="label">
+              Upload Photo
+              <input type="file" accept="image/*" hidden onChange={handleFileChange} />
+            </Button>
+            {galleryImages[0] && (
+              <Button
+                variant="outlined"
+                sx={{ marginLeft: "10px" }}
+                onClick={handleEditImage}
+              >
+                Edit Photo
+              </Button>
+            )}
+          </Box>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ width: "100%", marginTop: "20px" }}
+            disabled={galleryImages[0] === ""}
+            onClick={handleSubmit}
+          >
+            Next
+          </Button>
+        </>
+      )}
+
+      {isEditing && imageToEdit && (
+        <PhotoEditor
+          image={imageToEdit}
+          onSave={handleSaveEditedImage}
+          onClose={() => setIsEditing(false)}
+        />
+      )}
     </Box>
   );
 };
