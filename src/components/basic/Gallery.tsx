@@ -30,16 +30,18 @@ const Gallery: React.FC<GalleryProps> = ({ galleryImages, handleDeleteImage, han
     <Box mt={3} width="100%">
       <Box display="grid" gridTemplateColumns={`repeat(${columns}, 1fr)`} gap={1} justifyContent="center">
         {galleryImages.slice(0, columns * rows).map((src, index) => (
-          <Box key={index} position="relative">
-            <Avatar
-              variant="rounded"
-              src={src || undefined}
-              sx={{
-                width: `${imageSize}px`,
-                height: `${imageSize}px`,
-                bgcolor: src ? 'transparent' : 'grey.300',
-              }}
-            />
+          <Box key={index} position="relative" width={`${imageSize}px`} height={`${imageSize}px`} bgcolor="grey.300">
+            {src && (
+              <Box
+                component="img"
+                src={src}
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain'
+                }}
+              />
+            )}
             {/* Кнопка удаления */}
             {src && (
               <IconButton
@@ -59,7 +61,6 @@ const Gallery: React.FC<GalleryProps> = ({ galleryImages, handleDeleteImage, han
 
             {/* Кнопка редактирования / загрузки */}
             {!src ? (
-              // Если нет картинки - показываем кнопку с загрузкой файла
               <IconButton
                 size="small"
                 component="label"
@@ -80,7 +81,6 @@ const Gallery: React.FC<GalleryProps> = ({ galleryImages, handleDeleteImage, han
                 />
               </IconButton>
             ) : (
-              // Если картинка есть - по нажатию открываем редактор
               <IconButton
                 size="small"
                 onClick={() => handleEditImage(index)}
