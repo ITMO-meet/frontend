@@ -354,3 +354,34 @@ build/
 /public/bundle.css.map
 /public/bundle.js
 /public/bundle.js.map
+
+# Ignore build outputs
+/android/app/build/
+/android/.gradle/
+/android/captures/
+/android/app/.externalNativeBuild/
+
+# Ignore local properties and configurations
+/android/local.properties
+/android/.idea/libraries/
+/android/.idea/workspace.xml
+/android/.idea/tasks.xml
+/android/.idea/misc.xml
+/android/.idea/modules.xml
+
+# Ignore generated files
+/android/.cxx/
+/android/.settings/
+/android/.externalNativeBuild/
+
+# Ignore logs and caches
+/android/app/build/intermediates/
+/android/app/build/outputs/
+/android/app/build/generated/
+/android/app/build/.cxx/
+/android/app/.cxx/
+
+# Ignore .iml and gradle caches
+*.iml
+.gradle/
+/android/build/
