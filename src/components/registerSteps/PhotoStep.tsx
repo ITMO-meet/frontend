@@ -68,15 +68,12 @@ const PhotoStep: React.FC<PhotoStepProps> = ({ onNext }) => {
             handleLoadImage={handleLoadImage}
             handleEditImage={handleEditImage}
           />
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{ width: "100%", marginTop: "20px" }}
-            disabled={galleryImages[0] === ""}
+          <RoundButton
+            sx={{ width: "100%", marginTop: "20px" }} // Стили для кнопки
             onClick={handleSubmit}
           >
             Next
-          </Button>
+          </RoundButton>
         </>
       )}
 
