@@ -2,11 +2,10 @@ import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import StoryViewer from '../../src/components/StoryViewer';
-import { logEvent, logPageView } from '../../src/analytics'
+import { logEvent } from '../../src/analytics'
 
 jest.mock('../../src/analytics', () => ({
     logEvent: jest.fn(),
-    logPageView: jest.fn(),
 }));
 
 describe('StoryViewer Component', () => {
@@ -83,7 +82,7 @@ describe('StoryViewer Component', () => {
 
 
         expect(screen.getByAltText('Story')).toHaveAttribute('src', 'path/to/story2.jpg');
-        
+
         expect(logEvent).toHaveBeenCalledWith('Story', 'Story viewed', '');
     });
 

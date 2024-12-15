@@ -3,10 +3,9 @@ import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { logEvent, logPageView } from '../../src/analytics'
+import { logPageView } from '../../src/analytics'
 
 jest.mock('../../src/analytics', () => ({
-    logEvent: jest.fn(),
     logPageView: jest.fn(),
 }));
 
@@ -61,7 +60,7 @@ describe('AddStoryPage', () => {
         expect(screen.getByLabelText(/file upload/i)).toBeInTheDocument();
 
         expect(screen.getByText('Cancel')).toBeInTheDocument();
-        
+
         expect(logPageView).toHaveBeenCalledWith('/add-story');
     });
 

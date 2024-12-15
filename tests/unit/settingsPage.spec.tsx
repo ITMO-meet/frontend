@@ -3,10 +3,9 @@ import { render, screen, fireEvent, waitForElementToBeRemoved } from '@testing-l
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 import SettingsPage from '../../src/components/pages/SettingsPage';
 import '@testing-library/jest-dom';
-import { logEvent, logPageView } from '../../src/analytics'
+import { logPageView } from '../../src/analytics'
 
 jest.mock('../../src/analytics', () => ({
-    logEvent: jest.fn(),
     logPageView: jest.fn(),
 }));
 

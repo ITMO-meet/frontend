@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import CalendarPage from '../../src/components/pages/CalendarPage';
 import { Event } from '../../src/components/pages/CalendarPage';
-import { logEvent, logPageView } from '../../src/analytics'
+import { logPageView } from '../../src/analytics'
 
 jest.mock('react-big-calendar', () => {
     const Calendar = ({ events }: { events: Event[] }) => (
@@ -25,7 +25,6 @@ jest.mock('react-big-calendar', () => {
 });
 
 jest.mock('../../src/analytics', () => ({
-    logEvent: jest.fn(),
     logPageView: jest.fn(),
 }));
 
