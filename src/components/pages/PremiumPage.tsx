@@ -1,14 +1,15 @@
-import React from 'react';
-import {Box, Typography, Button, IconButton} from '@mui/material';
+import React, { useEffect } from 'react';
+import { Box, Typography, Button, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { usePremium } from '../../contexts/PremiumContext';
 import WestIcon from '@mui/icons-material/West'
-import { logEvent } from '../../analytics';
+import { logEvent, logPageView } from '../../analytics';
 
 const PremiumPage: React.FC = () => {
     const { setPremium } = usePremium();
     const navigate = useNavigate();
 
+    useEffect(() => { logPageView("/premium") }, []);
     const handleBuy = () => {
         setPremium(true); // update profile
         logEvent("Premium", "Premium bought", "Premium Button");
@@ -16,7 +17,7 @@ const PremiumPage: React.FC = () => {
     };
 
     return (
-        <Box sx={{ p: 4, textAlign: 'center'}}>
+        <Box sx={{ p: 4, textAlign: 'center' }}>
             {/* Back button */}
             <Box display="flex" justifyContent="flex-start" mb={3}>
                 <IconButton onClick={() => navigate('/profile')} sx={{ color: 'grey.800' }} aria-label="back">
@@ -25,7 +26,7 @@ const PremiumPage: React.FC = () => {
             </Box>
 
             {/* Описание */}
-            <Typography variant='h4' sx={{ mb: 2, fontWeight: 'bold'}}>
+            <Typography variant='h4' sx={{ mb: 2, fontWeight: 'bold' }}>
                 Это премиум. Вау!
             </Typography>
 
@@ -41,7 +42,7 @@ const PremiumPage: React.FC = () => {
             >
                 10 $/месяц
             </Typography>
-            
+
             {/* Преимущества */}
             <Box
                 sx={{
@@ -88,7 +89,7 @@ const PremiumPage: React.FC = () => {
                             fontSize: '20px',
                             px: 5,
                             py: 1.5,
-                        
+
                         }}
                         onClick={handleBuy}
                     >
