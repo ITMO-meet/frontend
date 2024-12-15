@@ -6,6 +6,7 @@ import '@testing-library/jest-dom';
 import { logPageView } from '../../src/analytics'
 
 jest.mock('../../src/analytics', () => ({
+    logEvent: jest.fn(),
     logPageView: jest.fn(),
 }));
 

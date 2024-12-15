@@ -11,6 +11,7 @@ jest.mock('react-router-dom', () => ({
 }));
 
 jest.mock('../../src/analytics', () => ({
+  logEvent: jest.fn(),
   logPageView: jest.fn(),
 }));
 

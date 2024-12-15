@@ -93,7 +93,7 @@ describe('UserProfilePage', () => {
     test('displays "Profile not found" if user does not exist', () => {
         renderUserProfilePage('999');
         expect(screen.getByText('Profile not found.')).toBeInTheDocument();
-
+        
         expect(logEvent).toHaveBeenCalledWith('UserProfile', 'User profile viewed', '');
     });
 
@@ -128,7 +128,7 @@ describe('UserProfilePage', () => {
         expect(screen.getByText('Course: 1')).toBeInTheDocument();
         expect(screen.getByText('Faculty: PIiKT')).toBeInTheDocument();
         expect(screen.getByText('ITMO ID: 123456')).toBeInTheDocument();
-
+    
         expect(logEvent).toHaveBeenCalledWith('UserProfile', 'User profile viewed', '');
     });
 

@@ -25,6 +25,7 @@ jest.mock('react-big-calendar', () => {
 });
 
 jest.mock('../../src/analytics', () => ({
+    logEvent: jest.fn(),
     logPageView: jest.fn(),
 }));
 

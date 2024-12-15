@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { logPageView } from '../../src/analytics'
 
 jest.mock('../../src/analytics', () => ({
+    logEvent: jest.fn(),
     logPageView: jest.fn(),
 }));
 
@@ -60,7 +61,7 @@ describe('AddStoryPage', () => {
         expect(screen.getByLabelText(/file upload/i)).toBeInTheDocument();
 
         expect(screen.getByText('Cancel')).toBeInTheDocument();
-
+        
         expect(logPageView).toHaveBeenCalledWith('/add-story');
     });
 
