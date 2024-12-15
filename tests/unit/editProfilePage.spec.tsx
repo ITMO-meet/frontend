@@ -7,6 +7,12 @@ import userEvent from '@testing-library/user-event';
 import { useLocation } from 'react-router-dom';
 import PremiumPage from '../../src/components/pages/PremiumPage';
 import { PremiumProvider } from '../../src/contexts/PremiumContext';
+import { logEvent, logPageView } from '../../src/analytics'
+
+jest.mock('../../src/analytics', () => ({
+    logEvent: jest.fn(),
+    logPageView: jest.fn(),
+}));
 
 function LocationDisplay() {
     const location = useLocation();
@@ -38,6 +44,8 @@ describe('EditProfilePage', () => {
         expect(screen.getByText('Interests')).toBeInTheDocument();
         expect(screen.getByText('Gallery')).toBeInTheDocument();
         expect(screen.getByText('Premium')).toBeInTheDocument();
+
+        expect(logPageView).toHaveBeenCalledWith('/edit-profile');
     });
 
     test('opens and selects target option', async () => {
@@ -151,5 +159,7 @@ describe('EditProfilePage', () => {
         await waitFor(() => {
             expect(screen.getByText('Это премиум. Вау!')).toBeInTheDocument();
         });
+
+        expect(logEvent).toHaveBeenCalledWith('Profile', 'To premium click', 'Premium Button');
     });
 });

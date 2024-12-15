@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ContactCard from '../Contact';
 import Stories from '../Stories';
 import AddStoryModal from '../AddStoryModal';
+import { logEvent, logPageView } from '../../analytics';
 
 interface ChatPageProps {
   people: Array<{
@@ -33,7 +34,10 @@ const ChatPage: React.FC<ChatPageProps> = ({ people, stories, messages }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddStoryOpen, setIsAddStoryOpen] = useState(false);
 
+  useEffect(() => { logPageView("/chats") }, []);
+
   const handleClick = (isu: number) => {
+    logEvent("Chats", "Open chat", "Clicked on chat");
     navigate(`/chat/${isu}`);
   };
 

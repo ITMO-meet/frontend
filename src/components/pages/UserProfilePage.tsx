@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, IconButton, Paper, Button } from '@mui/material';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useNavigate, useParams } from 'react-router-dom';
 import BlockIcon from '@mui/icons-material/Block';
+import { logEvent } from '../../analytics';
 
 interface UserProfilePageProps {
     people: Array<{
@@ -21,6 +22,8 @@ interface UserProfilePageProps {
 
 const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
     const navigate = useNavigate();
+
+    useEffect(() => { logEvent("UserProfile", "User profile viewed", "") }, []);
 
     const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
 

@@ -3,10 +3,16 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 import '@testing-library/jest-dom';
 import ChatPage from '../../src/components/pages/ChatPage';
+import { logPageView } from '../../src/analytics'
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: jest.fn(),
+}));
+
+jest.mock('../../src/analytics', () => ({
+  logEvent: jest.fn(),
+  logPageView: jest.fn(),
 }));
 
 interface MockContactProps {
@@ -96,6 +102,8 @@ describe('ChatPage Component', () => {
     expect(screen.getByText('Messages')).toBeInTheDocument();
     expect(screen.getByText('John Doe')).toBeInTheDocument();
     expect(screen.getByText('Jane Smith')).toBeInTheDocument();
+    expect(logPageView).toHaveBeenCalledWith('/chats');
+
   });
 
   it('filters contacts based on search query', () => {
