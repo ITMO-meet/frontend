@@ -20,6 +20,7 @@ import ImageButton from '../basic/ImageButton';
 import RoundButton from '../basic/RoundButton';
 import theme from '../theme';
 import HorizontalButtonGroup from '../basic/HorizontalButtonGroup';
+import { logEvent, logPageView } from '../../analytics';
 
 // Интерфейс для представления информации о человеке
 interface Person {
@@ -63,6 +64,7 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
 
     // Эффект для получения следующего человека при монтировании компонента
     useEffect(() => {
+        logPageView("/feed"); // GA log on page open
         setPerson(getNextPerson()); // Установка следующего человека
     }, []); // Зависимость от функции получения следующего человека
 
@@ -90,12 +92,15 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
         switch (dir) {
             case "left":
                 onDislike(person); // Если свайп влево, вызвать функцию "не понравилось"
+                logEvent("Feed", "User pressed/swiped dislike","");
                 break;
             case "right":
                 onLike(person); // Если свайп вправо, вызвать функцию лайка
+                logEvent("Feed", "User pressed/swiped like","");
                 break;
             case "up":
                 onSuperLike(person); // Если свайп вверх, вызвать функцию суперлайка
+                logEvent("Feed", "User pressed/swiped superlike","");
                 break;
         }
 
