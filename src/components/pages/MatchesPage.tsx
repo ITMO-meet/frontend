@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, IconButton, Paper, Avatar, List, ListItem, ListItemAvatar, ListItemText, Divider, Button } from '@mui/material';
 import ListIcon from '@mui/icons-material/List';
 import CloseIcon from '@mui/icons-material/Close';
@@ -6,6 +6,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { usePremium } from '../../contexts/PremiumContext';
 import { useNavigate } from 'react-router-dom';
+import { logEvent, logPageView } from '../../analytics';
 
 interface MatchesPageProps {
     people: Array<{
@@ -28,6 +29,13 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
 
     const currentMatch = people[currentMatchIndex];
     const allPhotos = [currentMatch.logo, ...currentMatch.photos];
+
+    useEffect(()=>{
+        logPageView("/matches")
+        if(!isPremium) {
+            logEvent("Matches", "User without premium tried to view matches", "User action (without premium)");
+        }
+    },[]);
 
     const handleNextMatch = () => {
         setCurrentMatchIndex((prevIndex) => (prevIndex + 1) % people.length);

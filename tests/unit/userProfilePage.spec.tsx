@@ -4,6 +4,11 @@ import '@testing-library/jest-dom';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import UserProfilePage from '../../src/components/pages/UserProfilePage';
 import { useNavigate } from 'react-router-dom';
+import { logEvent } from '../../src/analytics'
+
+jest.mock('../../src/analytics', () => ({
+    logEvent: jest.fn(),
+}));
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
@@ -88,6 +93,8 @@ describe('UserProfilePage', () => {
     test('displays "Profile not found" if user does not exist', () => {
         renderUserProfilePage('999');
         expect(screen.getByText('Profile not found.')).toBeInTheDocument();
+        
+        expect(logEvent).toHaveBeenCalledWith('UserProfile', 'User profile viewed', '');
     });
 
     test('displays user details correctly', () => {
@@ -112,6 +119,8 @@ describe('UserProfilePage', () => {
 
         fireEvent.click(prevPhotoButton);
         expect(screen.getByAltText('Jane Smith1 photo 1')).toBeInTheDocument();
+
+        expect(logEvent).toHaveBeenCalledWith('UserProfile', 'User profile viewed', '');
     });
 
     test('displays ITMO details if the user is a student', () => {
@@ -119,11 +128,15 @@ describe('UserProfilePage', () => {
         expect(screen.getByText('Course: 1')).toBeInTheDocument();
         expect(screen.getByText('Faculty: PIiKT')).toBeInTheDocument();
         expect(screen.getByText('ITMO ID: 123456')).toBeInTheDocument();
+    
+        expect(logEvent).toHaveBeenCalledWith('UserProfile', 'User profile viewed', '');
     });
 
     test('shows non-student message for non-student users', () => {
         renderUserProfilePage('789852');
         expect(screen.getByText('This person is not a student.')).toBeInTheDocument();
+
+        expect(logEvent).toHaveBeenCalledWith('UserProfile', 'User profile viewed', '');
     });
 
     test('calls block user functionality when "Block user" is clicked', () => {
@@ -131,6 +144,8 @@ describe('UserProfilePage', () => {
         const blockButton = screen.getByRole('button', { name: /Block user/i });
         fireEvent.click(blockButton);
         expect(console.log).toHaveBeenCalledWith('User blocked');
+
+        expect(logEvent).toHaveBeenCalledWith('UserProfile', 'User profile viewed', '');
     });
 
     test('navigates back when "Go Back" is clicked', () => {
@@ -138,5 +153,7 @@ describe('UserProfilePage', () => {
         const backButton = screen.getByLabelText('Go back');
         fireEvent.click(backButton);
         expect(mockNavigate).toHaveBeenCalledWith(-1);
+
+        expect(logEvent).toHaveBeenCalledWith('UserProfile', 'User profile viewed', '');
     });
 });
