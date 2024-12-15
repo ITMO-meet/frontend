@@ -29,7 +29,7 @@
         6. Добавить навигацию на кнопку Premium на страницу PremiumPage 
 */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, Avatar, Paper, IconButton } from '@mui/material';
 import WestIcon from '@mui/icons-material/West';
 import CloseIcon from '@mui/icons-material/Close';
@@ -44,6 +44,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import MultiCategorySheetButton from '../basic/MultiCategorySheetButton';
 import { useNavigate } from 'react-router-dom';
+import { logPageView, logEvent } from '../../analytics';
 
 interface SliderCategoryOption {
     label: string;
@@ -80,6 +81,8 @@ const EditProfilePage: React.FC = () => {
     });
     const [, setSelectedFeatures] = useState<{ [key: string]: string | string[] }>({});
 
+    useEffect(() => { logPageView("/edit-profile") }, []);
+
     const handleInterestClick = (selectedOpts: string[]) => {
         console.log('Selected interests:', selectedOpts);
     };
@@ -106,6 +109,7 @@ const EditProfilePage: React.FC = () => {
     };
 
     const handlePremiumClick = () => {
+        logEvent("Profile", "To premium click", "Premium Button")
         navigate('/premium');
         console.log('Premium button clicked from edit');
     }
