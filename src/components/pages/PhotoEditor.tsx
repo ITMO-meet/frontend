@@ -1,6 +1,6 @@
 import React from "react";
 import FilerobotImageEditor, { TABS } from "react-filerobot-image-editor";
-import { Box, Typography } from '@mui/material'; // Импортируем компоненты из MUI
+import { Box } from '@mui/material';
 
 
 interface PhotoEditorProps {
