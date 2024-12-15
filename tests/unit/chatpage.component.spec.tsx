@@ -102,6 +102,8 @@ describe('ChatPage Component', () => {
     expect(screen.getByText('Messages')).toBeInTheDocument();
     expect(screen.getByText('John Doe')).toBeInTheDocument();
     expect(screen.getByText('Jane Smith')).toBeInTheDocument();
+    expect(logPageView).toHaveBeenCalledWith('/chats');
+
   });
 
   it('filters contacts based on search query', () => {

@@ -3,6 +3,12 @@ import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { logEvent, logPageView } from '../../src/analytics'
+
+jest.mock('../../src/analytics', () => ({
+    logEvent: jest.fn(),
+    logPageView: jest.fn(),
+}));
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
@@ -55,6 +61,8 @@ describe('AddStoryPage', () => {
         expect(screen.getByLabelText(/file upload/i)).toBeInTheDocument();
 
         expect(screen.getByText('Cancel')).toBeInTheDocument();
+        
+        expect(logPageView).toHaveBeenCalledWith('/add-story');
     });
 
     test('uploads and previews an image', async () => {

@@ -4,6 +4,12 @@ import '@testing-library/jest-dom';
 import MatchesPage from '../../src/components/pages/MatchesPage';
 import { MemoryRouter } from 'react-router-dom';
 import { PremiumContext } from '../../src/contexts/PremiumContext';
+import { logEvent, logPageView } from '../../src/analytics'
+
+jest.mock('../../src/analytics', () => ({
+    logEvent: jest.fn(),
+    logPageView: jest.fn(),
+}));
 
 const mockPeople = [
     {
@@ -61,6 +67,9 @@ describe('MatchesPage', () => {
         expect(screen.getByText('Метчи разблокируются после покупки премиума.')).toBeInTheDocument();
         const button = screen.getByRole('button', { name: /Просмотреть план/i });
         expect(button).toBeInTheDocument();
+
+        expect(logPageView).toHaveBeenCalledWith('/matches');
+        expect(logEvent).toHaveBeenCalledWith('Matches', 'User without premium tried to view matches', 'User action (without premium)');
     });
 
     test('renders MatchesPage with all sections if user has premium', () => {
@@ -69,6 +78,8 @@ describe('MatchesPage', () => {
         expect(screen.getByText('Jane Smith1')).toBeInTheDocument();
         const currentPhoto = screen.getByAltText('Jane Smith1 photo 1');
         expect(currentPhoto).toBeInTheDocument();
+
+        expect(logPageView).toHaveBeenCalledWith('/matches');
     });
 
     test('opens and closes the match list', async () => {
@@ -86,6 +97,8 @@ describe('MatchesPage', () => {
         await waitFor(() => {
             expect(screen.queryByText('Match list')).not.toBeInTheDocument();
         });
+
+        expect(logPageView).toHaveBeenCalledWith('/matches');
     });
 
     test('selects a match from the list', async () => {
@@ -102,6 +115,8 @@ describe('MatchesPage', () => {
 
         const secondUserPhoto = screen.getByAltText('Jane Smith2 photo 1');
         expect(secondUserPhoto).toBeInTheDocument();
+
+        expect(logPageView).toHaveBeenCalledWith('/matches');
     });
 
     test('navigates between matches', async () => {
@@ -119,6 +134,8 @@ describe('MatchesPage', () => {
         await waitFor(() => {
             expect(screen.getByText('Jane Smith1')).toBeInTheDocument();
         });
+
+        expect(logPageView).toHaveBeenCalledWith('/matches');
     });
 
     test('navigates between photos', async () => {
@@ -138,5 +155,7 @@ describe('MatchesPage', () => {
             const firstPhoto = screen.getByAltText('Jane Smith1 photo 1');
             expect(firstPhoto).toBeInTheDocument();
         });
+
+        expect(logPageView).toHaveBeenCalledWith('/matches');
     });
 });

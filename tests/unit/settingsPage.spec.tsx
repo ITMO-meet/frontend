@@ -3,6 +3,12 @@ import { render, screen, fireEvent, waitForElementToBeRemoved } from '@testing-l
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 import SettingsPage from '../../src/components/pages/SettingsPage';
 import '@testing-library/jest-dom';
+import { logEvent, logPageView } from '../../src/analytics'
+
+jest.mock('../../src/analytics', () => ({
+    logEvent: jest.fn(),
+    logPageView: jest.fn(),
+}));
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
@@ -28,6 +34,8 @@ describe('SettingsPage', () => {
     it('renders the SettingsPage with the correct title', () => {
         const titleElement = screen.getByText(/Настройки/i);
         expect(titleElement).toBeInTheDocument();
+
+        expect(logPageView).toHaveBeenCalledWith('/settings');
     });
 
     it('navigates back to the profile page when the back button is clicked', () => {
