@@ -92,15 +92,15 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
         switch (dir) {
             case "left":
                 onDislike(person); // Если свайп влево, вызвать функцию "не понравилось"
-                logEvent("Feed", "User pressed/swiped dislike","");
+                logEvent("Feed", "User pressed/swiped dislike", "");
                 break;
             case "right":
                 onLike(person); // Если свайп вправо, вызвать функцию лайка
-                logEvent("Feed", "User pressed/swiped like","");
+                logEvent("Feed", "User pressed/swiped like", "");
                 break;
             case "up":
                 onSuperLike(person); // Если свайп вверх, вызвать функцию суперлайка
-                logEvent("Feed", "User pressed/swiped superlike","");
+                logEvent("Feed", "User pressed/swiped superlike", "");
                 break;
         }
 
