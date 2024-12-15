@@ -3,10 +3,16 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 import '@testing-library/jest-dom';
 import ChatPage from '../../src/components/pages/ChatPage';
+import { logEvent, logPageView } from '../../src/analytics'
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: jest.fn(),
+}));
+
+jest.mock('../../src/analytics', () => ({
+  logEvent: jest.fn(),
+  logPageView: jest.fn(),
 }));
 
 interface MockContactProps {

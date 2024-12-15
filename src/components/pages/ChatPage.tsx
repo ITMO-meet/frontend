@@ -34,7 +34,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ people, stories, messages }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddStoryOpen, setIsAddStoryOpen] = useState(false);
 
-  useEffect(() => { logPageView("/add-story") }, []);
+  useEffect(() => { logPageView("/chats") }, []);
 
   const handleClick = (isu: number) => {
     logEvent("Chats", "Open chat", "Clicked on chat");
