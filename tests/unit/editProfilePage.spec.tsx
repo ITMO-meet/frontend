@@ -41,7 +41,7 @@ describe('EditProfilePage', () => {
         expect(screen.getByText('Bio')).toBeInTheDocument();
         expect(screen.getByText('Target')).toBeInTheDocument();
         expect(screen.getByText('Main Features')).toBeInTheDocument();
-        expect(screen.getByText('Interests')).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /interests/i })).toBeInTheDocument();
         expect(screen.getByText('Gallery')).toBeInTheDocument();
         expect(screen.getByText('Premium')).toBeInTheDocument();
 
@@ -94,15 +94,16 @@ describe('EditProfilePage', () => {
         );
 
         // Выбор интересов
-        fireEvent.click(screen.getByText('Traveling'));
-        fireEvent.click(screen.getByText('Books'));
+        fireEvent.click(screen.getByText(/traveling/i));
+        fireEvent.click(screen.getByText(/books/i));
 
-        // Проверка состояния (выбранные интересы отображаются)
+        // Проверка интересов
         await waitFor(() => {
-            expect(screen.getByText('Traveling')).toBeInTheDocument();
-            expect(screen.getByText('Books')).toBeInTheDocument();
+        expect(screen.getByText(/traveling/i)).toBeInTheDocument();
+        expect(screen.getByText(/books/i)).toBeInTheDocument();
         });
     });
+    
     test('edits and deletes gallery images', async () => {
         render(
             <PremiumProvider>

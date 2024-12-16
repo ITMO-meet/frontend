@@ -35,18 +35,16 @@ import WestIcon from '@mui/icons-material/West';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import RoundButton from '../basic/RoundButton';
-import MultiSelectButtonGroup from '../basic/MultiSelectButtonGroup';
 import EditableField from '../basic/EditableField';
 import TargetSheetButton from '../basic/TargetSheetButton';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import WineBarIcon from '@mui/icons-material/WineBar';
 import PeopleIcon from '@mui/icons-material/People';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import AddIcon from '@mui/icons-material/Add';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MultiCategorySheetButton from '../basic/MultiCategorySheetButton';
 import { useNavigate } from 'react-router-dom';
-import { logPageView, logEvent } from '../../analytics';
+import { logEvent } from '../../analytics';
 
 interface SliderCategoryOption {
     label: string;
