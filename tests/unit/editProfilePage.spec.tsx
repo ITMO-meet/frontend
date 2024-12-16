@@ -3,11 +3,11 @@ import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import EditProfilePage from '../../src/components/pages/EditProfilePage';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import userEvent from '@testing-library/user-event';
+import { PremiumProvider } from '../../src/contexts/PremiumContext';
 import { useLocation } from 'react-router-dom';
 import PremiumPage from '../../src/components/pages/PremiumPage';
-import { PremiumProvider } from '../../src/contexts/PremiumContext';
-import { logEvent, logPageView } from '../../src/analytics'
+import userEvent from '@testing-library/user-event';
+import { logEvent, logPageView } from '../../src/analytics';
 
 jest.mock('../../src/analytics', () => ({
     logEvent: jest.fn(),
@@ -18,7 +18,6 @@ function LocationDisplay() {
     const location = useLocation();
     return <div data-testid="location-display">{location.pathname}</div>;
 }
-
 
 describe('EditProfilePage', () => {
     beforeEach(() => {
@@ -41,7 +40,7 @@ describe('EditProfilePage', () => {
         expect(screen.getByText('Bio')).toBeInTheDocument();
         expect(screen.getByText('Target')).toBeInTheDocument();
         expect(screen.getByText('Main Features')).toBeInTheDocument();
-        expect(screen.getByRole('heading', { name: /interests/i })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /Интересы/i })).toBeInTheDocument();
         expect(screen.getByText('Gallery')).toBeInTheDocument();
         expect(screen.getByText('Premium')).toBeInTheDocument();
 
@@ -77,7 +76,7 @@ describe('EditProfilePage', () => {
             </PremiumProvider>
         );
 
-        const chooseHeightButton = screen.getByRole('button', { name: "Height 100" });
+        const chooseHeightButton = screen.getByRole('button', { name: /Height/i });
         await userEvent.click(chooseHeightButton);
 
         const heightText = await screen.findByText('100');
@@ -93,17 +92,23 @@ describe('EditProfilePage', () => {
             </PremiumProvider>
         );
 
-        // Выбор интересов
-        fireEvent.click(screen.getByText(/traveling/i));
-        fireEvent.click(screen.getByText(/books/i));
+        // Открытие модального окна выбора интересов
+        fireEvent.click(screen.getByText(/Добавьте свои интересы/i));
 
-        // Проверка интересов
+        // Выбор интересов
+        fireEvent.click(screen.getByText(/Путешествия/i));
+        fireEvent.click(screen.getByText(/Книги/i));
+
+        // Закрытие модального окна
+        fireEvent.click(screen.getByText(/Применить/i));
+
+        // Проверка состояния (выбранные интересы отображаются)
         await waitFor(() => {
-        expect(screen.getByText(/traveling/i)).toBeInTheDocument();
-        expect(screen.getByText(/books/i)).toBeInTheDocument();
+            expect(screen.getByText(/Путешествия/i)).toBeInTheDocument();
+            expect(screen.getByText(/Книги/i)).toBeInTheDocument();
         });
     });
-    
+
     test('edits and deletes gallery images', async () => {
         render(
             <PremiumProvider>
@@ -116,11 +121,14 @@ describe('EditProfilePage', () => {
         const images = screen.getAllByRole('img');
         expect(images.length).toBe(3);
 
-        const buttons = screen.getAllByRole('button');
+        // Удаление первой фотографии
+        const deleteButtons = screen.getAllByRole('button', { name: '' }); // Используйте data-testid для точного селектора, если кнопка пустая
+        fireEvent.click(deleteButtons[0]);
 
-        fireEvent.click(buttons[0]);
-
-        await waitFor(() => expect(screen.getAllByRole('img').length).toBe(3));
+        // Проверка, что изображение удалено
+        await waitFor(() => {
+            expect(screen.getAllByRole('img').length).toBe(2);
+        });
     });
 
     test('navigates back to profile page', async () => {
@@ -151,10 +159,10 @@ describe('EditProfilePage', () => {
                 </MemoryRouter>
             </PremiumProvider>
         );
-    
+
         // Нажатие на кнопку Premium
         fireEvent.click(screen.getByText('Premium'));
-    
+
         // Проверка, что навигация выполнена
         await waitFor(() => {
             expect(screen.getByText('Это премиум. Вау!')).toBeInTheDocument();
