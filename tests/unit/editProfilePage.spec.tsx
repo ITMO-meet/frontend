@@ -41,10 +41,11 @@ describe('EditProfilePage', () => {
         expect(screen.getByText('Bio')).toBeInTheDocument();
         expect(screen.getByText('Target')).toBeInTheDocument();
         expect(screen.getByText('Main Features')).toBeInTheDocument();
-        expect(screen.getByText('Interests')).toBeInTheDocument();
+        expect(screen.getByText((content) => content.includes('Интересы'))).toBeInTheDocument();
         expect(screen.getByText('Gallery')).toBeInTheDocument();
         expect(screen.getByText('Premium')).toBeInTheDocument();
 
+        // Проверка вызова logPageView
         expect(logPageView).toHaveBeenCalledWith('/edit-profile');
     });
 
@@ -93,17 +94,23 @@ describe('EditProfilePage', () => {
             </PremiumProvider>
         );
 
-        // Выбор интересов
-        fireEvent.click(screen.getByText('Traveling'));
-        fireEvent.click(screen.getByText('Books'));
+        // Открытие модального окна для выбора интересов
+        fireEvent.click(screen.getByText('Добавьте свои интересы'));
 
-        // Проверка состояния (выбранные интересы отображаются)
+        // Выбор интересов
+        fireEvent.click(screen.getByText((content) => content.includes('Путешествия')));
+        fireEvent.click(screen.getByText((content) => content.includes('Чтение')));
+
+        // Применение выбора
+        fireEvent.click(screen.getByText('Применить'));
+
+        // Проверка интересов
         await waitFor(() => {
-            expect(screen.getByText('Traveling')).toBeInTheDocument();
-            expect(screen.getByText('Books')).toBeInTheDocument();
+            expect(screen.getByText((content) => content.includes('Путешествия'))).toBeInTheDocument();
+            expect(screen.getByText((content) => content.includes('Чтение'))).toBeInTheDocument();
         });
     });
-
+    
     test('edits and deletes gallery images', async () => {
         render(
             <PremiumProvider>
@@ -152,7 +159,7 @@ describe('EditProfilePage', () => {
             </PremiumProvider>
         );
     
-        // Нажатие на кнопку Premium
+        // На��атие на кнопку Premium
         fireEvent.click(screen.getByText('Premium'));
     
         // Проверка, что навигация выполнена
