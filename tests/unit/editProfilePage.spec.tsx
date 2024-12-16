@@ -41,10 +41,11 @@ describe('EditProfilePage', () => {
         expect(screen.getByText('Bio')).toBeInTheDocument();
         expect(screen.getByText('Target')).toBeInTheDocument();
         expect(screen.getByText('Main Features')).toBeInTheDocument();
-        expect(screen.getByText('Interests')).toBeInTheDocument();
+        expect(screen.getByText((content, element) => content.includes('Интересы'))).toBeInTheDocument();
         expect(screen.getByText('Gallery')).toBeInTheDocument();
         expect(screen.getByText('Premium')).toBeInTheDocument();
 
+        // Проверка вызова logPageView
         expect(logPageView).toHaveBeenCalledWith('/edit-profile');
     });
 
@@ -97,16 +98,16 @@ describe('EditProfilePage', () => {
         fireEvent.click(screen.getByText('Добавьте свои интересы'));
 
         // Выбор интересов
-        fireEvent.click(screen.getByText((content, element) => content.includes('Путешествия')));
-        fireEvent.click(screen.getByText((content, element) => content.includes('Чтение')));
+        fireEvent.click(screen.getByText((content) => content.includes('Путешествия')));
+        fireEvent.click(screen.getByText((content) => content.includes('Чтение')));
 
         // Применение выбора
         fireEvent.click(screen.getByText('Применить'));
 
         // Проверка интересов
         await waitFor(() => {
-            expect(screen.getByText((content, element) => content.includes('Путешествия'))).toBeInTheDocument();
-            expect(screen.getByText((content, element) => content.includes('Чтение'))).toBeInTheDocument();
+            expect(screen.getByText((content) => content.includes('Путешествия'))).toBeInTheDocument();
+            expect(screen.getByText((content) => content.includes('Чтение'))).toBeInTheDocument();
         });
     });
     
@@ -158,7 +159,7 @@ describe('EditProfilePage', () => {
             </PremiumProvider>
         );
     
-        // Нажатие на кнопку Premium
+        // На��атие на кнопку Premium
         fireEvent.click(screen.getByText('Premium'));
     
         // Проверка, что навигация выполнена

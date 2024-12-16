@@ -44,7 +44,7 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MultiCategorySheetButton from '../basic/MultiCategorySheetButton';
 import { useNavigate } from 'react-router-dom';
-import { logEvent } from '../../analytics';
+import { logEvent, logPageView } from '../../analytics';
 
 interface SliderCategoryOption {
     label: string;
@@ -161,7 +161,10 @@ const EditProfilePage: React.FC = () => {
     });
     const [, setSelectedFeatures] = useState<{ [key: string]: string | string[] }>({});
 
-    // useEffect(() => { logPageView("/edit-profile") }, []);
+    useEffect(() => {
+        logPageView('/edit-profile');
+    }, []);
+
     useEffect(() => {
         const storedInterests = localStorage.getItem('selectedInterests');
         if (storedInterests) {
