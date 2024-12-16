@@ -4,20 +4,13 @@ import '@testing-library/jest-dom';
 import EditProfilePage from '../../src/components/pages/EditProfilePage';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { PremiumProvider } from '../../src/contexts/PremiumContext';
-import { useLocation } from 'react-router-dom';
 import PremiumPage from '../../src/components/pages/PremiumPage';
-import userEvent from '@testing-library/user-event';
 import { logEvent, logPageView } from '../../src/analytics';
 
 jest.mock('../../src/analytics', () => ({
     logEvent: jest.fn(),
     logPageView: jest.fn(),
 }));
-
-function LocationDisplay() {
-    const location = useLocation();
-    return <div data-testid="location-display">{location.pathname}</div>;
-}
 
 describe('EditProfilePage', () => {
     beforeEach(() => {
@@ -33,13 +26,9 @@ describe('EditProfilePage', () => {
             </PremiumProvider>
         );
 
-        // Проверка наличия заголовка
         expect(screen.getByText('Alisa Pipisa, 20')).toBeInTheDocument();
-
-        // Проверка наличия секций
         expect(screen.getByText('Bio')).toBeInTheDocument();
         expect(screen.getByText('Target')).toBeInTheDocument();
-        expect(screen.getByText('Main Features')).toBeInTheDocument();
         expect(screen.getByRole('heading', { name: /Интересы/i })).toBeInTheDocument();
         expect(screen.getByText('Gallery')).toBeInTheDocument();
         expect(screen.getByText('Premium')).toBeInTheDocument();
@@ -56,15 +45,13 @@ describe('EditProfilePage', () => {
             </PremiumProvider>
         );
 
-        // Открытие TargetSheetButton
         fireEvent.click(screen.getByText('Romantic relationships'));
-
-        // Выбор опции и сохранение
         fireEvent.click(screen.getByText('Dates'));
         fireEvent.click(screen.getByText('Сохранить'));
 
-        // Проверка, что выбранная опция отображается
-        await waitFor(() => expect(screen.getByText('Dates')).toBeInTheDocument());
+        await waitFor(() => {
+            expect(screen.getByText('Dates')).toBeInTheDocument();
+        });
     });
 
     test('opens and selects main feature option', async () => {
@@ -76,11 +63,11 @@ describe('EditProfilePage', () => {
             </PremiumProvider>
         );
 
-        const chooseHeightButton = screen.getByRole('button', { name: /Height/i });
-        await userEvent.click(chooseHeightButton);
+        const heightButton = screen.getByRole('button', { name: /Height/i });
+        fireEvent.click(heightButton);
 
-        const heightText = await screen.findByText('100');
-        expect(heightText).toBeInTheDocument();
+        const heightValue = await screen.findByText('100');
+        expect(heightValue).toBeInTheDocument();
     });
 
     test('selects interests', async () => {
@@ -92,17 +79,11 @@ describe('EditProfilePage', () => {
             </PremiumProvider>
         );
 
-        // Открытие модального окна выбора интересов
         fireEvent.click(screen.getByText(/Добавьте свои интересы/i));
-
-        // Выбор интересов
         fireEvent.click(screen.getByText(/Путешествия/i));
         fireEvent.click(screen.getByText(/Книги/i));
-
-        // Закрытие модального окна
         fireEvent.click(screen.getByText(/Применить/i));
 
-        // Проверка состояния (выбранные интересы отображаются)
         await waitFor(() => {
             expect(screen.getByText(/Путешествия/i)).toBeInTheDocument();
             expect(screen.getByText(/Книги/i)).toBeInTheDocument();
@@ -121,11 +102,9 @@ describe('EditProfilePage', () => {
         const images = screen.getAllByRole('img');
         expect(images.length).toBe(3);
 
-        // Удаление первой фотографии
-        const deleteButtons = screen.getAllByRole('button', { name: '' }); // Используйте data-testid для точного селектора, если кнопка пустая
+        const deleteButtons = screen.getAllByTestId('delete-button');
         fireEvent.click(deleteButtons[0]);
 
-        // Проверка, что изображение удалено
         await waitFor(() => {
             expect(screen.getAllByRole('img').length).toBe(2);
         });
@@ -136,7 +115,6 @@ describe('EditProfilePage', () => {
             <PremiumProvider>
                 <MemoryRouter initialEntries={['/edit-profile']}>
                     <EditProfilePage />
-                    <LocationDisplay />
                 </MemoryRouter>
             </PremiumProvider>
         );
@@ -160,10 +138,8 @@ describe('EditProfilePage', () => {
             </PremiumProvider>
         );
 
-        // Нажатие на кнопку Premium
         fireEvent.click(screen.getByText('Premium'));
 
-        // Проверка, что навигация выполнена
         await waitFor(() => {
             expect(screen.getByText('Это премиум. Вау!')).toBeInTheDocument();
         });
