@@ -30,7 +30,7 @@
 */
 
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Avatar, Paper, IconButton } from '@mui/material';
+import { Box, Typography, Avatar, Paper, IconButton, Chip, Button, Modal } from '@mui/material';
 import WestIcon from '@mui/icons-material/West';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
@@ -42,6 +42,8 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import WineBarIcon from '@mui/icons-material/WineBar';
 import PeopleIcon from '@mui/icons-material/People';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import AddIcon from '@mui/icons-material/Add';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MultiCategorySheetButton from '../basic/MultiCategorySheetButton';
 import { useNavigate } from 'react-router-dom';
 import { logPageView, logEvent } from '../../analytics';
@@ -70,10 +72,90 @@ interface LanguageSelectCategoryOption {
     type: 'languageSelect';
 }
 
+const interestCategories = [
+    {
+        label: 'Спорт и активный отдых',
+        options: [
+            { name: 'Бег', emoji: '🏃‍♂️' },
+            { name: 'Плавание', emoji: '🏊‍♀️' },
+            { name: 'Йога', emoji: '🧘‍♀️' },
+            { name: 'Велоспорт', emoji: '🚴‍♀️' },
+            { name: 'Спортзал', emoji: '🏋️‍♂️' },
+            { name: 'Лыжи', emoji: '🎿' },
+            { name: 'Сноуборд', emoji: '🏂' },
+            { name: 'Танцы', emoji: '💃' },
+            { name: 'Боевые искусства', emoji: '🥋' },
+            { name: 'Серфинг', emoji: '🏄‍♂️' },
+            { name: 'Хайкинг', emoji: '🏕️' },
+            { name: 'Теннис', emoji: '🎾' },
+            { name: 'Скалолазание', emoji: '🧗‍♀️' },
+        ],
+    },
+    {
+        label: 'Образование и саморазвитие',
+        options: [
+            { name: 'Изучение языков', emoji: '🔖' },
+            { name: 'Научные лекции', emoji: '🎓' },
+            { name: 'Онлайн-курсы', emoji: '💻' },
+            { name: 'Самообразование', emoji: '📚' },
+            { name: 'Медитация', emoji: '🧘' },
+            { name: 'Психология', emoji: '🧠' },
+            { name: 'Философия', emoji: '📜' },
+            { name: 'История', emoji: '🏺' },
+            { name: 'Чтение', emoji: '📖' },
+            { name: 'Технологии', emoji: '💻' },
+        ],
+    },
+    {
+        label: 'Хобби и развлечения',
+        options: [
+            { name: 'Литература', emoji: '📚' },
+            { name: 'Видеоигры', emoji: '🎮' },
+            { name: 'Настольные игры', emoji: '🎲' },
+            { name: 'Путешествия', emoji: '🌍' },
+            { name: 'Выращивание растений', emoji: '🪴' },
+            { name: 'Рыбалка', emoji: '🎣' },
+            { name: 'Прогулки с собаками', emoji: '🐕' },
+            { name: 'Любитель кошек', emoji: '🐈' },
+            { name: 'Автомобили и мотоциклы', emoji: '🏎️' },
+        ],
+    },
+    {
+        label: 'Гастрономия',
+        options: [
+            { name: 'Готовка', emoji: '🍳' },
+            { name: 'Любитель вин', emoji: '🍷' },
+            { name: 'Тур по барам', emoji: '🍻' },
+            { name: 'Кофейный эксперт', emoji: '☕' },
+            { name: 'Чайные церемонии', emoji: '🍵' },
+            { name: 'Вегетарианская кухня', emoji: '🥗' },
+            { name: 'Ресторанный критик', emoji: '🍽️' },
+            { name: 'Любитель сладкого', emoji: '🍰' },
+        ],
+    },
+    {
+        label: 'Творчество и искусство',
+        options: [
+            { name: 'Живопись', emoji: '🎨' },
+            { name: 'Фотография', emoji: '📸' },
+            { name: 'Музыка', emoji: '🎵' },
+            { name: 'Пение', emoji: '🎤' },
+            { name: 'Писательство', emoji: '✍️' },
+            { name: 'Скульптура', emoji: '🗿' },
+            { name: 'Театр', emoji: '🎭' },
+            { name: 'Кино', emoji: '🎬' },
+            { name: 'Рукоделие', emoji: '🧵' },
+        ],
+    },
+];
+
+
 type CategoryOption = SliderCategoryOption | SelectCategoryOption | ButtonSelectCategoryOption | LanguageSelectCategoryOption;
 
 const EditProfilePage: React.FC = () => {
     const navigate = useNavigate();
+
+    const [isModalOpen, setModalOpen] = useState(false);
 
     const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>({
         label: "Romantic relationships",
@@ -81,11 +163,13 @@ const EditProfilePage: React.FC = () => {
     });
     const [, setSelectedFeatures] = useState<{ [key: string]: string | string[] }>({});
 
-    useEffect(() => { logPageView("/edit-profile") }, []);
-
-    const handleInterestClick = (selectedOpts: string[]) => {
-        console.log('Selected interests:', selectedOpts);
-    };
+    // useEffect(() => { logPageView("/edit-profile") }, []);
+    useEffect(() => {
+        const storedInterests = localStorage.getItem('selectedInterests');
+        if (storedInterests) {
+            setSelectedInterests(JSON.parse(storedInterests));
+        }
+    }, []);
 
     const handleDeleteImage = (index: number) => {
         console.log(`Delete image at index ${index}`);
@@ -140,6 +224,24 @@ const EditProfilePage: React.FC = () => {
         ''
     ];
 
+    const [selectedInterests, setSelectedInterests] = useState<{ [key: string]: string }>({});
+
+    const handleInterestSelect = (category: string, interest: string, emoji: string) => {
+        setSelectedInterests((prev) => {
+            const updatedInterests = { ...prev, [category]: `${emoji} ${interest}` };
+            localStorage.setItem('selectedInterests', JSON.stringify(updatedInterests));
+            return updatedInterests;
+        });
+    };
+
+    const handleInterestRemove = (category: string) => {
+        setSelectedInterests((prev) => {
+            const updated = { ...prev };
+            delete updated[category];
+            return updated;
+        });
+    };
+
     return (
         <Box position="relative" minHeight="100vh" display="flex" flexDirection="column">
             {/* Header */}
@@ -191,15 +293,128 @@ const EditProfilePage: React.FC = () => {
                 </Box>
 
                 {/* Interests Section */}
-                <Box mt={2} width="100%">
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>Interests</Typography>
+                <Box p={3}>
+            {/* Заголовок */}
+            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>Интересы</Typography>
+
+            {/* Интересы */}
+            <Paper
+                variant="outlined"
+                onClick={() => setModalOpen(true)}
+                sx={{
+                    p: 2,
+                    borderRadius: 3,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    cursor: 'pointer',
+                    '&:hover': { backgroundColor: 'grey.100' },
+                }}
+            >
+                {Object.keys(selectedInterests).length === 0 ? (
                     <Box>
-                        <MultiSelectButtonGroup
-                            options={['Traveling', 'Books', 'Music', 'Dancing', 'Modeling', 'Coffee', 'Rave', 'Hiking']}
-                            onClickOption={handleInterestClick}
-                        />
+                        <Typography sx={{ fontWeight: 'bold' }}>Добавьте свои интересы</Typography>
+                        <Typography sx={{ color: 'grey.600' }}>Расскажите, чем вы увлекаетесь и что вам нравится</Typography>
                     </Box>
+                ) : (
+                    <Box display="flex" flexWrap="wrap" gap={1}>
+                        {Object.entries(selectedInterests).map(([category, interest]) => (
+                            <Chip
+                                key={category}
+                                label={interest}
+                                onDelete={() => handleInterestRemove(category)}
+                                deleteIcon={<CloseIcon />}
+                                sx={{ fontSize: '14px' }}
+                            />
+                        ))}
+                    </Box>
+                )}
+                <ChevronRightIcon />
+            </Paper>
+
+            {/* Модальное окно для выбора интересов */}
+            <Modal open={isModalOpen} onClose={() => setModalOpen(false)}>
+    <Paper
+        sx={{
+            width: '90%',
+            maxWidth: '400px',
+            margin: '10% auto',
+            p: 3,
+            borderRadius: 2,
+            outline: 'none',
+            maxHeight: '80vh',
+            overflowY: 'auto',
+            boxShadow: 24,
+        }}
+    >
+        <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
+            Выберите интересы
+        </Typography>
+
+        {/* Перебор категорий */}
+        {interestCategories.map((category) => (
+            <Box key={category.label} mb={3}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                    {category.label}
+                </Typography>
+                <Box display="flex" flexWrap="wrap" gap={1}>
+                    {/* Кнопки интересов */}
+                    {category.options.map((interest) => (
+                        <Button
+                            key={interest.name}
+                            variant={
+                                selectedInterests[category.label] === `${interest.emoji} ${interest.name}`
+                                    ? 'contained'
+                                    : 'outlined'
+                            }
+                            size="small"
+                            onClick={() => handleInterestSelect(category.label, interest.name, interest.emoji)}
+                            sx={{
+                                textTransform: 'none',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 0.5,
+                                backgroundColor:
+                                    selectedInterests[category.label] === `${interest.emoji} ${interest.name}`
+                                        ? 'rgba(25, 118, 210, 0.1)'
+                                        : 'transparent',
+                                borderColor:
+                                    selectedInterests[category.label] === `${interest.emoji} ${interest.name}`
+                                        ? '#1976D2'
+                                        : 'rgba(0, 0, 0, 0.23)',
+                                color:
+                                    selectedInterests[category.label] === `${interest.emoji} ${interest.name}`
+                                        ? '#1976D2'
+                                        : 'inherit',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(25, 118, 210, 0.15)',
+                                    borderColor: '#1976D2',
+                                    color: '#1976D2',
+                                },
+                            }}
+                        >
+                            {interest.emoji} {interest.name}
+                        </Button>
+                    ))}
                 </Box>
+            </Box>
+        ))}
+
+        {/* Кнопка "Применить" */}
+        <Button
+            variant="contained"
+            fullWidth
+            sx={{ mt: 3 }}
+            onClick={() => setModalOpen(false)}
+        >
+            Применить
+        </Button>
+    </Paper>
+</Modal>
+
+
+
+        </Box>
 
                 {/* Gallery Section */}
                 <Box mt={3} width="100%">

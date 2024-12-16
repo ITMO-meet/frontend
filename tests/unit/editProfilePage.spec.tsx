@@ -103,7 +103,6 @@ describe('EditProfilePage', () => {
             expect(screen.getByText('Books')).toBeInTheDocument();
         });
     });
-
     test('edits and deletes gallery images', async () => {
         render(
             <PremiumProvider>
