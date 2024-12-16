@@ -41,7 +41,7 @@ describe('EditProfilePage', () => {
         expect(screen.getByText('Bio')).toBeInTheDocument();
         expect(screen.getByText('Target')).toBeInTheDocument();
         expect(screen.getByText('Main Features')).toBeInTheDocument();
-        expect(screen.getByText((content, element) => content.includes('Интересы'))).toBeInTheDocument();
+        expect(screen.getByText((content) => content.includes('Интересы'))).toBeInTheDocument();
         expect(screen.getByText('Gallery')).toBeInTheDocument();
         expect(screen.getByText('Premium')).toBeInTheDocument();
 
