@@ -110,6 +110,7 @@ const Stories: React.FC<StoriesProps> = ({ stories, people}) => {
             onClick={() => handleStoryClick(index)}
           >
             <Box
+              data-testid="activity"
               sx={{
                 width: 70,
                 height: 70,

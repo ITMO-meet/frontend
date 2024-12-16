@@ -14,6 +14,7 @@ interface ContactProps {
 const ContactCard: React.FC<ContactProps> = ({ person, lastMessage, handleClick }) => {
   return (
     <Card
+      data-testid="contact"
       sx={{
         mb: 2,
         borderRadius: '16px',
