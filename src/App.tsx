@@ -34,11 +34,15 @@ import SchoolIcon from '@mui/icons-material/School';
 import HomeIcon from '@mui/icons-material/Home';
 import BadgeIcon from '@mui/icons-material/Badge';
 import CalendarPage from './components/pages/CalendarPage';
+
+import { ErrorProvider } from './contexts/ErrorContext';
+
 import MonitorWeightIcon from '@mui/icons-material/MonitorWeight';
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import CakeIcon from '@mui/icons-material/Cake';
 import { AnimatePresence } from 'framer-motion';
+
 
 // deprecated. let it be just in case
 // const contacts = [
@@ -384,12 +388,14 @@ function App() {
   return (
     <Provider config={rollbarConfig}>
       <ErrorBoundary level={"error"} fallbackUI={FallbackUI}>
+        <ErrorProvider>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <PremiumProvider>
             <AppContent />
           </PremiumProvider>
         </ThemeProvider>
+        </ErrorProvider>
       </ErrorBoundary>
     </Provider>
   );

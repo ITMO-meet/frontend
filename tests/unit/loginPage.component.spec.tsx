@@ -1,16 +1,23 @@
+// tests/unit/loginPage.component.spec.tsx
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter, useNavigate } from 'react-router-dom';
+import {render, screen, fireEvent, act} from '@testing-library/react';
+import {MemoryRouter, useNavigate} from 'react-router-dom';
 import LoginPage from '../../src/components/pages/LoginPage';
 import '@testing-library/jest-dom';
+import {ErrorProvider} from "../../src/contexts/ErrorContext";
 
+jest.mock('../../src/api/auth', () => ({
+    __esModule: true,
+    loginUser: jest.fn().mockResolvedValue({
+        redirectUrl: 'http://localhost/auth/dashboard',
+        isu: 123456
+    }),
+}));
 
-jest.mock('../../src/components/pages/ChatPage', () => {
-    return {
-        __esModule: true,
-        default: () => <div data-testid="chat-page">ChatPage Component</div>,
-    };
-});
+jest.mock('../../src/components/pages/ChatPage', () => ({
+    __esModule: true,
+    default: () => <div data-testid="chat-page">ChatPage Component</div>,
+}));
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
@@ -23,9 +30,11 @@ describe('LoginPage', () => {
     beforeEach(() => {
         (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
         render(
-            <MemoryRouter>
-                <LoginPage />
-            </MemoryRouter>
+            <ErrorProvider>
+                <MemoryRouter>
+                    <LoginPage/>
+                </MemoryRouter>
+            </ErrorProvider>
         );
     });
 
@@ -34,8 +43,7 @@ describe('LoginPage', () => {
     });
 
     it('renders LoginPage with correct title', () => {
-        const titleElement = screen.getByText(/login with itmo.id/i);
-        expect(titleElement).toBeInTheDocument();
+        expect(screen.getByText(/login with itmo.id/i)).toBeInTheDocument();
     });
 
     it('shows alert when ID is not 6 characters', () => {
@@ -43,37 +51,34 @@ describe('LoginPage', () => {
         const passwordInput = screen.getByLabelText(/password/i);
         const button = screen.getByText(/continue/i);
 
-        // Enter an ID that is not 6 characters
-        fireEvent.change(idInput, { target: { value: '123' } });
-        fireEvent.change(passwordInput, { target: { value: 'password' } });
+        fireEvent.change(idInput, {target: {value: '123'}});
+        fireEvent.change(passwordInput, {target: {value: 'password'}});
         fireEvent.click(button);
 
-        // Check if the Snackbar is displayed with the correct message
-        const alertMessage = screen.getByText(/ID must be exact 6 symbols/i);
-        expect(alertMessage).toBeInTheDocument();
+        expect(screen.getByText(/ID must be exactly 6 symbols/i)).toBeInTheDocument();
     });
 
     it('shows alert when password is empty', () => {
         const idInput = screen.getByLabelText(/id/i);
         const button = screen.getByText(/continue/i);
 
-        // Enter a valid ID but leave password empty
-        fireEvent.change(idInput, { target: { value: '123456' } });
+        fireEvent.change(idInput, {target: {value: '123456'}});
         fireEvent.click(button);
 
-        // Check if the Snackbar is displayed with the correct message
-        const alertMessage = screen.getByText(/Password must not be empty/i);
-        expect(alertMessage).toBeInTheDocument();
+        expect(screen.getByText(/Password must not be empty/i)).toBeInTheDocument();
     });
 
-    it('navigates to /chats when ID and password are valid', () => {
+    it('navigates to /chats when ID and password are valid', async () => {
         const idInput = screen.getByLabelText(/id/i);
         const passwordInput = screen.getByLabelText(/password/i);
         const button = screen.getByText(/continue/i);
 
-        fireEvent.change(idInput, { target: { value: '123456' } });
-        fireEvent.change(passwordInput, { target: { value: 'password' } });
-        fireEvent.click(button);
+        fireEvent.change(idInput, {target: {value: '123456'}});
+        fireEvent.change(passwordInput, {target: {value: 'password'}});
+
+        await act(async () => {
+            fireEvent.click(button);
+        });
 
         expect(mockNavigate).toHaveBeenCalledWith('/chats');
     });
