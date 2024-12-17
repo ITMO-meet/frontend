@@ -12,6 +12,9 @@ import UsernameStep from '../registerSteps/UsernameStep';
 import { useNavigate } from 'react-router-dom';
 import BioStep from '../registerSteps/BioStep';
 import MainFeaturesStep from '../registerSteps/MainFeaturesStep';
+import PageWrapper from '../../PageWrapper';
+import { AnimatePresence } from 'framer-motion';
+
 
 const steps = [
 	'username',
@@ -28,8 +31,10 @@ export const RegisterPage: React.FC = () => {
 	const navigate = useNavigate();
 	const [currentStep, setCurrentStep] = useState(0);
 	const [userData, setUserData] = useState<object>({});
+	const [direction, setDirection] = useState(1); // направление анимации. 1 - вперед, -1 - назад
 
 	const handleNext = (data: object) => {
+		setDirection(1);
 		const newData = { ...userData, ...data }
 		setUserData(newData);
 		setCurrentStep((prev) => prev + 1);
@@ -39,6 +44,7 @@ export const RegisterPage: React.FC = () => {
 	};
 
 	const handleBack = () => {
+		setDirection(-1);
 		setCurrentStep((prev) => Math.max(prev - 1, 0));
 	};
 
@@ -54,7 +60,7 @@ export const RegisterPage: React.FC = () => {
 		switch (steps[currentStep]) {
 			case 'username':
 				return <UsernameStep onNext={handleNext} />;
-			case 'bio': 
+			case 'bio':
 				return <BioStep onNext={handleNext} />;
 			case 'main-feats':
 				return <MainFeaturesStep onNext={handleNext} />;
@@ -80,10 +86,14 @@ export const RegisterPage: React.FC = () => {
 			</Typography>
 			{/* Back button */}
 			<div style={{ marginTop: '20px', minHeight: '60px' }}>
-				{currentStep === 0 ? (<Box/>) : (<ImageButton onClick={handleBack}><WestIcon /></ImageButton>)}
+				{currentStep === 0 ? (<Box />) : (<ImageButton onClick={handleBack}><WestIcon /></ImageButton>)}
 			</div>
-			{renderStep()}
-		</Container>
+			<AnimatePresence mode="wait" custom={direction}>
+				<PageWrapper key={currentStep} direction={direction}>
+					{renderStep()}
+				</PageWrapper>
+			</AnimatePresence>
+		</Container >
 	);
 };
 

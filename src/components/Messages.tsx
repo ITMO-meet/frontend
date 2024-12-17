@@ -13,6 +13,7 @@ import SendIcon from '@mui/icons-material/Send';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useParams, useNavigate } from 'react-router-dom';
 import UserMessage from './UserMessage';
+import PageWrapper from '../PageWrapper';
 
 interface MessagesProps {
   people: Array<{
@@ -128,20 +129,22 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
       </Paper>
 
       {/* Messages List */}
-      <List
-        sx={{
-          mt: 8,
-          mb: 2,
-          px: 2,
-          overflowY: 'auto',
-          maxHeight: 'calc(100vh - 200px)',
-        }}
-      >
-        {chatMessages.map((message, index) => (
-          <UserMessage key={index} message={message} />
-        ))}
-        <div ref={messagesEndRef} />
-      </List>
+      <PageWrapper direction={1}>
+        <List
+          sx={{
+            mt: 8,
+            mb: 2,
+            px: 2,
+            overflowY: 'auto',
+            maxHeight: 'calc(100vh - 200px)',
+          }}
+        >
+          {chatMessages.map((message, index) => (
+            <UserMessage key={index} message={message} />
+          ))}
+          <div ref={messagesEndRef} />
+        </List>
+      </PageWrapper>
 
       {/* Message Input */}
       <Box
