@@ -2,6 +2,11 @@ import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import StoryViewer from '../../src/components/StoryViewer';
+import { logEvent } from '../../src/analytics'
+
+jest.mock('../../src/analytics', () => ({
+    logEvent: jest.fn(),
+}));
 
 describe('StoryViewer Component', () => {
     const mockStories = [
@@ -61,6 +66,8 @@ describe('StoryViewer Component', () => {
         expect(screen.getByAltText('Story')).toBeInTheDocument();
         expect(screen.getByText('Alice')).toBeInTheDocument();
         expect(screen.getAllByRole('progressbar')).toHaveLength(2);
+
+        expect(logEvent).toHaveBeenCalledWith('Story', 'Story viewed', '');
     });
 
     it('automatically advances to next story when progress completes', () => {
@@ -75,6 +82,8 @@ describe('StoryViewer Component', () => {
 
 
         expect(screen.getByAltText('Story')).toHaveAttribute('src', 'path/to/story2.jpg');
+
+        expect(logEvent).toHaveBeenCalledWith('Story', 'Story viewed', '');
     });
 
     it('advances to next story when right area is clicked', () => {
@@ -88,6 +97,8 @@ describe('StoryViewer Component', () => {
 
 
         expect(screen.getByAltText('Story')).toHaveAttribute('src', 'path/to/story2.jpg');
+
+        expect(logEvent).toHaveBeenCalledWith('Story', 'Story viewed', '');
     });
 
     it('goes to previous story when left area is clicked', () => {
@@ -100,6 +111,8 @@ describe('StoryViewer Component', () => {
         fireEvent.click(leftClickArea);
 
         expect(screen.getByAltText('Story')).toHaveAttribute('src', 'path/to/story1.jpg');
+
+        expect(logEvent).toHaveBeenCalledWith('Story', 'Story viewed', '');
     });
 
     it('calls onClose when Close button is clicked', () => {
@@ -110,6 +123,8 @@ describe('StoryViewer Component', () => {
         fireEvent.click(closeButton);
 
         expect(onClose).toHaveBeenCalled();
+
+        expect(logEvent).toHaveBeenCalledWith('Story', 'Story viewed', '');
     });
 
     it('pauses and resumes the progress when image is pressed and released', () => {
@@ -140,5 +155,7 @@ describe('StoryViewer Component', () => {
 
 
         expect(screen.getByAltText('Story')).toHaveAttribute('src', currentStory);
+
+        expect(logEvent).toHaveBeenCalledWith('Story', 'Story viewed', '');
     });
 });

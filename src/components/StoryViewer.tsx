@@ -3,6 +3,7 @@ import { Box, Avatar, Typography, IconButton, LinearProgress, Fade } from '@mui/
 import CloseIcon from '@mui/icons-material/Close';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import { logEvent } from '../analytics';
 
 interface StoryViewerProps {
   storiesWithContent: Array<{
@@ -28,6 +29,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ storiesWithContent, initialIn
 
   const currentEntry = storiesWithContent[currentIndex]
   useEffect(() => {
+    logEvent("Story", "Story viewed", "");
     startProgress();
 
     return () => {

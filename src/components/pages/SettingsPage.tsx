@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     Typography,
@@ -21,6 +21,7 @@ import LanguageIcon from '@mui/icons-material/Language';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useNavigate } from 'react-router-dom';
+import { logEvent, logPageView } from '../../analytics';
 
 const SettingsPage: React.FC = () => {
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -32,6 +33,8 @@ const SettingsPage: React.FC = () => {
     const [problemText, setProblemText] = useState('');
 
     const navigate = useNavigate();
+
+    useEffect(() => { logPageView("/settings") }, []);
 
     const handleOpenNotificationsDialog = () => setNotificationsDialogOpen(true);
     const handleCloseNotificationsDialog = () => setNotificationsDialogOpen(false);
@@ -47,10 +50,12 @@ const SettingsPage: React.FC = () => {
 
     const handleLanguageSelect = (language: string) => {
         setSelectedLanguage(language);
+        logEvent("Settings", "Set language", language);
         setLanguageDialogOpen(false);
     };
 
     const handleSendProblem = () => {
+        logEvent("Settings", "Problem submit", problemText);
         console.log('Problem submitted:', problemText);
         setProblemText('');
         setProblemDialogOpen(false);

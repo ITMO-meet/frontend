@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import CalendarPage from '../../src/components/pages/CalendarPage';
 import { Event } from '../../src/components/pages/CalendarPage';
+import { logPageView } from '../../src/analytics'
 
 jest.mock('react-big-calendar', () => {
     const Calendar = ({ events }: { events: Event[] }) => (
@@ -23,6 +24,10 @@ jest.mock('react-big-calendar', () => {
     };
 });
 
+jest.mock('../../src/analytics', () => ({
+    logEvent: jest.fn(),
+    logPageView: jest.fn(),
+}));
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
@@ -86,6 +91,8 @@ describe('CalendarPage', () => {
         await waitFor(() => {
             expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
         });
+
+        expect(logPageView).toHaveBeenCalledWith('/calendar');
     });
 
     test('displays events fetched from API', async () => {
