@@ -22,6 +22,7 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ isu, onNext }) => {
             await selectUsername({ isu, username: username.trim() });
             // Pass the object so the test can verify
             onNext({ username: username.trim() });
+            /* eslint-disable @typescript-eslint/no-explicit-any */
         } catch(e: any) {
             showError(e.message);
         }

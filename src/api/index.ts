@@ -15,6 +15,7 @@ async function request(url: string, options: RequestOptions) {
     let resp: Response;
     try {
         resp = await fetch(`${BASE_URL}${url}`, options);
+        /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (err: any) {
         // Сетевая ошибка
         throw new Error(`Network error: ${err.message || err}`);

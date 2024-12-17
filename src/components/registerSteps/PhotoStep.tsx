@@ -21,6 +21,7 @@ const PhotoStep: React.FC<PhotoStepProps> = ({ isu, onNext }) => {
         try {
             await uploadLogo(isu, selectedFile);
             onNext({ photo: selectedFile });
+            /* eslint-disable @typescript-eslint/no-explicit-any */
         } catch(e: any) {
             showError(e.message);
         }

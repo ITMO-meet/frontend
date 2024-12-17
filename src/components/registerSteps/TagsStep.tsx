@@ -32,6 +32,7 @@ const TagsStep: React.FC<TagsStepProps> = ({ isu, onNext }) => {
         try {
             await selectTags({ isu, tags: selectedTags });
             onNext({ tags: selectedTags });
+            /* eslint-disable @typescript-eslint/no-explicit-any */
         } catch(e: any) {
             showError(e.message);
         }

@@ -6,6 +6,7 @@ import GoalStep from '../../../src/components/registerSteps/GoalStep';
 import theme from '../../../src/components/theme';
 import { ErrorProvider } from "../../../src/contexts/ErrorContext";
 import { fetchPreferences, selectRelationship } from '../../../src/api/register';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useError as originalUseError } from '../../../src/contexts/ErrorContext';
 
 export const mockShowError = jest.fn();

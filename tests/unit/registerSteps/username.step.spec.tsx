@@ -5,6 +5,8 @@ import UsernameStep from '../../../src/components/registerSteps/UsernameStep';
 import '@testing-library/jest-dom';
 import { ErrorProvider } from "../../../src/contexts/ErrorContext";
 import { selectUsername } from '../../../src/api/register';
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useError as originalUseError } from '../../../src/contexts/ErrorContext';
 
 export const mockShowError = jest.fn();

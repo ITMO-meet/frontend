@@ -23,22 +23,20 @@ export const LoginPage: React.FC = () => {
             return;
         }
 
-        try {
-            const {redirectUrl, isu} = await loginUser(userId, password);
 
-            localStorage.setItem('isu', isu.toString());
+        const {redirectUrl, isu} = await loginUser(userId, password);
 
-            if (redirectUrl.endsWith('/auth/dashboard')) {
-                navigate("/chats");
-            } else if (redirectUrl.endsWith('/auth/register/select_username')) {
-                navigate("/register");
-            } else {
-                showError('Unexpected redirect from server');
-            }
+        localStorage.setItem('isu', isu.toString());
 
-        } catch (e: any) {
-            showError(e.message);
+        if (redirectUrl.endsWith('/auth/dashboard')) {
+            navigate("/chats");
+        } else if (redirectUrl.endsWith('/auth/register/select_username')) {
+            navigate("/register");
+        } else {
+            showError('Unexpected redirect from server');
         }
+
+
     };
 
     return (

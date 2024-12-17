@@ -30,6 +30,8 @@ const AdditionalPhotosStep: React.FC<AdditionalPhotosStepProps> = ({ isu, onNext
         try {
             await uploadCarousel(isu, filtered);
             onNext({ additionalPhotos: filtered });
+
+            /* eslint-disable @typescript-eslint/no-explicit-any */
         } catch(e: any) {
             showError(e.message);
         }

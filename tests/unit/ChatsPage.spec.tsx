@@ -5,6 +5,7 @@ import ChatsPage from '../../src/components/pages/ChatsPage';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
 
+// eslint-disable-next-line react/display-name
 jest.mock('../../src/components/basic/NavBar', () => () => <div data-testid="mocked-navbar"/>);
 
 describe('ChatsPage', () => {

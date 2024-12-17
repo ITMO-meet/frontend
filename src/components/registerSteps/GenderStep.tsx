@@ -23,6 +23,7 @@ const GenderStep: React.FC<GenderStepProps> = ({ isu, onNext }) => {
         try {
             await selectPreferences({ isu, gender_preference: gender });
             onNext({ gender: gender });
+            /* eslint-disable @typescript-eslint/no-explicit-any */
         } catch(e: any) {
             showError(e.message);
         }

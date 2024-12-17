@@ -7,7 +7,6 @@ import { ErrorProvider } from "../../../src/contexts/ErrorContext";
 import { selectPreferences } from '../../../src/api/register';
 
 // 1) Mock useError + selectPreferences:
-import { useError as originalUseError } from '../../../src/contexts/ErrorContext';
 
 export const mockShowError = jest.fn();
 
@@ -26,7 +25,7 @@ jest.mock('../../../src/api/register', () => ({
   __esModule: true,
   selectPreferences: jest.fn().mockResolvedValue({}),
 }));
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const mockSelectPreferences = selectPreferences as jest.Mock;
 
 describe('GenderStep', () => {

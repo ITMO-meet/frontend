@@ -27,6 +27,7 @@ const GoalStep: React.FC<GoalStepProps> = ({ isu, onNext }) => {
         try {
             await selectRelationship({ isu, relationship_preference: [goal] });
             onNext({ goal });
+            /* eslint-disable @typescript-eslint/no-explicit-any */
         } catch(e: any) {
             showError(e.message);
         }

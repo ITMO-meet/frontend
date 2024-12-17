@@ -5,6 +5,8 @@ import AdditionalPhotosStep from '../../../src/components/registerSteps/Addition
 import '@testing-library/jest-dom';
 import { ErrorProvider } from "../../../src/contexts/ErrorContext";
 import { uploadCarousel } from '../../../src/api/register';
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useError as originalUseError } from '../../../src/contexts/ErrorContext';
 
 export const mockShowError = jest.fn();
