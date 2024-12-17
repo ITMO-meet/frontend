@@ -57,8 +57,6 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
     const [swipeDirection, setSwipeDirection] = useState<string | null>(null); // Направление свайпа
     const [iconVisible, setIconVisible] = useState(false); // Видимость иконки
     const [person, setPerson] = useState<Person>({ isu: 0, username: "", bio: "", logo: "" }); // Текущий человек
-
-    const [] = useState(false); // Открытие/закрытие Drawer
    
     // Эффект для получения следующего человека при монтировании компонента
     useEffect(() => {
