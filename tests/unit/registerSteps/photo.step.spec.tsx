@@ -1,4 +1,5 @@
 // tests/unit/registerSteps/photo.step.spec.tsx
+
 import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import PhotoStep from '../../../src/components/registerSteps/PhotoStep';
@@ -6,9 +7,7 @@ import '@testing-library/jest-dom';
 import { ErrorProvider } from "../../../src/contexts/ErrorContext";
 import { uploadLogo } from '../../../src/api/register';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { useError as originalUseError } from '../../../src/contexts/ErrorContext';
-
+// Mocking useError
 export const mockShowError = jest.fn();
 
 // This re-mock must appear BEFORE the component is imported
@@ -22,6 +21,8 @@ jest.mock('../../../src/contexts/ErrorContext', () => {
         }),
     };
 });
+
+// Mocking uploadLogo API
 jest.mock('../../../src/api/register', () => ({
     __esModule: true,
     uploadLogo: jest.fn().mockResolvedValue({}),
@@ -43,7 +44,7 @@ describe('PhotoStep', () => {
     });
 
     it('renders the component', () => {
-        expect(screen.getByText(/Upload Logo/i)).toBeInTheDocument();
+        expect(screen.getByText(/Upload your photo/i)).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
     });
 
@@ -54,7 +55,7 @@ describe('PhotoStep', () => {
 
     it('button is enabled when a photo is uploaded', () => {
         const nextButton = screen.getByRole('button', { name: /next/i });
-        const inputEl = screen.getByTestId('photo-input') as HTMLInputElement;
+        const inputEl = screen.getByTestId('file-input-0') as HTMLInputElement;
         expect(nextButton).toBeDisabled();
 
         fireEvent.change(inputEl, {
@@ -64,7 +65,7 @@ describe('PhotoStep', () => {
     });
 
     it('calls onNext with the correct photo when Next is clicked', async () => {
-        const inputEl = screen.getByTestId('photo-input');
+        const inputEl = screen.getByTestId('file-input-0');
         await act(async () => {
             fireEvent.change(inputEl, {
                 target: { files: [new File(['dummy'], 'photo.jpg', { type: 'image/jpeg' })] }
@@ -74,11 +75,9 @@ describe('PhotoStep', () => {
         expect(mockOnNext).toHaveBeenCalledWith({ photo: expect.any(File) });
     });
 
-
-
     it('shows error if uploadLogo fails', async () => {
         mockUploadLogo.mockRejectedValueOnce(new Error('Upload error'));
-        const inputEl = screen.getByTestId('photo-input');
+        const inputEl = screen.getByTestId('file-input-0');
         await act(async () => {
             fireEvent.change(inputEl, {
                 target: { files: [new File(['dummy'], 'photo.jpg', { type: 'image/jpeg' })] }
