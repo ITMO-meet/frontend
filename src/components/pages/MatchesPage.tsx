@@ -30,12 +30,12 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
     const currentMatch = people[currentMatchIndex];
     const allPhotos = [currentMatch.logo, ...currentMatch.photos];
 
-    useEffect(()=>{
+    useEffect(() => {
         logPageView("/matches")
-        if(!isPremium) {
+        if (!isPremium) {
             logEvent("Matches", "User without premium tried to view matches", "User action (without premium)");
         }
-    },[]);
+    }, []);
 
     const handleNextMatch = () => {
         setCurrentMatchIndex((prevIndex) => (prevIndex + 1) % people.length);
