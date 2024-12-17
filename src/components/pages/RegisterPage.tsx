@@ -12,6 +12,9 @@ import UsernameStep from '../registerSteps/UsernameStep';
 import { useNavigate } from 'react-router-dom';
 import BioStep from '../registerSteps/BioStep';
 import MainFeaturesStep from '../registerSteps/MainFeaturesStep';
+import PageWrapper from '../../PageWrapper';
+import { AnimatePresence } from 'framer-motion';
+
 
 const steps = [
 	'username',
@@ -31,6 +34,7 @@ export const RegisterPage: React.FC = () => {
 	const isu = Number(localStorage.getItem('isu') || '0');
 
 	const handleNext = async () => {
+
 		setCurrentStep((prev) => prev + 1);
 		if (currentStep === steps.length - 1) {
 			handleFinish();
@@ -38,6 +42,7 @@ export const RegisterPage: React.FC = () => {
 	};
 
 	const handleBack = () => {
+		setDirection(-1);
 		setCurrentStep((prev) => Math.max(prev - 1, 0));
 	};
 
@@ -50,8 +55,10 @@ export const RegisterPage: React.FC = () => {
 	const renderStep = () => {
 		switch (steps[currentStep]) {
 			case 'username':
+
 				return <UsernameStep isu={isu} onNext={handleNext} />;
 			case 'bio': 
+
 				return <BioStep onNext={handleNext} />;
 			case 'main-feats':
 				return <MainFeaturesStep onNext={handleNext} />;
@@ -78,10 +85,14 @@ export const RegisterPage: React.FC = () => {
 			</Typography>
 			{/* Back button */}
 			<div style={{ marginTop: '20px', minHeight: '60px' }}>
-				{currentStep === 0 ? (<Box/>) : (<ImageButton onClick={handleBack}><WestIcon /></ImageButton>)}
+				{currentStep === 0 ? (<Box />) : (<ImageButton onClick={handleBack}><WestIcon /></ImageButton>)}
 			</div>
-			{renderStep()}
-		</Container>
+			<AnimatePresence mode="wait" custom={direction}>
+				<PageWrapper key={currentStep} direction={direction}>
+					{renderStep()}
+				</PageWrapper>
+			</AnimatePresence>
+		</Container >
 	);
 };
 

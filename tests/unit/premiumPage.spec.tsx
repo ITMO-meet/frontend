@@ -41,7 +41,7 @@ describe('PremiumPage', () => {
         expect(screen.getByText('Суперлайк')).toBeInTheDocument();
         expect(screen.getByText('Просмотр своих лайков')).toBeInTheDocument();
         expect(screen.getByText('Больше фильтров')).toBeInTheDocument();
-        expect(screen.getByText('Что нибудь еще, главное дай деняккк')).toBeInTheDocument();
+        expect(screen.getByText('Что-нибудь еще')).toBeInTheDocument();
 
         // Проверка наличия кнопки "Купить премиум"
         expect(screen.getByRole('button', { name: 'Купить премиум' })).toBeInTheDocument();
