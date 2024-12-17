@@ -1,6 +1,6 @@
 // RegisterPage.test.tsx
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 import RegisterPage from '../../src/components/pages/RegisterPage';
@@ -117,51 +117,66 @@ describe('RegisterPage', () => {
 		expect(screen.getByText(/Registration/i)).toBeInTheDocument();
 	});
 
-	it('navigates through steps', () => {
+	it('navigates through steps', async () => {
 		// Проверяем шаг ника
 		expect(screen.getByTestId('username-step')).toBeInTheDocument();
 		fireEvent.click(screen.getByText(/Next/i));
 
 		// Проверяем шаг описания
-		expect(screen.getByTestId('bio-step')).toBeInTheDocument();
+		await waitFor(() => {
+			expect(screen.getByTestId('bio-step')).toBeInTheDocument();
+		});
 		fireEvent.click(screen.getByText(/Next/i));
 
 		// Проверяем шаг основных параметров
-		expect(screen.getByTestId('main-features-step')).toBeInTheDocument();
+		await waitFor(() => {
+			expect(screen.getByTestId('main-features-step')).toBeInTheDocument();
+		});
 		fireEvent.click(screen.getByText(/Next/i));
 
 		// Проверяем шаг гендера
-		expect(screen.getByTestId('gender-step')).toBeInTheDocument();
+		await waitFor(() => {
+			expect(screen.getByTestId('gender-step')).toBeInTheDocument();
+		});
 		fireEvent.click(screen.getByText(/Next/i));
 
 		// Проверяем шаг тэгов
-		expect(screen.getByTestId('tags-step')).toBeInTheDocument();
+		await waitFor(() => {
+			expect(screen.getByTestId('tags-step')).toBeInTheDocument();
+		});
 		fireEvent.click(screen.getByText(/Next/i));
 
 		// Проверяем шаг фото
-		expect(screen.getByTestId('photo-step')).toBeInTheDocument();
+		await waitFor(() => {
+			expect(screen.getByTestId('photo-step')).toBeInTheDocument();
+		});
 		fireEvent.click(screen.getByText(/Next/i));
 
 		// Проверяем шаг фоток
-		expect(screen.getByTestId('additional-photos-step')).toBeInTheDocument();
+		await waitFor(() => {
+			expect(screen.getByTestId('additional-photos-step')).toBeInTheDocument();
+		});
 		fireEvent.click(screen.getByText(/Next/i));
 
 		// Проверяем шаг цели
-		expect(screen.getByTestId('goal-step')).toBeInTheDocument();
+		await waitFor(() => {
+			expect(screen.getByTestId('goal-step')).toBeInTheDocument();
+		});
 		fireEvent.click(screen.getByText(/Next/i));
 
 		// Здесь можно добавить проверку, что навигация произошла
 		expect(mockNavigate).toHaveBeenCalled();
 	});
 
-	it('navigates back to the previous step', () => {
+	it('navigates back to the previous step', async () => {
 		// Перейти к следующему шагу
 		fireEvent.click(screen.getByText(/Next/i)); // username step
 		fireEvent.click(screen.getByText(/Next/i)); // gender step
 
 		// Проверяем, что мы на нужном шаге шаге
-		expect(screen.getByTestId('main-features-step')).toBeInTheDocument();
-
+		await waitFor(() => {
+			expect(screen.getByTestId('main-features-step')).toBeInTheDocument();
+		});
 		// Нажимаем кнопку "Назад"
 		const buttons = screen.getAllByRole('button');
 		const backButton = buttons.find((button) => button.textContent !== 'Next') as HTMLElement;
@@ -169,6 +184,8 @@ describe('RegisterPage', () => {
 		fireEvent.click(backButton);
 
 		// Проверяем, что мы вернулись
-		expect(screen.getByTestId('bio-step')).toBeInTheDocument();
+		await waitFor(() => {
+			expect(screen.getByTestId('bio-step')).toBeInTheDocument();
+		});
 	});
 });

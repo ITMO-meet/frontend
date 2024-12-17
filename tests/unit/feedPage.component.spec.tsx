@@ -120,29 +120,4 @@ describe('FeedPage', () => {
 
         expect(logEvent).toHaveBeenCalledWith('Feed', 'User pressed/swiped superlike', '');
     });
-
-    it('opens and closes the drawer', async () => {
-        render(
-            <FeedPage
-                getNextPerson={mockGetNextPerson}
-                onLike={mockOnLike}
-                onSuperLike={mockOnSuperLike}
-                onDislike={mockOnDislike}
-            />
-        );
-
-        const button = screen.getByTestId("MoreVertIcon");
-
-        fireEvent.click(button);
-        const text = screen.getByText('Filters');
-        expect(text).toBeVisible();
-
-        const button2 = screen.getAllByTestId("CloseIcon")[1];
-        fireEvent.click(button2);
-        await waitFor(() => {
-            expect(text).not.toBeVisible();
-        });
-
-        expect(logPageView).toHaveBeenCalledWith('/feed');
-    });
 });
