@@ -131,14 +131,16 @@ describe('FeedPage', () => {
             />
         );
 
-        const button = screen.getByTestId("MoreVertIcon");
+        // Ensure the MoreVertIcon is rendered
+        const moreVertIcon = screen.queryByTestId("MoreVertIcon");
+        expect(moreVertIcon).toBeInTheDocument();
 
-        fireEvent.click(button);
+        fireEvent.click(moreVertIcon);
         const text = screen.getByText('Filters');
         expect(text).toBeVisible();
 
-        const button2 = screen.getAllByTestId("CloseIcon")[1];
-        fireEvent.click(button2);
+        const closeButton = screen.getAllByTestId("CloseIcon")[1];
+        fireEvent.click(closeButton);
         await waitFor(() => {
             expect(text).not.toBeVisible();
         });

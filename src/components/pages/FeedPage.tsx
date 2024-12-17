@@ -8,18 +8,18 @@ import {
     Card,
     CardMedia,
     CardContent,
-    Drawer,
     Slider,
+    Modal,
+    Button,
+    Paper,
+    ToggleButton,
+    ToggleButtonGroup,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import StarIcon from '@mui/icons-material/Star';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useSwipeable } from 'react-swipeable';
 import ImageButton from '../basic/ImageButton';
-import RoundButton from '../basic/RoundButton';
-import theme from '../theme';
-import HorizontalButtonGroup from '../basic/HorizontalButtonGroup';
 import { logEvent, logPageView } from '../../analytics';
 
 // Интерфейс для представления информации о человеке
@@ -58,30 +58,13 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
     const [iconVisible, setIconVisible] = useState(false); // Видимость иконки
     const [person, setPerson] = useState<Person>({ isu: 0, username: "", bio: "", logo: "" }); // Текущий человек
 
-    const [drawerOpen, setDrawerOpen] = useState(false); // Открытие/закрытие Drawer
-    const [distance, setDistance] = useState<number>(100); // Дистанция до 100
-    const [age, setAge] = useState<number[]>([18, 60]); // Возраст от 18 до 60
-
+    const [] = useState(false); // Открытие/закрытие Drawer
+   
     // Эффект для получения следующего человека при монтировании компонента
     useEffect(() => {
         logPageView("/feed"); // GA log on page open
         setPerson(getNextPerson()); // Установка следующего человека
     }, []); // Зависимость от функции получения следующего человека
-
-    // Функция для переключения состояния Drawer
-    const toggleDrawer = (open: boolean) => () => {
-        setDrawerOpen(open);
-    };
-
-    // Обработчик изменения дистанции
-    const handleDistanceChange = (event: Event, newValue: number | number[]) => {
-        setDistance(newValue as number); // Установка новой дистанции
-    };
-
-    // Обработчик изменения возраста
-    const handleAgeChange = (event: Event, newValue: number | number[]) => {
-        setAge(newValue as number[]); // Установка нового возраста
-    };
 
     // Обработчик свайпа
     const handleSwipe = (dir: string) => {
@@ -119,14 +102,36 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
         onSwipedUp: () => handleSwipe('up'), // Обработка свайпа вверх
     });
 
+    const [isModalOpen, setModalOpen] = useState(false); // Состояние модального окна
+    const [gender, setGender] = useState<string>('Мужчины');
+    const [isPremiumModalOpen, setPremiumModalOpen] = useState(false); // Состояние для премиум-сообщения
+    const [age, setAge] = useState<number[]>([18, 60]);
+    const [relationshipType] = useState<string[]>([]);
+    
+    const openModal = () => setModalOpen(true);
+    const closeModal = () => setModalOpen(false);
+    const handlePremiumModalOpen = () => setPremiumModalOpen(true);
+    const handlePremiumModalClose = () => setPremiumModalOpen(false);
+
     return (
         <Box sx={{ height: '90vh', display: 'flex', flexDirection: 'column' }}>
             <AppBar position="static">
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', background: "white" }}>
                     <Typography color="primary" fontSize="36px">Search</Typography> {/* Заголовок приложения */}
-                    <IconButton edge="end" color="inherit" onClick={toggleDrawer(true)}>
-                        <MoreVertIcon color='primary' /> {/* Кнопка для открытия Drawer */}
-                    </IconButton>
+                        {/* Кнопка для открытия модального окна */}
+                        <Button
+                            variant="contained"
+                            onClick={openModal}
+                            sx={{
+                                borderRadius: '50px',
+                                textTransform: 'none',
+                                backgroundColor: '#4469a6', // Голубой цвет (MUI Blue 500)
+                                color: 'white',
+                                '&:hover': { backgroundColor: '#283e61' }, // Более тёмный оттенок голубого при наведении
+                            }}
+                        >
+                            Фильтры
+                        </Button>
                 </Toolbar>
             </AppBar>
 
@@ -172,59 +177,117 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
                 <ImageButton onClick={() => handleSwipe("up")} radius='70px'>{icons.star}</ImageButton> {/* Кнопка суперлайка */}
             </Box>
 
-            {/* Drawer для фильтров */}
-            <Drawer
-                anchor="bottom" // Позиционирование Drawer снизу
-                open={drawerOpen} // Открытие или закрытие Drawer
-                onClose={toggleDrawer(false)} // Обработчик закрытия
+            {/* Модальное окно */}
+        <Modal open={isModalOpen} onClose={closeModal}>
+            <Paper
                 sx={{
-                    '& .MuiDrawer-paper': {
-                        borderTopLeftRadius: 16, // Закругление верхнего левого угла
-                        borderTopRightRadius: 16, // Закругление верхнего правого угла
-                        backgroundColor: theme.palette.secondary.light, // Установка фона Drawer
-                    },
+                    width: '90%',
+                    maxWidth: '400px',
+                    margin: '10% auto',
+                    p: 3,
+                    borderRadius: 3,
+                    outline: 'none',
+                    boxShadow: 24,
+                    maxHeight: '80vh',
+                    overflowY: 'auto',
                 }}
             >
-                <Box sx={{ padding: 2, width: '100%' }}>
-                    <IconButton onClick={toggleDrawer(false)} sx={{ position: 'absolute', top: 10, right: 10 }}>
-                        <CloseIcon /> {/* Кнопка закрытия Drawer */}
+                {/* Заголовок и кнопка закрытия */}
+                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                    <Typography variant="h6" fontWeight="bold">Фильтры</Typography>
+                    <IconButton onClick={closeModal}>
+                        <CloseIcon />
                     </IconButton>
-                    <Typography variant="h5" sx={{ marginBottom: 2, textAlign: 'center' }}>
-                        Filters {/* Заголовок секции фильтров */}
-                    </Typography>
-                    <Typography variant="subtitle1" sx={{ marginBottom: 2 }}>
-                        Interested in {/* Подзаголовок для выбора интересов */}
-                    </Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                        <HorizontalButtonGroup options={["Man", "Woman", "Helicopters"]} spacing={10} onButtonClick={console.log} /> {/* Группа кнопок для выбора интересов */}
-                    </Box>
-                    <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
-                        Distance {distance} {/* Отображение текущей дистанции */}
-                    </Typography>
+                </Box>
+
+                {/* Пол */}
+                <Typography>Пол</Typography>
+                <ToggleButtonGroup
+                    value={gender}
+                    exclusive
+                    onChange={(e, value) => setGender(value || gender)}
+                    fullWidth
+                    sx={{ mb: 3 }}
+                >
+                    <ToggleButton value="Мужчины">Мужчины</ToggleButton>
+                    <ToggleButton value="Женщины">Женщины</ToggleButton>
+                    <ToggleButton value="Неважно">Неважно</ToggleButton>
+                </ToggleButtonGroup>
+
+                {/* Возраст */}
+                <Typography>Возраст: {age[0]} - {age[1]}</Typography>
+                <Slider
+                    value={age}
+                    onChange={(e, value) => setAge(value as number[])}
+                    valueLabelDisplay="auto"
+                    min={18}
+                    max={60}
+                    sx={{ mb: 3 }}
+                />
+
+                {/* Премиум-фильтры */}
+                <Box>
+                    <Typography>Рост (доступно по подписке)</Typography>
                     <Slider
-                        value={distance} // Установка значения для слайдера
-                        onChange={handleDistanceChange} // Обработчик изменения значения
-                        valueLabelDisplay="off" // Отключение отображения метки значения
-                        min={0} // Минимальное значение
-                        max={100} // Максимальное значение
+                        disabled
+                        value={[150, 200]}
+                        valueLabelDisplay="auto"
+                        min={150}
+                        max={220}
+                        onClick={handlePremiumModalOpen} // Открытие премиум-сообщения
+                        sx={{ mb: 3 }}
                     />
 
-                    <Typography variant="subtitle1" sx={{ margin: '16px 0 1px' }}>
-                        Age {age[0]} - {age[1]} {/* Отображение диапазона возраста */}
-                    </Typography>
-                    <Slider
-                        value={age} // Установка значения для слайдера возраста
-                        onChange={handleAgeChange} // Обработчик изменения возраста
-                        valueLabelDisplay="off" // Отключение отображения метки значения
-                        min={18} // Минимальное значение возраста
-                        max={60} // Максимальное значение возраста
-                    />
-                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                        <RoundButton onClick={toggleDrawer(false)}>Continue</RoundButton> {/* Кнопка продолжения */}
-                    </Box>
+                    <Typography>Тип отношений (доступно по подписке)</Typography>
+                    <ToggleButtonGroup
+                        disabled
+                        value={relationshipType}
+                        onClick={handlePremiumModalOpen} // Открытие премиум-сообщения
+                        fullWidth
+                    >
+                        <ToggleButton value="Свидания">Свидания</ToggleButton>
+                        <ToggleButton value="Отношения">Отношения</ToggleButton>
+                        <ToggleButton value="Дружба">Дружба</ToggleButton>
+                        <ToggleButton value="Общение">Общение</ToggleButton>
+                    </ToggleButtonGroup>
                 </Box>
-            </Drawer>
-        </Box>
+
+                {/* Кнопка подтверждения */}
+                <Button variant="contained" fullWidth sx={{ mt: 3 }} onClick={closeModal}>
+                    Применить
+                </Button>
+            </Paper>
+        </Modal>
+
+        {/* Выплывающее окошко для премиум-сообщения */}
+        <Modal open={isPremiumModalOpen} onClose={handlePremiumModalClose}>
+                <Paper
+                    sx={{
+                        width: '80%',
+                        maxWidth: '350px',
+                        margin: '20% auto',
+                        p: 3,
+                        borderRadius: 2,
+                        boxShadow: 24,
+                        textAlign: 'center',
+                    }}
+                >
+                    <Typography variant="h6" fontWeight="bold" gutterBottom>
+                        Доступно по подписке
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 2 }}>
+                        Активация этого фильтра доступна только по подписке. Вы можете оформить её в профиле.
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        onClick={handlePremiumModalClose}
+                        sx={{ textTransform: 'none' }}
+                    >
+                        Закрыть
+                    </Button>
+                </Paper>
+            </Modal>
+    </Box>
     );
 };
 
