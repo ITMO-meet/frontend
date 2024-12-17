@@ -1,22 +1,48 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ContactCard from '../Contact';
 import Stories from '../Stories';
 import AddStoryModal from '../AddStoryModal';
-import {ChatProps} from '../../types';
+import { logEvent, logPageView } from '../../analytics';
 
-const ChatPage: React.FC<ChatProps> = ({ contacts }) => {
+interface ChatPageProps {
+  people: Array<{
+    isu: number;
+    username: string;
+    bio: string;
+    logo: string;
+  }>;
+  stories: Array<{
+    id: string;
+    isu: number;
+    url: string;
+    expiration_date: number;
+  }>;
+  messages: Array<{
+    id: string;
+    chat_id: string;
+    sender_id: number;
+    receiver_id: number;
+    text: string;
+    timestamp: string;
+  }>;
+}
+
+const ChatPage: React.FC<ChatPageProps> = ({ people, stories, messages }) => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddStoryOpen, setIsAddStoryOpen] = useState(false);
 
-  const handleClick = (id: string) => {
-    navigate(`/chat/${id}`);
+  useEffect(() => { logPageView("/chats") }, []);
+
+  const handleClick = (isu: number) => {
+    logEvent("Chats", "Open chat", "Clicked on chat");
+    navigate(`/chat/${isu}`);
   };
 
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredContacts = people.filter(person =>
+    person.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleAddStory = () => {
@@ -47,14 +73,23 @@ const ChatPage: React.FC<ChatProps> = ({ contacts }) => {
         Activities
       </Typography>
 
-      <Stories contacts={contacts} onAddStory={handleAddStory} />
+      <Stories people={people} stories={stories} onAddStory={handleAddStory} />
 
       <Typography variant="h6" sx={{ mb: 1, mt: 2 }}>
         Messages
       </Typography>
 
-      {filteredContacts.map((contact) => (
-        <ContactCard key={contact.id} contact={contact} handleClick={handleClick} />
+      {filteredContacts.map((person) => (
+        <ContactCard
+          key={person.isu}
+          person={person}
+          handleClick={handleClick}
+          lastMessage={
+            messages.find(
+              (message) => message.sender_id === person.isu || message.receiver_id === person.isu
+            )?.text || ''
+          }
+        />
       ))}
 
       {filteredContacts.length === 0 && (

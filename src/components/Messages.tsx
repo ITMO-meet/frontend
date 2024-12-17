@@ -12,32 +12,54 @@ import {
 import SendIcon from '@mui/icons-material/Send';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Message, ChatProps } from '../types';
 import UserMessage from './UserMessage';
 
-const Messages: React.FC<ChatProps> = ({ contacts }) => {
+interface MessagesProps {
+  people: Array<{
+    isu: number;
+    username: string;
+    logo: string;
+  }>;
+  messages: Array<{
+    id: string;
+    chat_id: string;
+    sender_id: number;
+    receiver_id: number;
+    text: string;
+    timestamp: string;
+  }>;
+}
+
+const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const contact = contacts.find((c) => c.id === id);
+  const contact = people.find((person) => person.isu === Number(id))
 
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [chatMessages, setChatMessages] = useState<
+    Array<{ sender: 'me' | 'them'; text: string }>
+  >([]);
   const [inputValue, setInputValue] = useState('');
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (contact) {
-      const initialMessages: Message[] = [
-        { sender: 'me', text: `Hey, how are you, ${contact.name}?` },
-        { sender: 'them', text: 'I am good, thanks! How about you?' },
-      ];
-      setMessages(initialMessages);
+      const initialMessages = messages
+        .filter(
+          (message) =>
+            message.sender_id === contact.isu || message.receiver_id === contact.isu
+        )
+        .map((message) => ({
+          sender: message.sender_id === contact.isu ? 'them' : 'me' as 'me' | 'them',
+          text: message.text,
+        }));
+      setChatMessages(initialMessages);
     }
-  }, [contact]);
+  }, [contact, messages]);
 
   const handleSend = () => {
     if (inputValue.trim() !== '') {
-      setMessages((prevMessages) => [
+      setChatMessages((prevMessages) => [
         ...prevMessages,
         { sender: 'me', text: inputValue },
       ]);
@@ -91,7 +113,7 @@ const Messages: React.FC<ChatProps> = ({ contacts }) => {
           <ArrowBackIosIcon />
         </IconButton>
         <Box
-          onClick={() => navigate(`/user-profile/${contact.id}`)}
+          onClick={() => navigate(`/user-profile/${contact.isu}`)}
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -100,8 +122,8 @@ const Messages: React.FC<ChatProps> = ({ contacts }) => {
             ml: 1,
           }}
         >
-          <Avatar src={contact.pfp} sx={{ width: 40, height: 40, mx: 1 }} />
-          <Typography variant="h6">{contact.name}</Typography>
+          <Avatar src={contact.logo} sx={{ width: 40, height: 40, mx: 1 }} />
+          <Typography variant="h6">{contact.username}</Typography>
         </Box>
       </Paper>
 
@@ -115,7 +137,7 @@ const Messages: React.FC<ChatProps> = ({ contacts }) => {
           maxHeight: 'calc(100vh - 200px)',
         }}
       >
-        {messages.map((message, index) => (
+        {chatMessages.map((message, index) => (
           <UserMessage key={index} message={message} />
         ))}
         <div ref={messagesEndRef} />

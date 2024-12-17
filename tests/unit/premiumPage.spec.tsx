@@ -5,10 +5,11 @@ import PremiumPage from '../../src/components/pages/PremiumPage';
 import { MemoryRouter } from 'react-router-dom';
 import { PremiumProvider } from '../../src/contexts/PremiumContext';
 import { useLocation } from 'react-router-dom';
-import { logEvent } from '../../src/analytics'
+import { logEvent, logPageView } from '../../src/analytics'
 
 jest.mock('../../src/analytics', () => ({
     logEvent: jest.fn(),
+    logPageView: jest.fn(),
 }));
 
 function LocationDisplay() {
@@ -47,6 +48,8 @@ describe('PremiumPage', () => {
 
         // Проверка наличия кнопки "назад"
         expect(screen.getByRole('button', { name: 'back' })).toBeInTheDocument();
+        
+        expect(logPageView).toHaveBeenCalledWith('/premium');
     });
 
     test('navigates back to profile page when back button is clicked', async () => {

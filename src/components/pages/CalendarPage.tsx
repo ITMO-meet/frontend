@@ -4,6 +4,7 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { useLocation } from 'react-router-dom';
+import { logEvent, logPageView } from '../../analytics';
 
 
 const localizer = momentLocalizer(moment);
@@ -50,6 +51,10 @@ const CalendarPage: React.FC = () => {
         );
     }
 
+    useEffect(()=>{
+        logPageView("/calendar")
+    },[]);
+
     useEffect(() => {
         const fetchSchedule = async () => {
             setLoading(true);
@@ -89,6 +94,7 @@ const CalendarPage: React.FC = () => {
                 );
 
                 setEvents(parsedEvents);
+                logEvent("ITMO API", "Get calendar", "")
             } catch (error) {
                 console.error(error); // Log the error
                 setError('Error fetching schedule');

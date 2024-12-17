@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, IconButton, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
-import FilerobotImageEditor, {
-  TABS,
-} from "react-filerobot-image-editor";
+import PhotoEditor from "./PhotoEditor";
+import { logEvent, logPageView } from "../../analytics";
 
 
 const AddStoryPage: React.FC = () => {
@@ -25,7 +24,20 @@ const AddStoryPage: React.FC = () => {
     }
   };
 
+  useEffect(() => { 
+    logPageView("/add-story")
+  }, [])
+
   const handleCancel = () => {
+    navigate("/chats");
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleSave = (editedImage: string) => {
+    //console.log( imageData.imageBase64);
+    logEvent("Stories", "Save story", "")
+    alert("Image saved!");
+    setIsEditing(false);
     navigate("/chats");
   };
 
@@ -90,49 +102,10 @@ const AddStoryPage: React.FC = () => {
       )}
 
       {isEditing && imageToEdit && (
-        <FilerobotImageEditor
-          source={imageToEdit}
-          onBeforeSave={() => false}
-
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          onSave={(imageData) => {
-            //console.log( imageData.imageBase64);
-            alert("Image saved!");
-            setIsEditing(false);
-            navigate("/chats");
-          }}
-
+        <PhotoEditor
+          image={imageToEdit}
+          onSave={handleSave}
           onClose={() => setIsEditing(false)}
-          annotationsCommon={{
-            fill: "#ff0000",
-          }}
-          Text={{
-            text: "Placeholder",
-            fontFamily: "Tahoma",
-            fontSize: 30,
-          }}
-          Rotate={{ angle: 90, componentType: 'slider' }}
-          Crop={{
-            ratio: "custom",
-            presetsItems: [
-              {
-                titleKey: '4:3',
-                ratio: 4 / 3,
-              },
-              {
-                titleKey: '21:9',
-                ratio: 21 / 9,
-              },
-            ],
-          }}
-          theme={{
-            colors: {
-              primaryBg: "#000",
-              primary: "#1e90ff",
-            },
-          }}
-          tabsIds={[TABS.ADJUST, TABS.ANNOTATE, TABS.FILTERS, TABS.FINETUNE, TABS.RESIZE]}
-          savingPixelRatio={0} previewPixelRatio={0}
         />
       )}
     </Box>
