@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, useNavigate } from 'react-router-dom';
 import TestsPage from '../../src/components/pages/TestsPage';
 
 // Мокаем useNavigate
@@ -16,7 +16,7 @@ describe('TestsPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     // Подмена useNavigate
-    jest.mocked(require('react-router-dom').useNavigate).mockReturnValue(navigateMock);
+    (useNavigate as jest.Mock).mockReturnValue(navigateMock);
     // Mock window.alert
     window.alert = jest.fn();
   });
