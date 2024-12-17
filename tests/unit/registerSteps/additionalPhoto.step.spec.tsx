@@ -1,46 +1,38 @@
 // AdditionalPhotosStep.test.tsx
 import React from 'react';
-import {render, screen, fireEvent, act} from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import AdditionalPhotosStep from '../../../src/components/registerSteps/AdditionalPhotosStep';
 import '@testing-library/jest-dom';
-import {ErrorProvider} from "../../../src/contexts/ErrorContext";
-jest.mock('../../../src/api/register');
+import { ErrorProvider } from "../../../src/contexts/ErrorContext";
+import { uploadCarousel } from '../../../src/api/register';
+import { useError as originalUseError } from '../../../src/contexts/ErrorContext';
 
+export const mockShowError = jest.fn();
 
-interface MockGalleryProps {
-  galleryImages: string[];
-  handleDeleteImage: (index: number) => void;
-  handleLoadImage: (index: number, url: string) => void;
-  columns: number;
-  rows: number;
-}
-
-jest.mock("../../../src/components/basic/Gallery", () => {
-  const MockGallery: React.FC<MockGalleryProps> = ({ handleDeleteImage, handleLoadImage }) => (
-    <div data-testid="gallery">
-      {Array.from({ length: 6 }).map((_, index) => (
-        <div key={index}>
-          <input
-            type="text"
-            placeholder={`Image URL ${index + 1}`}
-            onChange={(e) => handleLoadImage(index, e.target.value)}
-          />
-          <button onClick={() => handleDeleteImage(index)}>Delete</button>
-        </div>
-      ))}
-    </div>
-  );
+// This re-mock must appear BEFORE the component is imported
+jest.mock('../../../src/contexts/ErrorContext', () => {
+  const actual = jest.requireActual('../../../src/contexts/ErrorContext');
   return {
     __esModule: true,
-    default: MockGallery,
+    ...actual,
+    useError: () => ({
+      showError: mockShowError
+    }),
   };
 });
+jest.mock('../../../src/api/register', () => ({
+  __esModule: true,
+  uploadCarousel: jest.fn().mockResolvedValue({}),
+}));
+
+const mockUploadCarousel = uploadCarousel as jest.Mock;
 
 describe('AdditionalPhotosStep', () => {
   const mockOnNext = jest.fn();
 
   beforeEach(() => {
-    mockOnNext.mockClear(); // Сбрасываем мок перед каждым тестом
+    mockOnNext.mockClear();
+    mockShowError.mockClear();
     render(
         <ErrorProvider>
           <AdditionalPhotosStep isu={123456} onNext={mockOnNext} />
@@ -60,9 +52,28 @@ describe('AdditionalPhotosStep', () => {
       fireEvent.change(fileInputs[1], { target: { files: [new File(['img2'], 'photo2.jpg')] } });
       fireEvent.click(screen.getByRole('button', { name: /next/i }));
     });
-
     expect(mockOnNext).toHaveBeenCalledWith({
       additionalPhotos: [expect.any(File), expect.any(File)]
     });
+  });
+
+  it('shows error if no photos selected', async () => {
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /next/i }));
+    });
+    expect(mockShowError).toHaveBeenCalledWith('Please select at least one photo');
+    expect(mockOnNext).not.toHaveBeenCalled();
+  });
+
+  it('shows error if uploadCarousel fails', async () => {
+    mockUploadCarousel.mockRejectedValueOnce(new Error('Carousel error'));
+    const fileInputs = screen.getAllByTestId(/file-input-/i);
+
+    await act(async () => {
+      fireEvent.change(fileInputs[0], { target: { files: [new File(['img1'], 'photo1.jpg')] } });
+      fireEvent.click(screen.getByRole('button', { name: /next/i }));
+    });
+    expect(mockShowError).toHaveBeenCalledWith('Carousel error');
+    expect(mockOnNext).not.toHaveBeenCalled();
   });
 });

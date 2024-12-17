@@ -1,30 +1,47 @@
-// tests/unit/registerSteps/goals.step.spec.tsx
+// tests/unit/registerSteps/goal.step.spec.tsx
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, act } from '@testing-library/react';
 import React from 'react';
 import GoalStep from '../../../src/components/registerSteps/GoalStep';
 import theme from '../../../src/components/theme';
 import { ErrorProvider } from "../../../src/contexts/ErrorContext";
+import { fetchPreferences, selectRelationship } from '../../../src/api/register';
+import { useError as originalUseError } from '../../../src/contexts/ErrorContext';
 
-// Inline mock
+export const mockShowError = jest.fn();
+
+// This re-mock must appear BEFORE the component is imported
+jest.mock('../../../src/contexts/ErrorContext', () => {
+  const actual = jest.requireActual('../../../src/contexts/ErrorContext');
+  return {
+    __esModule: true,
+    ...actual,
+    useError: () => ({
+      showError: mockShowError
+    }),
+  };
+});
 jest.mock('../../../src/api/register', () => ({
   __esModule: true,
   fetchPreferences: jest.fn().mockResolvedValue(['friendship']),
   selectRelationship: jest.fn().mockResolvedValue({}),
 }));
 
+const mockFetchPreferences = fetchPreferences as jest.Mock;
+const mockSelectRelationship = selectRelationship as jest.Mock;
+
 describe('GoalStep', () => {
   const mockOnNext = jest.fn();
-  let container: HTMLElement;
 
   beforeEach(async () => {
     mockOnNext.mockClear();
+    mockShowError.mockClear();
     await act(async () => {
-      ({ container } = render(
+      render(
           <ErrorProvider>
             <GoalStep isu={123456} onNext={mockOnNext} />
           </ErrorProvider>
-      ));
+      );
     });
   });
 
@@ -33,14 +50,16 @@ describe('GoalStep', () => {
     expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
   });
 
-  it('allows selecting a goal', () => {
-    // The first Paper is "friendship" because fetchPreferences => ['friendship','dating']
-    const goalCard = container.getElementsByClassName("MuiPaper-root")[0];
-    fireEvent.click(goalCard);
-    expect(goalCard).toBeInTheDocument();
-    expect(goalCard).toHaveStyle(`background: ${theme.palette.secondary.light}`);
+  it('loads goals from fetchPreferences', () => {
+    // "friendship" is from the mock fetch
+    expect(screen.getByText(/friendship/i)).toBeInTheDocument();
   });
 
+  it('allows selecting a goal', () => {
+    const firstPaper = screen.getByTestId('goal-friendship');
+    fireEvent.click(firstPaper);
+    expect(firstPaper).toHaveStyle(`background: ${theme.palette.secondary.light}`);
+  });
 
   it('does not call onNext if no goal is selected', () => {
     const nextButton = screen.getByRole('button', { name: /next/i });
@@ -52,8 +71,34 @@ describe('GoalStep', () => {
   it('enables the Next button when goal is selected', () => {
     const nextButton = screen.getByRole('button', { name: /next/i });
     expect(nextButton).toBeDisabled();
-    // Click the Paper with text "friendship"
     fireEvent.click(screen.getByText(/friendship/i).closest('div')!);
     expect(nextButton).toBeEnabled();
+  });
+
+
+
+  it('shows error if selectRelationship fails', async () => {
+    mockSelectRelationship.mockRejectedValueOnce(new Error('Relationship error'));
+    fireEvent.click(screen.getByText(/friendship/i).closest('div')!);
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /next/i }));
+    });
+    expect(mockShowError).toHaveBeenCalledWith('Relationship error');
+    expect(mockOnNext).not.toHaveBeenCalled();
+  });
+
+  it('shows error if fetchPreferences fails', async () => {
+    mockFetchPreferences.mockRejectedValueOnce(new Error('Prefs error'));
+    mockOnNext.mockClear();
+    mockShowError.mockClear();
+
+    await act(async () => {
+      render(
+          <ErrorProvider>
+            <GoalStep isu={123456} onNext={mockOnNext} />
+          </ErrorProvider>
+      );
+    });
+    expect(mockShowError).toHaveBeenCalledWith('Prefs error');
   });
 });
