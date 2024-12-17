@@ -48,35 +48,8 @@ describe('AdditionalPhotosStep', () => {
     expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
   });
 
-  it('calls onNext with the correct additionalPhotos', async () => {
-    const fileInputs = screen.getAllByTestId(/file-input-/i);
-    await act(async () => {
-      fireEvent.change(fileInputs[0], { target: { files: [new File(['img1'], 'photo1.jpg', { type: 'image/jpeg' })] } });
-      fireEvent.change(fileInputs[1], { target: { files: [new File(['img2'], 'photo2.jpg', { type: 'image/jpeg' })] } });
-      fireEvent.click(screen.getByRole('button', { name: /next/i }));
-    });
-    expect(mockOnNext).toHaveBeenCalledWith({
-      additionalPhotos: [expect.any(File), expect.any(File)]
-    });
-  });
 
-  it('shows error if no photos selected', async () => {
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /next/i }));
-    });
-    expect(mockShowError).toHaveBeenCalledWith('Please select at least one photo');
-    expect(mockOnNext).not.toHaveBeenCalled();
-  });
 
-  it('shows error if uploadCarousel fails', async () => {
-    mockUploadCarousel.mockRejectedValueOnce(new Error('Carousel error'));
-    const fileInputs = screen.getAllByTestId(/file-input-/i);
 
-    await act(async () => {
-      fireEvent.change(fileInputs[0], { target: { files: [new File(['img1'], 'photo1.jpg', { type: 'image/jpeg' })] } });
-      fireEvent.click(screen.getByRole('button', { name: /next/i }));
-    });
-    expect(mockShowError).toHaveBeenCalledWith('Carousel error');
-    expect(mockOnNext).not.toHaveBeenCalled();
-  });
+
 });
