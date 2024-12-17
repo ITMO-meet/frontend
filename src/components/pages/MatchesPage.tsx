@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, IconButton, Paper, Avatar, List, ListItem, ListItemAvatar, ListItemText, Divider, Button } from '@mui/material';
 import ListIcon from '@mui/icons-material/List';
 import CloseIcon from '@mui/icons-material/Close';
@@ -6,12 +6,13 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { usePremium } from '../../contexts/PremiumContext';
 import { useNavigate } from 'react-router-dom';
+import { logEvent, logPageView } from '../../analytics';
 
 interface MatchesPageProps {
     people: Array<{
-        id: number;
-        name: string;
-        imageUrl: string;
+        isu: number;
+        username: string;
+        logo: string;
         photos: string[];
         mainFeatures: { text: string; icon: JSX.Element }[];
         interests: { text: string; icon: JSX.Element }[];
@@ -27,7 +28,14 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
     const navigate = useNavigate();
 
     const currentMatch = people[currentMatchIndex];
-    const allPhotos = [currentMatch.imageUrl, ...currentMatch.photos];
+    const allPhotos = [currentMatch.logo, ...currentMatch.photos];
+
+    useEffect(()=>{
+        logPageView("/matches")
+        if(!isPremium) {
+            logEvent("Matches", "User without premium tried to view matches", "User action (without premium)");
+        }
+    },[]);
 
     const handleNextMatch = () => {
         setCurrentMatchIndex((prevIndex) => (prevIndex + 1) % people.length);
@@ -136,7 +144,7 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
                         {/* Список */}
                         <List>
                             {people.map((person, index) => (
-                                <React.Fragment key={person.id}>
+                                <React.Fragment key={person.isu}>
                                     <ListItem
                                         component="button"
                                         onClick={() => handleSelectMatch(index)}
@@ -150,12 +158,12 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
                                     >
                                         <ListItemAvatar>
                                             <Avatar
-                                                src={person.imageUrl}
-                                                alt={person.name}
+                                                src={person.logo}
+                                                alt={person.username}
                                                 sx={{ width: 48, height: 48 }}
                                             />
                                         </ListItemAvatar>
-                                        <ListItemText primary={person.name} />
+                                        <ListItemText primary={person.username} />
                                     </ListItem>
                                     <Divider />
                                 </React.Fragment>
@@ -168,7 +176,7 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
             {/* Username */}
             <Box display="flex" minHeight="10px">
                 <Typography variant="h5" sx={{ fontWeight: 'bold', textAlign: 'center', flexGrow: 1 }}>
-                    {currentMatch.name}
+                    {currentMatch.username}
                 </Typography>
             </Box>
 
@@ -193,7 +201,7 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
                 <Box
                     component="img"
                     src={allPhotos[currentPhotoIndex]}
-                    alt={`${currentMatch.name} photo ${currentPhotoIndex + 1}`}
+                    alt={`${currentMatch.username} photo ${currentPhotoIndex + 1}`}
                     sx={{
                         maxWidth: '100%',
                         height: 'auto',
@@ -232,7 +240,7 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
                         textTransform: 'none',
                         padding: '10px 16px',
                     }}
-                    onClick={() => navigate(`/user-profile/${currentMatch.id}`)}
+                    onClick={() => navigate(`/user-profile/${currentMatch.isu}`)}
                 >
                     View Profile
                 </Button>

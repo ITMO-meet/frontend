@@ -20,7 +20,7 @@
  * - Компонент предназначен для отображения профиля пользователя с возможностью редактирования.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -29,11 +29,6 @@ import ChurchIcon from '@mui/icons-material/Church';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
 import LocalBarIcon from '@mui/icons-material/LocalBar';
 import SmokingRoomsIcon from '@mui/icons-material/SmokingRooms';
-import MusicNoteIcon from '@mui/icons-material/MusicNote';
-import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
-import BookIcon from '@mui/icons-material/Book';
-import RestaurantIcon from '@mui/icons-material/Restaurant';
-import CelebrationIcon from '@mui/icons-material/Celebration';
 import { useNavigate } from 'react-router-dom';
 import RoundButton from '../basic/RoundButton';
 import ImageButton from '../basic/ImageButton';
@@ -79,13 +74,14 @@ const ProfilePage: React.FC = () => {
     ];
 
     // Данные для секции "Interests"
-    const interests = [
-        { text: 'Music', icon: <MusicNoteIcon /> },
-        { text: 'GYM', icon: <FitnessCenterIcon /> },
-        { text: 'Reading', icon: <BookIcon /> },
-        { text: 'Cooking', icon: <RestaurantIcon /> },
-        { text: 'Raves', icon: <CelebrationIcon /> },
-    ];
+    const [interests, setInterests] = useState<{ [key: string]: string }>({});
+
+    useEffect(() => {
+        const storedInterests = localStorage.getItem('selectedInterests');
+        if (storedInterests) {
+            setInterests(JSON.parse(storedInterests));
+        }
+    }, []);
 
     // Данные для секции "Languages"
     const languages = [
@@ -164,29 +160,27 @@ const ProfilePage: React.FC = () => {
 
                 {/* Секция Interests */}
                 <Box mt={2} width="100%">
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                        Interests
-                    </Typography>
-                    <Box display="flex" gap={1} flexWrap="wrap">
-                        {interests.map((item, index) => (
-                            <Box
-                                key={index}
-                                display="flex"
-                                alignItems="center"
-                                sx={{
-                                    bgcolor: "rgba(214, 231, 255, 0.8)",
-                                    border: "1px solid rgba(214, 231, 255, 0.8)",
-                                    borderRadius: "8px",
-                                    padding: "4px 8px",
-                                    gap: "4px"
-                                }}
-                            >
-                                {item.icon}
-                                <Typography>{item.text}</Typography>
-                            </Box>
-                        ))}
+            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                Interests
+            </Typography>
+            <Box display="flex" gap={1} flexWrap="wrap">
+                {Object.values(interests).map((interest, index) => (
+                    <Box
+                        key={index}
+                        display="flex"
+                        alignItems="center"
+                        sx={{
+                            bgcolor: "rgba(214, 231, 255, 0.8)",
+                            borderRadius: "8px",
+                            padding: "4px 8px",
+                            gap: "4px",
+                        }}
+                    >
+                        <Typography>{interest}</Typography>
                     </Box>
-                </Box>
+                ))}
+            </Box>
+        </Box>
 
                 {/* Секция Languages */}
                 <Box mt={2} width="100%">

@@ -11,120 +11,142 @@ interface StepProps {
 
 // Мокаем компоненты шагов
 jest.mock("../../src/components/registerSteps/UsernameStep", () => {
-  const MockStep: React.FC<StepProps> = ({ onNext }) => (
-    <div data-testid={`username-step`}><button onClick={() => onNext({ username: 'testuser' })}>Next</button></div>
-  );
-  return {
-    __esModule: true,
-    default: MockStep,
-  };
+	const MockStep: React.FC<StepProps> = ({ onNext }) => (
+		<div data-testid={`username-step`}><button onClick={() => onNext({ username: 'testuser' })}>Next</button></div>
+	);
+	return {
+		__esModule: true,
+		default: MockStep,
+	};
 });
-	
+
+jest.mock("../../src/components/registerSteps/BioStep", () => {
+	const MockStep: React.FC<StepProps> = ({ onNext }) => (
+		<div data-testid={`bio-step`}><button onClick={() => onNext({ bio: 'testbio' })}>Next</button></div>
+	);
+	return {
+		__esModule: true,
+		default: MockStep,
+	};
+});
+
+jest.mock("../../src/components/registerSteps/MainFeaturesStep", () => {
+	const MockStep: React.FC<StepProps> = ({ onNext }) => (
+		<div data-testid={`main-features-step`}><button onClick={() => onNext({ weight: 100, height: 100, zodiac: "Cancer" })}>Next</button></div>
+	);
+	return {
+		__esModule: true,
+		default: MockStep,
+	};
+});
+
 jest.mock("../../src/components/registerSteps/GenderStep", () => {
-  const MockStep: React.FC<StepProps> = ({ onNext }) => (
-    <div data-testid={`gender-step`}><button onClick={() => onNext({ username: 'testuser' })}>Next</button></div>
-  );
-  return {
-    __esModule: true,
-    default: MockStep,
-  };
+	const MockStep: React.FC<StepProps> = ({ onNext }) => (
+		<div data-testid={`gender-step`}><button onClick={() => onNext({ gender: 'male' })}>Next</button></div>
+	);
+	return {
+		__esModule: true,
+		default: MockStep,
+	};
 });
 
 jest.mock("../../src/components/registerSteps/TagsStep", () => {
-  const MockStep: React.FC<StepProps> = ({ onNext }) => (
-    <div data-testid={`tags-step`}><button onClick={() => onNext({ username: 'testuser' })}>Next</button></div>
-  );
-  return {
-    __esModule: true,
-    default: MockStep,
-  };
+	const MockStep: React.FC<StepProps> = ({ onNext }) => (
+		<div data-testid={`tags-step`}><button onClick={() => onNext({ tags: ["tag1", "tag2"] })}>Next</button></div>
+	);
+	return {
+		__esModule: true,
+		default: MockStep,
+	};
 });
 
 jest.mock("../../src/components/registerSteps/PhotoStep", () => {
-  const MockStep: React.FC<StepProps> = ({ onNext }) => (
-    <div data-testid={`photo-step`}><button onClick={() => onNext({ username: 'testuser' })}>Next</button></div>
-  );
-  return {
-    __esModule: true,
-    default: MockStep,
-  };
+	const MockStep: React.FC<StepProps> = ({ onNext }) => (
+		<div data-testid={`photo-step`}><button onClick={() => onNext({ photo: 'photo' })}>Next</button></div>
+	);
+	return {
+		__esModule: true,
+		default: MockStep,
+	};
 });
 
 jest.mock("../../src/components/registerSteps/AdditionalPhotosStep", () => {
-  const MockStep: React.FC<StepProps> = ({ onNext }) => (
-    <div data-testid={`additional-photos-step`}><button onClick={() => onNext({ username: 'testuser' })}>Next</button></div>
-  );
-  return {
-    __esModule: true,
-    default: MockStep,
-  };
+	const MockStep: React.FC<StepProps> = ({ onNext }) => (
+		<div data-testid={`additional-photos-step`}><button onClick={() => onNext({ additionalPhotos: ["photo1", "photo2"] })}>Next</button></div>
+	);
+	return {
+		__esModule: true,
+		default: MockStep,
+	};
 });
 
 jest.mock("../../src/components/registerSteps/GoalStep", () => {
-  const MockStep: React.FC<StepProps> = ({ onNext }) => (
-    <div data-testid={`goal-step`}><button onClick={() => onNext({ username: 'testuser' })}>Next</button></div>
-  );
-  return {
-    __esModule: true,
-    default: MockStep,
-  };
+	const MockStep: React.FC<StepProps> = ({ onNext }) => (
+		<div data-testid={`goal-step`}><button onClick={() => onNext({ goal: 'goal' })}>Next</button></div>
+	);
+	return {
+		__esModule: true,
+		default: MockStep,
+	};
 });
 
 // Мокаем useNavigate
 jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: jest.fn(),
+	...jest.requireActual('react-router-dom'),
+	useNavigate: jest.fn(),
 }));
 
 describe('RegisterPage', () => {
-  const mockNavigate = jest.fn();
+	const mockNavigate = jest.fn();
 
 	beforeEach(() => {
-    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
-  });
+		(useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
-	afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-	it('renders the registration page', () => {
 		render(
 			<MemoryRouter>
 				<RegisterPage />
 			</MemoryRouter>
 		);
+	});
 
+	afterEach(() => {
+		jest.clearAllMocks();
+	});
+
+	it('renders the registration page', () => {
 		expect(screen.getByText(/Registration/i)).toBeInTheDocument();
 	});
 
 	it('navigates through steps', () => {
-		render(
-			<MemoryRouter>
-				<RegisterPage />
-			</MemoryRouter>
-		);
-
-		// Проверяем первый шаг
+		// Проверяем шаг ника
 		expect(screen.getByTestId('username-step')).toBeInTheDocument();
 		fireEvent.click(screen.getByText(/Next/i));
 
-		// Проверяем второй шаг
+		// Проверяем шаг описания
+		expect(screen.getByTestId('bio-step')).toBeInTheDocument();
+		fireEvent.click(screen.getByText(/Next/i));
+
+		// Проверяем шаг основных параметров
+		expect(screen.getByTestId('main-features-step')).toBeInTheDocument();
+		fireEvent.click(screen.getByText(/Next/i));
+
+		// Проверяем шаг гендера
 		expect(screen.getByTestId('gender-step')).toBeInTheDocument();
 		fireEvent.click(screen.getByText(/Next/i));
 
-		// Проверяем третий шаг
+		// Проверяем шаг тэгов
 		expect(screen.getByTestId('tags-step')).toBeInTheDocument();
 		fireEvent.click(screen.getByText(/Next/i));
 
-		// Проверяем четвертый шаг
+		// Проверяем шаг фото
 		expect(screen.getByTestId('photo-step')).toBeInTheDocument();
 		fireEvent.click(screen.getByText(/Next/i));
 
-		// Проверяем пятый шаг
+		// Проверяем шаг фоток
 		expect(screen.getByTestId('additional-photos-step')).toBeInTheDocument();
 		fireEvent.click(screen.getByText(/Next/i));
 
-		// Проверяем шестой шаг
+		// Проверяем шаг цели
 		expect(screen.getByTestId('goal-step')).toBeInTheDocument();
 		fireEvent.click(screen.getByText(/Next/i));
 
@@ -133,18 +155,12 @@ describe('RegisterPage', () => {
 	});
 
 	it('navigates back to the previous step', () => {
-		render(
-			<MemoryRouter>
-				<RegisterPage />
-			</MemoryRouter>
-		);
-
 		// Перейти к следующему шагу
 		fireEvent.click(screen.getByText(/Next/i)); // username step
 		fireEvent.click(screen.getByText(/Next/i)); // gender step
 
-		// Проверяем, что мы на gender шаге
-		expect(screen.getByTestId('tags-step')).toBeInTheDocument();
+		// Проверяем, что мы на нужном шаге шаге
+		expect(screen.getByTestId('main-features-step')).toBeInTheDocument();
 
 		// Нажимаем кнопку "Назад"
 		const buttons = screen.getAllByRole('button');
@@ -152,7 +168,7 @@ describe('RegisterPage', () => {
 
 		fireEvent.click(backButton);
 
-		// Проверяем, что мы вернулись на username шаг
-		expect(screen.getByTestId('gender-step')).toBeInTheDocument();
+		// Проверяем, что мы вернулись
+		expect(screen.getByTestId('bio-step')).toBeInTheDocument();
 	});
 });

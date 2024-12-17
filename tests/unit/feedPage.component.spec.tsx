@@ -2,18 +2,24 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { FeedPage } from '../../src/components/pages/FeedPage';
 import '@testing-library/jest-dom';
+import { logEvent, logPageView } from '../../src/analytics'
+
+jest.mock('../../src/analytics', () => ({
+    logEvent: jest.fn(),
+    logPageView: jest.fn(),
+}));
 
 const person1 = {
-    id: 1,
-    imageUrl: 'https://example.com/image.jpg',
-    name: 'John Doe',
-    description: 'A sample person',
+    isu: 1,
+    logo: 'https://example.com/image.jpg',
+    username: 'John Doe',
+    bio: 'A sample person',
 }
 const person2 = {
-    id: 2,
-    imageUrl: 'https://example.com/image.jpg',
-    name: 'John Doe2',
-    description: 'A sample person2',
+    isu: 2,
+    logo: 'https://example.com/image.jpg',
+    username: 'John Doe2',
+    bio: 'A sample person2',
 }
 
 describe('FeedPage', () => {
@@ -43,6 +49,8 @@ describe('FeedPage', () => {
         expect(screen.getByText('Search')).toBeInTheDocument();
         expect(screen.getByText('John Doe')).toBeInTheDocument();
         expect(screen.getByText('A sample person')).toBeInTheDocument();
+
+        expect(logPageView).toHaveBeenCalledWith('/feed');
     });
 
     it('calls onLike when swiped right', async () => {
@@ -64,6 +72,8 @@ describe('FeedPage', () => {
             expect(screen.getByText('John Doe2')).toBeInTheDocument();
             expect(screen.getByText('A sample person2')).toBeInTheDocument();
         });
+        
+        expect(logEvent).toHaveBeenCalledWith('Feed', 'User pressed/swiped like', '');
     });
 
     it('calls onDislike when swiped left', async () => {
@@ -86,6 +96,8 @@ describe('FeedPage', () => {
             expect(screen.getByText('John Doe2')).toBeInTheDocument();
             expect(screen.getByText('A sample person2')).toBeInTheDocument();
         });
+
+        expect(logEvent).toHaveBeenCalledWith('Feed', 'User pressed/swiped dislike', '');
     });
 
     it('calls onSuperLike when swiped up', async () => {
@@ -105,6 +117,8 @@ describe('FeedPage', () => {
         await waitFor(() => {
             expect(mockGetNextPerson).toHaveBeenCalledTimes(2);
         });
+
+        expect(logEvent).toHaveBeenCalledWith('Feed', 'User pressed/swiped superlike', '');
     });
 
     it('opens and closes the drawer', async () => {
@@ -128,5 +142,7 @@ describe('FeedPage', () => {
         await waitFor(() => {
             expect(text).not.toBeVisible();
         });
+
+        expect(logPageView).toHaveBeenCalledWith('/feed');
     });
 });

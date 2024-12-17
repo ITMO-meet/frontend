@@ -3,7 +3,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, useParams, useNavigate } from 'react-router-dom';
 import '@testing-library/jest-dom';
 import Messages from '../../src/components/Messages';
-import { Message } from '../../src/types';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -11,33 +10,43 @@ jest.mock('react-router-dom', () => ({
   useNavigate: jest.fn(),
 }));
 
-interface MockUserMessageProps {
-  message: Message;
-}
-
-jest.mock('../../src/components/UserMessage', () => {
-  const MockUserMessage: React.FC<MockUserMessageProps> = ({ message }) => (
+jest.mock('../../src/components/UserMessage', () => ({
+  __esModule: true,
+  default: ({ message }: { message: { sender: 'me' | 'them'; text: string } }) => (
     <div data-testid={`message-${message.sender}`}>{message.text}</div>
-  );
-  return {
-    __esModule: true,
-    default: MockUserMessage,
-  };
-});
+  ),
+}));
 
 describe('Messages Component', () => {
   const mockContacts = [
     {
+      isu: 1,
+      username: 'John Doe',
+      logo: 'avatar1.jpg',
+    },
+    {
+      isu: 2,
+      username: 'Jane Smith',
+      logo: 'avatar2.jpg',
+    },
+  ];
+
+  const mockMessages = [
+    {
       id: '1',
-      name: 'John Doe',
-      pfp: 'avatar1.jpg',
-      stories: [],
+      chat_id: '1',
+      sender_id: 1,
+      receiver_id: 2,
+      text: 'Hello, Jane!',
+      timestamp: '2024-01-01T10:00:00Z',
     },
     {
       id: '2',
-      name: 'Jane Smith',
-      pfp: 'avatar2.jpg',
-      stories: [],
+      chat_id: '1',
+      sender_id: 2,
+      receiver_id: 1,
+      text: 'Hi, John!',
+      timestamp: '2024-01-01T10:01:00Z',
     },
   ];
 
@@ -48,18 +57,15 @@ describe('Messages Component', () => {
   });
 
   beforeEach(() => {
-    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
-  });
-
-  afterEach(() => {
     jest.clearAllMocks();
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
   });
 
   it('renders "Contact not found" when contact does not exist', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '3' });
     render(
       <MemoryRouter>
-        <Messages contacts={mockContacts} />
+        <Messages people={mockContacts} messages={mockMessages} />
       </MemoryRouter>
     );
     expect(screen.getByText('Contact not found')).toBeInTheDocument();
@@ -69,19 +75,19 @@ describe('Messages Component', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
-        <Messages contacts={mockContacts} />
+        <Messages people={mockContacts} messages={mockMessages} />
       </MemoryRouter>
     );
     expect(screen.getByText('John Doe')).toBeInTheDocument();
-    expect(screen.getByText('Hey, how are you, John Doe?')).toBeInTheDocument();
-    expect(screen.getByText('I am good, thanks! How about you?')).toBeInTheDocument();
+    expect(screen.getByText('Hello, Jane!')).toBeInTheDocument();
+    expect(screen.getByText('Hi, John!')).toBeInTheDocument();
   });
 
   it('updates messages when a new message is sent via send button', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
-        <Messages contacts={mockContacts} />
+        <Messages people={mockContacts} messages={mockMessages} />
       </MemoryRouter>
     );
 
@@ -99,7 +105,7 @@ describe('Messages Component', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
-        <Messages contacts={mockContacts} />
+        <Messages people={mockContacts} messages={mockMessages} />
       </MemoryRouter>
     );
 
@@ -115,7 +121,7 @@ describe('Messages Component', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
-        <Messages contacts={mockContacts} />
+        <Messages people={mockContacts} messages={mockMessages} />
       </MemoryRouter>
     );
 
@@ -134,7 +140,7 @@ describe('Messages Component', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
-        <Messages contacts={mockContacts} />
+        <Messages people={mockContacts} messages={mockMessages} />
       </MemoryRouter>
     );
 
@@ -150,7 +156,7 @@ describe('Messages Component', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
-        <Messages contacts={mockContacts} />
+        <Messages people={mockContacts} messages={mockMessages} />
       </MemoryRouter>
     );
 
