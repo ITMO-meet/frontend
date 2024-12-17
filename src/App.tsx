@@ -38,6 +38,7 @@ import MonitorWeightIcon from '@mui/icons-material/MonitorWeight';
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import CakeIcon from '@mui/icons-material/Cake';
+import { AnimatePresence } from 'framer-motion';
 
 // deprecated. let it be just in case
 // const contacts = [
@@ -416,27 +417,29 @@ function AppContent() {
 
   return (
     <>
-      <Box sx={{ pb: 7 }}>
-        <Routes>
-          <Route path="/chats" element={<ChatPage people={people} stories={stories} messages={messages} />} />
-          {/* <Route path="/chats" element={<ChatPage contacts={contacts} />} /> */ }
-          <Route path="/add-story" element={<AddStoryPage />} />
-          <Route path="/chat/:id" element={<Messages people={people} messages={messages} />} />
-          {/* <Route path="/chat/:id" element={<Messages contacts={contacts} />} /> */ }
-          <Route path="/matches" element={<MatchesPage people={people} />} />
-          <Route path="/feed" element={<FeedPage getNextPerson={getNext} onLike={console.log} onDislike={console.log} onSuperLike={console.log} />} />
-          <Route path="/tests" element={<TestsPage />} />
-          <Route path="/tests/:id" element={<Quiz getQuestions={mockGetQuestions} onExit={() => navigate("/chats")} onFinish={console.log} />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/edit-profile" element={<EditProfilePage />} />
-          <Route path="/user-profile/:id" element={<UserProfilePage people={people} />} />
-          <Route path="/schedule" element={<CalendarPage />} />
-          <Route path="/premium" element={<PremiumPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
+      <Box sx={{ pb: 7, position: 'relative', overflow: 'hidden' }}>
+        <AnimatePresence mode="wait">
+          <Routes>
+            <Route path="/chats" element={<ChatPage people={people} stories={stories} messages={messages} />} />
+            {/* <Route path="/chats" element={<ChatPage contacts={contacts} />} /> */}
+            <Route path="/add-story" element={<AddStoryPage />} />
+            <Route path="/chat/:id" element={<Messages people={people} messages={messages} />} />
+            {/* <Route path="/chat/:id" element={<Messages contacts={contacts} />} /> */}
+            <Route path="/matches" element={<MatchesPage people={people} />} />
+            <Route path="/feed" element={<FeedPage getNextPerson={getNext} onLike={console.log} onDislike={console.log} onSuperLike={console.log} />} />
+            <Route path="/tests" element={<TestsPage />} />
+            <Route path="/tests/:id" element={<Quiz getQuestions={mockGetQuestions} onExit={() => navigate("/chats")} onFinish={console.log} />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/edit-profile" element={<EditProfilePage />} />
+            <Route path="/user-profile/:id" element={<UserProfilePage people={people} />} />
+            <Route path="/schedule" element={<CalendarPage />} />
+            <Route path="/premium" element={<PremiumPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </AnimatePresence>
       </Box>
       {!hideNav && <Nav />}
     </>
