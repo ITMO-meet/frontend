@@ -79,7 +79,6 @@ const PhotoStep: React.FC<PhotoStepProps> = ({ isu, onNext }) => {
         try {
             await uploadLogo(isu, filtered[0]);
             onNext({ photo: filtered[0] });
-            /* eslint-disable @typescript-eslint/no-explicit-any */
         } catch (e: any) {
             showError(e.message);
         }
@@ -108,7 +107,7 @@ const PhotoStep: React.FC<PhotoStepProps> = ({ isu, onNext }) => {
                         <input
                             type="file"
                             accept="image/*"
-                            data-testid="file-input-0" // Ensured data-testid is present
+                            data-testid="file-input-0" // Unique data-testid for parent component
                             onChange={(e) => handleFileSelect(e, 0)}
                         />
                     </Box>

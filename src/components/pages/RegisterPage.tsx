@@ -1,4 +1,5 @@
-// RegisterPage.tsx
+// src/components/pages/RegisterPage.tsx
+
 import WestIcon from '@mui/icons-material/West';
 import { Box, Container, Typography } from '@mui/material';
 import React, { useState } from 'react';
@@ -15,7 +16,6 @@ import MainFeaturesStep from '../registerSteps/MainFeaturesStep';
 import PageWrapper from '../../PageWrapper';
 import { AnimatePresence } from 'framer-motion';
 
-
 const steps = [
 	'username',
 	'bio',
@@ -30,11 +30,12 @@ const steps = [
 export const RegisterPage: React.FC = () => {
 	const navigate = useNavigate();
 	const [currentStep, setCurrentStep] = useState(0);
+	const [direction, setDirection] = useState(1); // Initialize direction state
 
 	const isu = Number(localStorage.getItem('isu') || '0');
 
 	const handleNext = async () => {
-
+		setDirection(1); // Set direction to forward
 		setCurrentStep((prev) => prev + 1);
 		if (currentStep === steps.length - 1) {
 			handleFinish();
@@ -42,12 +43,12 @@ export const RegisterPage: React.FC = () => {
 	};
 
 	const handleBack = () => {
-		setDirection(-1);
+		setDirection(-1); // Set direction to backward
 		setCurrentStep((prev) => Math.max(prev - 1, 0));
 	};
 
 	const handleFinish = () => {
-		// После завершения регистрации отправляем на тесты
+		// After registration, navigate to tests
 		const initialTestId = 1;
 		navigate(`/tests/${initialTestId}`);
 	};
@@ -55,14 +56,11 @@ export const RegisterPage: React.FC = () => {
 	const renderStep = () => {
 		switch (steps[currentStep]) {
 			case 'username':
-
 				return <UsernameStep isu={isu} onNext={handleNext} />;
-			case 'bio': 
-
+			case 'bio':
 				return <BioStep onNext={handleNext} />;
 			case 'main-feats':
 				return <MainFeaturesStep onNext={handleNext} />;
-
 			case 'gender':
 				return <GenderStep isu={isu} onNext={handleNext} />;
 			case 'tags':
@@ -85,14 +83,20 @@ export const RegisterPage: React.FC = () => {
 			</Typography>
 			{/* Back button */}
 			<div style={{ marginTop: '20px', minHeight: '60px' }}>
-				{currentStep === 0 ? (<Box />) : (<ImageButton onClick={handleBack}><WestIcon /></ImageButton>)}
+				{currentStep === 0 ? (
+					<Box />
+				) : (
+					<ImageButton onClick={handleBack}>
+						<WestIcon />
+					</ImageButton>
+				)}
 			</div>
 			<AnimatePresence mode="wait" custom={direction}>
 				<PageWrapper key={currentStep} direction={direction}>
 					{renderStep()}
 				</PageWrapper>
 			</AnimatePresence>
-		</Container >
+		</Container>
 	);
 };
 

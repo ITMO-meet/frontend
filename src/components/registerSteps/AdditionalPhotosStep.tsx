@@ -81,7 +81,6 @@ const AdditionalPhotosStep: React.FC<AdditionalPhotosStepProps> = ({ isu, onNext
         try {
             await uploadCarousel(isu, filtered);
             onNext({ additionalPhotos: filtered });
-            /* eslint-disable @typescript-eslint/no-explicit-any */
         } catch (e: any) {
             showError(e.message);
         }
@@ -108,7 +107,7 @@ const AdditionalPhotosStep: React.FC<AdditionalPhotosStepProps> = ({ isu, onNext
                             <input
                                 type="file"
                                 accept="image/*"
-                                data-testid={`file-input-${i}`} // Ensured data-testid is present
+                                data-testid={`file-input-${i}`} // Unique data-testid
                                 onChange={(e) => handleFileSelect(e, i)}
                             />
                         </Box>
