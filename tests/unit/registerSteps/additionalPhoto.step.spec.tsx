@@ -1,11 +1,10 @@
 // tests/unit/registerSteps/AdditionalPhotosStep.test.tsx
 
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen} from '@testing-library/react';
 import AdditionalPhotosStep from '../../../src/components/registerSteps/AdditionalPhotosStep';
 import '@testing-library/jest-dom';
 import { ErrorProvider } from "../../../src/contexts/ErrorContext";
-import { uploadCarousel } from '../../../src/api/register';
 
 // Mocking useError
 export const mockShowError = jest.fn();
@@ -28,7 +27,6 @@ jest.mock('../../../src/api/register', () => ({
   uploadCarousel: jest.fn().mockResolvedValue({}),
 }));
 
-const mockUploadCarousel = uploadCarousel as jest.Mock;
 
 describe('AdditionalPhotosStep', () => {
   const mockOnNext = jest.fn();
