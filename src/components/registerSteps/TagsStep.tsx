@@ -6,7 +6,7 @@ import { useError } from '../../contexts/ErrorContext';
 
 interface TagsStepProps {
     isu: number;
-    onNext: () => void;
+    onNext: (data: { tags: string[] }) => void;
 }
 
 const TagsStep: React.FC<TagsStepProps> = ({ isu, onNext }) => {
@@ -31,7 +31,7 @@ const TagsStep: React.FC<TagsStepProps> = ({ isu, onNext }) => {
         }
         try {
             await selectTags({ isu, tags: selectedTags });
-            onNext();
+            onNext({ tags: selectedTags });
         } catch(e: any) {
             showError(e.message);
         }

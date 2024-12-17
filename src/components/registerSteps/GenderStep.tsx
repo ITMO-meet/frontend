@@ -6,7 +6,7 @@ import { useError } from '../../contexts/ErrorContext';
 
 interface GenderStepProps {
     isu: number;
-    onNext: () => void;
+    onNext: (data: { gender: string }) => void;
 }
 
 const options = ["Male", "Female", "Everyone"];
@@ -22,7 +22,7 @@ const GenderStep: React.FC<GenderStepProps> = ({ isu, onNext }) => {
         }
         try {
             await selectPreferences({ isu, gender_preference: gender });
-            onNext();
+            onNext({ gender: gender });
         } catch(e: any) {
             showError(e.message);
         }

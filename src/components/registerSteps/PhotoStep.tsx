@@ -6,7 +6,7 @@ import { useError } from '../../contexts/ErrorContext';
 
 interface PhotoStepProps {
     isu: number;
-    onNext: () => void;
+    onNext: (data: { photo: File }) => void;
 }
 
 const PhotoStep: React.FC<PhotoStepProps> = ({ isu, onNext }) => {
@@ -20,7 +20,7 @@ const PhotoStep: React.FC<PhotoStepProps> = ({ isu, onNext }) => {
         }
         try {
             await uploadLogo(isu, selectedFile);
-            onNext();
+            onNext({ photo: selectedFile });
         } catch(e: any) {
             showError(e.message);
         }
@@ -32,6 +32,7 @@ const PhotoStep: React.FC<PhotoStepProps> = ({ isu, onNext }) => {
             <input
                 type="file"
                 accept="image/*"
+                data-testid="photo-input"
                 onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
             />
             <Button onClick={handleSubmit} disabled={!selectedFile} fullWidth sx={{mt:2}}>

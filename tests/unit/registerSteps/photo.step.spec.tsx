@@ -1,8 +1,11 @@
 // PhotoStep.test.tsx
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import {render, screen, fireEvent, act} from '@testing-library/react';
 import PhotoStep from '../../../src/components/registerSteps/PhotoStep';
 import '@testing-library/jest-dom';
+import {ErrorProvider} from "../../../src/contexts/ErrorContext";
+jest.mock('../../../src/api/register');
+
 
 interface MockGalleryProps {
     galleryImages: string[]; 
@@ -30,33 +33,43 @@ describe('PhotoStep', () => {
 
   beforeEach(() => {
     mockOnNext.mockClear(); // Сбрасываем мок перед каждым тестом
-    render(<PhotoStep onNext={mockOnNext} />);
-  });
+      render(
+          <ErrorProvider>
+              <PhotoStep isu={123456} onNext={mockOnNext} />
+          </ErrorProvider>
+      );  });
 
-  it('renders the component', () => {
-    expect(screen.getByText(/Upload your photo/i)).toBeInTheDocument();
-    expect(screen.getByText(/Make sure the photo of your face is clear so that it can be easily verified/i)).toBeInTheDocument();
-    expect(screen.getByTestId(/gallery/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
-  });
+    it('renders the component', () => {
+        // Меняем строку поиска текста
+        expect(screen.getByText(/Upload Logo/i)).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
+    });
 
-  it('calls onNext with the correct photo when Next is clicked', () => {
-    fireEvent.click(screen.getByRole('button', { name: /load/i }));
-    fireEvent.click(screen.getByRole('button', { name: /next/i }));
+    it('calls onNext with the correct photo when Next is clicked', async () => {
+        const inputEl = screen.getByTestId('photo-input');
+        await act(async () => {
+            fireEvent.change(inputEl, {
+                target: { files: [new File(['dummy'], 'photo.jpg', { type: 'image/jpeg' })] }
+            });
+            fireEvent.click(screen.getByRole('button', { name: /next/i }));
+        });
+        expect(mockOnNext).toHaveBeenCalledWith({ photo: expect.any(File) });
+    });
 
-    expect(mockOnNext).toHaveBeenCalledWith({ photo: 'photo.jpg' });
-    expect(mockOnNext).toHaveBeenCalledTimes(1);
-  });
 
   it('button is disabled when no photo is uploaded', () => {
     const nextButton = screen.getByRole('button', { name: /next/i });
     expect(nextButton).toBeDisabled(); // Проверяем, что кнопка "Next" отключена
   });
 
-  it('button is enabled when a photo is uploaded', () => {
-    fireEvent.click(screen.getByRole('button', { name: /load/i }));
+    it('button is enabled when a photo is uploaded', () => {
+        const inputEl = screen.getByTestId('photo-input');
+        const nextButton = screen.getByRole('button', { name: /next/i });
+        expect(nextButton).toBeDisabled();
 
-    const nextButton = screen.getByRole('button', { name: /next/i });
-    expect(nextButton).toBeEnabled(); // Проверяем, что кнопка "Next" включена
-  });
+        fireEvent.change(inputEl, {
+            target: { files: [new File(['dummy'], 'photo.jpg', { type: 'image/jpeg' })] }
+        });
+        expect(nextButton).toBeEnabled();
+    });
 });

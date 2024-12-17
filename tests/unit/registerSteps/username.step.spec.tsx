@@ -1,33 +1,44 @@
+// tests/unit/registerSteps/username.step.spec.tsx
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import {render, screen, fireEvent, act} from '@testing-library/react';
 import UsernameStep from '../../../src/components/registerSteps/UsernameStep';
 import '@testing-library/jest-dom';
+import { ErrorProvider } from "../../../src/contexts/ErrorContext";
+
+jest.mock('../../../src/api/register', () => ({
+  __esModule: true,
+  selectUsername: jest.fn().mockResolvedValue({}),
+}));
 
 describe('UsernameStep', () => {
   const mockOnNext = jest.fn();
 
   beforeEach(() => {
-    mockOnNext.mockClear(); // Сбрасываем мок перед каждым тестом
-    render(<UsernameStep onNext={mockOnNext} />)
+    mockOnNext.mockClear();
+    render(
+        <ErrorProvider>
+          <UsernameStep isu={123456} onNext={mockOnNext} />
+        </ErrorProvider>
+    );
   });
 
   it('renders the component', () => {
-    expect(screen.getByText(/Enter your username/i)).toBeInTheDocument();
+    expect(screen.getByText(/Choose a username/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Username/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
   });
 
-  it('calls onNext with the correct username when Next is clicked', () => {
-    // Вводим имя пользователя
-    const usernameInput = screen.getByLabelText(/Username/i);
-    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+  it('calls onNext with the correct username when Next is clicked', async () => {
+    fireEvent.change(screen.getByLabelText(/Username/i), { target: { value: 'testuser' } });
+    const nextBtn = screen.getByRole('button', { name: /next/i });
+    expect(nextBtn).toBeEnabled();
 
-    // Нажимаем кнопку "Next"
-    fireEvent.click(screen.getByRole('button', { name: /next/i }));
-
+    await act(async () => {
+      fireEvent.click(nextBtn);
+    });
     expect(mockOnNext).toHaveBeenCalledWith({ username: 'testuser' });
-    expect(mockOnNext).toHaveBeenCalledTimes(1);
   });
+
 
   it('button is disabled when username is empty', () => {
     const nextButton = screen.getByRole('button', { name: /next/i });

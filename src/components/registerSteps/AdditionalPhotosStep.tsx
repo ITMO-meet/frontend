@@ -5,7 +5,7 @@ import { useError } from '../../contexts/ErrorContext';
 
 interface AdditionalPhotosStepProps {
     isu: number;
-    onNext: () => void;
+    onNext: (data: { additionalPhotos: File[] }) => void;
 }
 
 const AdditionalPhotosStep: React.FC<AdditionalPhotosStepProps> = ({ isu, onNext }) => {
@@ -29,7 +29,7 @@ const AdditionalPhotosStep: React.FC<AdditionalPhotosStepProps> = ({ isu, onNext
         }
         try {
             await uploadCarousel(isu, filtered);
-            onNext();
+            onNext({ additionalPhotos: filtered });
         } catch(e: any) {
             showError(e.message);
         }
@@ -40,7 +40,7 @@ const AdditionalPhotosStep: React.FC<AdditionalPhotosStepProps> = ({ isu, onNext
             <Typography variant="h5" align="center" mb={2}>Add additional photos</Typography>
             {files.map((_, i) => (
                 <Box key={i} mb={1}>
-                    <input type="file" accept="image/*" onChange={(e) => handleChange(e, i)} />
+                    <input type="file" accept="image/*" data-testid={`file-input-${i}`} onChange={(e) => handleChange(e, i)} />
                 </Box>
             ))}
             <Button onClick={handleSubmit} fullWidth sx={{mt:2}}>

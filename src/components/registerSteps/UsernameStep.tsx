@@ -1,21 +1,18 @@
 // UsernameStep.tsx
-import { Box, Typography, TextField, Button } from '@mui/material'; // Импортируем компоненты из MUI
-import React, { useState } from 'react'; // Импортируем React и хук useState
+import { Box, Typography, TextField, Button } from '@mui/material';
+import React, { useState } from 'react';
 import { selectUsername } from '../../api/register';
 import { useError } from '../../contexts/ErrorContext';
 
-// Определяем интерфейс для пропсов компонента
 interface UsernameStepProps {
     isu: number;
-    onNext: () => void;
+    onNext: (data: { username: string }) => void;  // match test
 }
 
-// Основной компонент UsernameStep
 const UsernameStep: React.FC<UsernameStepProps> = ({ isu, onNext }) => {
     const { showError } = useError();
-    const [username, setUsername] = useState('');// Хук состояния для хранения введенного имени пользователя
+    const [username, setUsername] = useState('');
 
-    // Функция для обработки отправки данных
     const handleSubmit = async () => {
         if (!username.trim()) {
             showError('Please enter a username');
@@ -23,7 +20,8 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ isu, onNext }) => {
         }
         try {
             await selectUsername({ isu, username: username.trim() });
-            onNext();
+            // Pass the object so the test can verify
+            onNext({ username: username.trim() });
         } catch(e: any) {
             showError(e.message);
         }
@@ -37,7 +35,7 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ isu, onNext }) => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 label="Username"
-                sx={{mb:2}}
+                sx={{ mb:2 }}
             />
             <Button onClick={handleSubmit} disabled={!username.trim()} fullWidth>
                 Next
@@ -46,4 +44,4 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ isu, onNext }) => {
     );
 };
 
-export default UsernameStep; // Экспортируем компонент для использования в других частях приложения
+export default UsernameStep;

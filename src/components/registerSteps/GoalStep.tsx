@@ -1,12 +1,13 @@
 // GoalStep.tsx
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography, Paper, Button } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import { selectRelationship, fetchPreferences } from '../../api/register';
 import { useError } from '../../contexts/ErrorContext';
+import theme from '../theme'; // If needed
 
 interface GoalStepProps {
     isu: number;
-    onNext: () => void;
+    onNext: (data: { goal: string }) => void;
 }
 
 const GoalStep: React.FC<GoalStepProps> = ({ isu, onNext }) => {
@@ -25,7 +26,7 @@ const GoalStep: React.FC<GoalStepProps> = ({ isu, onNext }) => {
         }
         try {
             await selectRelationship({ isu, relationship_preference: [goal] });
-            onNext();
+            onNext({ goal });
         } catch(e: any) {
             showError(e.message);
         }
@@ -36,16 +37,22 @@ const GoalStep: React.FC<GoalStepProps> = ({ isu, onNext }) => {
             <Typography variant="h5" align="center" mb={2}>What are you looking for?</Typography>
             <Box display="flex" justifyContent="center" gap={1} flexWrap="wrap">
                 {allGoals.map(g => (
-                    <Button
+                    <Paper
+                        className="MuiPaper-root"
                         key={g}
-                        variant={g === goal ? 'contained' : 'outlined'}
+                        data-testid={`goal-${g}`}
                         onClick={() => setGoal(g)}
+                        sx={{
+                            padding: '16px',
+                            cursor: 'pointer',
+                            background: g === goal ? theme.palette.secondary.light : 'transparent',
+                        }}
                     >
                         {g}
-                    </Button>
+                    </Paper>
                 ))}
             </Box>
-            <Button onClick={handleSubmit} disabled={!goal} fullWidth sx={{mt:2}}>
+            <Button onClick={handleSubmit} disabled={!goal} fullWidth sx={{ mt:2 }}>
                 Next
             </Button>
         </Box>

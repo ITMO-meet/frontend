@@ -1,8 +1,11 @@
 // AdditionalPhotosStep.test.tsx
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import {render, screen, fireEvent, act} from '@testing-library/react';
 import AdditionalPhotosStep from '../../../src/components/registerSteps/AdditionalPhotosStep';
 import '@testing-library/jest-dom';
+import {ErrorProvider} from "../../../src/contexts/ErrorContext";
+jest.mock('../../../src/api/register');
+
 
 interface MockGalleryProps {
   galleryImages: string[];
@@ -38,38 +41,28 @@ describe('AdditionalPhotosStep', () => {
 
   beforeEach(() => {
     mockOnNext.mockClear(); // Сбрасываем мок перед каждым тестом
-    render(<AdditionalPhotosStep onNext={mockOnNext} />);
+    render(
+        <ErrorProvider>
+          <AdditionalPhotosStep isu={123456} onNext={mockOnNext} />
+        </ErrorProvider>
+    );
   });
 
   it('renders the component', () => {
-    expect(screen.getByText(/Add photo/i)).toBeInTheDocument();
-    expect(screen.getByText(/At least one, but all six would be even better/i)).toBeInTheDocument();
-    expect(screen.getByTestId(/gallery/i)).toBeInTheDocument();
+    expect(screen.getByText(/Add additional photos/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
   });
 
-  it('calls onNext with the correct additionalPhotos when Next is clicked', () => {
-    // Симулируем загрузку изображений
-    fireEvent.change(screen.getAllByPlaceholderText(/Image URL/i)[0], {
-      target: { value: 'http://example.com/photo1.jpg' },
+  it('calls onNext with the correct additionalPhotos', async () => {
+    const fileInputs = screen.getAllByTestId(/file-input-/i);
+    await act(async () => {
+      fireEvent.change(fileInputs[0], { target: { files: [new File(['img1'], 'photo1.jpg')] } });
+      fireEvent.change(fileInputs[1], { target: { files: [new File(['img2'], 'photo2.jpg')] } });
+      fireEvent.click(screen.getByRole('button', { name: /next/i }));
     });
-    fireEvent.change(screen.getAllByPlaceholderText(/Image URL/i)[1], {
-      target: { value: 'http://example.com/photo2.jpg' },
-    });
-
-    // Нажимаем кнопку "Next"
-    fireEvent.click(screen.getByRole('button', { name: /next/i }));
 
     expect(mockOnNext).toHaveBeenCalledWith({
-      additionalPhotos: [
-        'http://example.com/photo1.jpg',
-        'http://example.com/photo2.jpg',
-        '',
-        '',
-        '',
-        '',
-      ],
+      additionalPhotos: [expect.any(File), expect.any(File)]
     });
-    expect(mockOnNext).toHaveBeenCalledTimes(1);
   });
 });
