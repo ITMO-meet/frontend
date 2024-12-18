@@ -3,7 +3,7 @@
 // Возвращаем JSON или бросаем ошибку. Вызовы делаются из других модулей.
 
 
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = 'http://185.178.47.42:7000';
 
 interface RequestOptions {
     method: string;
