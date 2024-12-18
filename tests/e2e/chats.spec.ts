@@ -6,12 +6,13 @@ describe('Chats page', function() {
     beforeEach(async function() {
         await makeLogin(page);
         await page.click("text=Chats", {timeout: 5000}); 
-    });
 
-    it('Test Navigation', async function() {
         let url = await page.url(); 
         await expect(url).toContain("/chats");
 
+    });
+
+    it('Test Navigation', async function() {
         // check text
         await expect(await page.getByRole('heading', { name: 'Chats' })).toHaveCount(1);
         await expect(await page.locator("text=Activities")).toHaveCount(1);
@@ -29,7 +30,7 @@ describe('Chats page', function() {
 
         // click chats
         await page.getByRole('button', { name: 'Jane Smith3' }).click({timeout: 5000});
-        url = await page.url(); 
+        let url = await page.url(); 
         await expect(url).toContain("/chat/");
         
         // back to chats
@@ -39,9 +40,6 @@ describe('Chats page', function() {
     });
 
     it('Test Search', async function() {
-        let url = await page.url(); 
-        await expect(url).toContain("/chats");
-
         // check text
         await expect(await page.getByRole('heading', { name: 'Chats' })).toHaveCount(1);
         await expect(await page.locator("text=Activities")).toHaveCount(1);

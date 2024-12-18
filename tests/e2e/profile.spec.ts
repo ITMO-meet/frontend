@@ -6,6 +6,10 @@ describe('Profile', function() {
     beforeEach(async function() {
         await makeLogin(page);
         await page.click("text=Profile", {timeout: 5000}); 
+
+        // check url
+        let url = await page.url(); 
+        await expect(url).toContain("/profile");
     });
     
     it('Profile settings', async function() {       

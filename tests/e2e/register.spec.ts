@@ -1,89 +1,83 @@
 import { chromium, Browser, BrowserContext, Page } from 'playwright';
 import { expect } from '@playwright/test';
 import { page } from './setup';
+import { BASE_URL } from './utils';
 
 describe('Register page', function() {
-    // beforeEach(async function() {
-    //     await page.goto("http://localhost:3070");
-    //     await page.waitForURL("**/login");
-    // });
+    beforeEach(async function() {
+        await page.goto(BASE_URL);
+        await page.waitForURL("**/login");
 
-    // it('Test register', async function() {
-    //     await page.goto("http://localhost:3070/#/register");
-    //     await page.waitForURL("**/register");
+        await page.goto(`${BASE_URL}/#/register`);
+        await page.waitForURL("**/register");
 
-    //     // check url
-    //     let url = await page.url(); 
-    //     expect(url).to.contain("/register");
+        // check url
+        let url = await page.url(); 
+        await expect(url).toContain("/register");
+
+        // check page
+        await expect(await page.locator("text=Registration")).toHaveCount(1);
+    });
+    
+    it('Test register', async function() {
+        // username
+        await expect(await page.locator("text=Enter your username")).toHaveCount(1);
+        await page.fill('input[type="text"]', "username");
+        await page.locator("text=NEXT").click({timeout: 5000}); 
         
-    //     // check page
-    //     expect(await page.locator("text=Registration").isVisible()).to.be.true;
-
-    //     // username
-    //     expect(await page.locator("text=Enter your username").isVisible()).to.be.true;
-    //     await page.fill('input[type="text"]', "username");
-    //     await page.locator("text=NEXT").click(); 
-
-    //     // bio
-    //     expect(await page.locator("text=Enter information about yourself").isVisible()).to.be.true;
-    //     await page.fill('textarea', "bio...");
-    //     await page.locator("text=NEXT").click();
+        // bio
+        await expect(await page.locator("text=Enter information about yourself")).toHaveCount(1);
+        await page.fill('textarea', "bio...");
+        await page.locator("text=NEXT").click({timeout: 5000});
         
-    //     // main features
-    //     expect(await page.locator("text=Enter some main information").isVisible()).to.be.true;
-    //     await page.click("text=None");
-    //     await page.click("text=Cancer");
-    //     await page.locator("text=NEXT").click();
-
-    //     // dating
-    //     expect(await page.locator("text=Dating Settings").isVisible()).to.be.true;
-    //     await page.click("text=Male");
-    //     await page.locator("text=NEXT").click();
-
-    //     // interests
-    //     expect(await page.locator("text=Main Interests").isVisible()).to.be.true;
-    //     await page.click("text=Спорт");
-    //     await page.locator("text=NEXT").click();
-
-    //     // photo 
-    //     expect(await page.locator("text=Upload your photo").isVisible()).to.be.true;
-    //     await page.locator('input[type="file"]').setInputFiles("tests/data/photo.png");
-    //     await page.locator('[data-testid="EditIcon"]');
-    //     await page.locator('text=Save');
-    //     await page.locator("text=NEXT").click();
-
-    //     // photos
-    //     expect(await page.locator("text=Add photo").isVisible()).to.be.true;
-    //     await page.locator('input[type="file"]').first().setInputFiles("tests/data/photo.png");
-    //     await page.locator("text=NEXT").click();
+        // main features
+        await expect(await page.locator("text=Enter some main information")).toHaveCount(1);
+        await page.click("text=None", {timeout: 5000});
+        await page.click("text=Cancer", {timeout: 5000});
+        await page.locator("text=NEXT").click({timeout: 5000});
         
-    //     expect(await page.locator("text=What are you looking for?").isVisible()).to.be.true;
-    //     await page.locator("text=Знакомства").click();
-    //     // await page.locator("text=NEXT").click();
-    // });
-
-    // it('Test Navigation', async function() {
-    //     await page.goto("http://localhost:3070/#/register");
-    //     await page.waitForURL("**/register")
-
-    //     // check url
-    //     let url = await page.url(); 
-    //     expect(url).to.contain("/register");
+        // dating
+        await expect(await page.locator("text=Dating Settings")).toHaveCount(1);
+        await page.click("text=Male", {timeout: 5000});
+        await page.locator("text=NEXT").click({timeout: 5000});
         
-    //     // check page
-    //     expect(await page.locator("text=Registration").isVisible()).to.be.true;
-
-    //     // username
-    //     expect(await page.locator("text=Enter your username").isVisible()).to.be.true;
-    //     await page.fill('input[type="text"]', "username");
-    //     await page.locator("text=NEXT").click(); 
-
-    //     // bio
-    //     expect(await page.locator("text=Enter information about yourself").isVisible()).to.be.true;
-    //     await page.locator('[data-testid="WestIcon"]');
-
-    //     // return to username
-    //     expect(await page.locator("text=Enter your username").isVisible()).to.be.true;
-    // });
+        // interests
+        await expect(await page.locator("text=Main Interests")).toHaveCount(1);
+        await page.click("text=Спорт", {timeout: 5000});
+        await page.locator("text=NEXT").click({timeout: 5000});
+        
+        // photo 
+        await expect(await page.locator("text=Upload your photo")).toHaveCount(1);
+        await page.locator('input[type="file"]').setInputFiles("tests/data/photo.png");
+        await page.locator('[data-testid="EditIcon"]').click({timeout: 5000});
+        await page.locator('text=Save').click({timeout: 5000});
+        await page.locator("text=NEXT").click({timeout: 5000});
+        
+        // photos
+        await expect(await page.locator("text=Add photo")).toHaveCount(1);
+        await page.locator('input[type="file"]').first().setInputFiles("tests/data/photo.png");
+        await page.locator("text=NEXT").click({timeout: 5000});
+        
+        await expect(await page.locator("text=What are you looking for?")).toHaveCount(1);
+        await page.locator("text=Знакомства").click({timeout: 5000});
+        await page.locator("text=NEXT").click({timeout: 5000});
+        
+        let url = await page.url(); 
+        await expect(url).toContain("/tests/");
+    });
+    
+    it('Test Navigation', async function() {
+        // username
+        await expect(await page.locator("text=Enter your username")).toHaveCount(1);
+        await page.fill('input[type="text"]', "username");
+        await page.locator("text=NEXT").click({timeout: 5000}); 
+        
+        // bio
+        await expect(await page.locator("text=Enter information about yourself")).toHaveCount(1);
+        await page.locator('[data-testid="WestIcon"]').click({timeout: 5000});
+        
+        // return to username
+        await expect(await page.locator("text=Enter your username")).toHaveCount(1);
+    });
 
 });
