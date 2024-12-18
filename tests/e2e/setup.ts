@@ -1,10 +1,16 @@
-import { Page } from 'playwright';
+import { chromium, Browser, BrowserContext, Page } from 'playwright';
 
-export async function makeLogin(page: Page) {
-    await page.goto("localhost:3070");
-    await page.waitForURL("**/login")
+let browser: Browser;
+let context: BrowserContext;
+export let page: Page;
 
-    await page.fill('input[type="text"]', "123456");
-    await page.fill('input[type="password"]', "password");
-    await page.click("text=Continue");  
-}
+before(async () => {
+  browser = await chromium.launch();
+  context = await browser.newContext();
+  page = await context.newPage();
+});
+
+after(async () => {
+  await browser.close();
+});
+

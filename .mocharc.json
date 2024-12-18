@@ -1,5 +1,5 @@
 {
-    "timeout": 6000,
+    "timeout": 10000,
     "node-option": [
         "experimental-specifier-resolution=node",
         "loader=ts-node/esm",
