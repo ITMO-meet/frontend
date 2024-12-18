@@ -24,9 +24,14 @@ jest.mock('../../../src/contexts/ErrorContext', () => {
 });
 jest.mock('../../../src/api/register', () => ({
   __esModule: true,
-  fetchTags: jest.fn().mockResolvedValue(['music', 'gym']),
+  fetchTags: jest.fn().mockResolvedValue([
+    { id: 'tag1', text: 'Music', icon: 'tag' },
+    { id: 'tag2', text: 'Gym', icon: 'tag' },
+    // Add more tags as needed
+  ]),
   selectTags: jest.fn().mockResolvedValue({}),
 }));
+
 
 const mockFetchTags = fetchTags as jest.Mock;
 const mockSelectTags = selectTags as jest.Mock;

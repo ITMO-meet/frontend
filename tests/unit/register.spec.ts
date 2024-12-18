@@ -70,16 +70,32 @@ describe('register API', () => {
     });
 
     it('fetchTags calls getJson and transforms result', async () => {
-        mockGetJson.mockResolvedValue({ tags: [{ name: 'music' }, { name: 'gym' }] });
+        mockGetJson.mockResolvedValue([
+            { id: 'tag1', text: 'Music', icon: 'tag' },
+            { id: 'tag2', text: 'Gym', icon: 'tag' },
+        ]);
         const result = await fetchTags();
         expect(mockGetJson).toHaveBeenCalledWith('/tags');
-        expect(result).toEqual(['music','gym']);
+        expect(result).toEqual([
+            { id: 'tag1', text: 'Music', icon: 'tag' },
+            { id: 'tag2', text: 'Gym', icon: 'tag' },
+        ]);
     });
 
     it('fetchPreferences calls getJson and transforms result', async () => {
-        mockGetJson.mockResolvedValue({ preferences: [{ name: 'friendship' }, { name: 'dating' }] });
+        mockGetJson.mockResolvedValue({
+            preferences: [
+                { id: 'pref1', text: 'Friendship', icon: 'relationship_preferences' },
+                { id: 'pref2', text: 'Dating', icon: 'relationship_preferences' },
+            ]
+        });
         const result = await fetchPreferences();
         expect(mockGetJson).toHaveBeenCalledWith('/preferences');
-        expect(result).toEqual(['friendship','dating']);
+        expect(result).toEqual([
+            { id: 'pref1', text: 'Friendship', icon: 'relationship_preferences' },
+            { id: 'pref2', text: 'Dating', icon: 'relationship_preferences' },
+        ]);
     });
+
+
 });

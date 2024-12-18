@@ -24,9 +24,13 @@ jest.mock('../../../src/contexts/ErrorContext', () => {
 });
 jest.mock('../../../src/api/register', () => ({
   __esModule: true,
-  fetchPreferences: jest.fn().mockResolvedValue(['friendship']),
+  fetchPreferences: jest.fn().mockResolvedValue([
+    { id: '672b44eab151637e969889bc', text: 'Friendship', icon: 'relationship_preferences' },
+    { id: '672b44eab151637e969889bd', text: 'Dating', icon: 'relationship_preferences' },
+  ]),
   selectRelationship: jest.fn().mockResolvedValue({}),
 }));
+
 
 const mockFetchPreferences = fetchPreferences as jest.Mock;
 const mockSelectRelationship = selectRelationship as jest.Mock;
@@ -57,7 +61,7 @@ describe('GoalStep', () => {
   });
 
   it('allows selecting a goal', () => {
-    const firstPaper = screen.getByTestId('goal-friendship');
+    const firstPaper = screen.getByTestId('goal-672b44eab151637e969889bc');
     fireEvent.click(firstPaper);
     expect(firstPaper).toHaveStyle(`background: ${theme.palette.secondary.light}`);
   });
