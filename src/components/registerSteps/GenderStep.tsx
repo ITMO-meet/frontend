@@ -1,46 +1,53 @@
 // GenderStep.tsx
-import { Box, Typography } from '@mui/material'; // Импортируем необходимые компоненты из MUI
-import React, { useState } from 'react'; // Импортируем React и хук useState
-import HorizontalButtonGroup from '../basic/HorizontalButtonGroup'; // Импортируем компонент для группировки кнопок
-import RoundButton from '../basic/RoundButton'; // Импортируем компонент круглой кнопки
+import { Box, Typography, Button } from '@mui/material';
+import React, { useState } from 'react';
+import { selectPreferences } from '../../api/register';
+import { useError } from '../../contexts/ErrorContext';
 
-// Определяем доступные варианты выбора пола
-const options = ["Male", "Female", "Everyone"];
-
-// Определяем интерфейс для пропсов компонента
 interface GenderStepProps {
-  onNext: (data: { gender: string }) => void; // Функция, которая будет вызвана при выборе пола
+    isu: number;
+    onNext: (data: { gender: string }) => void;
 }
 
-// Основной компонент GenderStep
-const GenderStep: React.FC<GenderStepProps> = ({ onNext }) => {
-  const [gender, setGender] = useState(''); // Хук состояния для хранения выбранного пола
+const options = ["Male", "Female", "Everyone"];
 
-  // Функция для обработки отправки данных
-  const handleSubmit = () => {
-    onNext({ gender }); // Вызываем функцию onNext с выбранным полом
-  };
+const GenderStep: React.FC<GenderStepProps> = ({ isu, onNext }) => {
+    const { showError } = useError();
+    const [gender, setGender] = useState('');
 
-  return (
-    <Box style={{ padding: '20px' }}> {/* Обертка с отступами */}
-      <Typography variant="h5" align='center' sx={{ marginBottom: "20px" }}>Dating Settings</Typography> {/* Заголовок */}
-      <Typography variant="h6" align='center'>Show me</Typography> {/* Подзаголовок с инструкцией */}
-      <Box sx={{ display: "flex", justifyContent: "center", padding: "20px" }}> {/* Центрируем группу кнопок */}
-        <HorizontalButtonGroup 
-          onButtonClick={(option) => setGender(option)} // Обработчик клика по кнопке для установки пола
-          spacing={10} // Промежуток между кнопками
-          options={options} // Передаем доступные варианты
-        />
-      </Box>
-      <RoundButton 
-        onClick={handleSubmit} // Обработчик клика по кнопке
-        disabled={gender === ''} // Кнопка отключена, если пол не выбран
-        sx={{ width: "100%" }} // Стили для кнопки
-      >
-        Next
-      </RoundButton>
-    </Box>
-  );
+    const handleSubmit = async () => {
+        if (!gender) {
+            showError('Please select a gender preference');
+            return;
+        }
+        try {
+            await selectPreferences({ isu, gender_preference: gender });
+            onNext({ gender: gender });
+            /* eslint-disable @typescript-eslint/no-explicit-any */
+        } catch(e: any) {
+            showError(e.message);
+        }
+    };
+
+    return (
+        <Box padding="20px">
+            <Typography variant="h5" align="center" mb={2}>Show me</Typography>
+            <Box display="flex" justifyContent="center" gap={1} flexWrap="wrap">
+                {options.map(o => (
+                    <Button
+                        key={o}
+                        variant={o === gender ? 'contained' : 'outlined'}
+                        onClick={() => setGender(o)}
+                    >
+                        {o}
+                    </Button>
+                ))}
+            </Box>
+            <Button onClick={handleSubmit} disabled={!gender} fullWidth sx={{mt:2}}>
+                Next
+            </Button>
+        </Box>
+    );
 };
 
-export default GenderStep; // Экспортируем компонент для использования в других частях приложения
+export default GenderStep;

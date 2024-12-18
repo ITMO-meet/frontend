@@ -160,27 +160,27 @@ const ProfilePage: React.FC = () => {
 
                 {/* Секция Interests */}
                 <Box mt={2} width="100%">
-            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                Interests
-            </Typography>
-            <Box display="flex" gap={1} flexWrap="wrap">
-                {Object.values(interests).map((interest, index) => (
-                    <Box
-                        key={index}
-                        display="flex"
-                        alignItems="center"
-                        sx={{
-                            bgcolor: "rgba(214, 231, 255, 0.8)",
-                            borderRadius: "8px",
-                            padding: "4px 8px",
-                            gap: "4px",
-                        }}
-                    >
-                        <Typography>{interest}</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                        Interests
+                    </Typography>
+                    <Box display="flex" gap={1} flexWrap="wrap">
+                        {Object.values(interests).map((interest, index) => (
+                            <Box
+                                key={index}
+                                display="flex"
+                                alignItems="center"
+                                sx={{
+                                    bgcolor: "rgba(214, 231, 255, 0.8)",
+                                    borderRadius: "8px",
+                                    padding: "4px 8px",
+                                    gap: "4px",
+                                }}
+                            >
+                                <Typography>{interest}</Typography>
+                            </Box>
+                        ))}
                     </Box>
-                ))}
-            </Box>
-        </Box>
+                </Box>
 
                 {/* Секция Languages */}
                 <Box mt={2} width="100%">

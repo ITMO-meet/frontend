@@ -7,6 +7,8 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { usePremium } from '../../contexts/PremiumContext';
 import { useNavigate } from 'react-router-dom';
 import { logEvent, logPageView } from '../../analytics';
+import { AnimatePresence, motion } from 'framer-motion';
+
 
 interface MatchesPageProps {
     people: Array<{
@@ -27,22 +29,27 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
     const { isPremium } = usePremium();
     const navigate = useNavigate();
 
+    const [direction, setDirection] = useState(1);
+
+
     const currentMatch = people[currentMatchIndex];
     const allPhotos = [currentMatch.logo, ...currentMatch.photos];
 
-    useEffect(()=>{
+    useEffect(() => {
         logPageView("/matches")
-        if(!isPremium) {
+        if (!isPremium) {
             logEvent("Matches", "User without premium tried to view matches", "User action (without premium)");
         }
-    },[]);
+    }, []);
 
     const handleNextMatch = () => {
+        setDirection(1);
         setCurrentMatchIndex((prevIndex) => (prevIndex + 1) % people.length);
         setCurrentPhotoIndex(0);
     };
 
     const handlePrevMatch = () => {
+        setDirection(-1)
         setCurrentMatchIndex((prevIndex) => (prevIndex - 1 + people.length) % people.length);
         setCurrentPhotoIndex(0);
     };
@@ -59,6 +66,24 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
         setCurrentMatchIndex(index);
         setCurrentPhotoIndex(0);
         setIsListVisible(false);
+    };
+
+
+    const animationVariants = {
+        enter: (direction: number) => ({
+            x: direction > 0 ? 300 : -300,
+            opacity: 0,
+        }),
+        center: {
+            x: 0,
+            opacity: 1,
+            transition: { duration: 0.5, ease: "easeOut" },
+        },
+        exit: (direction: number) => ({
+            x: direction > 0 ? -300 : 300,
+            opacity: 0,
+            transition: { duration: 0.5, ease: "easeIn" },
+        }),
     };
 
     if (!isPremium) {
@@ -181,49 +206,67 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
             </Box>
 
             {/* Фотографии */}
-            <Box mb={2} sx={{ position: 'relative', textAlign: 'center' }}>
-                <IconButton
-                    aria-label="Previous Photo"
-                    onClick={handlePrevPhoto}
-                    sx={{
-                        position: 'absolute',
-                        left: '-40px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        zIndex: 2,
-                        padding: '50px',
-                        backgroundColor: 'transparent',
-                    }}
-                >
-                    <ArrowBackIosIcon />
-                </IconButton>
+            <Box position="relative" height="400px" display="flex" justifyContent="center" alignItems="center" overflow="hidden">
+                <AnimatePresence initial={false} custom={direction}>
+                    <motion.div
+                        key={currentMatch.isu}
+                        variants={animationVariants}
+                        custom={direction}
+                        initial="enter"
+                        animate="center"
+                        exit="exit"
+                        style={{
+                            position: 'absolute',
+                            textAlign: 'center',
+                        }}
+                    >
 
-                <Box
-                    component="img"
-                    src={allPhotos[currentPhotoIndex]}
-                    alt={`${currentMatch.username} photo ${currentPhotoIndex + 1}`}
-                    sx={{
-                        maxWidth: '100%',
-                        height: 'auto',
-                        borderRadius: '12px',
-                    }}
-                />
+                        <Box mb={2} sx={{ position: 'relative', textAlign: 'center' }}>
+                            <IconButton
+                                aria-label="Previous Photo"
+                                onClick={handlePrevPhoto}
+                                sx={{
+                                    position: 'absolute',
+                                    left: '-40px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    zIndex: 2,
+                                    padding: '50px',
+                                    backgroundColor: 'transparent',
+                                }}
+                            >
+                                <ArrowBackIosIcon />
+                            </IconButton>
 
-                <IconButton
-                    aria-label="Next Photo"
-                    onClick={handleNextPhoto}
-                    sx={{
-                        position: 'absolute',
-                        right: '-40px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        zIndex: 2,
-                        padding: '50px',
-                        backgroundColor: 'transparent',
-                    }}
-                >
-                    <ArrowForwardIosIcon />
-                </IconButton>
+                            <Box
+                                component="img"
+                                src={allPhotos[currentPhotoIndex]}
+                                alt={`${currentMatch.username} photo ${currentPhotoIndex + 1}`}
+                                sx={{
+                                    maxWidth: '100%',
+                                    height: 'auto',
+                                    borderRadius: '12px',
+                                }}
+                            />
+
+                            <IconButton
+                                aria-label="Next Photo"
+                                onClick={handleNextPhoto}
+                                sx={{
+                                    position: 'absolute',
+                                    right: '-40px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    zIndex: 2,
+                                    padding: '50px',
+                                    backgroundColor: 'transparent',
+                                }}
+                            >
+                                <ArrowForwardIosIcon />
+                            </IconButton>
+                        </Box>
+                    </motion.div>
+                </AnimatePresence>
             </Box>
 
             {/* Просмотр профиля */}
