@@ -1,41 +1,94 @@
-// TagsStep.tsx
-import { Box, Typography } from '@mui/material'; // Импортируем компоненты из MUI
-import React, { useState } from 'react'; // Импортируем React и хук useState
-import MultiSelectButtonGroup from '../basic/MultiSelectButtonGroup'; // Импортируем компонент для выбора нескольких кнопок
-import RoundButton from '../basic/RoundButton'; // Импортируем компонент круглой кнопки
+//src/components/registerSteps/TagsStep.tsx
 
-// Определяем доступные теги для выбора
-const tags = ['Спорт', 'Музыка', 'Путешествия', 'Чтение'];
+import { Box, Typography, Button } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { selectTags, fetchTags} from '../../api/register'; // Import Tag
+import { useError } from '../../contexts/ErrorContext';
+import {Tag} from "../../types";
 
-// Определяем интерфейс для пропсов компонента
 interface TagsStepProps {
-  onNext: (data: { tags: string[] }) => void; // Функция, которая будет вызвана при переходе к следующему шагу с выбранными тегами
+    isu: number;
+    onNext: (data: { tags: string[] }) => void;
 }
 
-// Основной компонент TagsStep
-const TagsStep: React.FC<TagsStepProps> = ({ onNext }) => {
-  const [selectedTags, setSelectedTags] = useState<string[]>([]); // Хук состояния для хранения выбранных тегов
+const TagsStep: React.FC<TagsStepProps> = ({ isu, onNext }) => {
+    const { showError } = useError();
+    const [allTags, setAllTags] = useState<Tag[]>([]);
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    const [loading, setLoading] = useState<boolean>(true); // Optional: Loading state
 
-  // Функция для обработки отправки данных
-  const handleSubmit = () => {
-    onNext({ tags: selectedTags }); // Вызываем функцию onNext с выбранными тегами
-  };
+    useEffect(() => {
+        const fetchAndSetTags = async () => {
+            try {
+                const tags = await fetchTags();
+                if (!Array.isArray(tags)) {
+                    throw new Error("Tags data is not an array");
+                }
+                setAllTags(tags);
+                /* eslint-disable @typescript-eslint/no-explicit-any */
+            } catch (err: any) {
+                console.error("Error fetching tags:", err);
+                showError(err.message || "Failed to load tags");
+            } finally {
+                setLoading(false);
+            }
+        };
 
-  return (
-    <Box style={{ padding: '20px' }}> {/* Обертка с отступами */}
-      <Typography variant="h5" align='center' sx={{ marginBottom: "20px" }}>Main Interests</Typography> {/* Заголовок */}
-      <MultiSelectButtonGroup 
-        options={tags} // Передаем доступные теги в компонент выбора
-        onClickOption={setSelectedTags} // Обновляем состояние при выборе тегов
-      />
-      <RoundButton 
-        onClick={handleSubmit} // Обработчик клика по кнопке
-        sx={{ width: "100%", marginTop: "20px" }} // Стили для кнопки
-      >
-        Next
-      </RoundButton>
-    </Box>
-  );
+        fetchAndSetTags();
+    }, [showError]);
+
+    const toggleTag = (tagId: string) => {
+        setSelectedTags((prev) =>
+            prev.includes(tagId) ? prev.filter(t => t !== tagId) : [...prev, tagId]
+        );
+    };
+
+    const handleSubmit = async () => {
+        if (selectedTags.length === 0) {
+            showError('Please select at least one tag');
+            return;
+        }
+        try {
+            await selectTags({ isu, tags: selectedTags });
+            onNext({ tags: selectedTags });
+            /* eslint-disable @typescript-eslint/no-explicit-any */
+        } catch(e: any) {
+            showError(e.message || "Failed to select tags");
+        }
+    };
+
+    if (loading) {
+        return (
+            <Box padding="20px" textAlign="center">
+                <Typography variant="h6">Loading tags...</Typography>
+            </Box>
+        );
+    }
+
+    return (
+        <Box padding="20px">
+            <Typography variant="h5" align="center" mb={2}>Select Tags</Typography>
+            <Box display="flex" flexWrap="wrap" gap={1} justifyContent="center">
+                {allTags.map(tag => (
+                    <Button
+                        key={tag.id}
+                        variant={selectedTags.includes(tag.id) ? 'contained' : 'outlined'}
+                        onClick={() => toggleTag(tag.id)}
+                    >
+                        {tag.text}
+                    </Button>
+                ))}
+            </Box>
+            <Button
+                onClick={handleSubmit}
+                disabled={selectedTags.length === 0}
+                fullWidth
+                sx={{ mt: 2 }}
+            >
+                Next
+            </Button>
+        </Box>
+    );
 };
 
-export default TagsStep; // Экспортируем компонент для использования в других частях приложения
+export default TagsStep;

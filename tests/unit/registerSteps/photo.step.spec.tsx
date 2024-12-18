@@ -1,62 +1,90 @@
-// PhotoStep.test.tsx
+// tests/unit/registerSteps/photo.step.spec.tsx
+
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import PhotoStep from '../../../src/components/registerSteps/PhotoStep';
 import '@testing-library/jest-dom';
+import { ErrorProvider } from "../../../src/contexts/ErrorContext";
+import { uploadLogo } from '../../../src/api/register';
 
-interface MockGalleryProps {
-    galleryImages: string[]; 
-    handleDeleteImage: (index: number) => void;
-    handleLoadImage: (index: number, url: string) => void;
-    columns: number; // Количество колонок
-    rows: number; // Количество строк
-  }
+// Mocking useError
+export const mockShowError = jest.fn();
 
-jest.mock("../../../src/components/basic/Gallery", () => {
-    const MockStep: React.FC<MockGalleryProps> = ({ handleDeleteImage, handleLoadImage,  }) => (
-      <div data-testid={`gallery`}>
-        <button onClick={() => handleDeleteImage(0)}>Delete</button>
-        <button onClick={() => handleLoadImage(0, "photo.jpg")}>Load</button>
-      </div>
-    );
+// This re-mock must appear BEFORE the component is imported
+jest.mock('../../../src/contexts/ErrorContext', () => {
+    const actual = jest.requireActual('../../../src/contexts/ErrorContext');
     return {
-      __esModule: true,
-      default: MockStep,
+        __esModule: true,
+        ...actual,
+        useError: () => ({
+            showError: mockShowError
+        }),
     };
-  });
+});
+
+// Mocking uploadLogo API
+jest.mock('../../../src/api/register', () => ({
+    __esModule: true,
+    uploadLogo: jest.fn().mockResolvedValue({}),
+}));
+
+const mockUploadLogo = uploadLogo as jest.Mock;
 
 describe('PhotoStep', () => {
-  const mockOnNext = jest.fn();
+    const mockOnNext = jest.fn();
 
-  beforeEach(() => {
-    mockOnNext.mockClear(); // Сбрасываем мок перед каждым тестом
-    render(<PhotoStep onNext={mockOnNext} />);
-  });
+    beforeEach(() => {
+        mockOnNext.mockClear();
+        mockShowError.mockClear();
+        render(
+            <ErrorProvider>
+                <PhotoStep isu={123456} onNext={mockOnNext} />
+            </ErrorProvider>
+        );
+    });
 
-  it('renders the component', () => {
-    expect(screen.getByText(/Upload your photo/i)).toBeInTheDocument();
-    expect(screen.getByText(/Make sure the photo of your face is clear so that it can be easily verified/i)).toBeInTheDocument();
-    expect(screen.getByTestId(/gallery/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
-  });
+    it('renders the component', () => {
+        expect(screen.getByText(/Upload your photo/i)).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
+    });
 
-  it('calls onNext with the correct photo when Next is clicked', () => {
-    fireEvent.click(screen.getByRole('button', { name: /load/i }));
-    fireEvent.click(screen.getByRole('button', { name: /next/i }));
+    it('button is disabled when no photo is uploaded', () => {
+        const nextButton = screen.getByRole('button', { name: /next/i });
+        expect(nextButton).toBeDisabled();
+    });
 
-    expect(mockOnNext).toHaveBeenCalledWith({ photo: 'photo.jpg' });
-    expect(mockOnNext).toHaveBeenCalledTimes(1);
-  });
+    it('button is enabled when a photo is uploaded', () => {
+        const nextButton = screen.getByRole('button', { name: /next/i });
+        const inputEl = screen.getByTestId('file-input-0') as HTMLInputElement;
+        expect(nextButton).toBeDisabled();
 
-  it('button is disabled when no photo is uploaded', () => {
-    const nextButton = screen.getByRole('button', { name: /next/i });
-    expect(nextButton).toBeDisabled(); // Проверяем, что кнопка "Next" отключена
-  });
+        fireEvent.change(inputEl, {
+            target: { files: [new File(['dummy'], 'photo.jpg', { type: 'image/jpeg' })] }
+        });
+        expect(nextButton).toBeEnabled();
+    });
 
-  it('button is enabled when a photo is uploaded', () => {
-    fireEvent.click(screen.getByRole('button', { name: /load/i }));
+    it('calls onNext with the correct photo when Next is clicked', async () => {
+        const inputEl = screen.getByTestId('file-input-0');
+        await act(async () => {
+            fireEvent.change(inputEl, {
+                target: { files: [new File(['dummy'], 'photo.jpg', { type: 'image/jpeg' })] }
+            });
+            fireEvent.click(screen.getByRole('button', { name: /next/i }));
+        });
+        expect(mockOnNext).toHaveBeenCalledWith({ photo: expect.any(File) });
+    });
 
-    const nextButton = screen.getByRole('button', { name: /next/i });
-    expect(nextButton).toBeEnabled(); // Проверяем, что кнопка "Next" включена
-  });
+    it('shows error if uploadLogo fails', async () => {
+        mockUploadLogo.mockRejectedValueOnce(new Error('Upload error'));
+        const inputEl = screen.getByTestId('file-input-0');
+        await act(async () => {
+            fireEvent.change(inputEl, {
+                target: { files: [new File(['dummy'], 'photo.jpg', { type: 'image/jpeg' })] }
+            });
+            fireEvent.click(screen.getByRole('button', { name: /next/i }));
+        });
+        expect(mockShowError).toHaveBeenCalledWith('Upload error');
+        expect(mockOnNext).not.toHaveBeenCalled();
+    });
 });

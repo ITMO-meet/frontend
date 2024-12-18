@@ -28,7 +28,7 @@
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
     "esbuild-plugin-alias": "^0.2.1",
-    "framer-motion": "^11.11.10",
+    "framer-motion": "^11.15.0",
     "frontend": "file:",
     "lightningcss": "^1.27.0",
     "mobx": "^6.13.3",

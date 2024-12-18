@@ -20,3 +20,15 @@ export interface Message {
 export interface ChatProps {
     contacts: Contact[];
 }
+
+export interface Preference {
+    id: string;
+    text: string;
+    icon: string;
+}
+
+export interface Tag {
+    id: string;
+    text: string;
+    icon: string;
+}
