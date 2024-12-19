@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { selectTags, fetchTags} from '../../api/register'; // Import Tag
 import { useError } from '../../contexts/ErrorContext';
 import {Tag} from "../../types";
+import RoundButton from "../basic/RoundButton";
 
 interface TagsStepProps {
     isu: number;
@@ -79,14 +80,13 @@ const TagsStep: React.FC<TagsStepProps> = ({ isu, onNext }) => {
                     </Button>
                 ))}
             </Box>
-            <Button
-                onClick={handleSubmit}
-                disabled={selectedTags.length === 0}
-                fullWidth
-                sx={{ mt: 2 }}
+            <RoundButton
+                onClick={handleSubmit} // Обработчик клика по кнопке
+                disabled={selectedTags.length === 0} // Кнопка отключена, если нет выбранных тегов
+                sx={{ width: "100%", marginTop: "20px" }} // Стили для кнопки
             >
                 Next
-            </Button>
+            </RoundButton>
         </Box>
     );
 };

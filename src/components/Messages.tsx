@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import MicIcon from '@mui/icons-material/Mic';
 import { useParams, useNavigate } from 'react-router-dom';
 import UserMessage from './UserMessage';
 import PageWrapper from '../PageWrapper';
@@ -34,14 +35,17 @@ interface MessagesProps {
 const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const contact = people.find((person) => person.isu === Number(id))
+  const contact = people.find((person) => person.isu === Number(id));
 
   const [chatMessages, setChatMessages] = useState<
-    Array<{ sender: 'me' | 'them'; text: string }>
+    Array<{ sender: 'me' | 'them'; text: string; audio?: Blob }>
   >([]);
   const [inputValue, setInputValue] = useState('');
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
 
   useEffect(() => {
     if (contact) {
@@ -51,14 +55,14 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
             message.sender_id === contact.isu || message.receiver_id === contact.isu
         )
         .map((message) => ({
-          sender: message.sender_id === contact.isu ? 'them' : 'me' as 'me' | 'them',
+          sender: message.sender_id === contact.isu ? 'them' : ('me' as 'me' | 'them'),
           text: message.text,
         }));
       setChatMessages(initialMessages);
     }
   }, [contact, messages]);
 
-  const handleSend = () => {
+  const handleSendText = () => {
     if (inputValue.trim() !== '') {
       setChatMessages((prevMessages) => [
         ...prevMessages,
@@ -66,13 +70,13 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
       ]);
       setInputValue('');
       scrollToBottom();
-      // TODO: Implement actual message sending logic (e.g., API call or RabbitMQ)
+      // TODO: Implement actual message sending logic
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      handleSend();
+      handleSendText();
     }
   };
 
@@ -84,7 +88,78 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, chatMessages]);
+
+  const startRecording = async () => {
+    try {
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+        ? 'audio/webm;codecs=opus'
+        : 'audio/ogg;codecs=opus';
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream, { mimeType });
+      setMediaRecorder(recorder);
+
+      // Use local variable to store chunks
+      const localChunks: BlobPart[] = [];
+
+      recorder.ondataavailable = (event) => {
+        localChunks.push(event.data);
+      };
+
+      recorder.onstop = () => {
+        const blob = new Blob(localChunks, { type: mimeType });
+        setChatMessages((prev) => [
+          ...prev,
+          { sender: 'me', text: '', audio: blob },
+        ]);
+        // Stop all tracks to release microphone
+        stream.getTracks().forEach(track => track.stop());
+        scrollToBottom();
+      };
+
+      recorder.start();
+      setIsRecording(true);
+    } catch (error) {
+      console.error('Error accessing microphone: ', error);
+      // TODO: show error to user
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
+      setIsRecording(false);
+    }
+  };
+
+  // Handlers for mic button (mouse and touch)
+  const handleMicMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    startRecording();
+  };
+
+  const handleMicMouseUp = (e: React.MouseEvent) => {
+    e.preventDefault();
+    stopRecording();
+  };
+
+  const handleMicMouseLeave = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isRecording) {
+      stopRecording();
+    }
+  };
+
+  const handleMicTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    startRecording();
+  };
+
+  const handleMicTouchEnd = (e: React.TouchEvent) => {
+    e.preventDefault();
+    stopRecording();
+  };
 
   if (!contact) {
     return (
@@ -166,9 +241,22 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton color="primary" onClick={handleSend}>
-                  <SendIcon />
-                </IconButton>
+                {inputValue.trim() ? (
+                  <IconButton color="primary" onClick={handleSendText}>
+                    <SendIcon />
+                  </IconButton>
+                ) : (
+                  <IconButton
+                    color={isRecording ? 'error' : 'primary'}
+                    onMouseDown={handleMicMouseDown}
+                    onMouseUp={handleMicMouseUp}
+                    onMouseLeave={handleMicMouseLeave}
+                    onTouchStart={handleMicTouchStart}
+                    onTouchEnd={handleMicTouchEnd}
+                  >
+                    <MicIcon />
+                  </IconButton>
+                )}
               </InputAdornment>
             ),
           }}
