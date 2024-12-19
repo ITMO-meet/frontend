@@ -23,21 +23,15 @@ const AdditionalPhotosStep: React.FC<AdditionalPhotosStepProps> = ({ isu, onNext
     const [imageToEdit, setImageToEdit] = useState<string | null>(null);
     const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
-    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-        const selected = e.target.files?.[0];
-        if (!selected) return;
+    // New handler to receive both File and URL from Gallery
+    const handleFileSelect = (index: number, file: File, url: string) => {
         const newFiles = [...files];
-        newFiles[index] = selected;
+        newFiles[index] = file;
         setFiles(newFiles);
 
-        // Load image preview
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            const newGallery = [...galleryImages];
-            newGallery[index] = reader.result as string;
-            setGalleryImages(newGallery);
-        };
-        reader.readAsDataURL(selected);
+        const newGallery = [...galleryImages];
+        newGallery[index] = url;
+        setGalleryImages(newGallery);
     };
 
     const handleDeleteImage = (index: number) => {
@@ -73,14 +67,14 @@ const AdditionalPhotosStep: React.FC<AdditionalPhotosStepProps> = ({ isu, onNext
     };
 
     const handleSubmit = async () => {
-        const filtered = files.filter((f): f is File => f !== null);
-        if (filtered.length === 0) {
+        const selectedFiles = files.filter((f): f is File => f !== null);
+        if (selectedFiles.length === 0) {
             showError('Please select at least one photo');
             return;
         }
         try {
-            await uploadCarousel(isu, filtered);
-            onNext({ additionalPhotos: filtered });
+            await uploadCarousel(isu, selectedFiles);
+            onNext({ additionalPhotos: selectedFiles });
             /* eslint-disable @typescript-eslint/no-explicit-any */
         } catch (e: any) {
             showError(e.message);
@@ -102,17 +96,8 @@ const AdditionalPhotosStep: React.FC<AdditionalPhotosStepProps> = ({ isu, onNext
                         handleDeleteImage={handleDeleteImage}
                         handleLoadImage={handleLoadImage}
                         handleEditImage={handleEditImage}
+                        handleFileSelect={handleFileSelect} // Pass the new handler
                     />
-                    {files.map((_, i) => (
-                        <Box key={i} mb={1}>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                data-testid={`file-input-${i}`} // Unique data-testid
-                                onChange={(e) => handleFileSelect(e, i)}
-                            />
-                        </Box>
-                    ))}
                     <RoundButton
                         onClick={handleSubmit}
                         sx={{ width: "100%", marginTop: "20px" }}

@@ -12,6 +12,7 @@ interface GalleryProps {
     handleEditImage: (index: number) => void;
     columns: number;
     rows: number;
+    handleFileSelect?: (index: number, file: File, url: string) => void; // New prop
 }
 
 const Gallery: React.FC<GalleryProps> = ({
@@ -21,6 +22,7 @@ const Gallery: React.FC<GalleryProps> = ({
                                              handleEditImage,
                                              columns,
                                              rows,
+                                             handleFileSelect,
                                          }) => {
     const handleFileChange = (
         event: React.ChangeEvent<HTMLInputElement>,
@@ -30,7 +32,11 @@ const Gallery: React.FC<GalleryProps> = ({
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                handleLoadImage(index, reader.result as string);
+                const result = reader.result as string;
+                handleLoadImage(index, result);
+                if (handleFileSelect) {
+                    handleFileSelect(index, file, result);
+                }
             };
             reader.readAsDataURL(file);
         }

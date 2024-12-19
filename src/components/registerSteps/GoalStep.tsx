@@ -1,11 +1,12 @@
-//src/components/registerSteps/GoalStep.tsx
+// src/components/registerSteps/GoalStep.tsx
 
-import { Box, Typography, Paper, Button } from '@mui/material';
+import { Box, Typography, Card, CardContent } from '@mui/material';
 import React, { useState, useEffect } from 'react';
-import { selectRelationship, fetchPreferences} from '../../api/register';
+import { selectRelationship, fetchPreferences } from '../../api/register';
 import { useError } from '../../contexts/ErrorContext';
 import theme from '../theme';
-import {Preference} from "../../types"; // If needed
+import { Preference } from "../../types";
+import RoundButton from "../basic/RoundButton"; // If needed
 
 interface GoalStepProps {
     isu: number;
@@ -44,11 +45,19 @@ const GoalStep: React.FC<GoalStepProps> = ({ isu, onNext }) => {
         try {
             await selectRelationship({ isu, relationship_preference: [selectedGoalId] });
             onNext({ goal: selectedGoalId }); // Sending the goal ID
-        } catch(e: any) {
+            /* eslint-disable @typescript-eslint/no-explicit-any */
+        } catch (e: any) {
             showError(e.message || "Failed to select relationship preference");
         }
     };
 
+    // Optional: Define titles and descriptions if not present in Preference
+    // If Preference already includes 'title' and 'description', you can omit this mapping
+    const mapPreferenceToDisplay = (preference: Preference) => ({
+        id: preference.id,
+        title: preference.title || preference.text, // Use 'title' if available, else fallback to 'text'
+        description: preference.description || 'No description provided.', // Provide a default description
+    });
 
     if (loading) {
         return (
@@ -59,38 +68,45 @@ const GoalStep: React.FC<GoalStepProps> = ({ isu, onNext }) => {
     }
 
     return (
-        <Box padding="20px">
-            <Typography variant="h5" align="center" mb={2}>What are you looking for?</Typography>
-            <Box display="flex" justifyContent="center" gap={1} flexWrap="wrap">
-                {allGoals.map(goal => (
-                    <Paper
-                        className="MuiPaper-root"
-                        key={goal.id} // Use unique ID as key
-                        data-testid={`goal-${goal.id}`}
-                        onClick={() => setSelectedGoalId(goal.id)}
+        <Box style={{ padding: '20px' }}> {/* Обертка с отступами */}
+            <Typography variant="h5" align='center' sx={{ marginBottom: "20px" }}>
+                What are you looking for?
+            </Typography> {/* Заголовок */}
+            <Typography variant="h6" align='center' sx={{ marginBottom: "20px" }}>
+                It can be changed at any time
+            </Typography> {/* Подзаголовок с инструкцией */}
+            {allGoals.map(preference => {
+                const { id, title, description } = mapPreferenceToDisplay(preference);
+                return (
+                    <Card
+                        key={id} // Уникальный ключ для каждого элемента
+                        onClick={() => setSelectedGoalId(id)} // Обработчик клика для выбора цели
                         sx={{
-                            padding: '16px',
-                            cursor: 'pointer',
-                            background: goal.id === selectedGoalId ? theme.palette.secondary.light : 'transparent',
-                            border: goal.id === selectedGoalId ? `2px solid ${theme.palette.secondary.main}` : '1px solid #ccc',
-                            borderRadius: '8px',
-                            minWidth: '120px',
-                            textAlign: 'center',
-                            transition: 'background 0.3s, border 0.3s',
+                            margin: '10px 0', // Отступы между карточками
+                            cursor: 'pointer', // Указатель при наведении
+                            background: selectedGoalId === id ? theme.palette.secondary.light : "white", // Изменяем фон выбранной карточки
+                            border: selectedGoalId === id ? `2px solid ${theme.palette.secondary.main}` : '1px solid #ccc', // Изменяем рамку выбранной карточки
+                            transition: 'background 0.3s, border 0.3s', // Плавный переход для фона и рамки
                         }}
                     >
-                        {goal.text} {/* Display the text */}
-                    </Paper>
-                ))}
-            </Box>
-            <Button
-                onClick={handleSubmit}
-                disabled={!selectedGoalId}
-                fullWidth
-                sx={{ mt: 2 }}
+                        <CardContent>
+                            <Typography variant="h6" gutterBottom>
+                                {title}
+                            </Typography> {/* Заголовок цели */}
+                            <Typography variant="body2" color="textSecondary">
+                                {description} {/* Описание цели */}
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                );
+            })}
+            <RoundButton
+                disabled={!selectedGoalId} // Кнопка отключена, если цель не выбрана
+                onClick={handleSubmit} // Обработчик клика по кнопке
+                sx={{ width: "100%", marginTop: "20px" }} // Стили для кнопки
             >
                 Next
-            </Button>
+            </RoundButton>
         </Box>
     );
 };

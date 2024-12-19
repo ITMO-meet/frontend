@@ -1,8 +1,10 @@
 // UsernameStep.tsx
-import { Box, Typography, TextField, Button } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { selectUsername } from '../../api/register';
 import { useError } from '../../contexts/ErrorContext';
+import RoundButton from "../basic/RoundButton";
+import InputText from "../basic/InputText";
 
 interface UsernameStepProps {
     isu: number;
@@ -31,16 +33,18 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ isu, onNext }) => {
     return (
         <Box padding="20px">
             <Typography variant="h5" align="center" mb={2}>Choose a username</Typography>
-            <TextField
-                fullWidth
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+            <InputText
                 label="Username"
-                sx={{ mb:2 }}
+                onChange={(e) => setUsername(e.target.value)} // Обновляем состояние при изменении текста
+                sx={{ width: "100%", marginY: "20px" }} // Стили для компонента ввода
             />
-            <Button onClick={handleSubmit} disabled={!username.trim()} fullWidth>
+            <RoundButton
+                disabled={username === ""} // Кнопка отключена, если имя пользователя пустое
+                onClick={handleSubmit} // Обработчик клика по кнопке
+                sx={{ width: "100%" }} // Стили для кнопки
+            >
                 Next
-            </Button>
+            </RoundButton>
         </Box>
     );
 };

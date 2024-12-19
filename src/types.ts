@@ -24,6 +24,8 @@ export interface ChatProps {
 export interface Preference {
     id: string;
     text: string;
+    title?: string; // Optional, if not provided by backend
+    description?: string; // Optional, if not provided by backend
     icon: string;
 }
 
