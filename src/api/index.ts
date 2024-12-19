@@ -3,6 +3,8 @@
 // Возвращаем JSON или бросаем ошибку. Вызовы делаются из других модулей.
 
 
+const AUTH_BASE_URL = 'http://185.178.47.42:3000'
+// const TEST_BASE_URL = 'http://185.178.47.42:7000'
 const BASE_URL = 'http://185.178.47.42:8000';
 
 interface RequestOptions {
@@ -13,8 +15,15 @@ interface RequestOptions {
 
 async function request(url: string, options: RequestOptions) {
     let resp: Response;
+
+    const baseUrl = url
+        .startsWith("/auth/") 
+        && !(url.startsWith("/auth/register/upload_carousel") || url.startsWith("/auth/register/upload_logo"))
+        ? AUTH_BASE_URL 
+        : BASE_URL
+
     try {
-        resp = await fetch(`${BASE_URL}${url}`, options);
+        resp = await fetch(`${baseUrl}${url}`, options);
         /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (err: any) {
         // Сетевая ошибка
