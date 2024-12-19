@@ -1,8 +1,11 @@
-// TagsStep.tsx
+//src/components/registerSteps/TagsStep.tsx
+
 import { Box, Typography, Button } from '@mui/material';
 import React, { useState, useEffect } from 'react';
-import { selectTags, fetchTags } from '../../api/register';
+import { selectTags, fetchTags} from '../../api/register'; // Import Tag
 import { useError } from '../../contexts/ErrorContext';
+import {Tag} from "../../types";
+import RoundButton from "../basic/RoundButton";
 
 interface TagsStepProps {
     isu: number;
@@ -11,16 +14,33 @@ interface TagsStepProps {
 
 const TagsStep: React.FC<TagsStepProps> = ({ isu, onNext }) => {
     const { showError } = useError();
-    const [allTags, setAllTags] = useState<string[]>([]);
+    const [allTags, setAllTags] = useState<Tag[]>([]);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    const [loading, setLoading] = useState<boolean>(true); // Optional: Loading state
 
     useEffect(() => {
-        fetchTags().then(setAllTags).catch(err => showError(err.message));
+        const fetchAndSetTags = async () => {
+            try {
+                const tags = await fetchTags();
+                if (!Array.isArray(tags)) {
+                    throw new Error("Tags data is not an array");
+                }
+                setAllTags(tags);
+                /* eslint-disable @typescript-eslint/no-explicit-any */
+            } catch (err: any) {
+                console.error("Error fetching tags:", err);
+                showError(err.message || "Failed to load tags");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAndSetTags();
     }, [showError]);
 
-    const toggleTag = (tag: string) => {
+    const toggleTag = (tagId: string) => {
         setSelectedTags((prev) =>
-            prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+            prev.includes(tagId) ? prev.filter(t => t !== tagId) : [...prev, tagId]
         );
     };
 
@@ -34,9 +54,17 @@ const TagsStep: React.FC<TagsStepProps> = ({ isu, onNext }) => {
             onNext({ tags: selectedTags });
             /* eslint-disable @typescript-eslint/no-explicit-any */
         } catch(e: any) {
-            showError(e.message);
+            showError(e.message || "Failed to select tags");
         }
     };
+
+    if (loading) {
+        return (
+            <Box padding="20px" textAlign="center">
+                <Typography variant="h6">Loading tags...</Typography>
+            </Box>
+        );
+    }
 
     return (
         <Box padding="20px">
@@ -44,17 +72,21 @@ const TagsStep: React.FC<TagsStepProps> = ({ isu, onNext }) => {
             <Box display="flex" flexWrap="wrap" gap={1} justifyContent="center">
                 {allTags.map(tag => (
                     <Button
-                        key={tag}
-                        variant={selectedTags.includes(tag) ? 'contained' : 'outlined'}
-                        onClick={() => toggleTag(tag)}
+                        key={tag.id}
+                        variant={selectedTags.includes(tag.id) ? 'contained' : 'outlined'}
+                        onClick={() => toggleTag(tag.id)}
                     >
-                        {tag}
+                        {tag.text}
                     </Button>
                 ))}
             </Box>
-            <Button onClick={handleSubmit} disabled={selectedTags.length === 0} fullWidth sx={{mt:2}}>
+            <RoundButton
+                onClick={handleSubmit} // Обработчик клика по кнопке
+                disabled={selectedTags.length === 0} // Кнопка отключена, если нет выбранных тегов
+                sx={{ width: "100%", marginTop: "20px" }} // Стили для кнопки
+            >
                 Next
-            </Button>
+            </RoundButton>
         </Box>
     );
 };

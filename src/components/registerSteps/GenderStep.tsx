@@ -1,8 +1,10 @@
 // GenderStep.tsx
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography} from '@mui/material';
 import React, { useState } from 'react';
 import { selectPreferences } from '../../api/register';
 import { useError } from '../../contexts/ErrorContext';
+import RoundButton from "../basic/RoundButton";
+import HorizontalButtonGroup from "../basic/HorizontalButtonGroup";
 
 interface GenderStepProps {
     isu: number;
@@ -30,22 +32,27 @@ const GenderStep: React.FC<GenderStepProps> = ({ isu, onNext }) => {
     };
 
     return (
-        <Box padding="20px">
-            <Typography variant="h5" align="center" mb={2}>Show me</Typography>
-            <Box display="flex" justifyContent="center" gap={1} flexWrap="wrap">
-                {options.map(o => (
-                    <Button
-                        key={o}
-                        variant={o === gender ? 'contained' : 'outlined'}
-                        onClick={() => setGender(o)}
-                    >
-                        {o}
-                    </Button>
-                ))}
+        <Box padding="20px"> {/* Обертка с отступами */}
+            <Typography variant="h5" align="center" sx={{ marginBottom: "20px" }}>
+                Dating Settings
+            </Typography> {/* Заголовок */}
+            <Typography variant="h6" align="center">
+                Show me
+            </Typography> {/* Подзаголовок с инструкцией */}
+            <Box display="flex" justifyContent="center" padding="20px"> {/* Центрируем группу кнопок */}
+                <HorizontalButtonGroup
+                    options={options} // Передаем доступные варианты
+                    spacing={10} // Промежуток между кнопками
+                    onButtonClick={setGender} // Обработчик клика по кнопке для установки пола
+                />
             </Box>
-            <Button onClick={handleSubmit} disabled={!gender} fullWidth sx={{mt:2}}>
+            <RoundButton
+                onClick={handleSubmit} // Обработчик клика по кнопке
+                disabled={gender === ''} // Кнопка отключена, если пол не выбран
+                sx={{ width: "100%" }} // Стили для кнопки
+            >
                 Next
-            </Button>
+            </RoundButton>
         </Box>
     );
 };

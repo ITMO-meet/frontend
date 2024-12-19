@@ -1,4 +1,3 @@
-// UsernameStep.tsx
 import { Box, TextField, Typography } from '@mui/material'; // Импортируем компоненты из MUI
 import React, { useState } from 'react'; // Импортируем React и хук useState
 import RoundButton from '../basic/RoundButton'; // Импортируем компонент круглой кнопки
