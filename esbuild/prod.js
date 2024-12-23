@@ -7,11 +7,13 @@ dotenv.config();
 
 const directory = 'build';
 
+// Clean and create build directory
 if (sh.test('-e', directory)) {
   sh.rm('-rf', directory);
 }
 sh.mkdir(directory);
 
+// Copy main static files
 const staticFiles = ['public/index.html', 'public/manifest.json', 'public/favicon.png'];
 staticFiles.forEach((file) => {
   if (sh.test('-e', file)) {
@@ -20,6 +22,13 @@ staticFiles.forEach((file) => {
     console.warn(`Warning: ${file} not found, skipping.`);
   }
 });
+
+// Copy images directory
+if (sh.test('-e', 'public/images')) {
+  sh.cp('-R', 'public/images', directory);
+} else {
+  console.warn(`Warning: public/images not found, skipping.`);
+}
 
 const config = {
   entryPoints: ['src/index.tsx'],
