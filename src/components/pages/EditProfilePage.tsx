@@ -45,6 +45,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MultiCategorySheetButton from '../basic/MultiCategorySheetButton';
 import { useNavigate } from 'react-router-dom';
 import { logEvent, logPageView } from '../../analytics';
+import { userData } from '../../stores/UserDataStore';
 
 interface SliderCategoryOption {
     label: string;
@@ -271,7 +272,7 @@ const EditProfilePage: React.FC = () => {
                 <Box display="flex" flexDirection="column">
                     <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>Alisa Pipisa, 20</Typography>
                 </Box>
-                <EditableField label="Bio" initialValue="My name is Jessica Parker, and I enjoy meeting new people and finding ways to help them have an uplifting experience. I enjoy reading..." />
+                <EditableField label="Bio" initialValue={userData.getBio} onSave={(v) => userData.setBio(v)} />
 
                 {/* Target Section */}
                 <Box mt={2} width="100%">

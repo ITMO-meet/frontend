@@ -36,8 +36,10 @@ import NavBar from '../basic/NavBar';
 import PhotoListing from '../basic/PhotoListing';
 import { usePremium } from '../../contexts/PremiumContext';
 import { logEvent, logPageView } from '../../analytics';
+import { userData } from '../../stores/UserDataStore';
+import { observer } from 'mobx-react-lite';
 
-const ProfilePage: React.FC = () => {
+const ProfilePage: React.FC = observer(() => {
     const { isPremium } = usePremium();
     const navigate = useNavigate();
 
@@ -106,7 +108,7 @@ const ProfilePage: React.FC = () => {
             <Box p={3} sx={{ backgroundColor: '#ffffff', flexGrow: 1, zIndex: 1 }}>
                 {/* Основная информация с кнопкой редактирования */}
                 <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>Alisa Pipisa, 20</Typography>
+                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{userData.getUsername}, {userData.getAge}</Typography>
                     <ImageButton onClick={handleEditClick}>
                         <EditIcon />
                     </ImageButton>
@@ -127,7 +129,7 @@ const ProfilePage: React.FC = () => {
                     </Typography>
                     <Box sx={{ border: '1px solid #ddd', borderRadius: '8px', padding: 2 }}>
                         <Typography variant="body1" textAlign="left">
-                            My name is Alisa Pipisa, and I enjoy meeting new people and finding ways to help them have an uplifting experience. I enjoy reading...
+                            {userData.getBio}
                         </Typography>
                     </Box>
                 </Box>
@@ -219,6 +221,6 @@ const ProfilePage: React.FC = () => {
             </Box>
         </Box>
     );
-};
+});
 
 export default ProfilePage;
