@@ -36,34 +36,32 @@ jest.mock('react-router-dom', () => ({
 
 const mockUseLocation = useLocation as jest.Mock;
 
-const mockScheduleData = {
-    data: [
-        {
-            date: '2024-09-01',
-            lessons: [
-                {
-                    subject: 'Math',
-                    room: 'Room 101',
-                    building: 'Main Building',
-                    time_start: '10:00',
-                    time_end: '11:30',
-                },
-            ],
-        },
-        {
-            date: '2024-09-02',
-            lessons: [
-                {
-                    subject: 'Physics',
-                    room: null,
-                    building: null,
-                    time_start: '12:00',
-                    time_end: '13:30',
-                },
-            ],
-        },
-    ],
-};
+const mockScheduleData = [
+    {
+        date: '2024-09-01',
+        lessons: [
+            {
+                subject: 'Math',
+                room: 'Room 101',
+                building: 'Main Building',
+                time_start: '10:00',
+                time_end: '11:30',
+            },
+        ],
+    },
+    {
+        date: '2024-09-02',
+        lessons: [
+            {
+                subject: 'Physics',
+                room: null,
+                building: null,
+                time_start: '12:00',
+                time_end: '13:30',
+            },
+        ],
+    },
+];
 
 describe('CalendarPage', () => {
     beforeEach(() => {
