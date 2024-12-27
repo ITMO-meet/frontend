@@ -4,7 +4,7 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { useLocation } from 'react-router-dom';
-import { logEvent, logPageView } from '../../analytics';
+import { logPageView } from '../../analytics';
 import { fetchUserSchedule } from '../../api/calendar';
 
 
