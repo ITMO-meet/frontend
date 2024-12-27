@@ -5,13 +5,10 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import { logEvent, logPageView } from '../../analytics';
+import { fetchUserSchedule } from '../../api/calendar';
 
 
 const localizer = momentLocalizer(moment);
-
-const getToken = async (itmoId: string): Promise<string> => { // eslint-disable-line @typescript-eslint/no-unused-vars
-    return Promise.resolve('Bearer xxx'); // TODO: FIX FOR BACKEND
-};
 
 interface Lesson {
     subject: string;
@@ -51,38 +48,18 @@ const CalendarPage: React.FC = () => {
         );
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         logPageView("/calendar")
-    },[]);
+    }, []);
 
     useEffect(() => {
         const fetchSchedule = async () => {
             setLoading(true);
             setError(null);
 
-            const dateStart = '2024-09-01'; // TODO: fix to dynamic dates (WONTFIX UNTIL NEW YEAR)
-            const dateEnd = '2025-02-01';
-
             try {
-                const token = await getToken(itmoId);
-
-                const response = await fetch(
-                    `https://my.itmo.ru/api/schedule/schedule/personal?date_start=${dateStart}&date_end=${dateEnd}`,
-                    {
-                        headers: {
-                            Authorization: token,
-                            'Accept-Language': 'ru',
-                        },
-                    }
-                );
-
-                if (!response.ok) {
-                    throw new Error('Error fetching schedule');
-                }
-                setLoading(false);
-
-                const data = await response.json();
-                const parsedEvents = data.data.flatMap((day: Day) =>
+                const response = await fetchUserSchedule(itmoId);
+                const parsedEvents = response.flatMap((day: Day) =>
                     day.lessons.map((lesson: Lesson) => ({
                         title: `${lesson.subject} (${lesson.room || 'Online(?)'}, ${lesson.building || ''})`,
                         start: new Date(`${day.date}T${lesson.time_start}`),
@@ -94,22 +71,23 @@ const CalendarPage: React.FC = () => {
                 );
 
                 setEvents(parsedEvents);
-                logEvent("ITMO API", "Get calendar", "")
             } catch (error) {
-                console.error(error); // Log the error
+                console.error(error);
                 setError('Error fetching schedule');
             } finally {
                 setLoading(false);
             }
         };
 
+
         fetchSchedule();
     }, [itmoId]);
+
 
     if (error) {
         return (
             <Box p={2}>
-                <Typography variant='h6' textAlign='center'>
+                <Typography variant="h6" textAlign="center">
                     Error occurred: {error}
                 </Typography>
             </Box>
