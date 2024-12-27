@@ -224,7 +224,7 @@ const stories = [
 
 const people = [
   {
-    isu: 123456,
+    isu: 386871,
     username: 'Jane Smith1',
     bio: 'Test bio for User1',
     logo: 'https://steamuserimages-a.akamaihd.net/ugc/1844789643806854188/FB581EAD503907F56A009F85371F6FB09A467FEC/?imw=512&imh=497&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true',
@@ -250,7 +250,7 @@ const people = [
     itmo: [
       { text: "1", icon: <SchoolIcon /> },  // person_params.course, course
       { text: "ПИиКТ", icon: <HomeIcon /> },// person_params.faculty
-      { text: "123456", icon: <BadgeIcon /> }, // itmo id. TODO: use isu from user, not from here duh
+      { text: "386871", icon: <BadgeIcon /> }, // itmo id. TODO: use isu from user, not from here duh
     ],
     gender_preferences: [ // Not used YET
       { text: "everyone", icon: "gender_preferences_placeholder" } // preferences.gender_preferences
