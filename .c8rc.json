@@ -12,7 +12,8 @@
         "src/components/basic/IdProps.ts",
         "src/components/examples/**",
         "src/components/Examples.tsx",
-        "src/types.ts"
+        "src/types.ts",
+        "src/stores/*"
     ],
     "extension": [
         ".ts",
