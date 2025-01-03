@@ -15,6 +15,22 @@ jest.mock('react-router-dom', () => ({
     useNavigate: jest.fn(),
 }));
 
+jest.mock('../../src/stores/UserDataStore', () => ({
+    userData: {
+        loading: false,
+        getIsu: jest.fn().mockReturnValue(1),
+        getUsername: jest.fn().mockReturnValue("Alisa Pipisa"),
+        getBio: jest.fn().mockReturnValue("Test Bio"),
+        getBirthdate: jest.fn().mockReturnValue("2000-01-01"),
+        getAge: jest.fn().mockReturnValue(20),
+        getWeight: jest.fn().mockReturnValue(70),
+        getHeight: jest.fn().mockReturnValue(175),
+        getZodiac: jest.fn().mockReturnValue("Capricorn"),
+        // Добавьте другие методы по мере необходимости
+    }
+}));
+
+
 describe('SettingsPage', () => {
     const mockNavigate = jest.fn();
 
