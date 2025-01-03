@@ -60,4 +60,12 @@ export async function getJson<T>(url: string): Promise<T> {
     return resp.json() as Promise<T>;
 }
 
+export async function putJson<T>(url: string, data: unknown = {}): Promise<T> {
+    const resp = await request(url, {
+        method: 'PUT',
+        body: JSON.stringify(data)
+    });
+    return resp.json() as Promise<T>;
+}
+
 export { BASE_URL };
