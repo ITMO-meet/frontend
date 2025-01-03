@@ -30,7 +30,7 @@
 */
 
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Avatar, Paper, IconButton, Chip, Button, Modal } from '@mui/material';
+import { Box, Typography, Avatar, Paper, IconButton, Chip, Button, Modal, CircularProgress } from '@mui/material';
 import WestIcon from '@mui/icons-material/West';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
@@ -244,6 +244,10 @@ const EditProfilePage: React.FC = () => {
         });
     };
 
+    if (userData.loading) {
+        return <CircularProgress  />; // Show a loading spinner while data is being fetched
+    }
+    
     return (
         <Box position="relative" minHeight="100vh" display="flex" flexDirection="column">
             {/* Header */}
@@ -270,9 +274,9 @@ const EditProfilePage: React.FC = () => {
             >
                 {/* Bio Section */}
                 <Box display="flex" flexDirection="column">
-                    <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>Alisa Pipisa, 20</Typography>
+                    <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>{userData.getUsername()}, {userData.getAge()}</Typography>
                 </Box>
-                <EditableField label="Bio" initialValue={userData.getBio} onSave={(v) => userData.setBio(v)} />
+                <EditableField label="Bio" initialValue={userData.getBio()} onSave={(v) => userData.setBio(v)} />
 
                 {/* Target Section */}
                 <Box mt={2} width="100%">

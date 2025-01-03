@@ -1,22 +1,61 @@
 import { makeAutoObservable } from "mobx";
-import { Preference, Tag } from "../types";
+import { getProfile, updateBio, updateHeight, updateWeight, updateZodiac } from "../api/profile";
+import { calculateAge } from "../utils";
 
 class UserData {
+    public loading: boolean = false;
+
     private isu: number | undefined
-    private age: number | undefined
     private username: string | undefined
     private bio: string | undefined
+    private birthdate: string | undefined
+    private age: number | undefined
     private weight: number | undefined
     private height: number | undefined
     private zodiac: string | undefined
     private genderPreference: string | undefined
-    private tags: Tag[] | undefined
-    private photo: File | undefined
-    private additionalPhotos: File[] | undefined
-    private relationshipPreference: Preference | undefined
+    // private tags: Tag[] | undefined
+    // private photo: string | undefined // url
+    // private additionalPhotos: string[] | undefined // urls
+    // private relationshipPreference: Preference | undefined
 
     constructor() {
         makeAutoObservable(this);
+    }
+
+    private setLoading(value: boolean) {
+        this.loading = value;
+    }
+
+    private async loadUserData() {
+        this.setLoading(true);
+
+        const profile = await getProfile(this.getIsu()); // get profile from server
+        console.log(profile);
+
+        // set variables in store
+        this.username = profile.username;
+        this.bio = profile.bio;
+        
+        const birthdate = profile.mainFeatures.find(feature => feature.icon === "birthdate")?.text;
+        this.age = birthdate ? calculateAge(birthdate) : 20;
+        this.birthdate = birthdate;
+
+        const weightFeature = profile.mainFeatures.find(feature => feature.icon === "weight")?.text;
+        this.weight = weightFeature ? parseFloat(weightFeature) : 80; // Assuming weight is stored as a string
+
+        const heightFeature = profile.mainFeatures.find(feature => feature.icon === "height")?.text;
+        this.height = heightFeature ? parseFloat(heightFeature) : 170; // Assuming height is stored as a string
+
+        const zodiacFeature = profile.mainFeatures.find(feature => feature.icon === "zodiac_sign")?.text;
+        this.zodiac = zodiacFeature ? zodiacFeature : "None";
+
+        const genderPreferenceFeature = profile.gender_preferences[0]?.text; // Assuming the first preference is the desired one
+        this.genderPreference = genderPreferenceFeature ? genderPreferenceFeature : "Everyone"
+        
+        // TODO: tags, photo, additionalPhotos, relationshipPreference and other
+        
+        this.setLoading(false);
     }
 
     // сеттеры.
@@ -27,137 +66,186 @@ class UserData {
 
     setBio(bio: string) {
         this.bio = bio;
+        if (this.isu) {
+            updateBio(this.isu, bio);
+        };
     }
 
     setWeight(weight: number) {
         this.weight = weight;
+        if (this.isu) {
+            updateWeight(this.isu, weight);
+        };
     }
 
     setHeight(height: number) {
         this.height = height;
+        if (this.isu) {
+            updateHeight(this.isu, height);
+        };
     }
 
     setZodiac(zodiac: string) {
         this.zodiac = zodiac;
+        if (this.isu) {
+            updateZodiac(this.isu, zodiac);
+        };
     }
 
-    setGenderPreference(genderPreference: string) {
-        this.genderPreference = genderPreference;
-    }
+    // setGenderPreference(genderPreference: string) {
+    //     this.genderPreference = genderPreference;
+    // }
 
-    setTags(tags: Tag[]) {
-        this.tags = tags;
-    }
+    // setTags(tags: Tag[]) {
+    //     this.tags = tags;
+    // }
 
-    setPhoto(photo: File) {
-        this.photo = photo;
-    }
+    // setPhoto(photo: string) {
+    //     this.photo = photo;
+    // }
 
-    setAdditionalPhotos(photos: File[]) {
-        this.additionalPhotos = photos;
-    }
+    // setAdditionalPhotos(photos: string[]) {
+    //     this.additionalPhotos = photos;
+    // }
 
-    setRelationshipPreference(preference: Preference) {
-        this.relationshipPreference = preference;
-    }
+    // setRelationshipPreference(preference: Preference) {
+    //     this.relationshipPreference = preference;
+    // }
 
     // Computed свойства (геттеры)
     // TODO: если undefined сделать запрос на сервер.
-    get getIsu() {
+    getIsu() {
         if (this.isu === undefined) {
-            console.warn("ISU is undefined. Returning default value.");
-            return -1; // Значение по умолчанию
+            const locIsu = localStorage.getItem("isu"); 
+            if (locIsu === null) {
+                console.warn("ISU is undefined. Returning default value.");
+                return -1; // Значение по умолчанию
+            }
+            this.isu = parseInt(locIsu);
+            return this.isu;
         }
         return this.isu;
     }
 
-    get getUsername() {
+    getUsername() {
         if (this.username === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
             console.warn("Username is undefined. Returning default value.");
             return "Default Username"; // Значение по умолчанию
         }
         return this.username;
     }
 
-    get getAge() {
+    getAge() {
         if (this.age === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
             console.warn("Age is undefined. Returning default value.");
             return 0; // Значение по умолчанию
         }
         return this.age;
     }
 
-    get getBio() {
+    getBirthdate() {
+        if (this.birthdate === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
+            console.warn("Birthdate is undefined. Returning default value.");
+            return ""; // Значение по умолчанию
+        }
+        return this.birthdate;
+    }
+
+    getBio() {
         if (this.bio === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
             console.warn("Bio is undefined. Returning default value.");
             return "No bio available"; // Значение по умолчанию
         }
         return this.bio;
     }
 
-    get getWeight() {
+    getWeight() {
         if (this.weight === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
             console.warn("Weight is undefined. Returning default value.");
             return 0; // Значение по умолчанию
         }
         return this.weight;
     }
 
-    get getHeight() {
+    getHeight() {
         if (this.height === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
             console.warn("Height is undefined. Returning default value.");
             return 0; // Значение по умолчанию
         }
         return this.height;
     }
 
-    get getZodiac() {
+    getZodiac() {
         if (this.zodiac === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
             console.warn("Zodiac is undefined. Returning default value.");
             return "Not specified"; // Значение по умолчанию
         }
         return this.zodiac;
     }
 
-    get getGenderPreference() {
-        if (this.genderPreference === undefined) {
-            console.warn("Gender preference is undefined. Returning default value.");
-            return "Not specified"; // Значение по умолчанию
-        }
-        return this.genderPreference;
-    }
+    // getGenderPreference() {
+    //     if (this.genderPreference === undefined) {
+    //         if (!this.loading) {
+    //             this.loadUserData();
+    //         }
+    //         console.warn("Gender preference is undefined. Returning default value.");
+    //         return "Not specified"; // Значение по умолчанию
+    //     }
+    //     return this.genderPreference;
+    // }
 
-    get getTags() {
-        if (this.tags === undefined) {
-            console.warn("Tags are undefined. Returning empty array.");
-            return []; // Значение по умолчанию
-        }
-        return this.tags;
-    }
+    //  getTags() {
+    //     if (this.tags === undefined) {
+    //         console.warn("Tags are undefined. Returning empty array.");
+    //         return []; // Значение по умолчанию
+    //     }
+    //     return this.tags;
+    // }
 
-    get getPhoto() {
-        if (this.photo === undefined) {
-            console.warn("Photo is undefined. Returning null.");
-            return null; // Значение по умолчанию
-        }
-        return this.photo;
-    }
+    //  getPhoto() {
+    //     if (this.photo === undefined) {
+    //         console.warn("Photo is undefined. Returning empty string.");
+    //         return ""; // Значение по умолчанию
+    //     }
+    //     return this.photo;
+    // }
 
-    get getAdditionalPhotos() {
-        if (this.additionalPhotos === undefined) {
-            console.warn("Additional photos are undefined. Returning empty array.");
-            return []; // Значение по умолчанию
-        }
-        return this.additionalPhotos;
-    }
+    //  getAdditionalPhotos() {
+    //     if (this.additionalPhotos === undefined) {
+    //         console.warn("Additional photos are undefined. Returning empty array.");
+    //         return []; // Значение по умолчанию
+    //     }
+    //     return this.additionalPhotos;
+    // }
 
-    get getRelationshipPreference() {
-        if (this.relationshipPreference === undefined) {
-            console.warn("Relationship preference is undefined. Returning default value.");
-            return null; // Значение по умолчанию
-        }
-        return this.relationshipPreference;
-    }
+    //  getRelationshipPreference() {
+    //     if (this.relationshipPreference === undefined) {
+    //         console.warn("Relationship preference is undefined. Returning default value.");
+    //         return null; // Значение по умолчанию
+    //     }
+    //     return this.relationshipPreference;
+    // }
 }
 
 export const userData = new UserData();

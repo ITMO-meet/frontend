@@ -21,7 +21,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, CircularProgress, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SettingsIcon from '@mui/icons-material/Settings';
 import StraightenIcon from '@mui/icons-material/Straighten';
@@ -38,6 +38,8 @@ import { usePremium } from '../../contexts/PremiumContext';
 import { logEvent, logPageView } from '../../analytics';
 import { userData } from '../../stores/UserDataStore';
 import { observer } from 'mobx-react-lite';
+import MonitorWeightIcon from '@mui/icons-material/MonitorWeight';
+
 
 const ProfilePage: React.FC = observer(() => {
     const { isPremium } = usePremium();
@@ -67,9 +69,10 @@ const ProfilePage: React.FC = observer(() => {
 
     // Данные для секции "Main Features"
     const mainFeatures = [
-        { text: '170 cm', icon: <StraightenIcon /> },
+        { text: `${userData.getHeight()} cm`, icon: <StraightenIcon /> },
+        { text: `${userData.getWeight()} kg`, icon: <MonitorWeightIcon /> },
         { text: 'Atheism', icon: <ChurchIcon /> },
-        { text: 'Aries', icon: <Typography sx={{ fontSize: 20 }}>♈️</Typography> },
+        { text: `${userData.getZodiac()}`, icon: <Typography sx={{ fontSize: 20 }}>♈️</Typography> },
         { text: 'No but would like', icon: <ChildCareIcon /> },
         { text: 'Neutral', icon: <LocalBarIcon /> },
         { text: 'Neutral', icon: <SmokingRoomsIcon /> },
@@ -91,6 +94,10 @@ const ProfilePage: React.FC = observer(() => {
         { text: 'Russian', flagCode: 'ru' },
     ];
 
+    if (userData.loading) {
+        return <CircularProgress  />; // Show a loading spinner while data is being fetched
+    }
+
     return (
         <Box display="flex" flexDirection="column" minHeight="100vh">
             {/* Заголовок с кнопкой настроек поверх фотографии */}
@@ -108,7 +115,7 @@ const ProfilePage: React.FC = observer(() => {
             <Box p={3} sx={{ backgroundColor: '#ffffff', flexGrow: 1, zIndex: 1 }}>
                 {/* Основная информация с кнопкой редактирования */}
                 <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{userData.getUsername}, {userData.getAge}</Typography>
+                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{userData.getUsername()}, {userData.getAge()}</Typography>
                     <ImageButton onClick={handleEditClick}>
                         <EditIcon />
                     </ImageButton>
@@ -129,7 +136,7 @@ const ProfilePage: React.FC = observer(() => {
                     </Typography>
                     <Box sx={{ border: '1px solid #ddd', borderRadius: '8px', padding: 2 }}>
                         <Typography variant="body1" textAlign="left">
-                            {userData.getBio}
+                            {userData.getBio()}
                         </Typography>
                     </Box>
                 </Box>
