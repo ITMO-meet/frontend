@@ -157,7 +157,7 @@ const EditProfilePage: React.FC = () => {
     const relation = relationshipIds.find(p => p.id == userData.getRelationshipPreference())
     const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>(relation ? relation : relationshipIds[0]);
     const [, setSelectedFeatures] = useState<{ [key: string]: string | string[] }>({});
-    const [selectedInterests, setSelectedInterests] = useState<{ [key: string]: string }>({});
+    const [selectedInterests, setSelectedInterests] = useState<{ [key: string]: string }>(userData.getInterests() || {});
 
     const targetOptions = [
         { ...relationshipIds[0], description: 'Looking for dates', onClick: () => handleTargetSelect(relationshipIds[0]) },
@@ -168,13 +168,6 @@ const EditProfilePage: React.FC = () => {
     
     useEffect(() => {
         logPageView('/edit-profile');
-    }, []);
-
-    useEffect(() => {
-        const storedInterests = localStorage.getItem('selectedInterests');
-        if (storedInterests) {
-            setSelectedInterests(JSON.parse(storedInterests));
-        }
     }, []);
 
     const handleDeleteImage = (index: number) => {
@@ -212,6 +205,7 @@ const EditProfilePage: React.FC = () => {
         setSelectedInterests((prev) => {
             const updatedInterests = { ...prev, [category]: `${emoji} ${interest}` };
             localStorage.setItem('selectedInterests', JSON.stringify(updatedInterests));
+            userData.setInterests(updatedInterests);
             return updatedInterests;
         });
     };
@@ -220,6 +214,8 @@ const EditProfilePage: React.FC = () => {
         setSelectedInterests((prev) => {
             const updated = { ...prev };
             delete updated[category];
+            localStorage.setItem('selectedInterests', JSON.stringify(updated));
+            userData.setInterests(updated);
             return updated;
         });
     };

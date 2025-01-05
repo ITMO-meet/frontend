@@ -25,6 +25,7 @@ class UserData {
     private languages: string[] | null | undefined
     private alcohol: string | null | undefined
     private smoking: string | null | undefined
+    private interests: {[key: string] : string} | null | undefined
 
     constructor() {
         makeAutoObservable(this);
@@ -135,6 +136,11 @@ class UserData {
     setSmoking(smoking: string) {
         this.smoking = smoking;
         localStorage.setItem("smoking", smoking);
+    }
+
+    setInterests(interests: {[key: string] : string}) {
+        this.interests = interests;
+        localStorage.setItem("interests", JSON.stringify(interests)); // Store as JSON string
     }
 
     // setTags(tags: Tag[]) {
@@ -273,7 +279,7 @@ class UserData {
         return v;
     }
 
-    getChildren(): string | null | undefined {
+    getChildren() {
         if (this.children) {
             return this.children;
         }
@@ -282,7 +288,7 @@ class UserData {
         return c;
     }
 
-    getLanguages(): string[] | null | undefined {
+    getLanguages() {
         if (this.languages) {
             return this.languages;
         }
@@ -291,7 +297,7 @@ class UserData {
         return this.languages;
     }
 
-    getAlcohol(): string | null | undefined {
+    getAlcohol() {
         if (this.alcohol) {
             return this.alcohol;
         }
@@ -300,13 +306,23 @@ class UserData {
         return a;
     }
 
-    getSmoking(): string | null | undefined {
+    getSmoking() {
         if (this.smoking) {
             return this.smoking;
         }
         const s = localStorage.getItem("smoking");
         this.smoking = s;
         return s;
+    }
+
+    getInterests() {
+        console.log(this.interests);
+        if (this.interests) {
+            return this.interests;
+        }
+        const i = localStorage.getItem("interests");
+        this.interests = i ? JSON.parse(i) : null; // Parse JSON string
+        return this.interests;
     }
 
     //  getTags() {

@@ -78,16 +78,6 @@ const ProfilePage: React.FC = observer(() => {
         { text: 'Neutral', icon: <SmokingRoomsIcon /> },
     ];
 
-    // Данные для секции "Interests"
-    const [interests, setInterests] = useState<{ [key: string]: string }>({});
-
-    useEffect(() => {
-        const storedInterests = localStorage.getItem('selectedInterests');
-        if (storedInterests) {
-            setInterests(JSON.parse(storedInterests));
-        }
-    }, []);
-
     // Данные для секции "Languages"
     const languages = [
         { text: 'English', flagCode: 'us' },
@@ -173,7 +163,7 @@ const ProfilePage: React.FC = observer(() => {
                         Interests
                     </Typography>
                     <Box display="flex" gap={1} flexWrap="wrap">
-                        {Object.values(interests).map((interest, index) => (
+                        {Object.values(userData.getInterests() || {}).map((interest, index) => (
                             <Box
                                 key={index}
                                 display="flex"
