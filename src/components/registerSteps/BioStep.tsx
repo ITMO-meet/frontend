@@ -1,19 +1,27 @@
 import { Box, TextField, Typography } from '@mui/material'; // Импортируем компоненты из MUI
 import React, { useState } from 'react'; // Импортируем React и хук useState
 import RoundButton from '../basic/RoundButton'; // Импортируем компонент круглой кнопки
+import { useError } from '../../contexts/ErrorContext';
+import { updateBio } from '../../api/profile';
 
 // Определяем интерфейс для пропсов компонента
 interface BioStepProps {
+    isu: number;
     onNext: (data: { bio: string }) => void; // Функция, которая будет вызвана при переходе к следующему шагу
 }
 
 // Основной компонент UsernameStep
-const BioStep: React.FC<BioStepProps> = ({ onNext }) => {
+const BioStep: React.FC<BioStepProps> = ({ isu, onNext }) => {
+    const { showError } = useError();
     const [bio, setBio] = useState(''); // Хук состояния для хранения введенного описания
 
     // Функция для обработки отправки данных
-    const handleSubmit = () => {
-        onNext({ bio }); // Вызываем функцию onNext с введенным именем пользователя
+    const handleSubmit = async () => {
+        if (!bio.trim()) {
+            showError('Please provide short bio');
+            return;
+        }
+        onNext({ bio: bio.trim() });
     };
 
     return (
