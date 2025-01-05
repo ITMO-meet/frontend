@@ -63,11 +63,11 @@ describe('profile API', () => {
 
     it('updateWeight calls putJson with correct data', async () => {
         await updateWeight(123456, 75);
-        expect(mockPutJson).toHaveBeenCalledWith('/profile/update_bio/123456?weight=75');
+        expect(mockPutJson).toHaveBeenCalledWith('/profile/update_weight/123456?weight=75');
     });
 
     it('updateZodiac calls putJson with correct data', async () => {
         await updateZodiac(123456, 'Aquarius');
-        expect(mockPutJson).toHaveBeenCalledWith('/profile/update_bio/123456?zodiac=Aquarius');
+        expect(mockPutJson).toHaveBeenCalledWith('/profile/update_zodiac/123456?zodiac=Aquarius');
     });
 });

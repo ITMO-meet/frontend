@@ -1,5 +1,5 @@
 import { makeAutoObservable } from "mobx";
-import { getProfile, updateBio, updateHeight, updateWeight, updateZodiac } from "../api/profile";
+import { getProfile, updateBio, updateHeight, updateGenderPreference, updateWeight, updateZodiac, updateRelationshipPreferences } from "../api/profile";
 import { calculateAge } from "../utils";
 
 class UserData {
@@ -14,10 +14,10 @@ class UserData {
     private height: number | undefined
     private zodiac: string | undefined
     private genderPreference: string | undefined
+    private relationshipPreferenceId: string | undefined
     // private tags: Tag[] | undefined
     // private photo: string | undefined // url
     // private additionalPhotos: string[] | undefined // urls
-    // private relationshipPreference: Preference | undefined
 
     constructor() {
         makeAutoObservable(this);
@@ -52,6 +52,9 @@ class UserData {
 
         const genderPreferenceFeature = profile.gender_preferences[0]?.text; // Assuming the first preference is the desired one
         this.genderPreference = genderPreferenceFeature ? genderPreferenceFeature : "Everyone"
+
+        const relationship = profile.relationship_preferences[0]?.text;
+        this.relationshipPreferenceId = relationship ? relationship : "672b44eab151637e969889bb" // default is 'Dates' 
         
         // TODO: tags, photo, additionalPhotos, relationshipPreference and other
         
@@ -92,9 +95,19 @@ class UserData {
         };
     }
 
-    // setGenderPreference(genderPreference: string) {
-    //     this.genderPreference = genderPreference;
-    // }
+    setGenderPreference(genderPreference: string) {
+        this.genderPreference = genderPreference;
+        if (this.isu) {
+            updateGenderPreference(this.isu, genderPreference);
+        }
+    }
+
+    setRelationshipPreference(preferenceId: string) {
+        this.relationshipPreferenceId = preferenceId;
+        if (this.isu) {
+            updateRelationshipPreferences(this.isu, [preferenceId]);
+        }
+    }
 
     // setTags(tags: Tag[]) {
     //     this.tags = tags;
@@ -108,11 +121,8 @@ class UserData {
     //     this.additionalPhotos = photos;
     // }
 
-    // setRelationshipPreference(preference: Preference) {
-    //     this.relationshipPreference = preference;
-    // }
 
-    // Computed свойства (геттеры)
+    // геттеры
     // TODO: если undefined сделать запрос на сервер.
     getIsu() {
         if (this.isu === undefined) {
@@ -204,16 +214,27 @@ class UserData {
         return this.zodiac;
     }
 
-    // getGenderPreference() {
-    //     if (this.genderPreference === undefined) {
-    //         if (!this.loading) {
-    //             this.loadUserData();
-    //         }
-    //         console.warn("Gender preference is undefined. Returning default value.");
-    //         return "Not specified"; // Значение по умолчанию
-    //     }
-    //     return this.genderPreference;
-    // }
+    getGenderPreference() {
+        if (this.genderPreference === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
+            console.warn("Gender preference is undefined. Returning default value.");
+            return "Not specified"; // Значение по умолчанию
+        }
+        return this.genderPreference;
+    }
+    
+    getRelationshipPreference() {
+        if (this.relationshipPreferenceId === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
+            console.warn("Relationship preference is undefined. Returning default value.");
+            return ""; // Значение по умолчанию
+        }
+        return this.relationshipPreferenceId;
+    }
 
     //  getTags() {
     //     if (this.tags === undefined) {
@@ -239,13 +260,6 @@ class UserData {
     //     return this.additionalPhotos;
     // }
 
-    //  getRelationshipPreference() {
-    //     if (this.relationshipPreference === undefined) {
-    //         console.warn("Relationship preference is undefined. Returning default value.");
-    //         return null; // Значение по умолчанию
-    //     }
-    //     return this.relationshipPreference;
-    // }
 }
 
 export const userData = new UserData();

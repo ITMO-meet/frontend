@@ -73,11 +73,19 @@ export async function updateHeight(isu: number, height: number) {
 }
 
 export async function updateWeight(isu: number, weight: number) {
-    await putJson(`/profile/update_bio/${isu}?weight=${weight}`)
+    await putJson(`/profile/update_weight/${isu}?weight=${weight}`)
 }
 
 export async function updateZodiac(isu: number, zodiac: string) {
     const params = new URLSearchParams();
     params.append('zodiac', zodiac);
-    await putJson(`/profile/update_bio/${isu}?${params.toString()}`);
+    await putJson(`/profile/update_zodiac/${isu}?${params.toString()}`);
+}
+
+export async function updateRelationshipPreferences(isu: number, preference_ids: string[]) {
+    await putJson(`/profile/update_relationship_preferences`, {isu: isu, tags: preference_ids});
+}
+
+export async function updateGenderPreference(isu: number, gender_preference: string) {
+    await putJson(`/profile/update_gender_preference`, {isu: isu, gender_preference: gender_preference});
 }

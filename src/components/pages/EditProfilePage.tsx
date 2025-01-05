@@ -148,18 +148,22 @@ const interestCategories = [
     },
 ];
 
+const relationshipIds = [
+    { id: "672b44eab151637e969889bb", label: 'Dates', icon: <WineBarIcon /> },
+    { id: "672b44eab151637e969889bc", label: 'Romantic relationships', icon: <FavoriteBorderIcon />},
+    { id: "672b44eab151637e969889bd", label: 'Friendship', icon: <PeopleIcon /> },
+    { id: "672b44eab151637e969889be",  label: 'Casual Chat', icon: <ChatBubbleOutlineIcon /> },
+];
+
 
 type CategoryOption = SliderCategoryOption | SelectCategoryOption | ButtonSelectCategoryOption | LanguageSelectCategoryOption;
 
 const EditProfilePage: React.FC = () => {
     const navigate = useNavigate();
-
     const [isModalOpen, setModalOpen] = useState(false);
 
-    const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>({
-        label: "Romantic relationships",
-        icon: <FavoriteBorderIcon />,
-    });
+    const relation = relationshipIds.find(p => p.id == userData.getRelationshipPreference())
+    const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>(relation ? relation : relationshipIds[0]);
     const [, setSelectedFeatures] = useState<{ [key: string]: string | string[] }>({});
 
     useEffect(() => {
@@ -183,6 +187,10 @@ const EditProfilePage: React.FC = () => {
 
     const handleTargetSelect = (option: { label: string; icon: JSX.Element }) => {
         setSelectedTarget(option);
+        const prefId = relationshipIds.find(p => p.label == option.label);
+        if (prefId) {
+            userData.setRelationshipPreference(prefId.id);
+        }
         console.log('Selected target:', option.label);
     };
 
@@ -201,10 +209,10 @@ const EditProfilePage: React.FC = () => {
     }
 
     const targetOptions = [
-        { icon: <WineBarIcon />, label: 'Dates', description: 'Looking for dates', onClick: () => handleTargetSelect({ icon: <WineBarIcon />, label: 'Dates' }) },
-        { icon: <FavoriteBorderIcon />, label: 'Romantic relationships', description: 'Looking for romantic relationships', onClick: () => handleTargetSelect({ icon: <FavoriteBorderIcon />, label: 'Romantic relationships' }) },
-        { icon: <PeopleIcon />, label: 'Friendship', description: 'Looking for friendship', onClick: () => handleTargetSelect({ icon: <PeopleIcon />, label: 'Friendship' }) },
-        { icon: <ChatBubbleOutlineIcon />, label: 'Casual Chat', description: 'Looking for casual chat', onClick: () => handleTargetSelect({ icon: <ChatBubbleOutlineIcon />, label: 'Casual Chat' }) },
+        { ...relationshipIds[0], description: 'Looking for dates', onClick: () => handleTargetSelect(relationshipIds[0]) },
+        { ...relationshipIds[1], description: 'Looking for romantic relationships', onClick: () => handleTargetSelect(relationshipIds[1]) },
+        { ...relationshipIds[2], description: 'Looking for friendship', onClick: () => handleTargetSelect(relationshipIds[2]) },
+        { ...relationshipIds[3], description: 'Looking for casual chat', onClick: () => handleTargetSelect(relationshipIds[3]) },
     ];
 
     const categoriesConfig: CategoryOption[] = [
