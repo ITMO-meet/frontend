@@ -46,6 +46,7 @@ import MultiCategorySheetButton, { CategoryOption } from '../basic/MultiCategory
 import { useNavigate } from 'react-router-dom';
 import { logEvent, logPageView } from '../../analytics';
 import { userData } from '../../stores/UserDataStore';
+import { observer } from 'mobx-react-lite';
 
 const interestCategories = [
     {
@@ -131,16 +132,6 @@ const relationshipIds = [
     { id: "672b44eab151637e969889be",  label: 'Casual Chat', icon: <ChatBubbleOutlineIcon /> },
 ];
 
-const categoriesConfig: CategoryOption[] = [
-    { label: 'Height', type: 'slider', min: 100, max: 250, onConfirm: v => userData.setHeight(v), selectedValue: userData.getHeight() },
-    { label: 'Worldview', type: 'select', options: ['Buddhism', 'Jewry', 'Hinduism', 'Islam', 'Catholicism', 'Confucianism', 'Orthodoxy', 'Protestantism', 'Secular humanism', 'Atheism', 'Agnosticism'], onConfirm: v => userData.setWorldview(v), selectedValue: userData.getWorldview() },
-    { label: 'Zodiac Sign', type: 'buttonSelect', options: ['Aries', 'None'], onConfirm: v => userData.setZodiac(v), selectedValue: userData.getZodiac() },
-    { label: 'Children', type: 'buttonSelect', options: ['No and not planning', 'No but would like', 'Already have'], onConfirm: v => userData.setChildren(v), selectedValue: userData.getChildren() },
-    { label: 'Languages', type: 'languageSelect', onConfirm: v => userData.setLanguages(v), selectedValue: userData.getLanguages() },
-    { label: 'Alcohol', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'], onConfirm: v => userData.setAlcohol(v), selectedValue: userData.getAlcohol() },
-    { label: 'Smoking', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'], onConfirm: v => userData.setSmoking(v), selectedValue: userData.getSmoking() },
-];
-
 const galleryImages: string[] = [
     'images/profile_photo1.png',
     'images/profile_photo2.jpg',
@@ -150,7 +141,7 @@ const galleryImages: string[] = [
     ''
 ];
 
-const EditProfilePage: React.FC = () => {
+const EditProfilePage: React.FC = observer(() => {
     const navigate = useNavigate();
     const [isModalOpen, setModalOpen] = useState(false);
 
@@ -165,6 +156,17 @@ const EditProfilePage: React.FC = () => {
         { ...relationshipIds[2], description: 'Looking for friendship', onClick: () => handleTargetSelect(relationshipIds[2]) },
         { ...relationshipIds[3], description: 'Looking for casual chat', onClick: () => handleTargetSelect(relationshipIds[3]) },
     ];
+
+    const categoriesConfig: CategoryOption[] = [
+        { label: 'Height', type: 'slider', min: 100, max: 250, onConfirm: v => userData.setHeight(v), selectedValue: userData.getHeight() },
+        { label: 'Worldview', type: 'select', options: ['Buddhism', 'Jewry', 'Hinduism', 'Islam', 'Catholicism', 'Confucianism', 'Orthodoxy', 'Protestantism', 'Secular humanism', 'Atheism', 'Agnosticism'], onConfirm: v => userData.setWorldview(v), selectedValue: userData.getWorldview() },
+        { label: 'Zodiac Sign', type: 'buttonSelect', options: ['Aries', 'None'], onConfirm: v => userData.setZodiac(v), selectedValue: userData.getZodiac() },
+        { label: 'Children', type: 'buttonSelect', options: ['No and not planning', 'No but would like', 'Already have'], onConfirm: v => userData.setChildren(v), selectedValue: userData.getChildren() },
+        { label: 'Languages', type: 'languageSelect', onConfirm: v => userData.setLanguages(v), selectedValue: userData.getLanguages() },
+        { label: 'Alcohol', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'], onConfirm: v => userData.setAlcohol(v), selectedValue: userData.getAlcohol() },
+        { label: 'Smoking', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'], onConfirm: v => userData.setSmoking(v), selectedValue: userData.getSmoking() },
+    ];
+    
     
     useEffect(() => {
         logPageView('/edit-profile');
@@ -438,6 +440,6 @@ const EditProfilePage: React.FC = () => {
             </Box>
         </Box>
     );
-};
+});
 
 export default EditProfilePage;

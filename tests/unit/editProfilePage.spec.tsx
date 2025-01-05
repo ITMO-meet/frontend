@@ -8,6 +8,7 @@ import { useLocation } from 'react-router-dom';
 import PremiumPage from '../../src/components/pages/PremiumPage';
 import { PremiumProvider } from '../../src/contexts/PremiumContext';
 import { logEvent, logPageView } from '../../src/analytics'
+import { userData } from '../../src/stores/UserDataStore';
 
 jest.mock('../../src/analytics', () => ({
     logEvent: jest.fn(),
@@ -20,11 +21,22 @@ jest.mock('../../src/stores/UserDataStore', () => ({
         getIsu: jest.fn().mockReturnValue(1),
         getUsername: jest.fn().mockReturnValue("Alisa Pipisa"),
         getBio: jest.fn().mockReturnValue("Test Bio"),
+        getBirthdate: jest.fn().mockReturnValue("2000-01-01"),
         getAge: jest.fn().mockReturnValue(20),
         getWeight: jest.fn().mockReturnValue(70),
-        getHeight: jest.fn().mockReturnValue(175),
+        getHeight: jest.fn().mockReturnValue(100),
         getZodiac: jest.fn().mockReturnValue("Capricorn"),
+        getGenderPreference: jest.fn().mockReturnValue("Everyone"),
+        getRelationshipPreference: jest.fn().mockReturnValue("672b44eab151637e969889bc"),
+        getWorldview: jest.fn().mockReturnValue("World"),
+        getChildren: jest.fn().mockReturnValue("Children"),
+        getLanguages: jest.fn().mockReturnValue(["Russian"]),
+        getAlcohol: jest.fn().mockReturnValue("Ok"),
+        getSmoking: jest.fn().mockReturnValue("Ok"),
+        getInterests: jest.fn().mockReturnValue({}),
         // Добавьте другие методы по мере необходимости
+        setInterests: jest.fn(),
+        setRelationshipPreference: jest.fn()
     }
 }));
 
@@ -80,7 +92,7 @@ describe('EditProfilePage', () => {
         fireEvent.click(screen.getByText('Сохранить'));
 
         // Проверка, что выбранная опция отображается
-        await waitFor(() => expect(screen.getByText('Dates')).toBeInTheDocument());
+        await waitFor(() => expect(userData.setRelationshipPreference).toHaveBeenCalledWith("672b44eab151637e969889bb"));
     });
 
     test('opens and selects main feature option', async () => {

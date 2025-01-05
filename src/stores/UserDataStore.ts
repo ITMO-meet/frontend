@@ -39,7 +39,7 @@ class UserData {
         this.setLoading(true);
 
         const profile = await getProfile(this.getIsu()); // get profile from server
-        console.log(profile);
+        console.log("Recieved profile: ", profile);
 
         // set variables in store
         this.username = profile.username;
@@ -50,10 +50,10 @@ class UserData {
         this.birthdate = birthdate;
 
         const weightFeature = profile.mainFeatures.find(feature => feature.icon === "weight")?.text;
-        this.weight = weightFeature ? parseFloat(weightFeature) : 80; // Assuming weight is stored as a string
+        this.weight = weightFeature ? parseFloat(weightFeature.split(" ")[0]) : 80; // Assuming weight is stored as a string
 
         const heightFeature = profile.mainFeatures.find(feature => feature.icon === "height")?.text;
-        this.height = heightFeature ? parseFloat(heightFeature) : 170; // Assuming height is stored as a string
+        this.height = heightFeature ? parseFloat(heightFeature.split(" ")[0]) : 170; // Assuming height is stored as a string
 
         this.zodiac = profile.mainFeatures.find(feature => feature.icon === "zodiac_sign")?.text || "None";
         this.genderPreference = profile.gender_preferences[0]?.text || "Everyone"
@@ -166,6 +166,7 @@ class UserData {
                 return -1; // Значение по умолчанию
             }
             this.isu = parseInt(locIsu);
+            this.loadUserData();
             return this.isu;
         }
         return this.isu;
@@ -316,7 +317,6 @@ class UserData {
     }
 
     getInterests() {
-        console.log(this.interests);
         if (this.interests) {
             return this.interests;
         }

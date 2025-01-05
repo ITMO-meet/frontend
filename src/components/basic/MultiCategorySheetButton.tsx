@@ -17,7 +17,7 @@ import { Box, Button, Typography, Dialog, DialogContent, DialogActions, Slider, 
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import MultiSelectButtonGroup from './MultiSelectButtonGroup';
 
-interface SliderCategoryOption {
+export interface SliderCategoryOption {
     label: string;
     type: 'slider';
     onConfirm?: (v: number) => void;
@@ -26,7 +26,7 @@ interface SliderCategoryOption {
     max: number;
 }
 
-interface SelectCategoryOption {
+export interface SelectCategoryOption {
     label: string;
     type: 'select';
     selectedValue?: string | null;
@@ -34,7 +34,7 @@ interface SelectCategoryOption {
     options: string[];
 }
 
-interface ButtonSelectCategoryOption {
+export interface ButtonSelectCategoryOption {
     label: string;
     type: 'buttonSelect';
     selectedValue?: string | null;
@@ -42,7 +42,7 @@ interface ButtonSelectCategoryOption {
     options: string[];
 }
 
-interface LanguageSelectCategoryOption {
+export interface LanguageSelectCategoryOption {
     label: string;
     type: 'languageSelect';
     selectedValue?: string[] | null;

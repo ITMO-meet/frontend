@@ -5,6 +5,8 @@ import {
     updateHeight,
     updateWeight,
     updateZodiac,
+    updateRelationshipPreferences,
+    updateGenderPreference,
 } from '../../src/api/profile';
 import * as apiIndex from '../../src/api/index';
 
@@ -48,7 +50,7 @@ describe('profile API', () => {
 
     it('updateBio calls putJson with correct data', async () => {
         await updateBio(123456, 'New bio');
-        expect(mockPutJson).toHaveBeenCalledWith('/profile/update_bio/123456?bio=New bio');
+        expect(mockPutJson).toHaveBeenCalledWith('/profile/update_bio/123456?bio=New+bio');
     });
 
     it('updateUsername calls putJson with correct data', async () => {
@@ -69,5 +71,16 @@ describe('profile API', () => {
     it('updateZodiac calls putJson with correct data', async () => {
         await updateZodiac(123456, 'Aquarius');
         expect(mockPutJson).toHaveBeenCalledWith('/profile/update_zodiac/123456?zodiac=Aquarius');
+    });
+
+    it('updateRelationshipPreferences calls putJson with correct data', async () => {
+        const preferenceIds = ['pref1', 'pref2', 'pref3'];
+        await updateRelationshipPreferences(123456, preferenceIds);
+        expect(mockPutJson).toHaveBeenCalledWith('/profile/update_relationship_preferences', { isu: 123456, tags: preferenceIds });
+    });
+
+    it('updateGenderPreference calls putJson with correct data', async () => {
+        await updateGenderPreference(123456, 'female');
+        expect(mockPutJson).toHaveBeenCalledWith('/profile/update_gender_preference', { isu: 123456, gender_preference: 'female' });
     });
 });
