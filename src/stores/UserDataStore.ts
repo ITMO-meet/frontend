@@ -294,7 +294,7 @@ class UserData {
             return this.languages;
         }
         const l = localStorage.getItem("languages");
-        this.languages = l ? JSON.parse(l) : null;
+        this.languages = l ? JSON.parse(l) : [];
         return this.languages;
     }
 
