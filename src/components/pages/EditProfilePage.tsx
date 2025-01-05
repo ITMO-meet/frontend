@@ -42,34 +42,11 @@ import WineBarIcon from '@mui/icons-material/WineBar';
 import PeopleIcon from '@mui/icons-material/People';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import MultiCategorySheetButton from '../basic/MultiCategorySheetButton';
+import MultiCategorySheetButton, { CategoryOption } from '../basic/MultiCategorySheetButton';
 import { useNavigate } from 'react-router-dom';
 import { logEvent, logPageView } from '../../analytics';
 import { userData } from '../../stores/UserDataStore';
-
-interface SliderCategoryOption {
-    label: string;
-    type: 'slider';
-    min: number;
-    max: number;
-}
-
-interface SelectCategoryOption {
-    label: string;
-    type: 'select';
-    options: string[];
-}
-
-interface ButtonSelectCategoryOption {
-    label: string;
-    type: 'buttonSelect';
-    options: string[];
-}
-
-interface LanguageSelectCategoryOption {
-    label: string;
-    type: 'languageSelect';
-}
+import { observer } from 'mobx-react-lite';
 
 const interestCategories = [
     {
@@ -148,29 +125,51 @@ const interestCategories = [
     },
 ];
 
+const relationshipIds = [
+    { id: "672b44eab151637e969889bb", label: 'Dates', icon: <WineBarIcon /> },
+    { id: "672b44eab151637e969889bc", label: 'Romantic relationships', icon: <FavoriteBorderIcon />},
+    { id: "672b44eab151637e969889bd", label: 'Friendship', icon: <PeopleIcon /> },
+    { id: "672b44eab151637e969889be",  label: 'Casual Chat', icon: <ChatBubbleOutlineIcon /> },
+];
 
-type CategoryOption = SliderCategoryOption | SelectCategoryOption | ButtonSelectCategoryOption | LanguageSelectCategoryOption;
+const galleryImages: string[] = [
+    'images/profile_photo1.png',
+    'images/profile_photo2.jpg',
+    'images/profile_photo3.jpg',
+    '',
+    '',
+    ''
+];
 
-const EditProfilePage: React.FC = () => {
+const EditProfilePage: React.FC = observer(() => {
     const navigate = useNavigate();
-
     const [isModalOpen, setModalOpen] = useState(false);
 
-    const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>({
-        label: "Romantic relationships",
-        icon: <FavoriteBorderIcon />,
-    });
+    const relation = relationshipIds.find(p => p.id == userData.getRelationshipPreference())
+    const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>(relation ? relation : relationshipIds[0]);
     const [, setSelectedFeatures] = useState<{ [key: string]: string | string[] }>({});
+    const [selectedInterests, setSelectedInterests] = useState<{ [key: string]: string }>(userData.getInterests() || {});
 
+    const targetOptions = [
+        { ...relationshipIds[0], description: 'Looking for dates', onClick: () => handleTargetSelect(relationshipIds[0]) },
+        { ...relationshipIds[1], description: 'Looking for romantic relationships', onClick: () => handleTargetSelect(relationshipIds[1]) },
+        { ...relationshipIds[2], description: 'Looking for friendship', onClick: () => handleTargetSelect(relationshipIds[2]) },
+        { ...relationshipIds[3], description: 'Looking for casual chat', onClick: () => handleTargetSelect(relationshipIds[3]) },
+    ];
+
+    const categoriesConfig: CategoryOption[] = [
+        { label: 'Height', type: 'slider', min: 100, max: 250, onConfirm: v => userData.setHeight(v), selectedValue: userData.getHeight() },
+        { label: 'Worldview', type: 'select', options: ['Buddhism', 'Jewry', 'Hinduism', 'Islam', 'Catholicism', 'Confucianism', 'Orthodoxy', 'Protestantism', 'Secular humanism', 'Atheism', 'Agnosticism'], onConfirm: v => userData.setWorldview(v), selectedValue: userData.getWorldview() },
+        { label: 'Zodiac Sign', type: 'buttonSelect', options: ['Aries', 'None'], onConfirm: v => userData.setZodiac(v), selectedValue: userData.getZodiac() },
+        { label: 'Children', type: 'buttonSelect', options: ['No and not planning', 'No but would like', 'Already have'], onConfirm: v => userData.setChildren(v), selectedValue: userData.getChildren() },
+        { label: 'Languages', type: 'languageSelect', onConfirm: v => userData.setLanguages(v), selectedValue: userData.getLanguages() },
+        { label: 'Alcohol', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'], onConfirm: v => userData.setAlcohol(v), selectedValue: userData.getAlcohol() },
+        { label: 'Smoking', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'], onConfirm: v => userData.setSmoking(v), selectedValue: userData.getSmoking() },
+    ];
+    
+    
     useEffect(() => {
         logPageView('/edit-profile');
-    }, []);
-
-    useEffect(() => {
-        const storedInterests = localStorage.getItem('selectedInterests');
-        if (storedInterests) {
-            setSelectedInterests(JSON.parse(storedInterests));
-        }
     }, []);
 
     const handleDeleteImage = (index: number) => {
@@ -183,6 +182,10 @@ const EditProfilePage: React.FC = () => {
 
     const handleTargetSelect = (option: { label: string; icon: JSX.Element }) => {
         setSelectedTarget(option);
+        const prefId = relationshipIds.find(p => p.label == option.label);
+        if (prefId) {
+            userData.setRelationshipPreference(prefId.id);
+        }
         console.log('Selected target:', option.label);
     };
 
@@ -200,38 +203,11 @@ const EditProfilePage: React.FC = () => {
         console.log('Premium button clicked from edit');
     }
 
-    const targetOptions = [
-        { icon: <WineBarIcon />, label: 'Dates', description: 'Looking for dates', onClick: () => handleTargetSelect({ icon: <WineBarIcon />, label: 'Dates' }) },
-        { icon: <FavoriteBorderIcon />, label: 'Romantic relationships', description: 'Looking for romantic relationships', onClick: () => handleTargetSelect({ icon: <FavoriteBorderIcon />, label: 'Romantic relationships' }) },
-        { icon: <PeopleIcon />, label: 'Friendship', description: 'Looking for friendship', onClick: () => handleTargetSelect({ icon: <PeopleIcon />, label: 'Friendship' }) },
-        { icon: <ChatBubbleOutlineIcon />, label: 'Casual Chat', description: 'Looking for casual chat', onClick: () => handleTargetSelect({ icon: <ChatBubbleOutlineIcon />, label: 'Casual Chat' }) },
-    ];
-
-    const categoriesConfig: CategoryOption[] = [
-        { label: 'Height', type: 'slider', min: 100, max: 250 },
-        { label: 'Worldview', type: 'select', options: ['Buddhism', 'Jewry', 'Hinduism', 'Islam', 'Catholicism', 'Confucianism', 'Orthodoxy', 'Protestantism', 'Secular humanism', 'Atheism', 'Agnosticism'] },
-        { label: 'Zodiac Sign', type: 'buttonSelect', options: ['Aries', 'Do Not Display'] },
-        { label: 'Children', type: 'buttonSelect', options: ['No and not planning', 'No but would like', 'Already have'] },
-        { label: 'Languages', type: 'languageSelect' },
-        { label: 'Alcohol', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'] },
-        { label: 'Smoking', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'] },
-    ];
-
-    const galleryImages: string[] = [
-        'images/profile_photo1.png',
-        'images/profile_photo2.jpg',
-        'images/profile_photo3.jpg',
-        '',
-        '',
-        ''
-    ];
-
-    const [selectedInterests, setSelectedInterests] = useState<{ [key: string]: string }>({});
-
     const handleInterestSelect = (category: string, interest: string, emoji: string) => {
         setSelectedInterests((prev) => {
             const updatedInterests = { ...prev, [category]: `${emoji} ${interest}` };
             localStorage.setItem('selectedInterests', JSON.stringify(updatedInterests));
+            userData.setInterests(updatedInterests);
             return updatedInterests;
         });
     };
@@ -240,6 +216,8 @@ const EditProfilePage: React.FC = () => {
         setSelectedInterests((prev) => {
             const updated = { ...prev };
             delete updated[category];
+            localStorage.setItem('selectedInterests', JSON.stringify(updated));
+            userData.setInterests(updated);
             return updated;
         });
     };
@@ -462,6 +440,6 @@ const EditProfilePage: React.FC = () => {
             </Box>
         </Box>
     );
-};
+});
 
 export default EditProfilePage;

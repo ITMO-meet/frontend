@@ -63,6 +63,7 @@ export async function getJson<T>(url: string): Promise<T> {
 export async function putJson<T>(url: string, data: unknown = {}): Promise<T> {
     const resp = await request(url, {
         method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data)
     });
     return resp.json() as Promise<T>;

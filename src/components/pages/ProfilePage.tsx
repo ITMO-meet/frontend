@@ -20,7 +20,7 @@
  * - Компонент предназначен для отображения профиля пользователя с возможностью редактирования.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -71,27 +71,11 @@ const ProfilePage: React.FC = observer(() => {
     const mainFeatures = [
         { text: `${userData.getHeight()} cm`, icon: <StraightenIcon /> },
         { text: `${userData.getWeight()} kg`, icon: <MonitorWeightIcon /> },
-        { text: 'Atheism', icon: <ChurchIcon /> },
+        { text: `${userData.getWorldview()}`, icon: <ChurchIcon /> },
         { text: `${userData.getZodiac()}`, icon: <Typography sx={{ fontSize: 20 }}>♈️</Typography> },
-        { text: 'No but would like', icon: <ChildCareIcon /> },
-        { text: 'Neutral', icon: <LocalBarIcon /> },
-        { text: 'Neutral', icon: <SmokingRoomsIcon /> },
-    ];
-
-    // Данные для секции "Interests"
-    const [interests, setInterests] = useState<{ [key: string]: string }>({});
-
-    useEffect(() => {
-        const storedInterests = localStorage.getItem('selectedInterests');
-        if (storedInterests) {
-            setInterests(JSON.parse(storedInterests));
-        }
-    }, []);
-
-    // Данные для секции "Languages"
-    const languages = [
-        { text: 'English', flagCode: 'us' },
-        { text: 'Russian', flagCode: 'ru' },
+        { text: `${userData.getChildren()}`, icon: <ChildCareIcon /> },
+        { text: `${userData.getAlcohol()}`, icon: <LocalBarIcon /> },
+        { text: `${userData.getSmoking()}`, icon: <SmokingRoomsIcon /> },
     ];
 
     if (userData.loading) {
@@ -173,7 +157,7 @@ const ProfilePage: React.FC = observer(() => {
                         Interests
                     </Typography>
                     <Box display="flex" gap={1} flexWrap="wrap">
-                        {Object.values(interests).map((interest, index) => (
+                        {Object.values(userData.getInterests() || {}).map((interest, index) => (
                             <Box
                                 key={index}
                                 display="flex"
@@ -197,7 +181,7 @@ const ProfilePage: React.FC = observer(() => {
                         Languages
                     </Typography>
                     <Box display="flex" gap={1} flexWrap="wrap">
-                        {languages.map((language, index) => (
+                        {(userData.getLanguages() || []).map((language, index) => (
                             <Box
                                 key={index}
                                 display="flex"
@@ -210,7 +194,7 @@ const ProfilePage: React.FC = observer(() => {
                                     gap: "4px"
                                 }}
                             >
-                                <Typography>{language.text}</Typography>
+                                <Typography>{language}</Typography>
                             </Box>
                         ))}
                     </Box>

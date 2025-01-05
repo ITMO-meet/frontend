@@ -1,5 +1,5 @@
 import { makeAutoObservable } from "mobx";
-import { getProfile, updateBio, updateHeight, updateWeight, updateZodiac } from "../api/profile";
+import { getProfile, updateBio, updateHeight, updateGenderPreference, updateWeight, updateZodiac, updateRelationshipPreferences } from "../api/profile";
 import { calculateAge } from "../utils";
 
 class UserData {
@@ -14,10 +14,18 @@ class UserData {
     private height: number | undefined
     private zodiac: string | undefined
     private genderPreference: string | undefined
+    private relationshipPreferenceId: string | undefined
     // private tags: Tag[] | undefined
     // private photo: string | undefined // url
     // private additionalPhotos: string[] | undefined // urls
-    // private relationshipPreference: Preference | undefined
+
+    // dont have db fields (yet?)
+    private worldview: string | null | undefined
+    private children: string | null | undefined
+    private languages: string[] | null | undefined
+    private alcohol: string | null | undefined
+    private smoking: string | null | undefined
+    private interests: {[key: string] : string} | null | undefined
 
     constructor() {
         makeAutoObservable(this);
@@ -31,7 +39,7 @@ class UserData {
         this.setLoading(true);
 
         const profile = await getProfile(this.getIsu()); // get profile from server
-        console.log(profile);
+        console.log("Recieved profile: ", profile);
 
         // set variables in store
         this.username = profile.username;
@@ -42,16 +50,15 @@ class UserData {
         this.birthdate = birthdate;
 
         const weightFeature = profile.mainFeatures.find(feature => feature.icon === "weight")?.text;
-        this.weight = weightFeature ? parseFloat(weightFeature) : 80; // Assuming weight is stored as a string
+        this.weight = weightFeature ? parseFloat(weightFeature.split(" ")[0]) : 80; // Assuming weight is stored as a string
 
         const heightFeature = profile.mainFeatures.find(feature => feature.icon === "height")?.text;
-        this.height = heightFeature ? parseFloat(heightFeature) : 170; // Assuming height is stored as a string
+        this.height = heightFeature ? parseFloat(heightFeature.split(" ")[0]) : 170; // Assuming height is stored as a string
 
-        const zodiacFeature = profile.mainFeatures.find(feature => feature.icon === "zodiac_sign")?.text;
-        this.zodiac = zodiacFeature ? zodiacFeature : "None";
+        this.zodiac = profile.mainFeatures.find(feature => feature.icon === "zodiac_sign")?.text || "None";
+        this.genderPreference = profile.gender_preferences[0]?.text || "Everyone"
 
-        const genderPreferenceFeature = profile.gender_preferences[0]?.text; // Assuming the first preference is the desired one
-        this.genderPreference = genderPreferenceFeature ? genderPreferenceFeature : "Everyone"
+        this.relationshipPreferenceId = profile.relationship_preferences[0]?.text || "672b44eab151637e969889bb"; // default is "Dates"
         
         // TODO: tags, photo, additionalPhotos, relationshipPreference and other
         
@@ -92,9 +99,49 @@ class UserData {
         };
     }
 
-    // setGenderPreference(genderPreference: string) {
-    //     this.genderPreference = genderPreference;
-    // }
+    setGenderPreference(genderPreference: string) {
+        this.genderPreference = genderPreference;
+        if (this.isu) {
+            updateGenderPreference(this.isu, genderPreference);
+        }
+    }
+
+    setRelationshipPreference(preferenceId: string) {
+        this.relationshipPreferenceId = preferenceId;
+        if (this.isu) {
+            updateRelationshipPreferences(this.isu, [preferenceId]);
+        }
+    }
+
+    setWorldview(worldview: string) {
+        this.worldview = worldview;
+        localStorage.setItem("worldview", worldview)
+    }
+
+    setChildren(children: string) {
+        this.children = children;
+        localStorage.setItem("children", children);
+    }
+
+    setLanguages(languages: string[]) {
+        this.languages = languages;
+        localStorage.setItem("languages", JSON.stringify(languages));
+    }
+
+    setAlcohol(alcohol: string) {
+        this.alcohol = alcohol;
+        localStorage.setItem("alcohol", alcohol);
+    }
+
+    setSmoking(smoking: string) {
+        this.smoking = smoking;
+        localStorage.setItem("smoking", smoking);
+    }
+
+    setInterests(interests: {[key: string] : string}) {
+        this.interests = interests;
+        localStorage.setItem("interests", JSON.stringify(interests)); // Store as JSON string
+    }
 
     // setTags(tags: Tag[]) {
     //     this.tags = tags;
@@ -108,11 +155,8 @@ class UserData {
     //     this.additionalPhotos = photos;
     // }
 
-    // setRelationshipPreference(preference: Preference) {
-    //     this.relationshipPreference = preference;
-    // }
 
-    // Computed свойства (геттеры)
+    // геттеры
     // TODO: если undefined сделать запрос на сервер.
     getIsu() {
         if (this.isu === undefined) {
@@ -122,6 +166,7 @@ class UserData {
                 return -1; // Значение по умолчанию
             }
             this.isu = parseInt(locIsu);
+            this.loadUserData();
             return this.isu;
         }
         return this.isu;
@@ -204,16 +249,81 @@ class UserData {
         return this.zodiac;
     }
 
-    // getGenderPreference() {
-    //     if (this.genderPreference === undefined) {
-    //         if (!this.loading) {
-    //             this.loadUserData();
-    //         }
-    //         console.warn("Gender preference is undefined. Returning default value.");
-    //         return "Not specified"; // Значение по умолчанию
-    //     }
-    //     return this.genderPreference;
-    // }
+    getGenderPreference() {
+        if (this.genderPreference === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
+            console.warn("Gender preference is undefined. Returning default value.");
+            return "Not specified"; // Значение по умолчанию
+        }
+        return this.genderPreference;
+    }
+    
+    getRelationshipPreference() {
+        if (this.relationshipPreferenceId === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
+            console.warn("Relationship preference is undefined. Returning default value.");
+            return ""; // Значение по умолчанию
+        }
+        return this.relationshipPreferenceId;
+    }
+
+    getWorldview() {
+        if (this.worldview) {
+            return this.worldview;
+        }
+        const v = localStorage.getItem("worldview");
+        this.worldview = v;
+        return v;
+    }
+
+    getChildren() {
+        if (this.children) {
+            return this.children;
+        }
+        const c = localStorage.getItem("children");
+        this.children = c;
+        return c;
+    }
+
+    getLanguages() {
+        if (this.languages) {
+            return this.languages;
+        }
+        const l = localStorage.getItem("languages");
+        this.languages = l ? JSON.parse(l) : [];
+        return this.languages;
+    }
+
+    getAlcohol() {
+        if (this.alcohol) {
+            return this.alcohol;
+        }
+        const a = localStorage.getItem("alcohol");
+        this.alcohol = a;
+        return a;
+    }
+
+    getSmoking() {
+        if (this.smoking) {
+            return this.smoking;
+        }
+        const s = localStorage.getItem("smoking");
+        this.smoking = s;
+        return s;
+    }
+
+    getInterests() {
+        if (this.interests) {
+            return this.interests;
+        }
+        const i = localStorage.getItem("interests");
+        this.interests = i ? JSON.parse(i) : null; // Parse JSON string
+        return this.interests;
+    }
 
     //  getTags() {
     //     if (this.tags === undefined) {
@@ -239,13 +349,6 @@ class UserData {
     //     return this.additionalPhotos;
     // }
 
-    //  getRelationshipPreference() {
-    //     if (this.relationshipPreference === undefined) {
-    //         console.warn("Relationship preference is undefined. Returning default value.");
-    //         return null; // Значение по умолчанию
-    //     }
-    //     return this.relationshipPreference;
-    // }
 }
 
 export const userData = new UserData();
