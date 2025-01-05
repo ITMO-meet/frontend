@@ -20,6 +20,8 @@ import MultiSelectButtonGroup from './MultiSelectButtonGroup';
 interface SliderCategoryOption {
     label: string;
     type: 'slider';
+    onConfirm?: (v: number) => void;
+    selectedValue?: number | null;
     min: number;
     max: number;
 }
@@ -27,21 +29,27 @@ interface SliderCategoryOption {
 interface SelectCategoryOption {
     label: string;
     type: 'select';
+    selectedValue?: string | null;
+    onConfirm?: (v: string) => void;
     options: string[];
 }
 
 interface ButtonSelectCategoryOption {
     label: string;
     type: 'buttonSelect';
+    selectedValue?: string | null;
+    onConfirm?: (v: string) => void;
     options: string[];
 }
 
 interface LanguageSelectCategoryOption {
     label: string;
     type: 'languageSelect';
+    selectedValue?: string[] | null;
+    onConfirm?: (v: string[]) => void;
 }
 
-type CategoryOption = SliderCategoryOption | SelectCategoryOption | ButtonSelectCategoryOption | LanguageSelectCategoryOption;
+export type CategoryOption = SliderCategoryOption | SelectCategoryOption | ButtonSelectCategoryOption | LanguageSelectCategoryOption;
 
 interface MultiCategorySheetButtonProps {
     label: string;
@@ -72,7 +80,7 @@ const MultiCategorySheetButton: React.FC<MultiCategorySheetButtonProps> = ({ lab
     // Управление состоянием BottomSheet
     const [isBottomSheetOpen, setBottomSheetOpen] = useState(false);
     // Значение, выбранное пользователем, для сохранения
-    const [selectedOption, setSelectedOption] = useState<string | number | string[] | null>(category.type === 'slider' ? category.min : null);
+    const [selectedOption, setSelectedOption] = useState<string | number | string[] | null | undefined>(category.selectedValue);
     // Значение для фильтрации списка языков
     const [searchTerm, setSearchTerm] = useState('');
     // Отфильтрованный список языков, отображаемый в поле поиска
@@ -83,7 +91,19 @@ const MultiCategorySheetButton: React.FC<MultiCategorySheetButtonProps> = ({ lab
 
     // Сохранение выбранного значения и закрытие BottomSheet
     const handleSave = () => {
-        onSave(category.label, selectedOption as string | string[]);
+        if (category.onConfirm && selectedOption) {
+            if (category.type === "slider") {
+                category.onConfirm(selectedOption as number)
+            } else if (category.type === "select" || category.type === "buttonSelect") {
+                category.onConfirm(selectedOption as string)
+            } else if (category.type === "languageSelect") {
+                category.onConfirm(selectedOption as string[])
+            }
+        } 
+
+        if (selectedOption) {
+            onSave(category.label, selectedOption as string | string[]);
+        }
         closeBottomSheet();
     };
 

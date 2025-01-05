@@ -42,34 +42,10 @@ import WineBarIcon from '@mui/icons-material/WineBar';
 import PeopleIcon from '@mui/icons-material/People';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import MultiCategorySheetButton from '../basic/MultiCategorySheetButton';
+import MultiCategorySheetButton, { CategoryOption } from '../basic/MultiCategorySheetButton';
 import { useNavigate } from 'react-router-dom';
 import { logEvent, logPageView } from '../../analytics';
 import { userData } from '../../stores/UserDataStore';
-
-interface SliderCategoryOption {
-    label: string;
-    type: 'slider';
-    min: number;
-    max: number;
-}
-
-interface SelectCategoryOption {
-    label: string;
-    type: 'select';
-    options: string[];
-}
-
-interface ButtonSelectCategoryOption {
-    label: string;
-    type: 'buttonSelect';
-    options: string[];
-}
-
-interface LanguageSelectCategoryOption {
-    label: string;
-    type: 'languageSelect';
-}
 
 const interestCategories = [
     {
@@ -155,8 +131,24 @@ const relationshipIds = [
     { id: "672b44eab151637e969889be",  label: 'Casual Chat', icon: <ChatBubbleOutlineIcon /> },
 ];
 
+const categoriesConfig: CategoryOption[] = [
+    { label: 'Height', type: 'slider', min: 100, max: 250, onConfirm: v => userData.setHeight(v), selectedValue: userData.getHeight() },
+    { label: 'Worldview', type: 'select', options: ['Buddhism', 'Jewry', 'Hinduism', 'Islam', 'Catholicism', 'Confucianism', 'Orthodoxy', 'Protestantism', 'Secular humanism', 'Atheism', 'Agnosticism'], onConfirm: v => userData.setWorldview(v), selectedValue: userData.getWorldview() },
+    { label: 'Zodiac Sign', type: 'buttonSelect', options: ['Aries', 'None'], onConfirm: v => userData.setZodiac(v), selectedValue: userData.getZodiac() },
+    { label: 'Children', type: 'buttonSelect', options: ['No and not planning', 'No but would like', 'Already have'], onConfirm: v => userData.setChildren(v), selectedValue: userData.getChildren() },
+    { label: 'Languages', type: 'languageSelect', onConfirm: v => userData.setLanguages(v), selectedValue: userData.getLanguages() },
+    { label: 'Alcohol', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'], onConfirm: v => userData.setAlcohol(v), selectedValue: userData.getAlcohol() },
+    { label: 'Smoking', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'], onConfirm: v => userData.setSmoking(v), selectedValue: userData.getSmoking() },
+];
 
-type CategoryOption = SliderCategoryOption | SelectCategoryOption | ButtonSelectCategoryOption | LanguageSelectCategoryOption;
+const galleryImages: string[] = [
+    'images/profile_photo1.png',
+    'images/profile_photo2.jpg',
+    'images/profile_photo3.jpg',
+    '',
+    '',
+    ''
+];
 
 const EditProfilePage: React.FC = () => {
     const navigate = useNavigate();
@@ -165,7 +157,15 @@ const EditProfilePage: React.FC = () => {
     const relation = relationshipIds.find(p => p.id == userData.getRelationshipPreference())
     const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>(relation ? relation : relationshipIds[0]);
     const [, setSelectedFeatures] = useState<{ [key: string]: string | string[] }>({});
+    const [selectedInterests, setSelectedInterests] = useState<{ [key: string]: string }>({});
 
+    const targetOptions = [
+        { ...relationshipIds[0], description: 'Looking for dates', onClick: () => handleTargetSelect(relationshipIds[0]) },
+        { ...relationshipIds[1], description: 'Looking for romantic relationships', onClick: () => handleTargetSelect(relationshipIds[1]) },
+        { ...relationshipIds[2], description: 'Looking for friendship', onClick: () => handleTargetSelect(relationshipIds[2]) },
+        { ...relationshipIds[3], description: 'Looking for casual chat', onClick: () => handleTargetSelect(relationshipIds[3]) },
+    ];
+    
     useEffect(() => {
         logPageView('/edit-profile');
     }, []);
@@ -207,34 +207,6 @@ const EditProfilePage: React.FC = () => {
         navigate('/premium');
         console.log('Premium button clicked from edit');
     }
-
-    const targetOptions = [
-        { ...relationshipIds[0], description: 'Looking for dates', onClick: () => handleTargetSelect(relationshipIds[0]) },
-        { ...relationshipIds[1], description: 'Looking for romantic relationships', onClick: () => handleTargetSelect(relationshipIds[1]) },
-        { ...relationshipIds[2], description: 'Looking for friendship', onClick: () => handleTargetSelect(relationshipIds[2]) },
-        { ...relationshipIds[3], description: 'Looking for casual chat', onClick: () => handleTargetSelect(relationshipIds[3]) },
-    ];
-
-    const categoriesConfig: CategoryOption[] = [
-        { label: 'Height', type: 'slider', min: 100, max: 250 },
-        { label: 'Worldview', type: 'select', options: ['Buddhism', 'Jewry', 'Hinduism', 'Islam', 'Catholicism', 'Confucianism', 'Orthodoxy', 'Protestantism', 'Secular humanism', 'Atheism', 'Agnosticism'] },
-        { label: 'Zodiac Sign', type: 'buttonSelect', options: ['Aries', 'Do Not Display'] },
-        { label: 'Children', type: 'buttonSelect', options: ['No and not planning', 'No but would like', 'Already have'] },
-        { label: 'Languages', type: 'languageSelect' },
-        { label: 'Alcohol', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'] },
-        { label: 'Smoking', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'] },
-    ];
-
-    const galleryImages: string[] = [
-        'images/profile_photo1.png',
-        'images/profile_photo2.jpg',
-        'images/profile_photo3.jpg',
-        '',
-        '',
-        ''
-    ];
-
-    const [selectedInterests, setSelectedInterests] = useState<{ [key: string]: string }>({});
 
     const handleInterestSelect = (category: string, interest: string, emoji: string) => {
         setSelectedInterests((prev) => {
