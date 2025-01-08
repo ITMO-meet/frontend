@@ -13,6 +13,7 @@ class UserData {
     private weight: number | undefined
     private height: number | undefined
     private zodiac: string | undefined
+    private gender: string | undefined
     private genderPreference: string | undefined
     private relationshipPreferenceId: string | undefined
     // private tags: Tag[] | undefined
@@ -44,6 +45,9 @@ class UserData {
         // set variables in store
         this.username = profile.username;
         this.bio = profile.bio;
+        
+        let temp_gender = profile.mainFeatures.find(feature => feature.icon === "gender")?.text;
+        this.gender = temp_gender ? temp_gender?.charAt(0).toUpperCase() + temp_gender?.slice(1) : "Helicopter"
         
         const birthdate = profile.mainFeatures.find(feature => feature.icon === "birthdate")?.text;
         this.age = birthdate ? calculateAge(birthdate) : 20;
@@ -206,6 +210,17 @@ class UserData {
             return ""; // Значение по умолчанию
         }
         return this.birthdate;
+    }
+
+    getGender() {
+        if (this.gender === undefined) {
+            if(!this.loading) {
+                this.loadUserData();
+            }
+            console.warn("Gender is undefined. Returning default value.");
+            return "helicopter"; // default val
+        }
+        return this.gender;
     }
 
     getBio() {

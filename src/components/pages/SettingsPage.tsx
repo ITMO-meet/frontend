@@ -89,7 +89,7 @@ const SettingsPage: React.FC = () => {
             <Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                     <Typography>Имя</Typography>
-                    <Typography color="text.secondary">Алиса</Typography>
+                    <Typography color="text.secondary">{userData.getUsername()}</Typography>
                 </Box>
                 <Divider />
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
@@ -99,7 +99,7 @@ const SettingsPage: React.FC = () => {
                 <Divider />
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                     <Typography>Пол</Typography>
-                    <Typography color="text.secondary">Женщина</Typography>
+                    <Typography color="text.secondary">{userData.getGender()}</Typography>
                 </Box>
             </Box>
 
