@@ -3,7 +3,8 @@ import { render, screen, fireEvent, waitForElementToBeRemoved } from '@testing-l
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 import SettingsPage from '../../src/components/pages/SettingsPage';
 import '@testing-library/jest-dom';
-import { logPageView } from '../../src/analytics'
+import { logPageView, logEvent } from '../../src/analytics';
+
 
 jest.mock('../../src/analytics', () => ({
     logEvent: jest.fn(),
@@ -26,7 +27,7 @@ jest.mock('../../src/stores/UserDataStore', () => ({
         getWeight: jest.fn().mockReturnValue(70),
         getHeight: jest.fn().mockReturnValue(175),
         getZodiac: jest.fn().mockReturnValue("Capricorn"),
-        // Добавьте другие методы по мере необходимости
+        getGender: jest.fn().mockReturnValue("Female"),
     }
 }));
 
@@ -36,6 +37,8 @@ describe('SettingsPage', () => {
 
     beforeEach(() => {
         (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+
+        
         render(
             <MemoryRouter>
                 <SettingsPage />
@@ -106,6 +109,7 @@ describe('SettingsPage', () => {
 
         const updatedLanguage = screen.getByText('Английский', { selector: 'p' });
         expect(updatedLanguage).toBeInTheDocument();
+        expect(logEvent).toHaveBeenCalledWith("Settings", "Set language", "Английский");
     });
 
     it('opens and closes the problem dialog', async () => {
@@ -133,21 +137,21 @@ describe('SettingsPage', () => {
 
         fireEvent.click(submitButton);
 
-        // Ждем, пока диалог будет удален из DOM
         await waitForElementToBeRemoved(() => screen.queryByRole('dialog'));
+        expect(logEvent).toHaveBeenCalledWith("Settings", "Problem submit", "Test problem");
+        expect(textField).toHaveValue('');
     });
 
     it('opens and closes the exit dialog', async () => {
         const exitItem = screen.getByText('Выйти');
         fireEvent.click(exitItem);
 
-        const dialogTitle = screen.getByText('Вы уверены, что хотите выйти?');
+        const dialogTitle = screen.getByText('Выйти', { selector: 'h2' });
         expect(dialogTitle).toBeInTheDocument();
 
         const noButton = screen.getByText('Нет');
         fireEvent.click(noButton);
 
-        // Wait for the dialog to be removed
         await waitForElementToBeRemoved(() => screen.queryByRole('dialog'));
     });
 
@@ -158,7 +162,6 @@ describe('SettingsPage', () => {
         const yesButton = screen.getByText('Да');
         fireEvent.click(yesButton);
 
-        // Проверяем, что произошел переход на страницу входа
         expect(mockNavigate).toHaveBeenCalledWith('/login');
     });
 });

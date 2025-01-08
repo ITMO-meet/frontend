@@ -46,7 +46,7 @@ class UserData {
         this.username = profile.username;
         this.bio = profile.bio;
         
-        let temp_gender = profile.mainFeatures.find(feature => feature.icon === "gender")?.text;
+        const temp_gender = profile.mainFeatures.find(feature => feature.icon === "gender")?.text;
         this.gender = temp_gender ? temp_gender?.charAt(0).toUpperCase() + temp_gender?.slice(1) : "Helicopter"
         
         const birthdate = profile.mainFeatures.find(feature => feature.icon === "birthdate")?.text;

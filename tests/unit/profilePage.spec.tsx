@@ -35,7 +35,10 @@ jest.mock('../../src/stores/UserDataStore', () => ({
         getInterests: jest.fn().mockReturnValue({}),
         // Добавьте другие методы по мере необходимости
         setInterests: jest.fn(),
-        setRelationshipPreference: jest.fn()
+        setRelationshipPreference: jest.fn(),
+        getPhoto: jest.fn(),
+        getAdditionalPhotos: jest.fn().mockReturnValue(["https://example.com/photo1.png", "https://example.com/photo2.png"]),
+        getGender: jest.fn()
     }
 }));
 
