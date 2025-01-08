@@ -37,8 +37,9 @@ interface GenderPreference {
 }
 
 interface RelationshipPreference {
-    text: string;
     icon: string;
+    id: string
+    text: string;
 }
 
 interface SelectedPreference {

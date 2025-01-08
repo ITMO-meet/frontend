@@ -13,11 +13,12 @@ class UserData {
     private weight: number | undefined
     private height: number | undefined
     private zodiac: string | undefined
+    private gender: string | undefined
     private genderPreference: string | undefined
     private relationshipPreferenceId: string | undefined
     // private tags: Tag[] | undefined
-    // private photo: string | undefined // url
-    // private additionalPhotos: string[] | undefined // urls
+    private photo: string | undefined
+    private additionalPhotos: string[] | undefined
 
     // dont have db fields (yet?)
     private worldview: string | null | undefined
@@ -45,6 +46,9 @@ class UserData {
         this.username = profile.username;
         this.bio = profile.bio;
         
+        const temp_gender = profile.mainFeatures.find(feature => feature.icon === "gender")?.text;
+        this.gender = temp_gender ? temp_gender?.charAt(0).toUpperCase() + temp_gender?.slice(1) : "Helicopter"
+        
         const birthdate = profile.mainFeatures.find(feature => feature.icon === "birthdate")?.text;
         this.age = birthdate ? calculateAge(birthdate) : 20;
         this.birthdate = birthdate;
@@ -58,15 +62,18 @@ class UserData {
         this.zodiac = profile.mainFeatures.find(feature => feature.icon === "zodiac_sign")?.text || "None";
         this.genderPreference = profile.gender_preferences[0]?.text || "Everyone"
 
-        this.relationshipPreferenceId = profile.relationship_preferences[0]?.text || "672b44eab151637e969889bb"; // default is "Dates"
+        this.relationshipPreferenceId = profile.relationship_preferences[0]?.id || "672b44eab151637e969889bb"; // default is "Dates"
         
-        // TODO: tags, photo, additionalPhotos, relationshipPreference and other
+        // TODO: tags, relationshipPreference and other
+
+        this.photo = profile.logo
+        this.additionalPhotos = profile.photos
         
         this.setLoading(false);
     }
 
     // сеттеры.
-    // TODO: отправлять на сервер
+    // TODO: отправлять на сервер, photos
     setUsername(username: string) {
         this.username = username;
     }
@@ -205,6 +212,17 @@ class UserData {
         return this.birthdate;
     }
 
+    getGender() {
+        if (this.gender === undefined) {
+            if(!this.loading) {
+                this.loadUserData();
+            }
+            console.warn("Gender is undefined. Returning default value.");
+            return "helicopter"; // default val
+        }
+        return this.gender;
+    }
+
     getBio() {
         if (this.bio === undefined) {
             if (!this.loading) {
@@ -333,21 +351,21 @@ class UserData {
     //     return this.tags;
     // }
 
-    //  getPhoto() {
-    //     if (this.photo === undefined) {
-    //         console.warn("Photo is undefined. Returning empty string.");
-    //         return ""; // Значение по умолчанию
-    //     }
-    //     return this.photo;
-    // }
+     getPhoto() {
+        if (this.photo === undefined) {
+            console.warn("Photo is undefined. Returning empty string.");
+            return ""; // Значение по умолчанию
+        }
+        return this.photo;
+    }
 
-    //  getAdditionalPhotos() {
-    //     if (this.additionalPhotos === undefined) {
-    //         console.warn("Additional photos are undefined. Returning empty array.");
-    //         return []; // Значение по умолчанию
-    //     }
-    //     return this.additionalPhotos;
-    // }
+     getAdditionalPhotos() {
+        if (this.additionalPhotos === undefined) {
+            console.warn("Additional photos are undefined. Returning empty array.");
+            return []; // Значение по умолчанию
+        }
+        return this.additionalPhotos;
+    }
 
 }
 

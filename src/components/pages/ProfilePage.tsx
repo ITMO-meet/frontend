@@ -61,11 +61,7 @@ const ProfilePage: React.FC = observer(() => {
     };
 
     // Массив фотографий профиля
-    const photos = [
-        '/images/profile_photo1.png',
-        '/images/profile_photo2.jpg',
-        '/images/profile_photo3.jpg',
-    ];
+    const photos = [userData.getPhoto(), ...userData.getAdditionalPhotos()].filter(photo => photo !== "");
 
     // Данные для секции "Main Features"
     const mainFeatures = [
