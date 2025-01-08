@@ -145,7 +145,7 @@ const EditProfilePage: React.FC = observer(() => {
     const navigate = useNavigate();
     const [isModalOpen, setModalOpen] = useState(false);
 
-    const relation = relationshipIds.find(p => p.id == userData.getRelationshipPreference())
+    const relation = relationshipIds.find(p => p.id === userData.getRelationshipPreference())
     const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>(relation ? relation : relationshipIds[0]);
     const [, setSelectedFeatures] = useState<{ [key: string]: string | string[] }>({});
     const [selectedInterests, setSelectedInterests] = useState<{ [key: string]: string }>(userData.getInterests() || {});
