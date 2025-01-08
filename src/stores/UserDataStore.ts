@@ -62,7 +62,7 @@ class UserData {
         this.zodiac = profile.mainFeatures.find(feature => feature.icon === "zodiac_sign")?.text || "None";
         this.genderPreference = profile.gender_preferences[0]?.text || "Everyone"
 
-        this.relationshipPreferenceId = profile.relationship_preferences[0]?.text || "672b44eab151637e969889bb"; // default is "Dates"
+        this.relationshipPreferenceId = profile.relationship_preferences[0]?.id || "672b44eab151637e969889bb"; // default is "Dates"
         
         // TODO: tags, relationshipPreference and other
 
