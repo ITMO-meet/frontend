@@ -140,6 +140,7 @@ const galleryImages: string[] = [
     '',
     ''
 ];
+ 
 
 const EditProfilePage: React.FC = observer(() => {
     const navigate = useNavigate();
@@ -159,8 +160,9 @@ const EditProfilePage: React.FC = observer(() => {
 
     const categoriesConfig: CategoryOption[] = [
         { label: 'Height', type: 'slider', min: 100, max: 250, onConfirm: v => userData.setHeight(v), selectedValue: userData.getHeight() },
+        { label: 'Weight', type: 'slider', min: 40, max: 200, onConfirm: v => userData.setWeight(v), selectedValue: userData.getWeight() },
         { label: 'Worldview', type: 'select', options: ['Buddhism', 'Jewry', 'Hinduism', 'Islam', 'Catholicism', 'Confucianism', 'Orthodoxy', 'Protestantism', 'Secular humanism', 'Atheism', 'Agnosticism'], onConfirm: v => userData.setWorldview(v), selectedValue: userData.getWorldview() },
-        { label: 'Zodiac Sign', type: 'buttonSelect', options: ['Aries', 'None'], onConfirm: v => userData.setZodiac(v), selectedValue: userData.getZodiac() },
+        { label: 'Zodiac Sign', type: 'buttonSelect', options: ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces', 'None'], onConfirm: v => userData.setZodiac(v), selectedValue: userData.getZodiac() },
         { label: 'Children', type: 'buttonSelect', options: ['No and not planning', 'No but would like', 'Already have'], onConfirm: v => userData.setChildren(v), selectedValue: userData.getChildren() },
         { label: 'Languages', type: 'languageSelect', onConfirm: v => userData.setLanguages(v), selectedValue: userData.getLanguages() },
         { label: 'Alcohol', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'], onConfirm: v => userData.setAlcohol(v), selectedValue: userData.getAlcohol() },
@@ -252,7 +254,8 @@ const EditProfilePage: React.FC = observer(() => {
             >
                 {/* Bio Section */}
                 <Box display="flex" flexDirection="column">
-                    <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>{userData.getUsername()}, {userData.getAge()}</Typography>
+                    <EditableField label="Username" initialValue={userData.getUsername()} onSave={(v) => userData.setUsername(v)} />
+                    <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>Age: {userData.getAge()} yo</Typography>
                 </Box>
                 <EditableField label="Bio" initialValue={userData.getBio()} onSave={(v) => userData.setBio(v)} />
 

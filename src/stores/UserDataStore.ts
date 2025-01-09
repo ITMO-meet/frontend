@@ -1,5 +1,5 @@
 import { makeAutoObservable } from "mobx";
-import { getProfile, updateBio, updateHeight, updateGenderPreference, updateWeight, updateZodiac, updateRelationshipPreferences } from "../api/profile";
+import { getProfile, updateBio, updateHeight, updateGenderPreference, updateWeight, updateZodiac, updateRelationshipPreferences, updateUsername, updateWorldview, updateChildren, updateLanguages } from "../api/profile";
 import { calculateAge } from "../utils";
 
 class UserData {
@@ -16,12 +16,12 @@ class UserData {
     private gender: string | undefined
     private genderPreference: string | undefined
     private relationshipPreferenceId: string | undefined
+    private worldview: string | undefined
     // private tags: Tag[] | undefined
     private photo: string | undefined
     private additionalPhotos: string[] | undefined
 
     // dont have db fields (yet?)
-    private worldview: string | null | undefined
     private children: string | null | undefined
     private languages: string[] | null | undefined
     private alcohol: string | null | undefined
@@ -63,7 +63,14 @@ class UserData {
         this.genderPreference = profile.gender_preferences[0]?.text || "Everyone"
 
         this.relationshipPreferenceId = profile.relationship_preferences[0]?.id || "672b44eab151637e969889bb"; // default is "Dates"
+
+        this.worldview = profile.mainFeatures.find(feature => feature.icon === "worldview")?.text;
+
+        this.children = profile.mainFeatures.find(feature => feature.icon === "children")?.text;
         
+        const languagesFeature = profile.mainFeatures[7];
+        this.languages = languagesFeature.map((item: { text: any; }) => item.text);
+
         // TODO: tags, relationshipPreference and other
 
         this.photo = profile.logo
@@ -76,6 +83,9 @@ class UserData {
     // TODO: отправлять на сервер, photos
     setUsername(username: string) {
         this.username = username;
+        if (this.isu) {
+            updateUsername(this.isu, username);
+        }
     }
 
     setBio(bio: string) {
@@ -122,17 +132,26 @@ class UserData {
 
     setWorldview(worldview: string) {
         this.worldview = worldview;
-        localStorage.setItem("worldview", worldview)
+        if (this.isu){
+            updateWorldview(this.isu, worldview);
+        }
+        // localStorage.setItem("worldview", worldview)
     }
 
     setChildren(children: string) {
         this.children = children;
-        localStorage.setItem("children", children);
+        if (this.isu) {
+            updateChildren(this.isu, children);
+        }
+        // localStorage.setItem("children", children);
     }
 
     setLanguages(languages: string[]) {
         this.languages = languages;
-        localStorage.setItem("languages", JSON.stringify(languages));
+        if (this.isu) {
+            updateLanguages(this.isu, languages)
+        }
+        //localStorage.setItem("languages", JSON.stringify(languages));
     }
 
     setAlcohol(alcohol: string) {
@@ -290,29 +309,51 @@ class UserData {
     }
 
     getWorldview() {
-        if (this.worldview) {
-            return this.worldview;
+        if (this.worldview === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
+            console.warn("Worldview is undefined. Returning default value.");
+            return "Not specified"; // Значение по умолчанию
         }
-        const v = localStorage.getItem("worldview");
-        this.worldview = v;
-        return v;
+        return this.worldview;
     }
 
     getChildren() {
-        if (this.children) {
-            return this.children;
+        if (this.children === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
+            console.warn("Children is undefined. Returning default value.");
+            return "Not specified"; // Значение по умолчанию
         }
-        const c = localStorage.getItem("children");
-        this.children = c;
-        return c;
+        return this.children;
+        // if (this.children) {
+        //     return this.children;
+        // }
+        // const c = localStorage.getItem("children");
+        // this.children = c;
+        // return c;
     }
 
+    // getLanguages() {
+    //     if (this.languages) {
+    //         return this.languages;
+    //     }
+    //     const l = localStorage.getItem("languages");
+    //     this.languages = l ? JSON.parse(l) : [];
+    //     console.log(this.languages);
+    //     return this.languages;
+    // }
     getLanguages() {
-        if (this.languages) {
-            return this.languages;
+        if (this.languages === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
+            console.warn("Languages are undefined. Returning empty array.");
+            return [];
         }
-        const l = localStorage.getItem("languages");
-        this.languages = l ? JSON.parse(l) : [];
+        console.log(this.languages)
         return this.languages;
     }
 
