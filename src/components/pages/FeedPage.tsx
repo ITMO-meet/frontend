@@ -134,7 +134,7 @@ const FeedPage: React.FC<Props> = observer(({ onLike, onDislike, onSuperLike }) 
     const handlePremiumModalOpen = () => setPremiumModalOpen(true);
     const handlePremiumModalClose = () => setPremiumModalOpen(false);
 
-    if (userData.loading) {
+    if (userData.loading || feedStore.loading) {
         return <CircularProgress  />; // Show a loading spinner while data is being fetched
     }
 
