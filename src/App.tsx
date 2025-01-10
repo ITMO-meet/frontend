@@ -443,7 +443,7 @@ function AppContent() {
             <Route path="/premium" element={<PremiumPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
+            {/* <Route path="*" element={<Navigate to="/login" replace />} /> */}
           </Routes>
         </AnimatePresence>
       </Box>

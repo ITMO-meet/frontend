@@ -4,6 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import StoryViewer from './StoryViewer';
 import { useNavigate } from 'react-router-dom';
 import { logEvent } from '../analytics';
+import { Profile } from '../api/profile';
 
 interface StoriesProps {
   stories: Array<{
@@ -12,11 +13,7 @@ interface StoriesProps {
     url: string;
     expiration_date: number;
   }>;
-  people: Array<{
-    isu: number;
-    username: string;
-    logo: string;
-  }>;
+  people: Profile[];
   onAddStory: () => void;
 }
 

@@ -5,14 +5,10 @@ import ContactCard from '../Contact';
 import Stories from '../Stories';
 import AddStoryModal from '../AddStoryModal';
 import { logEvent, logPageView } from '../../analytics';
+import { Profile } from '../../api/profile';
 
 interface ChatPageProps {
-  people: Array<{
-    isu: number;
-    username: string;
-    bio: string;
-    logo: string;
-  }>;
+  people: Profile[];
   stories: Array<{
     id: string;
     isu: number;

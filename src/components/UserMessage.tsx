@@ -2,19 +2,17 @@ import React, { useRef, useState, useMemo } from 'react';
 import { ListItem, Box, IconButton } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
+import { MessageType } from '../types';
 
 interface UserMessageProps {
-  message: {
-    sender: 'me' | 'them';
-    text: string;
-    audio?: Blob;
-  };
+  message: MessageType;
 }
 
 const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  // For audio
   const audioURL = useMemo(() => {
     if (message.audio) {
       return URL.createObjectURL(message.audio);
@@ -51,6 +49,14 @@ const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
     }
   };
 
+  // For video
+  const videoURL = useMemo(() => {
+    if (message.video) {
+      return URL.createObjectURL(message.video);
+    }
+    return undefined;
+  }, [message.video]);
+
   return (
     <ListItem
       sx={{
@@ -74,7 +80,32 @@ const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
           alignItems: 'center',
         }}
       >
-        {message.audio ? (
+        {/* VIDEO MESSAGE */}
+        {videoURL && (
+          <Box
+            sx={{
+              width: 150,
+              height: 150,
+              borderRadius: '50%',
+              overflow: 'hidden',
+              position: 'relative',
+              backgroundColor: '#000',
+            }}
+          >
+            <video
+              src={videoURL}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+              }}
+              controls
+            />
+          </Box>
+        )}
+
+        {/* AUDIO MESSAGE */}
+        {!videoURL && message.audio && (
           <>
             <IconButton onClick={handlePlayPause} size="small">
               {isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
@@ -95,9 +126,10 @@ const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
               Voice message
             </Box>
           </>
-        ) : (
-          message.text
         )}
+
+        {/* TEXT MESSAGE (if no audio/video) */}
+        {!videoURL && !message.audio && message.text}
       </Box>
     </ListItem>
   );

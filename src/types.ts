@@ -34,3 +34,19 @@ export interface Tag {
     text: string;
     icon: string;
 }
+
+export interface RawMessage {
+    id: string;
+    chat_id: string;
+    sender_id: number;
+    receiver_id: number;
+    text: string;
+    timestamp: string;
+}
+
+export interface MessageType {
+    sender: 'me' | 'them';
+    text: string;
+    audio?: Blob;
+    video?: Blob;
+}

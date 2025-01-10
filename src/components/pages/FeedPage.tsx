@@ -21,21 +21,15 @@ import StarIcon from '@mui/icons-material/Star';
 import { useSwipeable } from 'react-swipeable';
 import ImageButton from '../basic/ImageButton';
 import { logEvent, logPageView } from '../../analytics';
+import { Profile } from '../../api/profile';
 
-// Интерфейс для представления информации о человеке
-interface Person {
-    isu: number; // Уникальный идентификатор
-    logo: string; // Ссылка на изображение
-    username: string; // Имя человека
-    bio: string; // Описание человека
-}
 
 // Интерфейс для свойств компонента SwipeableCard
 interface Props {
-    getNextPerson: () => Person; // Функция для получения информации о следующем человеке
-    onLike: (person: Person) => void; // Функция для лайков
-    onSuperLike: (person: Person) => void; // Функция для суперлайков
-    onDislike: (person: Person) => void; // Функция для "не понравилось"
+    getNextPerson: () => Profile; // Функция для получения информации о следующем человеке
+    onLike: (person: Profile) => void; // Функция для лайков
+    onSuperLike: (person: Profile) => void; // Функция для суперлайков
+    onDislike: (person: Profile) => void; // Функция для "не понравилось"
 }
 
 // Функция для создания стилей иконок
@@ -56,8 +50,8 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
     const DURATION = 300; // Длительность анимации в миллисекундах
     const [swipeDirection, setSwipeDirection] = useState<string | null>(null); // Направление свайпа
     const [iconVisible, setIconVisible] = useState(false); // Видимость иконки
-    const [person, setPerson] = useState<Person>({ isu: 0, username: "", bio: "", logo: "" }); // Текущий человек
-   
+    const [person, setPerson] = useState<Profile>({ isu: 0, username: "", bio: "", logo: "" }); // Текущий человек
+
     // Эффект для получения следующего человека при монтировании компонента
     useEffect(() => {
         logPageView("/feed"); // GA log on page open
