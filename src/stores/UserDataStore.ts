@@ -62,16 +62,16 @@ class UserData {
 
         this.relationshipPreferenceId = profile.relationship_preferences[0]?.id || "672b44eab151637e969889bb"; // default is "Dates"
 
-        this.worldview = profile.mainFeatures.find(feature => feature.icon === "worldview")?.text;
+        this.worldview = profile.mainFeatures.find(feature => feature.icon === "worldview")?.text || "Default";
 
-        this.children = profile.mainFeatures.find(feature => feature.icon === "children")?.text;
+        this.children = profile.mainFeatures.find(feature => feature.icon === "children")?.text || "Default";
 
         const languagesFeature = profile.mainFeatures[7];
-        this.languages = languagesFeature.map((item: { text: string; }) => item.text);
+        this.languages = languagesFeature ? languagesFeature.map((item: { text: string; }) => item.text) : [];
 
-        this.alcohol = profile.mainFeatures.find(feature => feature.icon === "alcohol")?.text;
+        this.alcohol = profile.mainFeatures.find(feature => feature.icon === "alcohol")?.text || "Default";
 
-        this.smoking = profile.mainFeatures.find(feature => feature.icon === "smoking")?.text;
+        this.smoking = profile.mainFeatures.find(feature => feature.icon === "smoking")?.text || "Default";
 
 
         this.photo = profile.logo
