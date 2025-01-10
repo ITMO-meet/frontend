@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { ThemeProvider } from '@mui/material';
 import theme from './components/theme';
 import { CssBaseline, Box, Typography } from '@mui/material';
@@ -414,12 +414,6 @@ function AppContent() {
     logPageView(location.pathname);
   }, [location.pathname]);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const getNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % people.length);
-    return people[currentIndex];
-  }
-
   return (
     <>
       <Box sx={{ pb: 7, position: 'relative', overflow: 'hidden' }}>
@@ -431,7 +425,7 @@ function AppContent() {
             <Route path="/chat/:id" element={<Messages people={people} messages={messages} />} />
             {/* <Route path="/chat/:id" element={<Messages contacts={contacts} />} /> */}
             <Route path="/matches" element={<MatchesPage people={people} />} />
-            <Route path="/feed" element={<FeedPage getNextPerson={getNext} onLike={console.log} onDislike={console.log} onSuperLike={console.log} />} />
+            <Route path="/feed" element={<FeedPage onLike={console.log} onDislike={console.log} onSuperLike={console.log} />} />
             <Route path="/tests" element={<TestsPage />} />
             <Route path="/tests/:id" element={<Quiz getQuestions={mockGetQuestions} onExit={() => navigate("/chats")} onFinish={console.log} />} />
             <Route path="/profile" element={<ProfilePage />} />

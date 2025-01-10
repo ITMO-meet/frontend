@@ -62,16 +62,16 @@ class UserData {
 
         this.relationshipPreferenceId = profile.relationship_preferences[0]?.id || "672b44eab151637e969889bb"; // default is "Dates"
 
-        this.worldview = profile.mainFeatures.find(feature => feature.icon === "worldview")?.text;
+        this.worldview = profile.mainFeatures.find(feature => feature.icon === "worldview")?.text || "Default";
 
-        this.children = profile.mainFeatures.find(feature => feature.icon === "children")?.text;
+        this.children = profile.mainFeatures.find(feature => feature.icon === "children")?.text || "Default";
 
         const languagesFeature = profile.mainFeatures[7];
-        this.languages = languagesFeature.map((item: { text: string; }) => item.text);
+        this.languages = languagesFeature ? languagesFeature.map((item: { text: string; }) => item.text) : [];
 
-        this.alcohol = profile.mainFeatures.find(feature => feature.icon === "alcohol")?.text;
+        this.alcohol = profile.mainFeatures.find(feature => feature.icon === "alcohol")?.text || "Default";
 
-        this.smoking = profile.mainFeatures.find(feature => feature.icon === "smoking")?.text;
+        this.smoking = profile.mainFeatures.find(feature => feature.icon === "smoking")?.text || "Default";
 
 
         this.photo = profile.logo
@@ -193,7 +193,8 @@ class UserData {
                 return -1; // Значение по умолчанию
             }
             this.isu = parseInt(locIsu);
-            this.loadUserData();
+            if (!this.loading)
+                this.loadUserData();
             return this.isu;
         }
         return this.isu;
@@ -293,7 +294,7 @@ class UserData {
                 this.loadUserData();
             }
             console.warn("Gender preference is undefined. Returning default value.");
-            return "Not specified"; // Значение по умолчанию
+            return ""; // Значение по умолчанию
         }
         return this.genderPreference;
     }
@@ -383,6 +384,9 @@ class UserData {
 
     getPhoto() {
         if (this.photo === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
             console.warn("Photo is undefined. Returning empty string.");
             return ""; // Значение по умолчанию
         }
@@ -391,6 +395,9 @@ class UserData {
 
     getAdditionalPhotos() {
         if (this.additionalPhotos === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
             console.warn("Additional photos are undefined. Returning empty array.");
             return []; // Значение по умолчанию
         }

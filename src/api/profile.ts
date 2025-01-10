@@ -1,6 +1,6 @@
 import { getJson, putJson } from ".";
 
-interface Profile {
+export interface Profile {
     _id: string;
     isu: number;
     username: string;
