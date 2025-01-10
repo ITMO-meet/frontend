@@ -87,11 +87,11 @@ export async function updateZodiac(isu: number, zodiac: string) {
 }
 
 export async function updateRelationshipPreferences(isu: number, preference_ids: string[]) {
-    await putJson(`/profile/update_relationship_preferences`, {isu: isu, tags: preference_ids});
+    await putJson(`/profile/update_relationship_preferences`, { isu: isu, tags: preference_ids });
 }
 
 export async function updateGenderPreference(isu: number, gender_preference: string) {
-    await putJson(`/profile/update_gender_preference`, {isu: isu, gender_preference: gender_preference});
+    await putJson(`/profile/update_gender_preference`, { isu: isu, gender_preference: gender_preference });
 }
 
 export async function updateWorldview(isu: number, worldview: string) {
@@ -106,6 +106,18 @@ export async function updateChildren(isu: number, children: string) {
     await putJson(`/profile/update_children/${isu}?${params.toString()}`)
 }
 
-export async function updateLanguages(isu: number, languages: string[]){
+export async function updateLanguages(isu: number, languages: string[]) {
     await putJson(`/profile/update_languages`, { isu, languages });
+}
+
+export async function updateAlcohol(isu: number, alcohol: string) {
+    const params = new URLSearchParams();
+    params.append('alcohol', alcohol);
+    await putJson(`/profile/update_alcohol/${isu}?${params.toString()}`)
+}
+
+export async function updateSmoking(isu: number, smoking: string) {
+    const params = new URLSearchParams();
+    params.append('smoking', smoking);
+    await putJson(`/profile/update_smoking/${isu}?${params.toString()}`)
 }
