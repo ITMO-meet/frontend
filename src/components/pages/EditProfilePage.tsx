@@ -30,10 +30,10 @@
 */
 
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Avatar, Paper, IconButton, Chip, Button, Modal, CircularProgress } from '@mui/material';
+import { Box, Typography, Paper, IconButton, Chip, Button, Modal, CircularProgress } from '@mui/material';
 import WestIcon from '@mui/icons-material/West';
-import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
+import UploadIcon from '@mui/icons-material/Upload';
 import RoundButton from '../basic/RoundButton';
 import EditableField from '../basic/EditableField';
 import TargetSheetButton from '../basic/TargetSheetButton';
@@ -49,7 +49,10 @@ import { userData } from '../../stores/UserDataStore';
 import { observer } from 'mobx-react-lite';
 import { fetchTags } from '../../api/register';
 import { Tag } from "../../types";
-
+import { uploadLogo, uploadCarousel } from '../../api/register';
+import PhotoEditor from '../pages/PhotoEditor';
+import Gallery from '../basic/Gallery';
+import { urlToFile } from '../../utils';
 
 
 const relationshipIds = [
@@ -59,14 +62,7 @@ const relationshipIds = [
     { id: "672b44eab151637e969889be", label: 'Casual Chat', icon: <ChatBubbleOutlineIcon /> },
 ];
 
-const galleryImages: string[] = [
-    'images/profile_photo1.png',
-    'images/profile_photo2.jpg',
-    'images/profile_photo3.jpg',
-    '',
-    '',
-    ''
-];
+
 
 
 const EditProfilePage: React.FC = observer(() => {
@@ -77,7 +73,7 @@ const EditProfilePage: React.FC = observer(() => {
     const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>(relation ? relation : relationshipIds[0]);
     const [, setSelectedFeatures] = useState<{ [key: string]: string | string[] }>({});
     const [allTags, setAllTags] = useState<Tag[]>([]);
-    const [selectedTags, setSelectedTags] = useState<string[]>(userData.getInterestIDs() || []);
+    const [selectedTags, setSelectedTags] = useState<string[]>(userData.getInterests() || []);
     const [loadingTags, setLoadingTags] = useState<boolean>(true);
 
     const targetOptions = [
@@ -98,6 +94,142 @@ const EditProfilePage: React.FC = observer(() => {
         { label: 'Smoking', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'], onConfirm: v => userData.setSmoking(v), selectedValue: userData.getSmoking() },
     ];
 
+    //logo
+    const [logoUrl, setLogoUrl] = useState<string>("");
+    const [logoFile, setLogoFile] = useState<File | null>(null);
+    const [isEditingLogo, setIsEditingLogo] = useState(false);
+
+    const handleLogoFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const result = reader.result as string;
+                setLogoUrl(result);
+                setLogoFile(file);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleEditLogo = () => {
+        setIsEditingLogo(true);
+    };
+
+    const handleSaveEditedLogo = (editedImage: string) => {
+        setLogoUrl(editedImage);
+    };
+
+
+    const handleSubmitLogo = async () => {
+        try {
+            let finalFile = logoFile;
+            if (!finalFile && logoUrl) {
+                finalFile = await urlToFile(logoUrl, 'old_logo.png');
+            }
+
+            if (!finalFile) {
+                alert('No logo to upload');
+                return;
+            }
+
+            await uploadLogo(userData.getIsu(), finalFile);
+            window.location.reload();
+        } catch (error: unknown) {
+            console.error('Error uploading logo:', error);
+        }
+    };
+
+    //gall
+    const [files, setFiles] = useState<(File | null)[]>(Array(6).fill(null));
+    const [galleryImages, setGalleryImages] = useState<(string | null)[]>(Array(6).fill(null));
+    const [isEditingPhoto, setIsEditingPhoto] = useState(false);
+    const [imageToEdit, setImageToEdit] = useState<string | null>(null);
+    const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+
+
+    const handleFileSelect = (index: number, file: File, url: string) => {
+        const newFiles = [...files];
+        newFiles[index] = file;
+        setFiles(newFiles);
+
+        const newUrls = [...galleryImages];
+        newUrls[index] = url;
+        setGalleryImages(newUrls);
+    };
+
+    const handleDeleteImage = (index: number) => {
+        const newFiles = [...files];
+        newFiles[index] = null;
+        setFiles(newFiles);
+
+        const newUrls = [...galleryImages];
+        newUrls[index] = null;
+        setGalleryImages(newUrls);
+    };
+
+    const handleLoadImage = (index: number, url: string) => {
+        const newUrls = [...galleryImages];
+        newUrls[index] = url;
+        setGalleryImages(newUrls);
+    };
+
+    const handleEditImage = (index: number) => {
+        if (galleryImages[index]) {
+            setCurrentIndex(index);
+            setImageToEdit(galleryImages[index]);
+            setIsEditingPhoto(true);
+        }
+    };
+
+    const handleSaveEditedImage = (editedImage: string) => {
+        if (currentIndex !== null) {
+            const newUrls = [...galleryImages];
+            newUrls[currentIndex] = editedImage;
+            setGalleryImages(newUrls);
+        }
+    };
+
+    const handleSubmitPhotos = async () => {
+        try {
+            const finalFiles: File[] = [];
+
+            for (let i = 0; i < galleryImages.length; i++) {
+                const url = galleryImages[i];
+                const file = files[i];
+
+                if (!url) {
+                    continue;
+                }
+                if (file) {
+                    finalFiles.push(file);
+                } else {
+                    const f = await urlToFile(url, `old_photo_${i}.png`);
+                    finalFiles.push(f);
+                }
+            }
+
+            if (finalFiles.length === 0) {
+                alert('At least 1 photo required');
+                return;
+            }
+
+            await uploadCarousel(userData.getIsu(), finalFiles);
+            window.location.reload();
+        } catch (error: unknown) {
+            console.error('Error:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (!userData.loading) {
+            setLogoUrl(userData.getPhoto() || "");
+
+            const photos = userData.getAdditionalPhotos();
+            const paddedPhotos = photos.slice(0, 6).concat(Array(6 - photos.length).fill(null));
+            setGalleryImages(paddedPhotos);
+        }
+    }, [userData.loading]);
 
     useEffect(() => {
         logPageView('/edit-profile');
@@ -108,7 +240,7 @@ const EditProfilePage: React.FC = observer(() => {
             try {
                 const tags = await fetchTags();
                 setAllTags(tags);
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error("Error fetching tags: ", err)
             } finally {
                 setLoadingTags(false);
@@ -118,13 +250,7 @@ const EditProfilePage: React.FC = observer(() => {
         loadTags();
     }, [])
 
-    const handleDeleteImage = (index: number) => {
-        console.log(`Delete image at index ${index}`);
-    };
 
-    const handleEditImage = (index: number) => {
-        console.log(`Edit image at index ${index}`);
-    };
 
     const handleTargetSelect = (option: { label: string; icon: JSX.Element }) => {
         setSelectedTarget(option);
@@ -132,7 +258,6 @@ const EditProfilePage: React.FC = observer(() => {
         if (prefId) {
             userData.setRelationshipPreference(prefId.id);
         }
-        console.log('Selected target:', option.label);
     };
 
     const handleSave = (category: string, option: string | string[]) => {
@@ -140,7 +265,6 @@ const EditProfilePage: React.FC = observer(() => {
             ...prev,
             [category]: option,
         }));
-        console.log(`Selected ${category}: ${Array.isArray(option) ? option.join(', ') : option}`);
     };
 
     const handlePremiumClick = () => {
@@ -191,7 +315,7 @@ const EditProfilePage: React.FC = observer(() => {
                 {/* Bio Section */}
                 <Box display="flex" flexDirection="column">
                     <EditableField label="Username" initialValue={userData.getUsername()} onSave={(v) => userData.setUsername(v)} />
-                    <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>Age: {userData.getAge()} yo</Typography>
+                    <Typography variant="h6" sx={{ mb: 1 }}>Age: {userData.getAge()} yo</Typography>
                 </Box>
                 <EditableField label="Bio" initialValue={userData.getBio()} onSave={(v) => userData.setBio(v)} />
 
@@ -307,38 +431,119 @@ const EditProfilePage: React.FC = observer(() => {
 
                 </Box>
 
-                {/* Gallery Section */}
-                <Box mt={3} width="100%">
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>Gallery</Typography>
-                    <Box display="grid" gridTemplateColumns="repeat(3, 1fr)" gap={1} justifyContent="center">
-                        {galleryImages.map((src, index) => (
-                            <Box key={index} position="relative">
-                                <Avatar
-                                    variant="rounded"
-                                    src={src || undefined}
-                                    sx={{
-                                        width: 120,
-                                        height: 120,
-                                        bgcolor: src ? 'transparent' : 'grey.300',
-                                    }}
-                                />
-                                <IconButton
-                                    size="small"
-                                    onClick={() => src ? handleDeleteImage(index) : handleEditImage(index)}
-                                    sx={{
-                                        position: 'absolute',
-                                        top: 4,
-                                        right: 4,
-                                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                                        color: 'black'
-                                    }}
-                                >
-                                    {src ? <CloseIcon fontSize="small" /> : <EditIcon fontSize="small" />}
-                                </IconButton>
-                            </Box>
-                        ))}
+                {/*Logo*/}
+                <Box mt={3}>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                        Logo
+                    </Typography>
+
+                    <Box
+                        sx={{
+                            width: '100%',
+                            position: 'relative',
+                            paddingTop: '100%',
+                        }}>
+
+                        <Box
+                            component="img"
+                            src={logoUrl || ''}
+                            alt="User Logo"
+                            sx={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover',
+                                bgcolor: logoUrl ? 'transparent' : 'grey.300',
+                                borderRadius: 2,
+                            }}
+                        />
+                    </Box>
+
+                    <Box mt={2} display="flex" justifyContent="center" gap={2}>
+                        <IconButton
+                            size="small"
+                            component="label"
+                            sx={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                color: 'black',
+                            }}
+                        >
+                            <UploadIcon />
+                            <input
+                                type="file"
+                                accept="image/*"
+                                hidden
+                                onChange={handleLogoFileChange}
+                            />
+                        </IconButton>
+
+                        {logoUrl && (
+                            <IconButton
+                                size="small"
+                                onClick={handleEditLogo}
+                                sx={{
+                                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                    color: 'black',
+                                }}
+                            >
+                                <EditIcon />
+                            </IconButton>
+                        )}
+                    </Box>
+
+                    <Box mt={2} display="flex" justifyContent="center">
+                        <RoundButton onClick={handleSubmitLogo}>
+                            Save Logo
+                        </RoundButton>
                     </Box>
                 </Box>
+
+                {/*Gallery*/}
+                <Box mt={3}>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                        Additional Photos
+                    </Typography>
+
+                    <Gallery
+                        columns={3}
+                        rows={2}
+                        galleryImages={galleryImages}
+                        handleDeleteImage={handleDeleteImage}
+                        handleLoadImage={handleLoadImage}
+                        handleEditImage={handleEditImage}
+                        handleFileSelect={handleFileSelect}
+                    />
+
+                    <Box mt={2} display="flex" justifyContent="center">
+                        <RoundButton onClick={handleSubmitPhotos}>
+                            Save Additional Photos
+                        </RoundButton>
+                    </Box>
+                </Box>
+
+                {isEditingLogo && logoUrl && (
+                    <PhotoEditor
+                        image={logoUrl}
+                        onSave={edited => {
+                            handleSaveEditedLogo(edited);
+                            setIsEditingLogo(false);
+                        }}
+                        onClose={() => setIsEditingLogo(false)}
+                    />
+                )}
+
+                {isEditingPhoto && imageToEdit && (
+                    <PhotoEditor
+                        image={imageToEdit}
+                        onSave={edited => {
+                            handleSaveEditedImage(edited);
+                            setIsEditingPhoto(false);
+                        }}
+                        onClose={() => setIsEditingPhoto(false)}
+                    />
+                )}
 
                 {/* Premium Button Section */}
                 <Box mt={4} width="100%" display="flex" justifyContent="center" pb={8}>

@@ -17,6 +17,7 @@ interface Profile {
 }
 
 interface MainFeature {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     map: any;
     text: string;
     icon: string;

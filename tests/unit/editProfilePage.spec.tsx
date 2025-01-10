@@ -36,7 +36,13 @@ jest.mock('../../src/stores/UserDataStore', () => ({
         getInterests: jest.fn().mockReturnValue({}),
         // Добавьте другие методы по мере необходимости
         setInterests: jest.fn(),
-        setRelationshipPreference: jest.fn()
+        setRelationshipPreference: jest.fn(),
+        getPhoto: jest.fn().mockReturnValue("https://example.com/photo.jpg"),
+        getAdditionalPhotos: jest.fn().mockReturnValue([
+            "https://example.com/photo1.jpg",
+            "https://example.com/photo2.jpg",
+            "https://example.com/photo3.jpg"
+        ]),
     }
 }));
 
@@ -61,8 +67,9 @@ describe('EditProfilePage', () => {
         );
 
         // Проверка наличия заголовка
-        expect(screen.getByText('Alisa Pipisa, 20')).toBeInTheDocument();
-
+        expect(screen.getByText('Alisa Pipisa')).toBeInTheDocument();
+        expect(screen.getByText('Age: 20 yo')).toBeInTheDocument();
+        
         // Проверка наличия секций
         expect(screen.getByText('Bio')).toBeInTheDocument();
         expect(screen.getByText('Target')).toBeInTheDocument();

@@ -17,16 +17,12 @@ class UserData {
     private genderPreference: string | undefined
     private relationshipPreferenceId: string | undefined
     private worldview: string | undefined
-    // private tags: Tag[] | undefined
     private photo: string | undefined
     private additionalPhotos: string[] | undefined
     private alcohol: string | undefined
     private smoking: string | undefined
     private interestIDs: string[] | null = null;
     private interests: string[] = [];
-
-
-    // dont have db fields (yet?)
     private children: string | null | undefined
     private languages: string[] | null | undefined
 
@@ -71,7 +67,7 @@ class UserData {
         this.children = profile.mainFeatures.find(feature => feature.icon === "children")?.text;
 
         const languagesFeature = profile.mainFeatures[7];
-        this.languages = languagesFeature.map((item: { text: any; }) => item.text);
+        this.languages = languagesFeature.map((item: { text: string; }) => item.text);
 
         this.alcohol = profile.mainFeatures.find(feature => feature.icon === "alcohol")?.text;
 
@@ -179,7 +175,6 @@ class UserData {
         if (this.isu) {
             updateTags(this.isu, newIDs)
                 .then(() => {
-                    console.log("Tags updated in DB");
                     this.loadUserData();
                 })
                 .catch(err => {
@@ -344,7 +339,6 @@ class UserData {
             console.warn("Languages are undefined. Returning empty array.");
             return [];
         }
-        console.log(this.languages)
         return this.languages;
     }
 
