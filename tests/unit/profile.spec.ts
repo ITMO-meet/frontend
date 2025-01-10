@@ -55,7 +55,7 @@ describe('profile API', () => {
 
     it('updateUsername calls putJson with correct data', async () => {
         await updateUsername(123456, 'newusername');
-        expect(mockPutJson).toHaveBeenCalledWith('/profile/update_username', { isu: 123456, username: 'newusername' });
+        expect(mockPutJson).toHaveBeenCalledWith('/profile/update_username/123456?username=newusername');
     });
 
     it('updateHeight calls putJson with correct data', async () => {
