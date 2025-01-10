@@ -173,7 +173,8 @@ class UserData {
                 return -1; // Значение по умолчанию
             }
             this.isu = parseInt(locIsu);
-            this.loadUserData();
+            if (!this.loading)
+                this.loadUserData();
             return this.isu;
         }
         return this.isu;
@@ -273,7 +274,7 @@ class UserData {
                 this.loadUserData();
             }
             console.warn("Gender preference is undefined. Returning default value.");
-            return "Not specified"; // Значение по умолчанию
+            return ""; // Значение по умолчанию
         }
         return this.genderPreference;
     }
@@ -351,16 +352,22 @@ class UserData {
     //     return this.tags;
     // }
 
-     getPhoto() {
+    getPhoto() {
         if (this.photo === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
             console.warn("Photo is undefined. Returning empty string.");
             return ""; // Значение по умолчанию
         }
         return this.photo;
     }
 
-     getAdditionalPhotos() {
+    getAdditionalPhotos() {
         if (this.additionalPhotos === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
             console.warn("Additional photos are undefined. Returning empty array.");
             return []; // Значение по умолчанию
         }

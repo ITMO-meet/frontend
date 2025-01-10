@@ -34,3 +34,11 @@ export interface Tag {
     text: string;
     icon: string;
 }
+
+// Интерфейс для представления информации о человеке
+export interface Person {
+    isu: number; // Уникальный идентификатор
+    logo: string; // Ссылка на изображение
+    username: string; // Имя человека
+    bio: string; // Описание человека
+}
