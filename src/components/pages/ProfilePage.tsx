@@ -45,6 +45,7 @@ const ProfilePage: React.FC = observer(() => {
     const { isPremium } = usePremium();
     const navigate = useNavigate();
 
+
     useEffect(() => { logPageView("/profile"); }, []);
 
     // Обработчик для перехода на страницу редактирования профиля
@@ -75,7 +76,7 @@ const ProfilePage: React.FC = observer(() => {
     ];
 
     if (userData.loading) {
-        return <CircularProgress  />; // Show a loading spinner while data is being fetched
+        return <CircularProgress />; // Show a loading spinner while data is being fetched
     }
 
     return (
@@ -153,7 +154,7 @@ const ProfilePage: React.FC = observer(() => {
                         Interests
                     </Typography>
                     <Box display="flex" gap={1} flexWrap="wrap">
-                        {Object.values(userData.getInterests() || {}).map((interest, index) => (
+                        {userData.getInterests().map((interestName, index) => (
                             <Box
                                 key={index}
                                 display="flex"
@@ -165,7 +166,7 @@ const ProfilePage: React.FC = observer(() => {
                                     gap: "4px",
                                 }}
                             >
-                                <Typography>{interest}</Typography>
+                                <Typography>{interestName}</Typography>
                             </Box>
                         ))}
                     </Box>

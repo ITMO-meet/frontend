@@ -389,12 +389,12 @@ function App() {
     <Provider config={rollbarConfig}>
       <ErrorBoundary level={"error"} fallbackUI={FallbackUI}>
         <ErrorProvider>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <PremiumProvider>
-            <AppContent />
-          </PremiumProvider>
-        </ThemeProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <PremiumProvider>
+              <AppContent />
+            </PremiumProvider>
+          </ThemeProvider>
         </ErrorProvider>
       </ErrorBoundary>
     </Provider>
@@ -408,7 +408,6 @@ function AppContent() {
 
   useEffect(() => {
     initGA();
-    console.log("GA init");
   }, []);
 
   useEffect(() => {
