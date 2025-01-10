@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { ThemeProvider } from '@mui/material';
 import theme from './components/theme';
 import { CssBaseline, Box, Typography } from '@mui/material';
@@ -413,12 +413,6 @@ function AppContent() {
   useEffect(() => {
     logPageView(location.pathname);
   }, [location.pathname]);
-
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const getNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % people.length);
-    return people[currentIndex];
-  }
 
   return (
     <>
