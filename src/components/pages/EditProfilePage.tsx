@@ -47,89 +47,16 @@ import { useNavigate } from 'react-router-dom';
 import { logEvent, logPageView } from '../../analytics';
 import { userData } from '../../stores/UserDataStore';
 import { observer } from 'mobx-react-lite';
+import { fetchTags } from '../../api/register';
+import { Tag } from "../../types";
 
-const interestCategories = [
-    {
-        label: 'Спорт и активный отдых',
-        options: [
-            { name: 'Бег', emoji: '🏃‍♂️' },
-            { name: 'Плавание', emoji: '🏊‍♀️' },
-            { name: 'Йога', emoji: '🧘‍♀️' },
-            { name: 'Велоспорт', emoji: '🚴‍♀️' },
-            { name: 'Спортзал', emoji: '🏋️‍♂️' },
-            { name: 'Лыжи', emoji: '🎿' },
-            { name: 'Сноуборд', emoji: '🏂' },
-            { name: 'Танцы', emoji: '💃' },
-            { name: 'Боевые искусства', emoji: '🥋' },
-            { name: 'Серфинг', emoji: '🏄‍♂️' },
-            { name: 'Хайкинг', emoji: '🏕️' },
-            { name: 'Теннис', emoji: '🎾' },
-            { name: 'Скалолазание', emoji: '🧗‍♀️' },
-        ],
-    },
-    {
-        label: 'Образование и саморазвитие',
-        options: [
-            { name: 'Изучение языков', emoji: '🔖' },
-            { name: 'Научные лекции', emoji: '🎓' },
-            { name: 'Онлайн-курсы', emoji: '💻' },
-            { name: 'Самообразование', emoji: '📚' },
-            { name: 'Медитация', emoji: '🧘' },
-            { name: 'Психология', emoji: '🧠' },
-            { name: 'Философия', emoji: '📜' },
-            { name: 'История', emoji: '🏺' },
-            { name: 'Чтение', emoji: '📖' },
-            { name: 'Технологии', emoji: '💻' },
-        ],
-    },
-    {
-        label: 'Хобби и развлечения',
-        options: [
-            { name: 'Литература', emoji: '📚' },
-            { name: 'Видеоигры', emoji: '🎮' },
-            { name: 'Настольные игры', emoji: '🎲' },
-            { name: 'Путешествия', emoji: '🌍' },
-            { name: 'Выращивание растений', emoji: '🪴' },
-            { name: 'Рыбалка', emoji: '🎣' },
-            { name: 'Прогулки с собаками', emoji: '🐕' },
-            { name: 'Любитель кошек', emoji: '🐈' },
-            { name: 'Автомобили и мотоциклы', emoji: '🏎️' },
-        ],
-    },
-    {
-        label: 'Гастрономия',
-        options: [
-            { name: 'Готовка', emoji: '🍳' },
-            { name: 'Любитель вин', emoji: '🍷' },
-            { name: 'Тур по барам', emoji: '🍻' },
-            { name: 'Кофейный эксперт', emoji: '☕' },
-            { name: 'Чайные церемонии', emoji: '🍵' },
-            { name: 'Вегетарианская кухня', emoji: '🥗' },
-            { name: 'Ресторанный критик', emoji: '🍽️' },
-            { name: 'Любитель сладкого', emoji: '🍰' },
-        ],
-    },
-    {
-        label: 'Творчество и искусство',
-        options: [
-            { name: 'Живопись', emoji: '🎨' },
-            { name: 'Фотография', emoji: '📸' },
-            { name: 'Музыка', emoji: '🎵' },
-            { name: 'Пение', emoji: '🎤' },
-            { name: 'Писательство', emoji: '✍️' },
-            { name: 'Скульптура', emoji: '🗿' },
-            { name: 'Театр', emoji: '🎭' },
-            { name: 'Кино', emoji: '🎬' },
-            { name: 'Рукоделие', emoji: '🧵' },
-        ],
-    },
-];
+
 
 const relationshipIds = [
     { id: "672b44eab151637e969889bb", label: 'Dates', icon: <WineBarIcon /> },
-    { id: "672b44eab151637e969889bc", label: 'Romantic relationships', icon: <FavoriteBorderIcon />},
+    { id: "672b44eab151637e969889bc", label: 'Romantic relationships', icon: <FavoriteBorderIcon /> },
     { id: "672b44eab151637e969889bd", label: 'Friendship', icon: <PeopleIcon /> },
-    { id: "672b44eab151637e969889be",  label: 'Casual Chat', icon: <ChatBubbleOutlineIcon /> },
+    { id: "672b44eab151637e969889be", label: 'Casual Chat', icon: <ChatBubbleOutlineIcon /> },
 ];
 
 const galleryImages: string[] = [
@@ -140,7 +67,7 @@ const galleryImages: string[] = [
     '',
     ''
 ];
- 
+
 
 const EditProfilePage: React.FC = observer(() => {
     const navigate = useNavigate();
@@ -149,7 +76,9 @@ const EditProfilePage: React.FC = observer(() => {
     const relation = relationshipIds.find(p => p.id === userData.getRelationshipPreference())
     const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>(relation ? relation : relationshipIds[0]);
     const [, setSelectedFeatures] = useState<{ [key: string]: string | string[] }>({});
-    const [selectedInterests, setSelectedInterests] = useState<{ [key: string]: string }>(userData.getInterests() || {});
+    const [allTags, setAllTags] = useState<Tag[]>([]);
+    const [selectedTags, setSelectedTags] = useState<string[]>(userData.getInterestIDs() || []);
+    const [loadingTags, setLoadingTags] = useState<boolean>(true);
 
     const targetOptions = [
         { ...relationshipIds[0], description: 'Looking for dates', onClick: () => handleTargetSelect(relationshipIds[0]) },
@@ -168,11 +97,26 @@ const EditProfilePage: React.FC = observer(() => {
         { label: 'Alcohol', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'], onConfirm: v => userData.setAlcohol(v), selectedValue: userData.getAlcohol() },
         { label: 'Smoking', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'], onConfirm: v => userData.setSmoking(v), selectedValue: userData.getSmoking() },
     ];
-    
-    
+
+
     useEffect(() => {
         logPageView('/edit-profile');
     }, []);
+
+    useEffect(() => {
+        const loadTags = async () => {
+            try {
+                const tags = await fetchTags();
+                setAllTags(tags);
+            } catch (err: any) {
+                console.error("Error fetching tags: ", err)
+            } finally {
+                setLoadingTags(false);
+            }
+        };
+
+        loadTags();
+    }, [])
 
     const handleDeleteImage = (index: number) => {
         console.log(`Delete image at index ${index}`);
@@ -205,29 +149,21 @@ const EditProfilePage: React.FC = observer(() => {
         console.log('Premium button clicked from edit');
     }
 
-    const handleInterestSelect = (category: string, interest: string, emoji: string) => {
-        setSelectedInterests((prev) => {
-            const updatedInterests = { ...prev, [category]: `${emoji} ${interest}` };
-            localStorage.setItem('selectedInterests', JSON.stringify(updatedInterests));
-            userData.setInterests(updatedInterests);
-            return updatedInterests;
-        });
+    const handleInterestSelect = (tagId: string) => {
+        setSelectedTags((prev) =>
+            prev.includes(tagId) ? prev.filter(t => t !== tagId) : [...prev, tagId]
+        );
     };
 
-    const handleInterestRemove = (category: string) => {
-        setSelectedInterests((prev) => {
-            const updated = { ...prev };
-            delete updated[category];
-            localStorage.setItem('selectedInterests', JSON.stringify(updated));
-            userData.setInterests(updated);
-            return updated;
-        });
+    const applyInterests = () => {
+        userData.setInterests(selectedTags);
+        setModalOpen(false);
     };
 
     if (userData.loading) {
-        return <CircularProgress  />; // Show a loading spinner while data is being fetched
+        return <CircularProgress />; // Show a loading spinner while data is being fetched
     }
-    
+
     return (
         <Box position="relative" minHeight="100vh" display="flex" flexDirection="column">
             {/* Header */}
@@ -281,127 +217,95 @@ const EditProfilePage: React.FC = observer(() => {
 
                 {/* Interests Section */}
                 <Box p={3}>
-            {/* Заголовок */}
-            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>Интересы</Typography>
+                    {/* Заголовок */}
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>Интересы</Typography>
 
-            {/* Интересы */}
-            <Paper
-                variant="outlined"
-                onClick={() => setModalOpen(true)}
-                sx={{
-                    p: 2,
-                    borderRadius: 3,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    cursor: 'pointer',
-                    '&:hover': { backgroundColor: 'grey.100' },
-                }}
-            >
-                {Object.keys(selectedInterests).length === 0 ? (
-                    <Box>
-                        <Typography sx={{ fontWeight: 'bold' }}>Добавьте свои интересы</Typography>
-                        <Typography sx={{ color: 'grey.600' }}>Расскажите, чем вы увлекаетесь и что вам нравится</Typography>
-                    </Box>
-                ) : (
-                    <Box display="flex" flexWrap="wrap" gap={1}>
-                        {Object.entries(selectedInterests).map(([category, interest]) => (
-                            <Chip
-                                key={category}
-                                label={interest}
-                                onDelete={() => handleInterestRemove(category)}
-                                deleteIcon={<CloseIcon />}
-                                sx={{ fontSize: '14px' }}
-                            />
-                        ))}
-                    </Box>
-                )}
-                <ChevronRightIcon />
-            </Paper>
+                    {/* Интересы */}
+                    <Paper
+                        variant="outlined"
+                        onClick={() => setModalOpen(true)}
+                        sx={{
+                            p: 2,
+                            borderRadius: 3,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            cursor: 'pointer',
+                            '&:hover': { backgroundColor: 'grey.100' },
+                        }}
+                    >
+                        {Object.keys(selectedTags).length === 0 ? (
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold' }}>Добавьте свои интересы</Typography>
+                                <Typography sx={{ color: 'grey.600' }}>Расскажите, чем вы увлекаетесь и что вам нравится</Typography>
+                            </Box>
+                        ) : (
+                            <Box display="flex" flexWrap="wrap" gap={1}>
+                                {selectedTags.map(tagId => {
+                                    const foundTag = allTags.find(t => t.id === tagId);
+                                    if (!foundTag) return null;
 
-            {/* Модальное окно для выбора интересов */}
-            <Modal open={isModalOpen} onClose={() => setModalOpen(false)}>
-    <Paper
-        sx={{
-            width: '90%',
-            maxWidth: '400px',
-            margin: '10% auto',
-            p: 3,
-            borderRadius: 2,
-            outline: 'none',
-            maxHeight: '80vh',
-            overflowY: 'auto',
-            boxShadow: 24,
-        }}
-    >
-        <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
-            Выберите интересы
-        </Typography>
+                                    return (
+                                        <Chip
+                                            key={tagId}
+                                            label={foundTag.text}
+                                            onDelete={() => handleInterestSelect(tagId)}
+                                        />
+                                    );
+                                })}
+                            </Box>
 
-        {/* Перебор категорий */}
-        {interestCategories.map((category) => (
-            <Box key={category.label} mb={3}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>
-                    {category.label}
-                </Typography>
-                <Box display="flex" flexWrap="wrap" gap={1}>
-                    {/* Кнопки интересов */}
-                    {category.options.map((interest) => (
-                        <Button
-                            key={interest.name}
-                            variant={
-                                selectedInterests[category.label] === `${interest.emoji} ${interest.name}`
-                                    ? 'contained'
-                                    : 'outlined'
-                            }
-                            size="small"
-                            onClick={() => handleInterestSelect(category.label, interest.name, interest.emoji)}
+                        )}
+                        <ChevronRightIcon />
+                    </Paper>
+
+                    {/* Модальное окно для выбора интересов */}
+                    <Modal open={isModalOpen} onClose={() => setModalOpen(false)}>
+                        <Paper
                             sx={{
-                                textTransform: 'none',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 0.5,
-                                backgroundColor:
-                                    selectedInterests[category.label] === `${interest.emoji} ${interest.name}`
-                                        ? 'rgba(25, 118, 210, 0.1)'
-                                        : 'transparent',
-                                borderColor:
-                                    selectedInterests[category.label] === `${interest.emoji} ${interest.name}`
-                                        ? '#1976D2'
-                                        : 'rgba(0, 0, 0, 0.23)',
-                                color:
-                                    selectedInterests[category.label] === `${interest.emoji} ${interest.name}`
-                                        ? '#1976D2'
-                                        : 'inherit',
-                                '&:hover': {
-                                    backgroundColor: 'rgba(25, 118, 210, 0.15)',
-                                    borderColor: '#1976D2',
-                                    color: '#1976D2',
-                                },
+                                width: '90%',
+                                maxWidth: '400px',
+                                margin: '10% auto',
+                                p: 3,
+                                borderRadius: 2,
+                                outline: 'none',
+                                maxHeight: '80vh',
+                                overflowY: 'auto',
+                                boxShadow: 24,
                             }}
                         >
-                            {interest.emoji} {interest.name}
-                        </Button>
-                    ))}
+                            <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
+                                Выберите интересы
+                            </Typography>
+
+                            {/* Перебор категорий */}
+                            {loadingTags ? (
+                                <Typography>Загрузка интересов...</Typography>
+                            ) : (
+                                <Box display="flex" flexWrap="wrap" gap={1}>
+                                    {allTags.map(tag => (
+                                        <Button
+                                            key={tag.id}
+                                            variant={
+                                                selectedTags.includes(tag.id) ? 'contained' : 'outlined'
+                                            }
+                                            onClick={() => handleInterestSelect(tag.id)}
+                                        >
+                                            {tag.text}
+                                        </Button>
+                                    ))}
+                                </Box>
+                            )}
+
+                            <Button variant="contained" fullWidth sx={{ mt: 3 }} onClick={applyInterests}>
+                                Применить
+                            </Button>
+                        </Paper>
+                    </Modal>
+
+
+
                 </Box>
-            </Box>
-        ))}
-
-        {/* Кнопка "Применить" */}
-        <Button
-            variant="contained"
-            fullWidth
-            sx={{ mt: 3 }}
-            onClick={() => setModalOpen(false)}
-        >
-            Применить
-        </Button>
-    </Paper>
-</Modal>
-
-
-
-        </Box>
 
                 {/* Gallery Section */}
                 <Box mt={3} width="100%">

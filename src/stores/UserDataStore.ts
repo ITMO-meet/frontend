@@ -1,5 +1,5 @@
 import { makeAutoObservable } from "mobx";
-import { getProfile, updateBio, updateHeight, updateGenderPreference, updateWeight, updateZodiac, updateRelationshipPreferences, updateUsername, updateWorldview, updateChildren, updateLanguages, updateAlcohol, updateSmoking } from "../api/profile";
+import { getProfile, updateBio, updateHeight, updateGenderPreference, updateWeight, updateZodiac, updateRelationshipPreferences, updateUsername, updateWorldview, updateChildren, updateLanguages, updateAlcohol, updateSmoking, updateTags } from "../api/profile";
 import { calculateAge } from "../utils";
 
 class UserData {
@@ -22,12 +22,13 @@ class UserData {
     private additionalPhotos: string[] | undefined
     private alcohol: string | undefined
     private smoking: string | undefined
+    private interestIDs: string[] | null = null;
+    private interests: string[] = [];
 
 
     // dont have db fields (yet?)
     private children: string | null | undefined
     private languages: string[] | null | undefined
-    private interests: { [key: string]: string } | null | undefined
 
     constructor() {
         makeAutoObservable(this);
@@ -76,16 +77,17 @@ class UserData {
 
         this.smoking = profile.mainFeatures.find(feature => feature.icon === "smoking")?.text;
 
-        // TODO: tags, relationshipPreference and other
 
         this.photo = profile.logo
         this.additionalPhotos = profile.photos
+
+        this.interests = (profile.interests || []).map(item => item.text);
+
 
         this.setLoading(false);
     }
 
     // сеттеры.
-    // TODO: отправлять на сервер, photos
     setUsername(username: string) {
         this.username = username;
         if (this.isu) {
@@ -170,26 +172,24 @@ class UserData {
         }
     }
 
-    setInterests(interests: { [key: string]: string }) {
-        this.interests = interests;
-        localStorage.setItem("interests", JSON.stringify(interests)); // Store as JSON string
+    setInterests(newIDs: string[]) {
+        this.interestIDs = newIDs;
+        localStorage.setItem("interestIDs", JSON.stringify(newIDs));
+
+        if (this.isu) {
+            updateTags(this.isu, newIDs)
+                .then(() => {
+                    console.log("Tags updated in DB");
+                    this.loadUserData();
+                })
+                .catch(err => {
+                    console.error("Failed to update tags in DB: ", err);
+                });
+        }
     }
-
-    // setTags(tags: Tag[]) {
-    //     this.tags = tags;
-    // }
-
-    // setPhoto(photo: string) {
-    //     this.photo = photo;
-    // }
-
-    // setAdditionalPhotos(photos: string[]) {
-    //     this.additionalPhotos = photos;
-    // }
 
 
     // геттеры
-    // TODO: если undefined сделать запрос на сервер.
     getIsu() {
         if (this.isu === undefined) {
             const locIsu = localStorage.getItem("isu");
@@ -371,21 +371,21 @@ class UserData {
     }
 
     getInterests() {
-        if (this.interests) {
-            return this.interests;
-        }
-        const i = localStorage.getItem("interests");
-        this.interests = i ? JSON.parse(i) : null; // Parse JSON string
         return this.interests;
     }
 
-    //  getTags() {
-    //     if (this.tags === undefined) {
-    //         console.warn("Tags are undefined. Returning empty array.");
-    //         return []; // Значение по умолчанию
-    //     }
-    //     return this.tags;
-    // }
+    getInterestIDs() {
+        if (!this.interestIDs) {
+            const local = localStorage.getItem("interestIDs");
+            if (local) {
+                this.interestIDs = JSON.parse(local);
+            } else {
+                this.interestIDs = [];
+            }
+        }
+        return this.interestIDs;
+    }
+
 
     getPhoto() {
         if (this.photo === undefined) {

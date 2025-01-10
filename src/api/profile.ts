@@ -121,3 +121,11 @@ export async function updateSmoking(isu: number, smoking: string) {
     params.append('smoking', smoking);
     await putJson(`/profile/update_smoking/${isu}?${params.toString()}`)
 }
+
+export async function updateTags(isu: number, tagIds: string[]) {
+    return await putJson(`/profile/update_tags`, {
+      isu,
+      tags: tagIds
+    });
+  }
+  
