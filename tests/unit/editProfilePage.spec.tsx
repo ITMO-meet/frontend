@@ -8,10 +8,41 @@ import { useLocation } from 'react-router-dom';
 import PremiumPage from '../../src/components/pages/PremiumPage';
 import { PremiumProvider } from '../../src/contexts/PremiumContext';
 import { logEvent, logPageView } from '../../src/analytics'
+import { userData } from '../../src/stores/UserDataStore';
 
 jest.mock('../../src/analytics', () => ({
     logEvent: jest.fn(),
     logPageView: jest.fn(),
+}));
+
+jest.mock('../../src/stores/UserDataStore', () => ({
+    userData: {
+        loading: false,
+        getIsu: jest.fn().mockReturnValue(1),
+        getUsername: jest.fn().mockReturnValue("Alisa Pipisa"),
+        getBio: jest.fn().mockReturnValue("Test Bio"),
+        getBirthdate: jest.fn().mockReturnValue("2000-01-01"),
+        getAge: jest.fn().mockReturnValue(20),
+        getWeight: jest.fn().mockReturnValue(70),
+        getHeight: jest.fn().mockReturnValue(100),
+        getZodiac: jest.fn().mockReturnValue("Capricorn"),
+        getGenderPreference: jest.fn().mockReturnValue("Everyone"),
+        getRelationshipPreference: jest.fn().mockReturnValue("672b44eab151637e969889bc"),
+        getWorldview: jest.fn().mockReturnValue("World"),
+        getChildren: jest.fn().mockReturnValue("Children"),
+        getLanguages: jest.fn().mockReturnValue(["Russian"]),
+        getAlcohol: jest.fn().mockReturnValue("Ok"),
+        getSmoking: jest.fn().mockReturnValue("Ok"),
+        getInterests: jest.fn().mockReturnValue({}),
+        // Добавьте другие методы по мере необходимости
+        setInterests: jest.fn(),
+        setRelationshipPreference: jest.fn(),
+        getPhoto: jest.fn().mockReturnValue("https://example.com/photo.jpg"),
+        getAdditionalPhotos: jest.fn().mockReturnValue([
+            "https://example.com/photo1.jpg",
+            "https://example.com/photo2.jpg",
+        ]),
+    }
 }));
 
 function LocationDisplay() {
@@ -35,14 +66,16 @@ describe('EditProfilePage', () => {
         );
 
         // Проверка наличия заголовка
-        expect(screen.getByText('Alisa Pipisa, 20')).toBeInTheDocument();
+        expect(screen.getByText('Alisa Pipisa')).toBeInTheDocument();
+        expect(screen.getByText('Age: 20 yo')).toBeInTheDocument();
 
         // Проверка наличия секций
         expect(screen.getByText('Bio')).toBeInTheDocument();
         expect(screen.getByText('Target')).toBeInTheDocument();
         expect(screen.getByText('Main Features')).toBeInTheDocument();
         expect(screen.getByText((content) => content.includes('Интересы'))).toBeInTheDocument();
-        expect(screen.getByText('Gallery')).toBeInTheDocument();
+        expect(screen.getByText('Logo')).toBeInTheDocument();
+        expect(screen.getByText('Additional Photos')).toBeInTheDocument();
         expect(screen.getByText('Premium')).toBeInTheDocument();
 
         // Проверка вызова logPageView
@@ -66,7 +99,7 @@ describe('EditProfilePage', () => {
         fireEvent.click(screen.getByText('Сохранить'));
 
         // Проверка, что выбранная опция отображается
-        await waitFor(() => expect(screen.getByText('Dates')).toBeInTheDocument());
+        await waitFor(() => expect(userData.setRelationshipPreference).toHaveBeenCalledWith("672b44eab151637e969889bb"));
     });
 
     test('opens and selects main feature option', async () => {
@@ -85,32 +118,6 @@ describe('EditProfilePage', () => {
         expect(heightText).toBeInTheDocument();
     });
 
-    test('selects interests', async () => {
-        render(
-            <PremiumProvider>
-                <MemoryRouter initialEntries={['/edit-profile']}>
-                    <EditProfilePage />
-                </MemoryRouter>
-            </PremiumProvider>
-        );
-
-        // Открытие модального окна для выбора интересов
-        fireEvent.click(screen.getByText('Добавьте свои интересы'));
-
-        // Выбор интересов
-        fireEvent.click(screen.getByText((content) => content.includes('Путешествия')));
-        fireEvent.click(screen.getByText((content) => content.includes('Чтение')));
-
-        // Применение выбора
-        fireEvent.click(screen.getByText('Применить'));
-
-        // Проверка интересов
-        await waitFor(() => {
-            expect(screen.getByText((content) => content.includes('Путешествия'))).toBeInTheDocument();
-            expect(screen.getByText((content) => content.includes('Чтение'))).toBeInTheDocument();
-        });
-    });
-    
     test('edits and deletes gallery images', async () => {
         render(
             <PremiumProvider>

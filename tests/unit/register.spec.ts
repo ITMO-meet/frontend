@@ -8,6 +8,7 @@ import {
     selectRelationship,
     fetchTags,
     fetchPreferences,
+    profileDetails,
 } from '../../src/api/register';
 import * as apiIndex from '../../src/api/index';
 import {any} from "prop-types";
@@ -32,6 +33,20 @@ describe('register API', () => {
         mockPostJson.mockResolvedValue({});
         await selectUsername({ isu: 123456, username: 'testuser' });
         expect(mockPostJson).toHaveBeenCalledWith('/auth/register/select_username', { isu: 123456, username: 'testuser' });
+    });
+
+    it('profileDetails calls postJson with correct data', async () => {
+        mockPostJson.mockResolvedValue({});
+        const profileData = {
+            isu: 123456,
+            bio: 'Hello, I am a test user.',
+            height: 175,
+            weight: 70,
+            zodiac_sign: 'Aquarius'
+        };
+
+        await profileDetails(profileData);
+        expect(mockPostJson).toHaveBeenCalledWith('/auth/register/profile_details', profileData);
     });
 
     it('selectPreferences calls postJson with correct data', async () => {
@@ -70,16 +85,32 @@ describe('register API', () => {
     });
 
     it('fetchTags calls getJson and transforms result', async () => {
-        mockGetJson.mockResolvedValue({ tags: [{ name: 'music' }, { name: 'gym' }] });
+        mockGetJson.mockResolvedValue([
+            { id: 'tag1', text: 'Music', icon: 'tag' },
+            { id: 'tag2', text: 'Gym', icon: 'tag' },
+        ]);
         const result = await fetchTags();
         expect(mockGetJson).toHaveBeenCalledWith('/tags');
-        expect(result).toEqual(['music','gym']);
+        expect(result).toEqual([
+            { id: 'tag1', text: 'Music', icon: 'tag' },
+            { id: 'tag2', text: 'Gym', icon: 'tag' },
+        ]);
     });
 
     it('fetchPreferences calls getJson and transforms result', async () => {
-        mockGetJson.mockResolvedValue({ preferences: [{ name: 'friendship' }, { name: 'dating' }] });
+        mockGetJson.mockResolvedValue({
+            preferences: [
+                { id: 'pref1', text: 'Friendship', icon: 'relationship_preferences' },
+                { id: 'pref2', text: 'Dating', icon: 'relationship_preferences' },
+            ]
+        });
         const result = await fetchPreferences();
         expect(mockGetJson).toHaveBeenCalledWith('/preferences');
-        expect(result).toEqual(['friendship','dating']);
+        expect(result).toEqual([
+            { id: 'pref1', text: 'Friendship', icon: 'relationship_preferences' },
+            { id: 'pref2', text: 'Dating', icon: 'relationship_preferences' },
+        ]);
     });
+
+
 });

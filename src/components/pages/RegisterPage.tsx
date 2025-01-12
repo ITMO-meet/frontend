@@ -33,6 +33,7 @@ export const RegisterPage: React.FC = () => {
 	const [direction, setDirection] = useState(1); // Initialize direction state
 
 	const isu = Number(localStorage.getItem('isu') || '0');
+	const [bio, setBio] = useState("");
 
 	const handleNext = async () => {
 		setDirection(1); // Set direction to forward
@@ -41,6 +42,11 @@ export const RegisterPage: React.FC = () => {
 			handleFinish();
 		}
 	};
+
+	const handleNextBio = async ({bio} : {bio: string}) => {
+		setBio(bio);
+		handleNext();
+	}
 
 	const handleBack = () => {
 		setDirection(-1); // Set direction to backward
@@ -58,9 +64,9 @@ export const RegisterPage: React.FC = () => {
 			case 'username':
 				return <UsernameStep isu={isu} onNext={handleNext} />;
 			case 'bio':
-				return <BioStep onNext={handleNext} />;
+				return <BioStep isu={isu} onNext={handleNextBio} />;
 			case 'main-feats':
-				return <MainFeaturesStep onNext={handleNext} />;
+				return <MainFeaturesStep isu={isu} bio={bio} onNext={handleNext} />;
 			case 'gender':
 				return <GenderStep isu={isu} onNext={handleNext} />;
 			case 'tags':

@@ -20,8 +20,8 @@
  * - Компонент предназначен для отображения профиля пользователя с возможностью редактирования.
  */
 
-import React, { useEffect, useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import React, { useEffect } from 'react';
+import { Box, CircularProgress, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SettingsIcon from '@mui/icons-material/Settings';
 import StraightenIcon from '@mui/icons-material/Straighten';
@@ -36,10 +36,15 @@ import NavBar from '../basic/NavBar';
 import PhotoListing from '../basic/PhotoListing';
 import { usePremium } from '../../contexts/PremiumContext';
 import { logEvent, logPageView } from '../../analytics';
+import { userData } from '../../stores/UserDataStore';
+import { observer } from 'mobx-react-lite';
+import MonitorWeightIcon from '@mui/icons-material/MonitorWeight';
 
-const ProfilePage: React.FC = () => {
+
+const ProfilePage: React.FC = observer(() => {
     const { isPremium } = usePremium();
     const navigate = useNavigate();
+
 
     useEffect(() => { logPageView("/profile"); }, []);
 
@@ -57,37 +62,22 @@ const ProfilePage: React.FC = () => {
     };
 
     // Массив фотографий профиля
-    const photos = [
-        '/images/profile_photo1.png',
-        '/images/profile_photo2.jpg',
-        '/images/profile_photo3.jpg',
-    ];
+    const photos = [userData.getPhoto(), ...userData.getAdditionalPhotos()].filter(photo => photo !== "");
 
     // Данные для секции "Main Features"
     const mainFeatures = [
-        { text: '170 cm', icon: <StraightenIcon /> },
-        { text: 'Atheism', icon: <ChurchIcon /> },
-        { text: 'Aries', icon: <Typography sx={{ fontSize: 20 }}>♈️</Typography> },
-        { text: 'No but would like', icon: <ChildCareIcon /> },
-        { text: 'Neutral', icon: <LocalBarIcon /> },
-        { text: 'Neutral', icon: <SmokingRoomsIcon /> },
+        { text: `${userData.getHeight()} cm`, icon: <StraightenIcon /> },
+        { text: `${userData.getWeight()} kg`, icon: <MonitorWeightIcon /> },
+        { text: `${userData.getWorldview()}`, icon: <ChurchIcon /> },
+        { text: `${userData.getZodiac()}`, icon: <Typography sx={{ fontSize: 20 }}>♈️</Typography> },
+        { text: `${userData.getChildren()}`, icon: <ChildCareIcon /> },
+        { text: `${userData.getAlcohol()}`, icon: <LocalBarIcon /> },
+        { text: `${userData.getSmoking()}`, icon: <SmokingRoomsIcon /> },
     ];
 
-    // Данные для секции "Interests"
-    const [interests, setInterests] = useState<{ [key: string]: string }>({});
-
-    useEffect(() => {
-        const storedInterests = localStorage.getItem('selectedInterests');
-        if (storedInterests) {
-            setInterests(JSON.parse(storedInterests));
-        }
-    }, []);
-
-    // Данные для секции "Languages"
-    const languages = [
-        { text: 'English', flagCode: 'us' },
-        { text: 'Russian', flagCode: 'ru' },
-    ];
+    if (userData.loading) {
+        return <CircularProgress />; // Show a loading spinner while data is being fetched
+    }
 
     return (
         <Box display="flex" flexDirection="column" minHeight="100vh">
@@ -106,7 +96,7 @@ const ProfilePage: React.FC = () => {
             <Box p={3} sx={{ backgroundColor: '#ffffff', flexGrow: 1, zIndex: 1 }}>
                 {/* Основная информация с кнопкой редактирования */}
                 <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>Alisa Pipisa, 20</Typography>
+                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{userData.getUsername()}, {userData.getAge()}</Typography>
                     <ImageButton onClick={handleEditClick}>
                         <EditIcon />
                     </ImageButton>
@@ -127,7 +117,7 @@ const ProfilePage: React.FC = () => {
                     </Typography>
                     <Box sx={{ border: '1px solid #ddd', borderRadius: '8px', padding: 2 }}>
                         <Typography variant="body1" textAlign="left">
-                            My name is Alisa Pipisa, and I enjoy meeting new people and finding ways to help them have an uplifting experience. I enjoy reading...
+                            {userData.getBio()}
                         </Typography>
                     </Box>
                 </Box>
@@ -164,7 +154,7 @@ const ProfilePage: React.FC = () => {
                         Interests
                     </Typography>
                     <Box display="flex" gap={1} flexWrap="wrap">
-                        {Object.values(interests).map((interest, index) => (
+                        {userData.getInterests().map((interestName, index) => (
                             <Box
                                 key={index}
                                 display="flex"
@@ -176,7 +166,7 @@ const ProfilePage: React.FC = () => {
                                     gap: "4px",
                                 }}
                             >
-                                <Typography>{interest}</Typography>
+                                <Typography>{interestName}</Typography>
                             </Box>
                         ))}
                     </Box>
@@ -188,7 +178,7 @@ const ProfilePage: React.FC = () => {
                         Languages
                     </Typography>
                     <Box display="flex" gap={1} flexWrap="wrap">
-                        {languages.map((language, index) => (
+                        {(userData.getLanguages() || []).map((language, index) => (
                             <Box
                                 key={index}
                                 display="flex"
@@ -201,7 +191,7 @@ const ProfilePage: React.FC = () => {
                                     gap: "4px"
                                 }}
                             >
-                                <Typography>{language.text}</Typography>
+                                <Typography>{language}</Typography>
                             </Box>
                         ))}
                     </Box>
@@ -219,6 +209,6 @@ const ProfilePage: React.FC = () => {
             </Box>
         </Box>
     );
-};
+});
 
 export default ProfilePage;

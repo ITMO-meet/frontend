@@ -13,7 +13,8 @@ import {
     TextField,
     List,
     ListItemText,
-    ListItemButton
+    ListItemButton,
+    CircularProgress
 } from '@mui/material';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -22,6 +23,7 @@ import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useNavigate } from 'react-router-dom';
 import { logEvent, logPageView } from '../../analytics';
+import { userData } from '../../stores/UserDataStore';
 
 const SettingsPage: React.FC = () => {
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -65,6 +67,10 @@ const SettingsPage: React.FC = () => {
         navigate('/login');
     }
 
+    if (userData.loading) {
+        return <CircularProgress  />; // Show a loading spinner while data is being fetched
+    }
+
     return (
         <Box sx={{ px: 2, py: 1 }}>
             <Box display="flex" alignItems="center" mb={2}>
@@ -83,17 +89,17 @@ const SettingsPage: React.FC = () => {
             <Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                     <Typography>Имя</Typography>
-                    <Typography color="text.secondary">Алиса</Typography>
+                    <Typography color="text.secondary">{userData.getUsername()}</Typography>
                 </Box>
                 <Divider />
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                     <Typography>Дата рождения</Typography>
-                    <Typography color="text.secondary">01 дек. 2004</Typography>
+                    <Typography color="text.secondary">{userData.getBirthdate()}</Typography>
                 </Box>
                 <Divider />
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                     <Typography>Пол</Typography>
-                    <Typography color="text.secondary">Женщина</Typography>
+                    <Typography color="text.secondary">{userData.getGender()}</Typography>
                 </Box>
             </Box>
 

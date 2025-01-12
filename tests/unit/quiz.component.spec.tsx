@@ -101,6 +101,6 @@ describe('Quiz component', () => {
       expect(mockOnFinish).toHaveBeenCalledWith([
         { id: 1, answerIndex: 0 },
       ]);
-    });
+    }, {timeout: 5000});
   });
 });

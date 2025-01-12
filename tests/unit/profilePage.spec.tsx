@@ -14,6 +14,34 @@ jest.mock('../../src/analytics', () => ({
     logPageView: jest.fn(),
 }));
 
+jest.mock('../../src/stores/UserDataStore', () => ({
+    userData: {
+        loading: false,
+        getIsu: jest.fn().mockReturnValue(1),
+        getUsername: jest.fn().mockReturnValue("Alisa Pipisa"),
+        getBio: jest.fn().mockReturnValue("Test Bio"),
+        getBirthdate: jest.fn().mockReturnValue("2000-01-01"),
+        getAge: jest.fn().mockReturnValue(20),
+        getWeight: jest.fn().mockReturnValue(70),
+        getHeight: jest.fn().mockReturnValue(100),
+        getZodiac: jest.fn().mockReturnValue("Capricorn"),
+        getGenderPreference: jest.fn().mockReturnValue("Everyone"),
+        getRelationshipPreference: jest.fn().mockReturnValue("672b44eab151637e969889bc"),
+        getWorldview: jest.fn().mockReturnValue("World"),
+        getChildren: jest.fn().mockReturnValue("Children"),
+        getLanguages: jest.fn().mockReturnValue(["Russian"]),
+        getAlcohol: jest.fn().mockReturnValue("Ok"),
+        getSmoking: jest.fn().mockReturnValue("Ok"),
+        getInterests: jest.fn().mockReturnValue(["Reading", "Traveling", "Cooking"]),
+        // Добавьте другие методы по мере необходимости
+        setInterests: jest.fn(),
+        setRelationshipPreference: jest.fn(),
+        getPhoto: jest.fn(),
+        getAdditionalPhotos: jest.fn().mockReturnValue(["https://example.com/photo1.png", "https://example.com/photo2.png"]),
+        getGender: jest.fn()
+    }
+}));
+
 describe('ProfilePage', () => {
     beforeEach(() => {
         jest.clearAllMocks();
