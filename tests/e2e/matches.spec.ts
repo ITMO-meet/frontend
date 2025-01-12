@@ -2,7 +2,7 @@ import { page } from './setup';
 import { makeLogin } from './utils';
 import { expect } from '@playwright/test';
 
-describe('Feed page', function() {
+describe('Matches page', function() {
     beforeEach(async function() {
         await makeLogin(page);
         await page.click("text=Matches"); 
@@ -38,6 +38,7 @@ describe('Feed page', function() {
 
         // we have access
         await expect(await page.locator("text=Метчи разблокируются после покупки премиума.")).toHaveCount(0);
+        await expect(await page.locator("text=View profile")).toHaveCount(1);
     });
 
     it('Test navigation', async function() {
@@ -58,6 +59,7 @@ describe('Feed page', function() {
         
         // access not granted
         await expect(await page.locator("text=У вас премиум-аккаунт!")).toHaveCount(0);
+        await expect(await page.getByText('Bio', { exact: true })).toHaveCount(1);
         await page.click("text=Matches", {timeout: 5000})
 
         // redirect to profile

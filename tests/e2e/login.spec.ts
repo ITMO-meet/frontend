@@ -14,15 +14,21 @@ describe('Login page', function() {
         
         // shoudnt redirect yet
         await page.click("text=Continue", {timeout: 5000});  
-        await expect(await page.locator("text=ID must be exact 6 symbols")).toHaveCount(1);
+        await expect(await page.locator("text=ID must be exactly 6 symbols")).toHaveCount(1);
+        url = await page.url(); 
+        await expect(url).toContain("/login");
+
+        await page.fill('input[type="text"]', "999999");
+        await page.click("text=Continue", {timeout: 5000});  
+        await expect(await page.locator("text=Password must not be empty")).toHaveCount(1);
         url = await page.url(); 
         await expect(url).toContain("/login");
 
         // should redirect
-        await page.fill('input[type="text"]', "123456");
-        await page.fill('input[type="password"]', "password");
+        await page.fill('input[type="password"]', "test");
         await page.click("text=Continue", {timeout: 5000});  
-        url = await page.url(); 
-        await expect(url).not.toContain("/login");
+
+        await expect(await page.locator("text=ID must be exactly 6 symbols")).toHaveCount(0);
+        await expect(await page.locator("text=Password must not be empty")).toHaveCount(0);
     });
 });

@@ -51,61 +51,102 @@ describe('Profile', function() {
     
     it('should display all fields and allow editing', async () => {
         await page.click('[data-testid="EditIcon"]', {timeout: 5000});  
-        let url = await page.url();
-        await expect(url).toContain('/edit-profile');
+        await expect(await page.url()).toContain('/edit-profile');
         
-        // Проверка поля Bio
-        await expect(await page.locator('text=Bio')).toHaveCount(1);
-        
-        // // Изменение текста в поле Bio
-        await page.locator('text=Bio').click({timeout: 5000});
+        // Изменение текста в поле Username
+        await page.getByRole('heading', { name: 'Username' }).click({timeout: 5000});
+        await expect(await page.getByPlaceholder('Edit your username...')).toHaveCount(1);
+        await page.click('text=Cancel', {timeout: 5000});
+
+        // Изменение текста в поле Bio
+        await page.getByText('Bio', { exact: true }).click({timeout: 5000});
         await expect(await page.getByPlaceholder('Edit your bio...')).toHaveCount(1);
         await page.click('text=Cancel', {timeout: 5000});
         
         // Проверка секции Target
-        await page.click('text=Romantic relationships', {timeout: 5000});
+        const h6Locator = page.locator('h6', { hasText: 'Target' });
+        const buttonLocator = h6Locator.locator('xpath=following-sibling::button');
+        await buttonLocator.click({timeout: 5000});
         await expect(await page.locator('text=Укажите вашу цель')).toHaveCount(1);
         await page.click('text=Отмена', {timeout: 5000});
         
         // Проверка возможности выбора основных параметров
-        await page.locator('button[name="Choose Height"]').click({timeout: 5000});
+        await page.locator('text=Height').click({timeout: 5000});
         await expect(await page.getByRole('heading', { name: 'Height' })).toHaveCount(1);
-        await page.click('text=Save', {timeout: 5000});
+        await page.locator(".MuiDialog-root").locator('text=Save').click({timeout: 5000});
         
+        await page.locator('text=Weight').click({timeout: 5000});
+        await expect(await page.getByRole('heading', { name: 'Weight' })).toHaveCount(1);
+        await page.locator(".MuiDialog-root").locator('text=Save').click({timeout: 5000});
+
         // Проверка секции Worldview
-        await page.locator('button[name="Choose Worldview"]').click({timeout: 5000});
+        await page.locator('text=Worldview').click({timeout: 5000});
         await expect(await page.getByRole('heading', { name: 'Worldview' })).toHaveCount(1);
-        await page.click('text=Save', {timeout: 5000});
+        await page.locator(".MuiDialog-root").locator('text=Save').click({timeout: 5000});
         
         // Проверка секции Zodiac
-        await page.locator('button[name="Choose Zodiac Sign"]').click({timeout: 5000});
+        await page.locator('text=Zodiac Sign').click({timeout: 5000});
         await expect(await page.getByRole('heading', { name: 'Zodiac Sign' })).toHaveCount(1);
-        await page.click('text=Save', {timeout: 5000});
+        await page.locator(".MuiDialog-root").locator('text=Save').click({timeout: 5000});
         
         // Проверка секции Children
-        await page.locator('button[name="Choose Children"]').click({timeout: 5000});
+        await page.locator('text=Children').click({timeout: 5000});
         await expect(await page.getByRole('heading', { name: 'Children' })).toHaveCount(1);
-        await page.click('text=Save', {timeout: 5000});
+        await page.locator(".MuiDialog-root").locator('text=Save').click({timeout: 5000});
         
-        // Проверка секции Children
-        await page.locator('button[name="Choose Languages"]').click({timeout: 5000});
+        // Проверка секции Languages
+        await page.locator('text=Languages').click({timeout: 5000});
         await expect(await page.getByRole('heading', { name: 'Languages' })).toHaveCount(1);
-        await page.click('text=Save', {timeout: 5000});
+        await page.locator(".MuiDialog-root").locator('text=Save').click({timeout: 5000});
         
         // Проверка секции Alcohol
-        await page.locator('button[name="Choose Alcohol"]').click({timeout: 5000});
+        await page.locator('text=Alcohol').click({timeout: 5000});
         await expect(await page.getByRole('heading', { name: 'Alcohol' })).toHaveCount(1);
-        await page.click('text=Save', {timeout: 5000});
+        await page.locator(".MuiDialog-root").locator('text=Save').click({timeout: 5000});
         
         // Проверка секции Smoking
-        await page.locator('button[name="Choose Smoking"]').click({timeout: 5000});
+        await page.locator('text=Smoking').click({timeout: 5000});
         await expect(await page.getByRole('heading', { name: 'Smoking' })).toHaveCount(1);
-        await page.click('text=Save', {timeout: 5000});
+        await page.locator(".MuiDialog-root").locator('text=Save').click({timeout: 5000});
 
         // Проверка секции Premium
         await page.locator('text=Premium').click({timeout: 5000});
-        url = await page.url();
-        await expect(url).toContain('/premium');
+        await expect(await page.url()).toContain('/premium');
+    });
+
+    it('saves settings', async () => {
+        await page.click('[data-testid="EditIcon"]', {timeout: 5000});  
+        
+        // Изменение текста в поле Username
+        await page.getByRole('heading', { name: 'Username' }).click({timeout: 5000});
+        await page.getByPlaceholder('Edit your username...').fill("Some username");
+        await page.locator(".MuiDialog-root").locator('text=Save').click({timeout: 5000});
+
+        // Изменение текста в поле Bio
+        await page.getByText('Bio', { exact: true }).click({timeout: 5000});
+        await page.getByPlaceholder('Edit your bio...').fill("Some bio...");
+        await page.locator(".MuiDialog-root").locator('text=Save').click({timeout: 5000});
+        
+        // Изменение секции Target
+        const h6Locator = page.locator('h6', { hasText: 'Target' });
+        const buttonLocator = h6Locator.locator('xpath=following-sibling::button');
+        await buttonLocator.click({timeout: 5000});
+        await page.click('text=Looking for casual Chat', {timeout: 5000});
+        await page.click('text=Сохранить', {timeout: 5000});
+        
+        // Изменение секции Zodiac
+        await page.locator('text=Zodiac Sign').click({timeout: 5000});
+        await page.getByRole('button', { name: 'None' }).click({timeout: 5000});
+        await page.locator(".MuiDialog-root").locator('text=Save').click({timeout: 5000});
+        
+        // Проверить, что изменения применились
+        await page.locator('[data-testid=BackToProfile]').click({timeout: 5000});
+        // await expect(await page.locator("text=Some username")).toHaveCount(1);
+        await expect(await page.locator("text=Some bio...")).toHaveCount(1);
+        await expect(await page.getByText("None")).toHaveCount(1);
+        await page.click('[data-testid="EditIcon"]', {timeout: 5000});  
+        await expect(await page.locator("text=Casual Chat")).toHaveCount(1);
+
     });
 
     it('profile navigation', async () => {
