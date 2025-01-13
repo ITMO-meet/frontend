@@ -31,7 +31,7 @@ describe('profile API', () => {
             isStudent: false,
             selected_preferences: [],
         };
-        mockGetJson.mockResolvedValue(mockPerson);
+        mockGetJson.mockResolvedValue({ profile: mockPerson });
         const result = await getRandomPerson(123456);
         expect(mockGetJson).toHaveBeenCalledWith('/matches/random_person?user_id=123456');
         expect(result).toEqual(mockPerson);
