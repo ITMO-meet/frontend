@@ -69,11 +69,13 @@ const EditProfilePage: React.FC = observer(() => {
     const navigate = useNavigate();
     const [isModalOpen, setModalOpen] = useState(false);
 
-    const relation = relationshipIds.find(p => p.id === userData.getRelationshipPreference())
-    const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>(relation ? relation : relationshipIds[0]);
+    const initRelation = relationshipIds.find(p => p.id === userData.getRelationshipPreference()) || relationshipIds[0];
+    const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>();
     const [, setSelectedFeatures] = useState<{ [key: string]: string | string[] }>({});
     const [allTags, setAllTags] = useState<Tag[]>([]);
-    const [selectedTags, setSelectedTags] = useState<string[]>(userData.getInterests() || []);
+
+    const initTags = userData.getInterestIDs() || [];
+    const [selectedTags, setSelectedTags] = useState<string[]>();
     const [loadingTags, setLoadingTags] = useState<boolean>(true);
 
     const targetOptions = [
@@ -274,13 +276,17 @@ const EditProfilePage: React.FC = observer(() => {
     }
 
     const handleInterestSelect = (tagId: string) => {
-        setSelectedTags((prev) =>
-            prev.includes(tagId) ? prev.filter(t => t !== tagId) : [...prev, tagId]
+        setSelectedTags((prev) => {
+                const p = prev || initTags;
+                const newP = p.includes(tagId) ? p.filter(t => t !== tagId) : [...p, tagId];
+                userData.setInterests(newP);
+                return newP;
+            }
         );
     };
 
     const applyInterests = () => {
-        userData.setInterests(selectedTags);
+        // userData.setInterests(selectedTags || []);
         setModalOpen(false);
     };
 
@@ -322,7 +328,7 @@ const EditProfilePage: React.FC = observer(() => {
                 {/* Target Section */}
                 <Box mt={2} width="100%">
                     <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>Target</Typography>
-                    <TargetSheetButton label={selectedTarget.label} icon={selectedTarget.icon} options={targetOptions} onSelect={handleTargetSelect} />
+                    <TargetSheetButton label={selectedTarget?.label || initRelation.label} icon={selectedTarget?.icon || initRelation.icon} options={targetOptions} onSelect={handleTargetSelect} />
                 </Box>
 
                 {/* Main Features Section */}
@@ -358,14 +364,14 @@ const EditProfilePage: React.FC = observer(() => {
                             '&:hover': { backgroundColor: 'grey.100' },
                         }}
                     >
-                        {Object.keys(selectedTags).length === 0 ? (
+                        {Object.keys(selectedTags || initTags).length === 0 ? (
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold' }}>Добавьте свои интересы</Typography>
                                 <Typography sx={{ color: 'grey.600' }}>Расскажите, чем вы увлекаетесь и что вам нравится</Typography>
                             </Box>
                         ) : (
                             <Box display="flex" flexWrap="wrap" gap={1}>
-                                {selectedTags.map(tagId => {
+                                {(selectedTags || initTags).map(tagId => {
                                     const foundTag = allTags.find(t => t.id === tagId);
                                     if (!foundTag) return null;
 
@@ -411,7 +417,7 @@ const EditProfilePage: React.FC = observer(() => {
                                         <Button
                                             key={tag.id}
                                             variant={
-                                                selectedTags.includes(tag.id) ? 'contained' : 'outlined'
+                                                (selectedTags || initTags).includes(tag.id) ? 'contained' : 'outlined'
                                             }
                                             onClick={() => handleInterestSelect(tag.id)}
                                         >

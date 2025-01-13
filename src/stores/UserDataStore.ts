@@ -44,42 +44,41 @@ class UserData {
         this.username = profile.username;
         this.bio = profile.bio;
 
-        const temp_gender = profile.mainFeatures.find(feature => feature.icon === "gender")?.text;
+        const temp_gender = profile.mainFeatures.find(feature => feature?.icon === "gender")?.text;
         this.gender = temp_gender ? temp_gender?.charAt(0).toUpperCase() + temp_gender?.slice(1) : "Helicopter"
 
-        const birthdate = profile.mainFeatures.find(feature => feature.icon === "birthdate")?.text;
+        const birthdate = profile.mainFeatures.find(feature => feature?.icon === "birthdate")?.text;
         this.age = birthdate ? calculateAge(birthdate) : 20;
         this.birthdate = birthdate;
 
-        const weightFeature = profile.mainFeatures.find(feature => feature.icon === "weight")?.text;
+        const weightFeature = profile.mainFeatures.find(feature => feature?.icon === "weight")?.text;
         this.weight = weightFeature ? parseFloat(weightFeature.split(" ")[0]) : 80; // Assuming weight is stored as a string
 
-        const heightFeature = profile.mainFeatures.find(feature => feature.icon === "height")?.text;
+        const heightFeature = profile.mainFeatures.find(feature => feature?.icon === "height")?.text;
         this.height = heightFeature ? parseFloat(heightFeature.split(" ")[0]) : 170; // Assuming height is stored as a string
 
-        this.zodiac = profile.mainFeatures.find(feature => feature.icon === "zodiac_sign")?.text || "None";
+        this.zodiac = profile.mainFeatures.find(feature => feature?.icon === "zodiac_sign")?.text || "None";
         this.genderPreference = profile.gender_preferences[0]?.text || "Everyone"
 
         this.relationshipPreferenceId = profile.relationship_preferences[0]?.id || "672b44eab151637e969889bb"; // default is "Dates"
 
-        this.worldview = profile.mainFeatures.find(feature => feature.icon === "worldview")?.text || "Default";
+        this.worldview = profile.mainFeatures.find(feature => feature?.icon === "worldview")?.text || "Default";
 
-        this.children = profile.mainFeatures.find(feature => feature.icon === "children")?.text || "Default";
+        this.children = profile.mainFeatures.find(feature => feature?.icon === "children")?.text || "Default";
 
         const languagesFeature = profile.mainFeatures[7];
         this.languages = languagesFeature ? languagesFeature.map((item: { text: string; }) => item.text) : [];
 
-        this.alcohol = profile.mainFeatures.find(feature => feature.icon === "alcohol")?.text || "Default";
+        this.alcohol = profile.mainFeatures.find(feature => feature?.icon === "alcohol")?.text || "Default";
 
-        this.smoking = profile.mainFeatures.find(feature => feature.icon === "smoking")?.text || "Default";
+        this.smoking = profile.mainFeatures.find(feature => feature?.icon === "smoking")?.text || "Default";
 
 
         this.photo = profile.logo
         this.additionalPhotos = profile.photos
 
         this.interests = (profile.interests || []).map(item => item.text);
-
-
+        
         this.setLoading(false);
     }
 
