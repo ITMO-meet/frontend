@@ -12,6 +12,13 @@ export interface Contact {
     stories: Story[];
 }
 
+export interface Person {
+    isu: number
+    bio: string
+    logo: string
+    username: string
+}
+
 export interface Message {
     sender: 'me' | 'them';
     text: string;

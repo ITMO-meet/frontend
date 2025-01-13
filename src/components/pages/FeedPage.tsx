@@ -175,7 +175,14 @@ const FeedPage: React.FC<Props> = observer(({ onLike, onDislike, onSuperLike }) 
                     flexDirection: "column", // Вертикальная ориентация
                     justifyContent: "space-between", // Распределение пространства между элементами
                 }}>
-                    <CardMedia component="img" image={person.logo} alt={person.username} /> {/* Изображение человека */}
+                    <CardMedia component="img" image={person.logo || '/images/placeholder.png'} alt={person.username} 
+                    sx={{
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: '#fff',
+                        objectFit: 'contain',
+                    }}
+                    /> {/* Изображение человека */}
                     {iconVisible && (
                         <Box sx={{
                             position: 'absolute',
