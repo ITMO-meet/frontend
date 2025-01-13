@@ -2,17 +2,17 @@ import { makeAutoObservable } from "mobx";
 import { getRandomPerson } from "../api/feed";
 import { userData } from "./UserDataStore";
 import { Profile } from "../api/profile";
-import { use } from "chai";
+import { calculateAge } from "../utils";
 
 class FeedStore {
     loading: boolean = false;
 
-    private person : Profile | undefined 
+    private person: Profile | undefined
 
     // dont have db fields
     private agePreference: number[] | undefined
     private heightPreference: number[] | undefined
-    private relationshipPreference : string[] | undefined // is this the same as userData.relationshipPreference ???
+    private relationshipPreference: string[] | undefined // is this the same as userData.relationshipPreference ???
 
     constructor() {
         makeAutoObservable(this);
@@ -35,40 +35,49 @@ class FeedStore {
     // custom methods
     async loadNewPerson() {
         this.setLoading(true);
-    
+
         let attempt = 0;
         const maxAttempt = 10;
         let profile: Profile | undefined;
-    
-        const preferredGender  = userData.getGenderPreference();
-        console.log("Preferred: ", preferredGender);
-    
+
+        const preferredGender = userData.getGenderPreference();
+        const agePreference = this.getAgePreference();
+        console.log("Preferred Gender:", preferredGender, "Age Preference:", agePreference);
+
         do {
             profile = await getRandomPerson(userData.getIsu());
             attempt++;
-            
-            if (preferredGender.trim().toLowerCase() === "other") {
+
+
+            let genderOk = true;
+            if (preferredGender.trim().toLowerCase() !== "everyone") {
+                const profileGenderFeature = profile.mainFeatures.find(f => f.icon === "gender");
+                const profileGender = profileGenderFeature ? profileGenderFeature.text : "";
+                genderOk = profileGender.trim().toLowerCase() === preferredGender.trim().toLowerCase();
+            }
+
+            let ageOk = false;
+            const birthdateFeature = profile.mainFeatures.find(f => f.icon === "birthdate");
+            if (birthdateFeature && birthdateFeature.text) {
+                const profileAge = calculateAge(birthdateFeature.text);
+                ageOk = profileAge >= agePreference[0] && profileAge <= agePreference[1];
+            }
+
+            if (genderOk && ageOk) {
                 break;
             }
-    
-            const profileGenderFeature = profile.mainFeatures.find(f => f.icon === "gender");
-            const profileGender = profileGenderFeature ? profileGenderFeature.text : "";
-            console.log("Profile gender:", profileGender);
-    
-            if (profileGender.trim().toLowerCase() === preferredGender.trim().toLowerCase()) {
-                break;
-            }
-    
+
             if (attempt >= maxAttempt) {
+                console.warn("Не найден профиль, удовлетворяющий фильтрам за максимальное число попыток.");
                 break;
             }
         } while (true);
-    
+
         this.person = profile;
-        console.log("Loaded:", profile);
+        console.log("Loaded Profile:", profile);
         this.setLoading(false);
         return this.person;
-    }    
+    }
 
     // setters
     setAgePreference(agePreference: number[]) {
