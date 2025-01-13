@@ -1,12 +1,12 @@
 import { makeAutoObservable } from "mobx";
-import { Person } from "../types";
 import { getRandomPerson } from "../api/feed";
 import { userData } from "./UserDataStore";
+import { Profile } from "../api/profile";
 
 class FeedStore {
     loading: boolean = false;
 
-    private person : Person | undefined 
+    private person : Profile | undefined 
 
     // dont have db fields
     private agePreference: number[] | undefined
@@ -34,7 +34,7 @@ class FeedStore {
     // custom methods
     async loadNewPerson() {
         const profile = await getRandomPerson(userData.getIsu());
-        this.person = {isu: profile.isu, bio: profile.bio, logo: profile.logo, username: profile.username}
+        this.person = profile
         return this.person;
     }
 
@@ -82,12 +82,26 @@ class FeedStore {
         return this.relationshipPreference;
     }
 
-    getCurrentPerson(): Person {
-        if (this.person === undefined) {
+    getCurrentPerson(): Profile {
+        if (!this.person) {
             if (!this.loading) {
                 this.loadData();
             }
-            return {isu: 0, username: "", bio: "", logo: ""};
+            return {
+                _id: "",
+                isu: 0,
+                username: "",
+                bio: "",
+                logo: "",
+                photos: [],
+                mainFeatures: [],
+                interests: [],
+                itmo: [],
+                gender_preferences: [],
+                relationship_preferences: [],
+                isStudent: false,
+                selected_preferences: []
+            };
         }
         return this.person;
     }

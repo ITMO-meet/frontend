@@ -38,7 +38,6 @@ class UserData {
         this.setLoading(true);
 
         const profile = await getProfile(this.getIsu()); // get profile from server
-        console.log("Recieved profile: ", profile);
 
         // set variables in store
         this.username = profile.username;
