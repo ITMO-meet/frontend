@@ -42,7 +42,8 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
   // Video recorder state
   const [videoRecorder, setVideoRecorder] = useState<MediaRecorder | null>(null);
   const [isRecordingVideo, setIsRecordingVideo] = useState(false);
-  const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [VideoStream, setVideoStream] = useState<MediaStream | null>(null);  // TOOD: UI live VideoStream
 
   useEffect(() => {
     if (contact) {
