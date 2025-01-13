@@ -34,6 +34,7 @@ jest.mock('../../src/stores/UserDataStore', () => ({
         getAlcohol: jest.fn().mockReturnValue("Ok"),
         getSmoking: jest.fn().mockReturnValue("Ok"),
         getInterests: jest.fn().mockReturnValue({}),
+        getInterestIDs: jest.fn().mockReturnValue([""]),
         // Добавьте другие методы по мере необходимости
         setInterests: jest.fn(),
         setRelationshipPreference: jest.fn(),
