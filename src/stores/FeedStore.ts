@@ -12,7 +12,7 @@ class FeedStore {
     // dont have db fields
     private agePreference: number[] | undefined
     private heightPreference: number[] | undefined
-    private relationshipPreference: string[] | undefined // is this the same as userData.relationshipPreference ???
+    private relationshipPreference: string[] | undefined
 
     constructor() {
         makeAutoObservable(this);
@@ -42,7 +42,9 @@ class FeedStore {
 
         const preferredGender = userData.getGenderPreference();
         const agePreference = this.getAgePreference();
-        console.log("Preferred Gender:", preferredGender, "Age Preference:", agePreference);
+        const heightPreference = this.getHeightPreference();
+        const relPreference = this.getRelationshipPreference();
+
 
         do {
             profile = await getRandomPerson(userData.getIsu());
@@ -63,7 +65,23 @@ class FeedStore {
                 ageOk = profileAge >= agePreference[0] && profileAge <= agePreference[1];
             }
 
-            if (genderOk && ageOk) {
+            let heightOk = false;
+            const heightFeature = profile.mainFeatures.find(f => f.icon === "height");
+            if (heightFeature && heightFeature.text) {
+                const profileHeight = parseFloat(heightFeature.text.split(" ")[0]);
+                heightOk = profileHeight >= heightPreference[0] && profileHeight <= heightPreference[1];
+            }
+
+            let relationshipOk = false;
+            if (!relPreference || relPreference.length === 0) {
+                relationshipOk = true;
+            } else if (profile.relationship_preferences && profile.relationship_preferences.length > 0) {
+                relationshipOk = profile.relationship_preferences.some(rp => relPreference.includes(rp.id));
+            } else {
+                relationshipOk = false;
+            }
+
+            if (genderOk && ageOk && heightOk && relationshipOk) {
                 break;
             }
 
@@ -74,7 +92,6 @@ class FeedStore {
         } while (true);
 
         this.person = profile;
-        console.log("Loaded Profile:", profile);
         this.setLoading(false);
         return this.person;
     }
@@ -118,8 +135,8 @@ class FeedStore {
         if (this.relationshipPreference) {
             return this.relationshipPreference;
         }
-        const temp = localStorage.getItem("relationshipPreference")
-        this.relationshipPreference = temp ? JSON.parse(temp) : [150, 200]
+        const temp = localStorage.getItem("relationshipPreference");
+        this.relationshipPreference = temp ? JSON.parse(temp) : [];
         return this.relationshipPreference;
     }
 
