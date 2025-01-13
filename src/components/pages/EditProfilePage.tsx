@@ -69,8 +69,8 @@ const EditProfilePage: React.FC = observer(() => {
     const navigate = useNavigate();
     const [isModalOpen, setModalOpen] = useState(false);
 
-    const relation = relationshipIds.find(p => p.id === userData.getRelationshipPreference())
-    const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>(relation ? relation : relationshipIds[0]);
+    const initRelation = relationshipIds.find(p => p.id === userData.getRelationshipPreference()) || relationshipIds[0];
+    const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>();
     const [, setSelectedFeatures] = useState<{ [key: string]: string | string[] }>({});
     const [allTags, setAllTags] = useState<Tag[]>([]);
     const [selectedTags, setSelectedTags] = useState<string[]>(userData.getInterests() || []);
@@ -322,7 +322,7 @@ const EditProfilePage: React.FC = observer(() => {
                 {/* Target Section */}
                 <Box mt={2} width="100%">
                     <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>Target</Typography>
-                    <TargetSheetButton label={selectedTarget.label} icon={selectedTarget.icon} options={targetOptions} onSelect={handleTargetSelect} />
+                    <TargetSheetButton label={selectedTarget?.label || initRelation.label} icon={selectedTarget?.icon || initRelation.icon} options={targetOptions} onSelect={handleTargetSelect} />
                 </Box>
 
                 {/* Main Features Section */}
