@@ -12,24 +12,17 @@ import {
 import SendIcon from '@mui/icons-material/Send';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import MicIcon from '@mui/icons-material/Mic';
+import VideocamIcon from '@mui/icons-material/Videocam';
+import StopIcon from '@mui/icons-material/Stop';
 import { useParams, useNavigate } from 'react-router-dom';
 import UserMessage from './UserMessage';
 import PageWrapper from '../PageWrapper';
+import { MessageType, RawMessage } from '../types';
+import { Profile } from '../api/profile'
 
 interface MessagesProps {
-  people: Array<{
-    isu: number;
-    username: string;
-    logo: string;
-  }>;
-  messages: Array<{
-    id: string;
-    chat_id: string;
-    sender_id: number;
-    receiver_id: number;
-    text: string;
-    timestamp: string;
-  }>;
+  people: Profile[];
+  messages: RawMessage[];
 }
 
 const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
@@ -37,25 +30,30 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
   const navigate = useNavigate();
   const contact = people.find((person) => person.isu === Number(id));
 
-  const [chatMessages, setChatMessages] = useState<
-    Array<{ sender: 'me' | 'them'; text: string; audio?: Blob }>
-  >([]);
+  const [chatMessages, setChatMessages] = useState<MessageType[]>([]);
   const [inputValue, setInputValue] = useState('');
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
+  // Audio recorder state
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [isRecording, setIsRecording] = useState(false);
 
+  // Video recorder state
+  const [videoRecorder, setVideoRecorder] = useState<MediaRecorder | null>(null);
+  const [isRecordingVideo, setIsRecordingVideo] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [VideoStream, setVideoStream] = useState<MediaStream | null>(null);  // TOOD: UI live VideoStream
+
   useEffect(() => {
     if (contact) {
-      const initialMessages = messages
+      const initialMessages: MessageType[] = messages
         .filter(
           (message) =>
             message.sender_id === contact.isu || message.receiver_id === contact.isu
         )
         .map((message) => ({
-          sender: message.sender_id === contact.isu ? 'them' : ('me' as 'me' | 'them'),
+          sender: message.sender_id === contact.isu ? 'them' : 'me' as const,
           text: message.text,
         }));
       setChatMessages(initialMessages);
@@ -90,7 +88,10 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
     scrollToBottom();
   }, [messages, chatMessages]);
 
-  const startRecording = async () => {
+  /**
+   * AUDIO RECORDING LOGIC
+   */
+  const startRecordingAudio = async () => {
     try {
       const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
         ? 'audio/webm;codecs=opus'
@@ -100,7 +101,6 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
       const recorder = new MediaRecorder(stream, { mimeType });
       setMediaRecorder(recorder);
 
-      // Use local variable to store chunks
       const localChunks: BlobPart[] = [];
 
       recorder.ondataavailable = (event) => {
@@ -114,7 +114,7 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
           { sender: 'me', text: '', audio: blob },
         ]);
         // Stop all tracks to release microphone
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
         scrollToBottom();
       };
 
@@ -126,7 +126,7 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
     }
   };
 
-  const stopRecording = () => {
+  const stopRecordingAudio = () => {
     if (mediaRecorder && mediaRecorder.state !== 'inactive') {
       mediaRecorder.stop();
       setIsRecording(false);
@@ -136,30 +136,90 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
   // Handlers for mic button (mouse and touch)
   const handleMicMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
-    startRecording();
+    startRecordingAudio();
   };
 
   const handleMicMouseUp = (e: React.MouseEvent) => {
     e.preventDefault();
-    stopRecording();
+    stopRecordingAudio();
   };
 
   const handleMicMouseLeave = (e: React.MouseEvent) => {
     e.preventDefault();
     if (isRecording) {
-      stopRecording();
+      stopRecordingAudio();
     }
   };
 
   const handleMicTouchStart = (e: React.TouchEvent) => {
     e.preventDefault();
-    startRecording();
+    startRecordingAudio();
   };
 
   const handleMicTouchEnd = (e: React.TouchEvent) => {
     e.preventDefault();
-    stopRecording();
+    stopRecordingAudio();
   };
+
+  /**
+   * VIDEO RECORDING LOGIC
+   */
+  const startRecordingVideo = async () => {
+    try {
+      // Decide on a common video MIME type
+      let mimeType = 'video/webm;codecs=vp8';
+      if (!MediaRecorder.isTypeSupported(mimeType)) {
+        // Fallback if needed
+        mimeType = 'video/mp4';
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true,
+      });
+      setVideoStream(stream);
+
+      const recorder = new MediaRecorder(stream, { mimeType });
+      setVideoRecorder(recorder);
+
+      const localChunks: BlobPart[] = [];
+
+      recorder.ondataavailable = (event) => {
+        localChunks.push(event.data);
+      };
+
+      recorder.onstop = () => {
+        // We have a recorded video blob
+        const blob = new Blob(localChunks, { type: mimeType });
+        // Add the message with video blob
+        setChatMessages((prev) => [
+          ...prev,
+          { sender: 'me', text: '', video: blob },
+        ]);
+        // Stop all tracks
+        stream.getTracks().forEach((track) => track.stop());
+        setVideoStream(null);
+        scrollToBottom();
+      };
+
+      recorder.start();
+      setIsRecordingVideo(true);
+    } catch (error) {
+      console.error('Error accessing camera/microphone: ', error);
+      // TODO: show error to user
+    }
+  };
+
+  const stopRecordingVideo = () => {
+    if (videoRecorder && videoRecorder.state !== 'inactive') {
+      videoRecorder.stop();
+      setIsRecordingVideo(false);
+    }
+  };
+
+  /**
+   * RENDER
+   */
 
   if (!contact) {
     return (
@@ -246,16 +306,29 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
                     <SendIcon />
                   </IconButton>
                 ) : (
-                  <IconButton
-                    color={isRecording ? 'error' : 'primary'}
-                    onMouseDown={handleMicMouseDown}
-                    onMouseUp={handleMicMouseUp}
-                    onMouseLeave={handleMicMouseLeave}
-                    onTouchStart={handleMicTouchStart}
-                    onTouchEnd={handleMicTouchEnd}
-                  >
-                    <MicIcon />
-                  </IconButton>
+                  <>
+                    {/* AUDIO BUTTON */}
+                    <IconButton
+                      color={isRecording ? 'error' : 'primary'}
+                      onMouseDown={handleMicMouseDown}
+                      onMouseUp={handleMicMouseUp}
+                      onMouseLeave={handleMicMouseLeave}
+                      onTouchStart={handleMicTouchStart}
+                      onTouchEnd={handleMicTouchEnd}
+                    >
+                      <MicIcon />
+                    </IconButton>
+
+                    {/* VIDEO BUTTON */}
+                    <IconButton
+                      color={isRecordingVideo ? 'error' : 'primary'}
+                      onClick={() =>
+                        isRecordingVideo ? stopRecordingVideo() : startRecordingVideo()
+                      }
+                    >
+                      {isRecordingVideo ? <StopIcon /> : <VideocamIcon />}
+                    </IconButton>
+                  </>
                 )}
               </InputAdornment>
             ),

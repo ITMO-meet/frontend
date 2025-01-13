@@ -22,17 +22,18 @@ import StarIcon from '@mui/icons-material/Star';
 import { useSwipeable } from 'react-swipeable';
 import ImageButton from '../basic/ImageButton';
 import { logEvent, logPageView } from '../../analytics';
+import { Profile } from '../../api/profile';
+
 import { userData } from '../../stores/UserDataStore';
 import { observer } from 'mobx-react-lite';
 import { usePremium } from '../../contexts/PremiumContext';
-import { Person } from '../../types';
 import { feedStore } from '../../stores/FeedStore';
 
 // Интерфейс для свойств компонента SwipeableCard
 interface Props {
-    onLike: (person: Person) => void; // Функция для лайков
-    onSuperLike: (person: Person) => void; // Функция для суперлайков
-    onDislike: (person: Person) => void; // Функция для "не понравилось"
+    onLike: (person: Profile) => void; // Функция для лайков
+    onSuperLike: (person: Profile) => void; // Функция для суперлайков
+    onDislike: (person: Profile) => void; // Функция для "не понравилось"
 }
 
 // Функция для создания стилей иконок
@@ -53,6 +54,7 @@ const FeedPage: React.FC<Props> = observer(({ onLike, onDislike, onSuperLike }) 
     const DURATION = 300; // Длительность анимации в миллисекундах
     const [swipeDirection, setSwipeDirection] = useState<string | null>(null); // Направление свайпа
     const [iconVisible, setIconVisible] = useState(false); // Видимость иконки
+
     const person = feedStore.getCurrentPerson(); 
 
     const { isPremium } = usePremium();
@@ -69,7 +71,6 @@ const FeedPage: React.FC<Props> = observer(({ onLike, onDislike, onSuperLike }) 
     const [height, setHeight] = useState<number[]>(initHeight || []);
     const [relationshipType, setRelationshipType] = useState<string[]>([]);
 
-    
     // Эффект для получения следующего человека при монтировании компонента
     useEffect(() => {
         logPageView("/feed"); // GA log on page open

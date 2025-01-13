@@ -35,10 +35,18 @@ export interface Tag {
     icon: string;
 }
 
-// Интерфейс для представления информации о человеке
-export interface Person {
-    isu: number; // Уникальный идентификатор
-    logo: string; // Ссылка на изображение
-    username: string; // Имя человека
-    bio: string; // Описание человека
+export interface RawMessage {
+    id: string;
+    chat_id: string;
+    sender_id: number;
+    receiver_id: number;
+    text: string;
+    timestamp: string;
+}
+
+export interface MessageType {
+    sender: 'me' | 'them';
+    text: string;
+    audio?: Blob;
+    video?: Blob;
 }
