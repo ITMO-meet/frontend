@@ -45,6 +45,7 @@ class FeedStore {
         const heightPreference = this.getHeightPreference();
         const relPreference = this.getRelationshipPreference();
 
+        let foundValidProfile = false;
 
         do {
             profile = await getRandomPerson(userData.getIsu());
@@ -82,6 +83,7 @@ class FeedStore {
             }
 
             if (genderOk && ageOk && heightOk && relationshipOk) {
+                foundValidProfile = true;
                 break;
             }
 
@@ -89,7 +91,7 @@ class FeedStore {
                 console.warn("Не найден профиль, удовлетворяющий фильтрам за максимальное число попыток.");
                 break;
             }
-        } while (true);
+        } while (!foundValidProfile);
 
         this.person = profile;
         this.setLoading(false);
