@@ -14,6 +14,7 @@ import {
     Paper,
     ToggleButton,
     ToggleButtonGroup,
+    CircularProgress,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -23,10 +24,13 @@ import ImageButton from '../basic/ImageButton';
 import { logEvent, logPageView } from '../../analytics';
 import { Profile } from '../../api/profile';
 
+import { userData } from '../../stores/UserDataStore';
+import { observer } from 'mobx-react-lite';
+import { usePremium } from '../../contexts/PremiumContext';
+import { feedStore } from '../../stores/FeedStore';
 
 // Интерфейс для свойств компонента SwipeableCard
 interface Props {
-    getNextPerson: () => Profile; // Функция для получения информации о следующем человеке
     onLike: (person: Profile) => void; // Функция для лайков
     onSuperLike: (person: Profile) => void; // Функция для суперлайков
     onDislike: (person: Profile) => void; // Функция для "не понравилось"
@@ -46,16 +50,30 @@ const icons = {
 };
 
 // Основной компонент SwipeableCard
-export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, onSuperLike }) => {
+const FeedPage: React.FC<Props> = observer(({ onLike, onDislike, onSuperLike }) => {
     const DURATION = 300; // Длительность анимации в миллисекундах
     const [swipeDirection, setSwipeDirection] = useState<string | null>(null); // Направление свайпа
     const [iconVisible, setIconVisible] = useState(false); // Видимость иконки
-    const [person, setPerson] = useState<Profile>({ isu: 0, username: "", bio: "", logo: "" }); // Текущий человек
+
+    const person = feedStore.getCurrentPerson(); 
+
+    const { isPremium } = usePremium();
+    const [isPremiumModalOpen, setPremiumModalOpen] = useState(false); // Состояние для премиум-сообщения
+    const [isModalOpen, setModalOpen] = useState(false); // Состояние модального окна
+
+    const initGender = userData.getGenderPreference();
+    const [gender, setGender] = useState("");
+
+    const initAge = feedStore.getAgePreference();
+    const [age, setAge] = useState<number[]>(initAge || []);
+
+    const initHeight = feedStore.getHeightPreference();
+    const [height, setHeight] = useState<number[]>(initHeight || []);
+    const [relationshipType, setRelationshipType] = useState<string[]>([]);
 
     // Эффект для получения следующего человека при монтировании компонента
     useEffect(() => {
         logPageView("/feed"); // GA log on page open
-        setPerson(getNextPerson()); // Установка следующего человека
     }, []); // Зависимость от функции получения следующего человека
 
     // Обработчик свайпа
@@ -80,9 +98,9 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
         }
 
         // Сброс состояния после завершения свайпа
-        setTimeout(() => {
+        setTimeout(async () => {
             setSwipeDirection(null); // Сброс направления свайпа
-            setPerson(getNextPerson()); // Получение следующего человека
+            await feedStore.loadNewPerson(); // Получение следующего человека
             setIconVisible(false); // Скрытие иконки
         }, DURATION); // Задержка по длительности анимации
     };
@@ -94,16 +112,32 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
         onSwipedUp: () => handleSwipe('up'), // Обработка свайпа вверх
     });
 
-    const [isModalOpen, setModalOpen] = useState(false); // Состояние модального окна
-    const [gender, setGender] = useState<string>('Мужчины');
-    const [isPremiumModalOpen, setPremiumModalOpen] = useState(false); // Состояние для премиум-сообщения
-    const [age, setAge] = useState<number[]>([18, 60]);
-    const [relationshipType] = useState<string[]>([]);
+    const updateGender = (newGender: string) => {
+        if (newGender === null) {
+            return;
+        }
+        setGender(newGender)
+        userData.setGenderPreference(newGender);
+    }
+
+    const updateAge = (newAge: number[]) => {
+        setAge(newAge)
+        feedStore.setAgePreference(newAge);
+    }
+
+    const updateHeight = (newHeight: number[]) => {
+        setHeight(newHeight)
+        feedStore.setHeightPreference(newHeight);
+    }
     
     const openModal = () => setModalOpen(true);
     const closeModal = () => setModalOpen(false);
     const handlePremiumModalOpen = () => setPremiumModalOpen(true);
     const handlePremiumModalClose = () => setPremiumModalOpen(false);
+
+    if (userData.loading || feedStore.loading) {
+        return <CircularProgress  />; // Show a loading spinner while data is being fetched
+    }
 
     return (
         <Box sx={{ height: '90vh', display: 'flex', flexDirection: 'column' }}>
@@ -195,22 +229,22 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
                 {/* Пол */}
                 <Typography>Пол</Typography>
                 <ToggleButtonGroup
-                    value={gender}
+                    value={gender ? gender : initGender}
                     exclusive
-                    onChange={(e, value) => setGender(value || gender)}
+                    onChange={(e, value) => updateGender(value)}
                     fullWidth
                     sx={{ mb: 3 }}
                 >
-                    <ToggleButton value="Мужчины">Мужчины</ToggleButton>
-                    <ToggleButton value="Женщины">Женщины</ToggleButton>
-                    <ToggleButton value="Неважно">Неважно</ToggleButton>
+                    <ToggleButton value="Male">Мужчины</ToggleButton>
+                    <ToggleButton value="Female">Женщины</ToggleButton>
+                    <ToggleButton value="Everyone">Неважно</ToggleButton>
                 </ToggleButtonGroup>
 
                 {/* Возраст */}
                 <Typography>Возраст: {age[0]} - {age[1]}</Typography>
                 <Slider
-                    value={age}
-                    onChange={(e, value) => setAge(value as number[])}
+                    value={age ? age : initAge}
+                    onChange={(e, value) => updateAge(value as number[])}
                     valueLabelDisplay="auto"
                     min={18}
                     max={60}
@@ -219,22 +253,23 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
 
                 {/* Премиум-фильтры */}
                 <Box>
-                    <Typography>Рост (доступно по подписке)</Typography>
+                    <Typography>Рост{isPremium ? `: ${height[0]} - ${height[1]}` : " (доступно по подписке)"}</Typography>
                     <Slider
-                        disabled
-                        value={[150, 200]}
+                        disabled = {!isPremium}
+                        value={height ? height : initHeight}
                         valueLabelDisplay="auto"
                         min={150}
                         max={220}
-                        onClick={handlePremiumModalOpen} // Открытие премиум-сообщения
+                        onChange={(e, value) => updateHeight(value as number[])}
                         sx={{ mb: 3 }}
                     />
 
-                    <Typography>Тип отношений (доступно по подписке)</Typography>
+                    <Typography>Тип отношений {isPremium ? "" : "(доступно по подписке)"}</Typography>
                     <ToggleButtonGroup
-                        disabled
+                        disabled = {!isPremium}
                         value={relationshipType}
-                        onClick={handlePremiumModalOpen} // Открытие премиум-сообщения
+                        onClick={isPremium ? () => {} : handlePremiumModalOpen} // Открытие премиум-сообщения
+                        onChange={(e, value) => setRelationshipType(value)}
                         fullWidth
                     >
                         <ToggleButton value="Свидания">Свидания</ToggleButton>
@@ -281,6 +316,6 @@ export const FeedPage: React.FC<Props> = ({ getNextPerson, onLike, onDislike, on
             </Modal>
     </Box>
     );
-};
+});
 
 export default FeedPage; // Экспорт компонента SwipeableCard

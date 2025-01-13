@@ -1,5 +1,5 @@
 import { makeAutoObservable } from "mobx";
-import { getProfile, updateBio, updateHeight, updateGenderPreference, updateWeight, updateZodiac, updateRelationshipPreferences } from "../api/profile";
+import { getProfile, updateBio, updateHeight, updateGenderPreference, updateWeight, updateZodiac, updateRelationshipPreferences, updateUsername, updateWorldview, updateChildren, updateLanguages, updateAlcohol, updateSmoking, updateTags } from "../api/profile";
 import { calculateAge } from "../utils";
 
 class UserData {
@@ -16,17 +16,15 @@ class UserData {
     private gender: string | undefined
     private genderPreference: string | undefined
     private relationshipPreferenceId: string | undefined
-    // private tags: Tag[] | undefined
+    private worldview: string | undefined
     private photo: string | undefined
     private additionalPhotos: string[] | undefined
-
-    // dont have db fields (yet?)
-    private worldview: string | null | undefined
+    private alcohol: string | undefined
+    private smoking: string | undefined
+    private interestIDs: string[] | null = null;
+    private interests: string[] = [];
     private children: string | null | undefined
     private languages: string[] | null | undefined
-    private alcohol: string | null | undefined
-    private smoking: string | null | undefined
-    private interests: {[key: string] : string} | null | undefined
 
     constructor() {
         makeAutoObservable(this);
@@ -45,37 +43,51 @@ class UserData {
         // set variables in store
         this.username = profile.username;
         this.bio = profile.bio;
-        
-        const temp_gender = profile.mainFeatures.find(feature => feature.icon === "gender")?.text;
+
+        const temp_gender = profile.mainFeatures.find(feature => feature?.icon === "gender")?.text;
         this.gender = temp_gender ? temp_gender?.charAt(0).toUpperCase() + temp_gender?.slice(1) : "Helicopter"
-        
-        const birthdate = profile.mainFeatures.find(feature => feature.icon === "birthdate")?.text;
+
+        const birthdate = profile.mainFeatures.find(feature => feature?.icon === "birthdate")?.text;
         this.age = birthdate ? calculateAge(birthdate) : 20;
         this.birthdate = birthdate;
 
-        const weightFeature = profile.mainFeatures.find(feature => feature.icon === "weight")?.text;
+        const weightFeature = profile.mainFeatures.find(feature => feature?.icon === "weight")?.text;
         this.weight = weightFeature ? parseFloat(weightFeature.split(" ")[0]) : 80; // Assuming weight is stored as a string
 
-        const heightFeature = profile.mainFeatures.find(feature => feature.icon === "height")?.text;
+        const heightFeature = profile.mainFeatures.find(feature => feature?.icon === "height")?.text;
         this.height = heightFeature ? parseFloat(heightFeature.split(" ")[0]) : 170; // Assuming height is stored as a string
 
-        this.zodiac = profile.mainFeatures.find(feature => feature.icon === "zodiac_sign")?.text || "None";
+        this.zodiac = profile.mainFeatures.find(feature => feature?.icon === "zodiac_sign")?.text || "None";
         this.genderPreference = profile.gender_preferences[0]?.text || "Everyone"
 
         this.relationshipPreferenceId = profile.relationship_preferences[0]?.id || "672b44eab151637e969889bb"; // default is "Dates"
-        
-        // TODO: tags, relationshipPreference and other
+
+        this.worldview = profile.mainFeatures.find(feature => feature?.icon === "worldview")?.text || "Default";
+
+        this.children = profile.mainFeatures.find(feature => feature?.icon === "children")?.text || "Default";
+
+        const languagesFeature = profile.mainFeatures[7];
+        this.languages = languagesFeature ? languagesFeature.map((item: { text: string; }) => item.text) : [];
+
+        this.alcohol = profile.mainFeatures.find(feature => feature?.icon === "alcohol")?.text || "Default";
+
+        this.smoking = profile.mainFeatures.find(feature => feature?.icon === "smoking")?.text || "Default";
+
 
         this.photo = profile.logo
         this.additionalPhotos = profile.photos
+
+        this.interests = (profile.interests || []).map(item => item.text);
         
         this.setLoading(false);
     }
 
     // сеттеры.
-    // TODO: отправлять на сервер, photos
     setUsername(username: string) {
         this.username = username;
+        if (this.isu) {
+            updateUsername(this.isu, username);
+        }
     }
 
     setBio(bio: string) {
@@ -122,58 +134,66 @@ class UserData {
 
     setWorldview(worldview: string) {
         this.worldview = worldview;
-        localStorage.setItem("worldview", worldview)
+        if (this.isu) {
+            updateWorldview(this.isu, worldview);
+        }
     }
 
     setChildren(children: string) {
         this.children = children;
-        localStorage.setItem("children", children);
+        if (this.isu) {
+            updateChildren(this.isu, children);
+        }
     }
 
     setLanguages(languages: string[]) {
         this.languages = languages;
-        localStorage.setItem("languages", JSON.stringify(languages));
+        if (this.isu) {
+            updateLanguages(this.isu, languages)
+        }
     }
 
     setAlcohol(alcohol: string) {
         this.alcohol = alcohol;
-        localStorage.setItem("alcohol", alcohol);
+        if (this.isu) {
+            updateAlcohol(this.isu, alcohol)
+        }
     }
 
     setSmoking(smoking: string) {
         this.smoking = smoking;
-        localStorage.setItem("smoking", smoking);
+        if (this.isu) {
+            updateSmoking(this.isu, smoking)
+        }
     }
 
-    setInterests(interests: {[key: string] : string}) {
-        this.interests = interests;
-        localStorage.setItem("interests", JSON.stringify(interests)); // Store as JSON string
+    setInterests(newIDs: string[]) {
+        this.interestIDs = newIDs;
+        localStorage.setItem("interestIDs", JSON.stringify(newIDs));
+
+        if (this.isu) {
+            updateTags(this.isu, newIDs)
+                .then(() => {
+                    this.loadUserData();
+                })
+                .catch(err => {
+                    console.error("Failed to update tags in DB: ", err);
+                });
+        }
     }
-
-    // setTags(tags: Tag[]) {
-    //     this.tags = tags;
-    // }
-
-    // setPhoto(photo: string) {
-    //     this.photo = photo;
-    // }
-
-    // setAdditionalPhotos(photos: string[]) {
-    //     this.additionalPhotos = photos;
-    // }
 
 
     // геттеры
-    // TODO: если undefined сделать запрос на сервер.
     getIsu() {
         if (this.isu === undefined) {
-            const locIsu = localStorage.getItem("isu"); 
+            const locIsu = localStorage.getItem("isu");
             if (locIsu === null) {
                 console.warn("ISU is undefined. Returning default value.");
                 return -1; // Значение по умолчанию
             }
             this.isu = parseInt(locIsu);
-            this.loadUserData();
+            if (!this.loading)
+                this.loadUserData();
             return this.isu;
         }
         return this.isu;
@@ -214,7 +234,7 @@ class UserData {
 
     getGender() {
         if (this.gender === undefined) {
-            if(!this.loading) {
+            if (!this.loading) {
                 this.loadUserData();
             }
             console.warn("Gender is undefined. Returning default value.");
@@ -273,11 +293,11 @@ class UserData {
                 this.loadUserData();
             }
             console.warn("Gender preference is undefined. Returning default value.");
-            return "Not specified"; // Значение по умолчанию
+            return ""; // Значение по умолчанию
         }
         return this.genderPreference;
     }
-    
+
     getRelationshipPreference() {
         if (this.relationshipPreferenceId === undefined) {
             if (!this.loading) {
@@ -290,77 +310,93 @@ class UserData {
     }
 
     getWorldview() {
-        if (this.worldview) {
-            return this.worldview;
+        if (this.worldview === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
+            console.warn("Worldview is undefined. Returning default value.");
+            return "Not specified"; // Значение по умолчанию
         }
-        const v = localStorage.getItem("worldview");
-        this.worldview = v;
-        return v;
+        return this.worldview;
     }
 
     getChildren() {
-        if (this.children) {
-            return this.children;
+        if (this.children === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
+            console.warn("Children is undefined. Returning default value.");
+            return "Not specified"; // Значение по умолчанию
         }
-        const c = localStorage.getItem("children");
-        this.children = c;
-        return c;
+        return this.children;
     }
 
     getLanguages() {
-        if (this.languages) {
-            return this.languages;
+        if (this.languages === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
+            console.warn("Languages are undefined. Returning empty array.");
+            return [];
         }
-        const l = localStorage.getItem("languages");
-        this.languages = l ? JSON.parse(l) : [];
         return this.languages;
     }
 
     getAlcohol() {
-        if (this.alcohol) {
-            return this.alcohol;
+        if (this.alcohol === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
+            console.warn("Alcohol is undefined. Returning default value.");
+            return "Not specified"; // Значение по умолчанию
         }
-        const a = localStorage.getItem("alcohol");
-        this.alcohol = a;
-        return a;
+        return this.alcohol;
     }
 
     getSmoking() {
-        if (this.smoking) {
-            return this.smoking;
+        if (this.smoking === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
+            console.warn("Smoking is undefined. Returning default value.");
+            return "Not specified"; // Значение по умолчанию
         }
-        const s = localStorage.getItem("smoking");
-        this.smoking = s;
-        return s;
+        return this.smoking;
     }
 
     getInterests() {
-        if (this.interests) {
-            return this.interests;
-        }
-        const i = localStorage.getItem("interests");
-        this.interests = i ? JSON.parse(i) : null; // Parse JSON string
         return this.interests;
     }
 
-    //  getTags() {
-    //     if (this.tags === undefined) {
-    //         console.warn("Tags are undefined. Returning empty array.");
-    //         return []; // Значение по умолчанию
-    //     }
-    //     return this.tags;
-    // }
+    getInterestIDs() {
+        if (!this.interestIDs) {
+            const local = localStorage.getItem("interestIDs");
+            if (local) {
+                this.interestIDs = JSON.parse(local);
+            } else {
+                this.interestIDs = [];
+            }
+        }
+        return this.interestIDs;
+    }
 
-     getPhoto() {
+
+    getPhoto() {
         if (this.photo === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
             console.warn("Photo is undefined. Returning empty string.");
             return ""; // Значение по умолчанию
         }
         return this.photo;
     }
 
-     getAdditionalPhotos() {
+    getAdditionalPhotos() {
         if (this.additionalPhotos === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
             console.warn("Additional photos are undefined. Returning empty array.");
             return []; // Значение по умолчанию
         }

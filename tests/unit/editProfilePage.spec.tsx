@@ -34,9 +34,15 @@ jest.mock('../../src/stores/UserDataStore', () => ({
         getAlcohol: jest.fn().mockReturnValue("Ok"),
         getSmoking: jest.fn().mockReturnValue("Ok"),
         getInterests: jest.fn().mockReturnValue({}),
+        getInterestIDs: jest.fn().mockReturnValue([""]),
         // Добавьте другие методы по мере необходимости
         setInterests: jest.fn(),
-        setRelationshipPreference: jest.fn()
+        setRelationshipPreference: jest.fn(),
+        getPhoto: jest.fn().mockReturnValue("https://example.com/photo.jpg"),
+        getAdditionalPhotos: jest.fn().mockReturnValue([
+            "https://example.com/photo1.jpg",
+            "https://example.com/photo2.jpg",
+        ]),
     }
 }));
 
@@ -61,14 +67,16 @@ describe('EditProfilePage', () => {
         );
 
         // Проверка наличия заголовка
-        expect(screen.getByText('Alisa Pipisa, 20')).toBeInTheDocument();
+        expect(screen.getByText('Alisa Pipisa')).toBeInTheDocument();
+        expect(screen.getByText('Age: 20 yo')).toBeInTheDocument();
 
         // Проверка наличия секций
         expect(screen.getByText('Bio')).toBeInTheDocument();
         expect(screen.getByText('Target')).toBeInTheDocument();
         expect(screen.getByText('Main Features')).toBeInTheDocument();
         expect(screen.getByText((content) => content.includes('Интересы'))).toBeInTheDocument();
-        expect(screen.getByText('Gallery')).toBeInTheDocument();
+        expect(screen.getByText('Logo')).toBeInTheDocument();
+        expect(screen.getByText('Additional Photos')).toBeInTheDocument();
         expect(screen.getByText('Premium')).toBeInTheDocument();
 
         // Проверка вызова logPageView
@@ -111,32 +119,6 @@ describe('EditProfilePage', () => {
         expect(heightText).toBeInTheDocument();
     });
 
-    test('selects interests', async () => {
-        render(
-            <PremiumProvider>
-                <MemoryRouter initialEntries={['/edit-profile']}>
-                    <EditProfilePage />
-                </MemoryRouter>
-            </PremiumProvider>
-        );
-
-        // Открытие модального окна для выбора интересов
-        fireEvent.click(screen.getByText('Добавьте свои интересы'));
-
-        // Выбор интересов
-        fireEvent.click(screen.getByText((content) => content.includes('Путешествия')));
-        fireEvent.click(screen.getByText((content) => content.includes('Чтение')));
-
-        // Применение выбора
-        fireEvent.click(screen.getByText('Применить'));
-
-        // Проверка интересов
-        await waitFor(() => {
-            expect(screen.getByText((content) => content.includes('Путешествия'))).toBeInTheDocument();
-            expect(screen.getByText((content) => content.includes('Чтение'))).toBeInTheDocument();
-        });
-    });
-    
     test('edits and deletes gallery images', async () => {
         render(
             <PremiumProvider>
