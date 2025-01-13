@@ -55,7 +55,7 @@ const FeedPage: React.FC<Props> = observer(({ onLike, onDislike, onSuperLike }) 
     const [swipeDirection, setSwipeDirection] = useState<string | null>(null); // Направление свайпа
     const [iconVisible, setIconVisible] = useState(false); // Видимость иконки
 
-    const person = feedStore.getCurrentPerson(); 
+    const person = feedStore.getCurrentPerson();
 
     const { isPremium } = usePremium();
     const [isPremiumModalOpen, setPremiumModalOpen] = useState(false); // Состояние для премиум-сообщения
@@ -129,14 +129,14 @@ const FeedPage: React.FC<Props> = observer(({ onLike, onDislike, onSuperLike }) 
         setHeight(newHeight)
         feedStore.setHeightPreference(newHeight);
     }
-    
+
     const openModal = () => setModalOpen(true);
     const closeModal = () => setModalOpen(false);
     const handlePremiumModalOpen = () => setPremiumModalOpen(true);
     const handlePremiumModalClose = () => setPremiumModalOpen(false);
 
     if (userData.loading || feedStore.loading) {
-        return <CircularProgress  />; // Show a loading spinner while data is being fetched
+        return <CircularProgress />; // Show a loading spinner while data is being fetched
     }
 
     return (
@@ -144,20 +144,20 @@ const FeedPage: React.FC<Props> = observer(({ onLike, onDislike, onSuperLike }) 
             <AppBar position="static">
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', background: "white" }}>
                     <Typography color="primary" fontSize="36px">Search</Typography> {/* Заголовок приложения */}
-                        {/* Кнопка для открытия модального окна */}
-                        <Button
-                            variant="contained"
-                            onClick={openModal}
-                            sx={{
-                                borderRadius: '50px',
-                                textTransform: 'none',
-                                backgroundColor: '#4469a6', // Голубой цвет (MUI Blue 500)
-                                color: 'white',
-                                '&:hover': { backgroundColor: '#283e61' }, // Более тёмный оттенок голубого при наведении
-                            }}
-                        >
-                            Фильтры
-                        </Button>
+                    {/* Кнопка для открытия модального окна */}
+                    <Button
+                        variant="contained"
+                        onClick={openModal}
+                        sx={{
+                            borderRadius: '50px',
+                            textTransform: 'none',
+                            backgroundColor: '#4469a6', // Голубой цвет (MUI Blue 500)
+                            color: 'white',
+                            '&:hover': { backgroundColor: '#283e61' }, // Более тёмный оттенок голубого при наведении
+                        }}
+                    >
+                        Фильтры
+                    </Button>
                 </Toolbar>
             </AppBar>
 
@@ -175,7 +175,14 @@ const FeedPage: React.FC<Props> = observer(({ onLike, onDislike, onSuperLike }) 
                     flexDirection: "column", // Вертикальная ориентация
                     justifyContent: "space-between", // Распределение пространства между элементами
                 }}>
-                    <CardMedia component="img" image={person.logo} alt={person.username} /> {/* Изображение человека */}
+                    <CardMedia component="img" image={person.logo || '/images/placeholder.png'} alt={person.username}
+                        sx={{
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: '#fff',
+                            objectFit: 'contain',
+                        }}
+                    /> {/* Изображение человека */}
                     {iconVisible && (
                         <Box sx={{
                             position: 'absolute',
@@ -204,90 +211,94 @@ const FeedPage: React.FC<Props> = observer(({ onLike, onDislike, onSuperLike }) 
             </Box>
 
             {/* Модальное окно */}
-        <Modal open={isModalOpen} onClose={closeModal}>
-            <Paper
-                sx={{
-                    width: '90%',
-                    maxWidth: '400px',
-                    margin: '10% auto',
-                    p: 3,
-                    borderRadius: 3,
-                    outline: 'none',
-                    boxShadow: 24,
-                    maxHeight: '80vh',
-                    overflowY: 'auto',
-                }}
-            >
-                {/* Заголовок и кнопка закрытия */}
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                    <Typography variant="h6" fontWeight="bold">Фильтры</Typography>
-                    <IconButton onClick={closeModal}>
-                        <CloseIcon />
-                    </IconButton>
-                </Box>
-
-                {/* Пол */}
-                <Typography>Пол</Typography>
-                <ToggleButtonGroup
-                    value={gender ? gender : initGender}
-                    exclusive
-                    onChange={(e, value) => updateGender(value)}
-                    fullWidth
-                    sx={{ mb: 3 }}
+            <Modal open={isModalOpen} onClose={closeModal}>
+                <Paper
+                    sx={{
+                        width: '90%',
+                        maxWidth: '400px',
+                        margin: '10% auto',
+                        p: 3,
+                        borderRadius: 3,
+                        outline: 'none',
+                        boxShadow: 24,
+                        maxHeight: '80vh',
+                        overflowY: 'auto',
+                    }}
                 >
-                    <ToggleButton value="Male">Мужчины</ToggleButton>
-                    <ToggleButton value="Female">Женщины</ToggleButton>
-                    <ToggleButton value="Everyone">Неважно</ToggleButton>
-                </ToggleButtonGroup>
+                    {/* Заголовок и кнопка закрытия */}
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                        <Typography variant="h6" fontWeight="bold">Фильтры</Typography>
+                        <IconButton onClick={closeModal}>
+                            <CloseIcon />
+                        </IconButton>
+                    </Box>
 
-                {/* Возраст */}
-                <Typography>Возраст: {age[0]} - {age[1]}</Typography>
-                <Slider
-                    value={age ? age : initAge}
-                    onChange={(e, value) => updateAge(value as number[])}
-                    valueLabelDisplay="auto"
-                    min={18}
-                    max={60}
-                    sx={{ mb: 3 }}
-                />
+                    {/* Пол */}
+                    <Typography>Пол</Typography>
+                    <ToggleButtonGroup
+                        value={gender ? gender : initGender}
+                        exclusive
+                        onChange={(e, value) => updateGender(value)}
+                        fullWidth
+                        sx={{ mb: 3 }}
+                    >
+                        <ToggleButton value="Male">Мужчины</ToggleButton>
+                        <ToggleButton value="Female">Женщины</ToggleButton>
+                        <ToggleButton value="Everyone">Неважно</ToggleButton>
+                    </ToggleButtonGroup>
 
-                {/* Премиум-фильтры */}
-                <Box>
-                    <Typography>Рост{isPremium ? `: ${height[0]} - ${height[1]}` : " (доступно по подписке)"}</Typography>
+                    {/* Возраст */}
+                    <Typography>Возраст: {age[0]} - {age[1]}</Typography>
                     <Slider
-                        disabled = {!isPremium}
-                        value={height ? height : initHeight}
+                        value={age ? age : initAge}
+                        onChange={(e, value) => updateAge(value as number[])}
                         valueLabelDisplay="auto"
-                        min={150}
-                        max={220}
-                        onChange={(e, value) => updateHeight(value as number[])}
+                        min={18}
+                        max={60}
                         sx={{ mb: 3 }}
                     />
 
-                    <Typography>Тип отношений {isPremium ? "" : "(доступно по подписке)"}</Typography>
-                    <ToggleButtonGroup
-                        disabled = {!isPremium}
-                        value={relationshipType}
-                        onClick={isPremium ? () => {} : handlePremiumModalOpen} // Открытие премиум-сообщения
-                        onChange={(e, value) => setRelationshipType(value)}
-                        fullWidth
-                    >
-                        <ToggleButton value="Свидания">Свидания</ToggleButton>
-                        <ToggleButton value="Отношения">Отношения</ToggleButton>
-                        <ToggleButton value="Дружба">Дружба</ToggleButton>
-                        <ToggleButton value="Общение">Общение</ToggleButton>
-                    </ToggleButtonGroup>
-                </Box>
+                    {/* Премиум-фильтры */}
+                    <Box>
+                        <Typography>Рост{isPremium ? `: ${height[0]} - ${height[1]}` : " (доступно по подписке)"}</Typography>
+                        <Slider
+                            disabled={!isPremium}
+                            value={height ? height : initHeight}
+                            valueLabelDisplay="auto"
+                            min={150}
+                            max={220}
+                            onChange={(e, value) => updateHeight(value as number[])}
+                            sx={{ mb: 3 }}
+                        />
 
-                {/* Кнопка подтверждения */}
-                <Button variant="contained" fullWidth sx={{ mt: 3 }} onClick={closeModal}>
-                    Применить
-                </Button>
-            </Paper>
-        </Modal>
+                        <Typography>Тип отношений {isPremium ? "" : "(доступно по подписке)"}</Typography>
+                        <ToggleButtonGroup
+                            disabled={!isPremium}
+                            value={relationshipType}
+                            onClick={isPremium ? () => {} : handlePremiumModalOpen} // Открытие премиум-сообщения
+                            onChange={(e, value) => {
+                                setRelationshipType(value);
+                                feedStore.setRelationshipPreference(value);
+                            }}
+                            fullWidth
+                        >
+                            <ToggleButton value="672b44eab151637e969889bb">Свидания</ToggleButton>
+                            <ToggleButton value="672b44eab151637e969889bc">Отношения</ToggleButton>
+                            <ToggleButton value="672b44eab151637e969889bd">Дружба</ToggleButton>
+                            <ToggleButton value="672b44eab151637e969889be">Общение</ToggleButton>
+                        </ToggleButtonGroup>
 
-        {/* Выплывающее окошко для премиум-сообщения */}
-        <Modal open={isPremiumModalOpen} onClose={handlePremiumModalClose}>
+                    </Box>
+
+                    {/* Кнопка подтверждения */}
+                    <Button variant="contained" fullWidth sx={{ mt: 3 }} onClick={closeModal}>
+                        Применить
+                    </Button>
+                </Paper>
+            </Modal>
+
+            {/* Выплывающее окошко для премиум-сообщения */}
+            <Modal open={isPremiumModalOpen} onClose={handlePremiumModalClose}>
                 <Paper
                     sx={{
                         width: '80%',
@@ -314,7 +325,7 @@ const FeedPage: React.FC<Props> = observer(({ onLike, onDislike, onSuperLike }) 
                     </Button>
                 </Paper>
             </Modal>
-    </Box>
+        </Box>
     );
 });
 

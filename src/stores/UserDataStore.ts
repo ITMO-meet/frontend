@@ -38,7 +38,6 @@ class UserData {
         this.setLoading(true);
 
         const profile = await getProfile(this.getIsu()); // get profile from server
-        console.log("Recieved profile: ", profile);
 
         // set variables in store
         this.username = profile.username;
@@ -293,7 +292,7 @@ class UserData {
                 this.loadUserData();
             }
             console.warn("Gender preference is undefined. Returning default value.");
-            return ""; // Значение по умолчанию
+            return "Everyone"; // Значение по умолчанию
         }
         return this.genderPreference;
     }
