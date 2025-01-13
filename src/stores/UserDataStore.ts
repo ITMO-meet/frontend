@@ -292,7 +292,7 @@ class UserData {
                 this.loadUserData();
             }
             console.warn("Gender preference is undefined. Returning default value.");
-            return ""; // Значение по умолчанию
+            return "Everyone"; // Значение по умолчанию
         }
         return this.genderPreference;
     }

@@ -2,6 +2,7 @@ import { makeAutoObservable } from "mobx";
 import { getRandomPerson } from "../api/feed";
 import { userData } from "./UserDataStore";
 import { Profile } from "../api/profile";
+import { use } from "chai";
 
 class FeedStore {
     loading: boolean = false;
@@ -33,10 +34,41 @@ class FeedStore {
 
     // custom methods
     async loadNewPerson() {
-        const profile = await getRandomPerson(userData.getIsu());
-        this.person = profile
+        this.setLoading(true);
+    
+        let attempt = 0;
+        const maxAttempt = 10;
+        let profile: Profile | undefined;
+    
+        const preferredGender  = userData.getGenderPreference();
+        console.log("Preferred: ", preferredGender);
+    
+        do {
+            profile = await getRandomPerson(userData.getIsu());
+            attempt++;
+            
+            if (preferredGender.trim().toLowerCase() === "other") {
+                break;
+            }
+    
+            const profileGenderFeature = profile.mainFeatures.find(f => f.icon === "gender");
+            const profileGender = profileGenderFeature ? profileGenderFeature.text : "";
+            console.log("Profile gender:", profileGender);
+    
+            if (profileGender.trim().toLowerCase() === preferredGender.trim().toLowerCase()) {
+                break;
+            }
+    
+            if (attempt >= maxAttempt) {
+                break;
+            }
+        } while (true);
+    
+        this.person = profile;
+        console.log("Loaded:", profile);
+        this.setLoading(false);
         return this.person;
-    }
+    }    
 
     // setters
     setAgePreference(agePreference: number[]) {
