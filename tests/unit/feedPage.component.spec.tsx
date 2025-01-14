@@ -84,9 +84,6 @@ jest.mock('../../src/stores/UserDataStore', () => ({
 }));
 
 describe('FeedPage', () => {
-    // const mockOnLike = jest.fn();
-    // const mockOnSuperLike = jest.fn();
-    // const mockOnDislike = jest.fn();
 
     beforeEach(() => {
         jest.clearAllMocks();
