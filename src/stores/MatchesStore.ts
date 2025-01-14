@@ -38,7 +38,6 @@ class MatchesStore {
                 const profile = await getProfile(matchIsu);
                 profiles.push(profile);
             }
-            console.log(profiles);
 
             runInAction(() => {
                 this.matches = profiles;

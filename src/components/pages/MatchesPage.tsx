@@ -10,12 +10,10 @@ import { logEvent, logPageView } from '../../analytics';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Profile } from '../../api/profile';
 import { matchesStore } from '../../stores/MatchesStore';
+import { observer } from 'mobx-react-lite';
 
-interface MatchesPageProps {
-    people: Profile[];
-}
 
-const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
+const MatchesPage: React.FC = observer(() => {
     const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
     const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
     const [isListVisible, setIsListVisible] = useState(false);
@@ -25,11 +23,14 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
 
     const [direction, setDirection] = useState(1);
 
+    const matches = matchesStore.matches;
+    const currentMatch = matches[currentMatchIndex];
+    const allPhotos = currentMatch ? [currentMatch.logo, ...currentMatch.photos] : [];
 
-    const currentMatch = people[currentMatchIndex];
-    const allPhotos = [currentMatch.logo, ...currentMatch.photos];
+    //const currentMatch = people[currentMatchIndex];
+    //const allPhotos = [currentMatch.logo, ...currentMatch.photos];
 
-    useEffect(() => {matchesStore.loadMatches()},[])
+    useEffect(() => { matchesStore.loadMatches() }, [])
 
     useEffect(() => {
         logPageView("/matches")
@@ -40,13 +41,13 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
 
     const handleNextMatch = () => {
         setDirection(1);
-        setCurrentMatchIndex((prevIndex) => (prevIndex + 1) % people.length);
+        setCurrentMatchIndex((prevIndex) => (prevIndex + 1) % matches.length);
         setCurrentPhotoIndex(0);
     };
 
     const handlePrevMatch = () => {
         setDirection(-1)
-        setCurrentMatchIndex((prevIndex) => (prevIndex - 1 + people.length) % people.length);
+        setCurrentMatchIndex((prevIndex) => (prevIndex - 1 + matches.length) % matches.length);
         setCurrentPhotoIndex(0);
     };
 
@@ -164,8 +165,8 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
 
                         {/* Список */}
                         <List>
-                            {people.map((person, index) => (
-                                <React.Fragment key={person.isu}>
+                            {matches.map((match, index) => (
+                                <React.Fragment key={match.isu}>
                                     <ListItem
                                         component="button"
                                         onClick={() => handleSelectMatch(index)}
@@ -179,12 +180,12 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
                                     >
                                         <ListItemAvatar>
                                             <Avatar
-                                                src={person.logo}
-                                                alt={person.username}
+                                                src={match.logo}
+                                                alt={match.username}
                                                 sx={{ width: 48, height: 48 }}
                                             />
                                         </ListItemAvatar>
-                                        <ListItemText primary={person.username} />
+                                        <ListItemText primary={match.username} />
                                     </ListItem>
                                     <Divider />
                                 </React.Fragment>
@@ -347,7 +348,7 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
                     <ArrowBackIosIcon />
                 </IconButton>
                 <Typography>
-                    Match {currentMatchIndex + 1} of {people.length}
+                    Match {currentMatchIndex + 1} of {matches.length}
                 </Typography>
                 <IconButton aria-label="Next match" onClick={handleNextMatch}>
                     <ArrowForwardIosIcon />
@@ -355,6 +356,6 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
             </Box>
         </Box>
     );
-};
+});
 
 export default MatchesPage;
