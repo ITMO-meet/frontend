@@ -15,7 +15,9 @@ import MonitorWeightIcon from '@mui/icons-material/MonitorWeight';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
 import LocalBarIcon from '@mui/icons-material/LocalBar';
 import SmokingRoomsIcon from '@mui/icons-material/SmokingRooms';
-
+import BadgeIcon from '@mui/icons-material/Badge';
+import HomeIcon from '@mui/icons-material/Home';
+import SchoolIcon from '@mui/icons-material/School';
 
 const UserProfilePage: React.FC = observer(() => {
     const navigate = useNavigate();
@@ -162,6 +164,38 @@ const UserProfilePage: React.FC = observer(() => {
         </Box>
     );
 
+    const renderItmo = (profile: Profile) => {
+        const details = [
+            { text: profile.itmo.find((item) => item.icon === "course")?.text || "Unknown", icon: <SchoolIcon />, label: "Course: " },
+            { text: profile.itmo.find((item) => item.icon === "faculty")?.text || "Unknown", icon: <HomeIcon />, label: "Faculty: " },
+            { text: profile.isu.toString(), icon: <BadgeIcon />, label: "ITMO ID: " },
+        ];
+
+        return (
+            <Box display="flex" flexDirection="column" gap={1}>
+                {details.map((detail, index) => (
+                    <Box
+                        key={index}
+                        display="flex"
+                        alignItems="center"
+                        sx={{
+                            bgcolor: 'rgba(214, 231, 255, 0.8)',
+                            border: '1px solid rgba(214, 231, 255, 0.8)',
+                            borderRadius: '8px',
+                            padding: '8px',
+                            gap: '8px',
+                        }}
+                    >{detail.icon}
+                        <Typography>
+                            {detail.label}
+                            {detail.text}
+                        </Typography>
+                    </Box>
+                ))}
+            </Box>
+        );
+    };
+
     return (
         <PageWrapper direction={1}>
             <Box display="flex" flexDirection="column" minHeight="100vh" p={2}>
@@ -278,28 +312,7 @@ const UserProfilePage: React.FC = observer(() => {
                         ITMO
                     </Typography>
                     {currentUser.isStudent ? (
-                        <Box display="flex" flexDirection="column" gap={1}>
-                            {currentUser.itmo.map((item, id) => (
-                                <Box
-                                    key={id}
-                                    display="flex"
-                                    alignItems="center"
-                                    sx={{
-                                        bgcolor: 'rgba(214, 231, 255, 0.8)',
-                                        border: '1px solid rgba(214, 231, 255, 0.8)',
-                                        borderRadius: '8px',
-                                        padding: '8px',
-                                        gap: '8px',
-                                    }}
-                                >
-                                    {item.icon}
-                                    <Typography>
-                                        {id === 0 ? 'Course: ' : id === 1 ? 'Faculty: ' : id === 2 ? 'ITMO ID: ' : ''}
-                                        {item.text}
-                                    </Typography>
-                                </Box>
-                            ))}
-                        </Box>
+                        renderItmo(currentUser)
                     ) : (
                         <Typography variant="h6" textAlign="center">
                             This person is not a student.
