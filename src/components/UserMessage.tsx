@@ -259,9 +259,10 @@ const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
               position: 'relative',
               backgroundColor: '#000',
             }}
-            >
+          >
             <video
               src={videoURL}
+              data-testid="video-element" // Добавьте data-testid для тестов
               style={{
                 width: '100%',
                 height: '100%',
@@ -271,6 +272,7 @@ const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
             />
           </Box>
         )}
+
 
         {/* FILE MESSAGE */}
         {message.file && (
