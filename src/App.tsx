@@ -427,7 +427,7 @@ function AppContent() {
             <Route path="/matches" element={<MatchesPage people={people} />} />
             <Route path="/feed" element={<FeedPage onLike={console.log} onDislike={console.log} onSuperLike={console.log} />} />
             <Route path="/tests" element={<TestsPage />} />
-            <Route path="/tests/:id" element={<Quiz getQuestions={mockGetQuestions} onExit={() => navigate("/chats")} onFinish={console.log} />} />
+            <Route path="/tests/:id" element={<Quiz onExit={() => navigate("/tests")} />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/edit-profile" element={<EditProfilePage />} />
