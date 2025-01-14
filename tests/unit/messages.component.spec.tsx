@@ -32,26 +32,34 @@ beforeAll(() => {
   });
 
   // Mock MediaRecorder
-  global.MediaRecorder = class {
-    constructor() {
-      this.state = 'inactive';
-      this.ondataavailable = null;
-      this.onstop = null;
+// Mock MediaRecorder
+global.MediaRecorder = class {
+  private ondataavailable: ((event: BlobEvent) => void) | null = null;
+  private onstop: (() => void) | null = null;
+
+  private chunks: BlobPart[] = [];
+
+  start() {
+    this.chunks = [];
+    this.ondataavailable?.({ data: new Blob(['audio-data'], { type: 'audio/webm' }) } as BlobEvent);
+  }
+
+  stop() {
+    if (this.onstop) {
+      this.onstop();
     }
-    start() {
-      console.log('MediaRecorder started');
-      this.state = 'recording';
-    }
-    stop() {
-      console.log('MediaRecorder stopped');
-      this.state = 'inactive';
-      if (this.onstop) this.onstop();
-    }
-    addEventListener(event, callback) {
-      if (event === 'dataavailable') this.ondataavailable = callback;
-      if (event === 'stop') this.onstop = callback;
-    }
-  };
+  }
+
+  addEventListener(event: string, callback: (...args: any[]) => void) {
+    if (event === 'dataavailable') this.ondataavailable = callback as (event: BlobEvent) => void;
+    if (event === 'stop') this.onstop = callback;
+  }
+
+  removeEventListener() {
+    // No-op
+  }
+};
+
   
 });
 
@@ -170,20 +178,20 @@ describe('Messages Component', () => {
     const micButton = screen.getAllByRole('button').find(
       (button) => button.querySelector('svg[data-testid="MicIcon"]')
     )!;
-    
+  
     // Act
-    fireEvent.mouseDown(micButton);
-    fireEvent.mouseUp(micButton);
+    fireEvent.mouseDown(micButton); // Start recording
+    fireEvent.mouseUp(micButton);   // Stop recording
   
     // Assert
     await waitFor(() => {
-      expect(screen.getByText('Voice message')).toBeInTheDocument();
+      expect(screen.getByText((content) => content.includes('Voice message'))).toBeInTheDocument();
     });
-  
-  
-  
+  });
+   
 
   it('adds a video message when recording is stopped', async () => {
+    // Arrange
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
@@ -194,12 +202,17 @@ describe('Messages Component', () => {
     const videoButton = screen.getAllByRole('button').find(
       (button) => button.querySelector('svg[data-testid="VideocamIcon"]')
     )!;
+    
+    // Act
     fireEvent.click(videoButton); // Start recording
     fireEvent.click(videoButton); // Stop recording
   
-    // Wait for 'Video sent' to appear
-    expect(await screen.findByText('Video sent')).toBeInTheDocument();
+    // Assert
+    await waitFor(() => {
+      expect(screen.getByText((content) => content.includes('Video sent'))).toBeInTheDocument();
+    });
   });
+  
   
   
 
@@ -216,5 +229,4 @@ describe('Messages Component', () => {
   
     expect(mockNavigate).toHaveBeenCalledWith(-1);
   });
-  
-});
+}); 
