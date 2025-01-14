@@ -4,8 +4,11 @@
 
 
 const AUTH_BASE_URL = 'http://185.178.47.42:3000'
+//const AUTH_BASE_URL = 'http://127.0.0.1:3000'
 // const TEST_BASE_URL = 'http://185.178.47.42:7000'
 const BASE_URL = 'http://185.178.47.42:8000';
+//const BASE_URL = 'http://127.0.0.1:8000';
+
 
 interface RequestOptions {
     method: string;
@@ -56,6 +59,15 @@ export async function postForm(url: string, formData: FormData): Promise<void> {
 export async function getJson<T>(url: string): Promise<T> {
     const resp = await request(url, {
         method: 'GET'
+    });
+    return resp.json() as Promise<T>;
+}
+
+export async function putJson<T>(url: string, data: unknown = {}): Promise<T> {
+    const resp = await request(url, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
     });
     return resp.json() as Promise<T>;
 }

@@ -51,6 +51,13 @@ jest.mock('../../src/components/pages/ProfilePage', () => {
   };
 });
 
+jest.mock('../../src/components/pages/EditProfilePage', () => {
+  return {
+    __esModule: true,
+    default: () => <div data-testid="edit-profile-page">ProfilePage Component</div>,
+  };
+});
+
 jest.mock('../../src/components/Messages', () => {
   return {
     __esModule: true,
@@ -114,6 +121,13 @@ describe('App Component', () => {
 
     expect(screen.getByTestId('profile-page')).toBeInTheDocument();
     expect(screen.getByTestId('nav')).toBeInTheDocument();
+  });
+
+  it('renders EditProfilePage at "/edit-profile" and doesnt show Nav', () => {
+    renderAppWithPath('/edit-profile');
+
+    expect(screen.getByTestId('edit-profile-page')).toBeInTheDocument();
+    expect(screen.queryByTestId('nav')).not.toBeInTheDocument();
   });
 
   it('hides Nav when shouldHideNav is true', () => {

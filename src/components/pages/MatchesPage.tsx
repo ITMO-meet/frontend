@@ -8,17 +8,10 @@ import { usePremium } from '../../contexts/PremiumContext';
 import { useNavigate } from 'react-router-dom';
 import { logEvent, logPageView } from '../../analytics';
 import { AnimatePresence, motion } from 'framer-motion';
-
+import { Profile } from '../../api/profile';
 
 interface MatchesPageProps {
-    people: Array<{
-        isu: number;
-        username: string;
-        logo: string;
-        photos: string[];
-        mainFeatures: { text: string; icon: JSX.Element }[];
-        interests: { text: string; icon: JSX.Element }[];
-    }>;
+    people: Profile[];
 }
 
 const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {

@@ -30,10 +30,10 @@
 */
 
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Avatar, Paper, IconButton, Chip, Button, Modal } from '@mui/material';
+import { Box, Typography, Paper, IconButton, Chip, Button, Modal, CircularProgress } from '@mui/material';
 import WestIcon from '@mui/icons-material/West';
-import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
+import UploadIcon from '@mui/icons-material/Upload';
 import RoundButton from '../basic/RoundButton';
 import EditableField from '../basic/EditableField';
 import TargetSheetButton from '../basic/TargetSheetButton';
@@ -42,147 +42,224 @@ import WineBarIcon from '@mui/icons-material/WineBar';
 import PeopleIcon from '@mui/icons-material/People';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import MultiCategorySheetButton from '../basic/MultiCategorySheetButton';
+import MultiCategorySheetButton, { CategoryOption } from '../basic/MultiCategorySheetButton';
 import { useNavigate } from 'react-router-dom';
 import { logEvent, logPageView } from '../../analytics';
+import { userData } from '../../stores/UserDataStore';
+import { observer } from 'mobx-react-lite';
+import { fetchTags } from '../../api/register';
+import { Tag } from "../../types";
+import { uploadLogo, uploadCarousel } from '../../api/register';
+import PhotoEditor from '../pages/PhotoEditor';
+import Gallery from '../basic/Gallery';
+import { urlToFile } from '../../utils';
 
-interface SliderCategoryOption {
-    label: string;
-    type: 'slider';
-    min: number;
-    max: number;
-}
 
-interface SelectCategoryOption {
-    label: string;
-    type: 'select';
-    options: string[];
-}
-
-interface ButtonSelectCategoryOption {
-    label: string;
-    type: 'buttonSelect';
-    options: string[];
-}
-
-interface LanguageSelectCategoryOption {
-    label: string;
-    type: 'languageSelect';
-}
-
-const interestCategories = [
-    {
-        label: 'Спорт и активный отдых',
-        options: [
-            { name: 'Бег', emoji: '🏃‍♂️' },
-            { name: 'Плавание', emoji: '🏊‍♀️' },
-            { name: 'Йога', emoji: '🧘‍♀️' },
-            { name: 'Велоспорт', emoji: '🚴‍♀️' },
-            { name: 'Спортзал', emoji: '🏋️‍♂️' },
-            { name: 'Лыжи', emoji: '🎿' },
-            { name: 'Сноуборд', emoji: '🏂' },
-            { name: 'Танцы', emoji: '💃' },
-            { name: 'Боевые искусства', emoji: '🥋' },
-            { name: 'Серфинг', emoji: '🏄‍♂️' },
-            { name: 'Хайкинг', emoji: '🏕️' },
-            { name: 'Теннис', emoji: '🎾' },
-            { name: 'Скалолазание', emoji: '🧗‍♀️' },
-        ],
-    },
-    {
-        label: 'Образование и саморазвитие',
-        options: [
-            { name: 'Изучение языков', emoji: '🔖' },
-            { name: 'Научные лекции', emoji: '🎓' },
-            { name: 'Онлайн-курсы', emoji: '💻' },
-            { name: 'Самообразование', emoji: '📚' },
-            { name: 'Медитация', emoji: '🧘' },
-            { name: 'Психология', emoji: '🧠' },
-            { name: 'Философия', emoji: '📜' },
-            { name: 'История', emoji: '🏺' },
-            { name: 'Чтение', emoji: '📖' },
-            { name: 'Технологии', emoji: '💻' },
-        ],
-    },
-    {
-        label: 'Хобби и развлечения',
-        options: [
-            { name: 'Литература', emoji: '📚' },
-            { name: 'Видеоигры', emoji: '🎮' },
-            { name: 'Настольные игры', emoji: '🎲' },
-            { name: 'Путешествия', emoji: '🌍' },
-            { name: 'Выращивание растений', emoji: '🪴' },
-            { name: 'Рыбалка', emoji: '🎣' },
-            { name: 'Прогулки с собаками', emoji: '🐕' },
-            { name: 'Любитель кошек', emoji: '🐈' },
-            { name: 'Автомобили и мотоциклы', emoji: '🏎️' },
-        ],
-    },
-    {
-        label: 'Гастрономия',
-        options: [
-            { name: 'Готовка', emoji: '🍳' },
-            { name: 'Любитель вин', emoji: '🍷' },
-            { name: 'Тур по барам', emoji: '🍻' },
-            { name: 'Кофейный эксперт', emoji: '☕' },
-            { name: 'Чайные церемонии', emoji: '🍵' },
-            { name: 'Вегетарианская кухня', emoji: '🥗' },
-            { name: 'Ресторанный критик', emoji: '🍽️' },
-            { name: 'Любитель сладкого', emoji: '🍰' },
-        ],
-    },
-    {
-        label: 'Творчество и искусство',
-        options: [
-            { name: 'Живопись', emoji: '🎨' },
-            { name: 'Фотография', emoji: '📸' },
-            { name: 'Музыка', emoji: '🎵' },
-            { name: 'Пение', emoji: '🎤' },
-            { name: 'Писательство', emoji: '✍️' },
-            { name: 'Скульптура', emoji: '🗿' },
-            { name: 'Театр', emoji: '🎭' },
-            { name: 'Кино', emoji: '🎬' },
-            { name: 'Рукоделие', emoji: '🧵' },
-        ],
-    },
+const relationshipIds = [
+    { id: "672b44eab151637e969889bb", label: 'Dates', icon: <WineBarIcon /> },
+    { id: "672b44eab151637e969889bc", label: 'Romantic relationships', icon: <FavoriteBorderIcon /> },
+    { id: "672b44eab151637e969889bd", label: 'Friendship', icon: <PeopleIcon /> },
+    { id: "672b44eab151637e969889be", label: 'Casual Chat', icon: <ChatBubbleOutlineIcon /> },
 ];
 
 
-type CategoryOption = SliderCategoryOption | SelectCategoryOption | ButtonSelectCategoryOption | LanguageSelectCategoryOption;
 
-const EditProfilePage: React.FC = () => {
+
+const EditProfilePage: React.FC = observer(() => {
     const navigate = useNavigate();
-
     const [isModalOpen, setModalOpen] = useState(false);
 
-    const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>({
-        label: "Romantic relationships",
-        icon: <FavoriteBorderIcon />,
-    });
+    const initRelation = relationshipIds.find(p => p.id === userData.getRelationshipPreference()) || relationshipIds[0];
+    const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>();
     const [, setSelectedFeatures] = useState<{ [key: string]: string | string[] }>({});
+    const [allTags, setAllTags] = useState<Tag[]>([]);
+
+    const initTags = userData.getInterestIDs() || [];
+    const [selectedTags, setSelectedTags] = useState<string[]>();
+    const [loadingTags, setLoadingTags] = useState<boolean>(true);
+
+    const targetOptions = [
+        { ...relationshipIds[0], description: 'Looking for dates', onClick: () => handleTargetSelect(relationshipIds[0]) },
+        { ...relationshipIds[1], description: 'Looking for romantic relationships', onClick: () => handleTargetSelect(relationshipIds[1]) },
+        { ...relationshipIds[2], description: 'Looking for friendship', onClick: () => handleTargetSelect(relationshipIds[2]) },
+        { ...relationshipIds[3], description: 'Looking for casual chat', onClick: () => handleTargetSelect(relationshipIds[3]) },
+    ];
+
+    const categoriesConfig: CategoryOption[] = [
+        { label: 'Height', type: 'slider', min: 100, max: 250, onConfirm: v => userData.setHeight(v), selectedValue: userData.getHeight() },
+        { label: 'Weight', type: 'slider', min: 40, max: 200, onConfirm: v => userData.setWeight(v), selectedValue: userData.getWeight() },
+        { label: 'Worldview', type: 'select', options: ['Buddhism', 'Jewry', 'Hinduism', 'Islam', 'Catholicism', 'Confucianism', 'Orthodoxy', 'Protestantism', 'Secular humanism', 'Atheism', 'Agnosticism'], onConfirm: v => userData.setWorldview(v), selectedValue: userData.getWorldview() },
+        { label: 'Zodiac Sign', type: 'buttonSelect', options: ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces', 'None'], onConfirm: v => userData.setZodiac(v), selectedValue: userData.getZodiac() },
+        { label: 'Children', type: 'buttonSelect', options: ['No and not planning', 'No but would like', 'Already have'], onConfirm: v => userData.setChildren(v), selectedValue: userData.getChildren() },
+        { label: 'Languages', type: 'languageSelect', onConfirm: v => userData.setLanguages(v), selectedValue: userData.getLanguages() },
+        { label: 'Alcohol', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'], onConfirm: v => userData.setAlcohol(v), selectedValue: userData.getAlcohol() },
+        { label: 'Smoking', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'], onConfirm: v => userData.setSmoking(v), selectedValue: userData.getSmoking() },
+    ];
+
+    //logo
+    const [logoUrl, setLogoUrl] = useState<string>("");
+    const [logoFile, setLogoFile] = useState<File | null>(null);
+    const [isEditingLogo, setIsEditingLogo] = useState(false);
+
+    const handleLogoFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const result = reader.result as string;
+                setLogoUrl(result);
+                setLogoFile(file);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleEditLogo = () => {
+        setIsEditingLogo(true);
+    };
+
+    const handleSaveEditedLogo = (editedImage: string) => {
+        setLogoUrl(editedImage);
+    };
+
+
+    const handleSubmitLogo = async () => {
+        try {
+            let finalFile = logoFile;
+            if (!finalFile && logoUrl) {
+                finalFile = await urlToFile(logoUrl, 'old_logo.png');
+            }
+
+            if (!finalFile) {
+                alert('No logo to upload');
+                return;
+            }
+
+            await uploadLogo(userData.getIsu(), finalFile);
+            window.location.reload();
+        } catch (error: unknown) {
+            console.error('Error uploading logo:', error);
+        }
+    };
+
+    //gall
+    const [files, setFiles] = useState<(File | null)[]>(Array(6).fill(null));
+    const [galleryImages, setGalleryImages] = useState<(string | null)[]>(Array(6).fill(null));
+    const [isEditingPhoto, setIsEditingPhoto] = useState(false);
+    const [imageToEdit, setImageToEdit] = useState<string | null>(null);
+    const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+
+
+    const handleFileSelect = (index: number, file: File, url: string) => {
+        const newFiles = [...files];
+        newFiles[index] = file;
+        setFiles(newFiles);
+
+        const newUrls = [...galleryImages];
+        newUrls[index] = url;
+        setGalleryImages(newUrls);
+    };
+
+    const handleDeleteImage = (index: number) => {
+        const newFiles = [...files];
+        newFiles[index] = null;
+        setFiles(newFiles);
+
+        const newUrls = [...galleryImages];
+        newUrls[index] = null;
+        setGalleryImages(newUrls);
+    };
+
+    const handleLoadImage = (index: number, url: string) => {
+        const newUrls = [...galleryImages];
+        newUrls[index] = url;
+        setGalleryImages(newUrls);
+    };
+
+    const handleEditImage = (index: number) => {
+        if (galleryImages[index]) {
+            setCurrentIndex(index);
+            setImageToEdit(galleryImages[index]);
+            setIsEditingPhoto(true);
+        }
+    };
+
+    const handleSaveEditedImage = (editedImage: string) => {
+        if (currentIndex !== null) {
+            const newUrls = [...galleryImages];
+            newUrls[currentIndex] = editedImage;
+            setGalleryImages(newUrls);
+        }
+    };
+
+    const handleSubmitPhotos = async () => {
+        try {
+            const finalFiles: File[] = [];
+
+            for (let i = 0; i < galleryImages.length; i++) {
+                const url = galleryImages[i];
+                const file = files[i];
+
+                if (!url) {
+                    continue;
+                }
+                if (file) {
+                    finalFiles.push(file);
+                } else {
+                    const f = await urlToFile(url, `old_photo_${i}.png`);
+                    finalFiles.push(f);
+                }
+            }
+
+            if (finalFiles.length === 0) {
+                alert('At least 1 photo required');
+                return;
+            }
+
+            await uploadCarousel(userData.getIsu(), finalFiles);
+            window.location.reload();
+        } catch (error: unknown) {
+            console.error('Error:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (!userData.loading) {
+            setLogoUrl(userData.getPhoto() || "");
+
+            const photos = userData.getAdditionalPhotos();
+            const paddedPhotos = photos.slice(0, 6).concat(Array(6 - photos.length).fill(null));
+            setGalleryImages(paddedPhotos);
+        }
+    }, [userData.loading]);
 
     useEffect(() => {
         logPageView('/edit-profile');
     }, []);
 
     useEffect(() => {
-        const storedInterests = localStorage.getItem('selectedInterests');
-        if (storedInterests) {
-            setSelectedInterests(JSON.parse(storedInterests));
-        }
-    }, []);
+        const loadTags = async () => {
+            try {
+                const tags = await fetchTags();
+                setAllTags(tags);
+            } catch (err: unknown) {
+                console.error("Error fetching tags: ", err)
+            } finally {
+                setLoadingTags(false);
+            }
+        };
 
-    const handleDeleteImage = (index: number) => {
-        console.log(`Delete image at index ${index}`);
-    };
+        loadTags();
+    }, [])
 
-    const handleEditImage = (index: number) => {
-        console.log(`Edit image at index ${index}`);
-    };
+
 
     const handleTargetSelect = (option: { label: string; icon: JSX.Element }) => {
         setSelectedTarget(option);
-        console.log('Selected target:', option.label);
+        const prefId = relationshipIds.find(p => p.label == option.label);
+        if (prefId) {
+            userData.setRelationshipPreference(prefId.id);
+        }
     };
 
     const handleSave = (category: string, option: string | string[]) => {
@@ -190,7 +267,6 @@ const EditProfilePage: React.FC = () => {
             ...prev,
             [category]: option,
         }));
-        console.log(`Selected ${category}: ${Array.isArray(option) ? option.join(', ') : option}`);
     };
 
     const handlePremiumClick = () => {
@@ -199,49 +275,24 @@ const EditProfilePage: React.FC = () => {
         console.log('Premium button clicked from edit');
     }
 
-    const targetOptions = [
-        { icon: <WineBarIcon />, label: 'Dates', description: 'Looking for dates', onClick: () => handleTargetSelect({ icon: <WineBarIcon />, label: 'Dates' }) },
-        { icon: <FavoriteBorderIcon />, label: 'Romantic relationships', description: 'Looking for romantic relationships', onClick: () => handleTargetSelect({ icon: <FavoriteBorderIcon />, label: 'Romantic relationships' }) },
-        { icon: <PeopleIcon />, label: 'Friendship', description: 'Looking for friendship', onClick: () => handleTargetSelect({ icon: <PeopleIcon />, label: 'Friendship' }) },
-        { icon: <ChatBubbleOutlineIcon />, label: 'Casual Chat', description: 'Looking for casual chat', onClick: () => handleTargetSelect({ icon: <ChatBubbleOutlineIcon />, label: 'Casual Chat' }) },
-    ];
-
-    const categoriesConfig: CategoryOption[] = [
-        { label: 'Height', type: 'slider', min: 100, max: 250 },
-        { label: 'Worldview', type: 'select', options: ['Buddhism', 'Jewry', 'Hinduism', 'Islam', 'Catholicism', 'Confucianism', 'Orthodoxy', 'Protestantism', 'Secular humanism', 'Atheism', 'Agnosticism'] },
-        { label: 'Zodiac Sign', type: 'buttonSelect', options: ['Aries', 'Do Not Display'] },
-        { label: 'Children', type: 'buttonSelect', options: ['No and not planning', 'No but would like', 'Already have'] },
-        { label: 'Languages', type: 'languageSelect' },
-        { label: 'Alcohol', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'] },
-        { label: 'Smoking', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'] },
-    ];
-
-    const galleryImages: string[] = [
-        'images/profile_photo1.png',
-        'images/profile_photo2.jpg',
-        'images/profile_photo3.jpg',
-        '',
-        '',
-        ''
-    ];
-
-    const [selectedInterests, setSelectedInterests] = useState<{ [key: string]: string }>({});
-
-    const handleInterestSelect = (category: string, interest: string, emoji: string) => {
-        setSelectedInterests((prev) => {
-            const updatedInterests = { ...prev, [category]: `${emoji} ${interest}` };
-            localStorage.setItem('selectedInterests', JSON.stringify(updatedInterests));
-            return updatedInterests;
-        });
+    const handleInterestSelect = (tagId: string) => {
+        setSelectedTags((prev) => {
+                const p = prev || initTags;
+                const newP = p.includes(tagId) ? p.filter(t => t !== tagId) : [...p, tagId];
+                userData.setInterests(newP);
+                return newP;
+            }
+        );
     };
 
-    const handleInterestRemove = (category: string) => {
-        setSelectedInterests((prev) => {
-            const updated = { ...prev };
-            delete updated[category];
-            return updated;
-        });
+    const applyInterests = () => {
+        // userData.setInterests(selectedTags || []);
+        setModalOpen(false);
     };
+
+    if (userData.loading) {
+        return <CircularProgress />; // Show a loading spinner while data is being fetched
+    }
 
     return (
         <Box position="relative" minHeight="100vh" display="flex" flexDirection="column">
@@ -269,14 +320,15 @@ const EditProfilePage: React.FC = () => {
             >
                 {/* Bio Section */}
                 <Box display="flex" flexDirection="column">
-                    <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>Alisa Pipisa, 20</Typography>
+                    <EditableField label="Username" initialValue={userData.getUsername()} onSave={(v) => userData.setUsername(v)} />
+                    <Typography variant="h6" sx={{ mb: 1 }}>Age: {userData.getAge()} yo</Typography>
                 </Box>
-                <EditableField label="Bio" initialValue="My name is Jessica Parker, and I enjoy meeting new people and finding ways to help them have an uplifting experience. I enjoy reading..." />
+                <EditableField label="Bio" initialValue={userData.getBio()} onSave={(v) => userData.setBio(v)} />
 
                 {/* Target Section */}
                 <Box mt={2} width="100%">
                     <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>Target</Typography>
-                    <TargetSheetButton label={selectedTarget.label} icon={selectedTarget.icon} options={targetOptions} onSelect={handleTargetSelect} />
+                    <TargetSheetButton label={selectedTarget?.label || initRelation.label} icon={selectedTarget?.icon || initRelation.icon} options={targetOptions} onSelect={handleTargetSelect} />
                 </Box>
 
                 {/* Main Features Section */}
@@ -295,160 +347,209 @@ const EditProfilePage: React.FC = () => {
 
                 {/* Interests Section */}
                 <Box p={3}>
-            {/* Заголовок */}
-            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>Интересы</Typography>
+                    {/* Заголовок */}
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>Интересы</Typography>
 
-            {/* Интересы */}
-            <Paper
-                variant="outlined"
-                onClick={() => setModalOpen(true)}
-                sx={{
-                    p: 2,
-                    borderRadius: 3,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    cursor: 'pointer',
-                    '&:hover': { backgroundColor: 'grey.100' },
-                }}
-            >
-                {Object.keys(selectedInterests).length === 0 ? (
-                    <Box>
-                        <Typography sx={{ fontWeight: 'bold' }}>Добавьте свои интересы</Typography>
-                        <Typography sx={{ color: 'grey.600' }}>Расскажите, чем вы увлекаетесь и что вам нравится</Typography>
-                    </Box>
-                ) : (
-                    <Box display="flex" flexWrap="wrap" gap={1}>
-                        {Object.entries(selectedInterests).map(([category, interest]) => (
-                            <Chip
-                                key={category}
-                                label={interest}
-                                onDelete={() => handleInterestRemove(category)}
-                                deleteIcon={<CloseIcon />}
-                                sx={{ fontSize: '14px' }}
-                            />
-                        ))}
-                    </Box>
-                )}
-                <ChevronRightIcon />
-            </Paper>
+                    {/* Интересы */}
+                    <Paper
+                        variant="outlined"
+                        onClick={() => setModalOpen(true)}
+                        sx={{
+                            p: 2,
+                            borderRadius: 3,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            cursor: 'pointer',
+                            '&:hover': { backgroundColor: 'grey.100' },
+                        }}
+                    >
+                        {Object.keys(selectedTags || initTags).length === 0 ? (
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold' }}>Добавьте свои интересы</Typography>
+                                <Typography sx={{ color: 'grey.600' }}>Расскажите, чем вы увлекаетесь и что вам нравится</Typography>
+                            </Box>
+                        ) : (
+                            <Box display="flex" flexWrap="wrap" gap={1}>
+                                {(selectedTags || initTags).map(tagId => {
+                                    const foundTag = allTags.find(t => t.id === tagId);
+                                    if (!foundTag) return null;
 
-            {/* Модальное окно для выбора интересов */}
-            <Modal open={isModalOpen} onClose={() => setModalOpen(false)}>
-    <Paper
-        sx={{
-            width: '90%',
-            maxWidth: '400px',
-            margin: '10% auto',
-            p: 3,
-            borderRadius: 2,
-            outline: 'none',
-            maxHeight: '80vh',
-            overflowY: 'auto',
-            boxShadow: 24,
-        }}
-    >
-        <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
-            Выберите интересы
-        </Typography>
+                                    return (
+                                        <Chip
+                                            key={tagId}
+                                            label={foundTag.text}
+                                            onDelete={() => handleInterestSelect(tagId)}
+                                        />
+                                    );
+                                })}
+                            </Box>
 
-        {/* Перебор категорий */}
-        {interestCategories.map((category) => (
-            <Box key={category.label} mb={3}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>
-                    {category.label}
-                </Typography>
-                <Box display="flex" flexWrap="wrap" gap={1}>
-                    {/* Кнопки интересов */}
-                    {category.options.map((interest) => (
-                        <Button
-                            key={interest.name}
-                            variant={
-                                selectedInterests[category.label] === `${interest.emoji} ${interest.name}`
-                                    ? 'contained'
-                                    : 'outlined'
-                            }
-                            size="small"
-                            onClick={() => handleInterestSelect(category.label, interest.name, interest.emoji)}
+                        )}
+                        <ChevronRightIcon />
+                    </Paper>
+
+                    {/* Модальное окно для выбора интересов */}
+                    <Modal open={isModalOpen} onClose={() => setModalOpen(false)}>
+                        <Paper
                             sx={{
-                                textTransform: 'none',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 0.5,
-                                backgroundColor:
-                                    selectedInterests[category.label] === `${interest.emoji} ${interest.name}`
-                                        ? 'rgba(25, 118, 210, 0.1)'
-                                        : 'transparent',
-                                borderColor:
-                                    selectedInterests[category.label] === `${interest.emoji} ${interest.name}`
-                                        ? '#1976D2'
-                                        : 'rgba(0, 0, 0, 0.23)',
-                                color:
-                                    selectedInterests[category.label] === `${interest.emoji} ${interest.name}`
-                                        ? '#1976D2'
-                                        : 'inherit',
-                                '&:hover': {
-                                    backgroundColor: 'rgba(25, 118, 210, 0.15)',
-                                    borderColor: '#1976D2',
-                                    color: '#1976D2',
-                                },
+                                width: '90%',
+                                maxWidth: '400px',
+                                margin: '10% auto',
+                                p: 3,
+                                borderRadius: 2,
+                                outline: 'none',
+                                maxHeight: '80vh',
+                                overflowY: 'auto',
+                                boxShadow: 24,
                             }}
                         >
-                            {interest.emoji} {interest.name}
-                        </Button>
-                    ))}
+                            <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
+                                Выберите интересы
+                            </Typography>
+
+                            {/* Перебор категорий */}
+                            {loadingTags ? (
+                                <Typography>Загрузка интересов...</Typography>
+                            ) : (
+                                <Box display="flex" flexWrap="wrap" gap={1}>
+                                    {allTags.map(tag => (
+                                        <Button
+                                            key={tag.id}
+                                            variant={
+                                                (selectedTags || initTags).includes(tag.id) ? 'contained' : 'outlined'
+                                            }
+                                            onClick={() => handleInterestSelect(tag.id)}
+                                        >
+                                            {tag.text}
+                                        </Button>
+                                    ))}
+                                </Box>
+                            )}
+
+                            <Button variant="contained" fullWidth sx={{ mt: 3 }} onClick={applyInterests}>
+                                Применить
+                            </Button>
+                        </Paper>
+                    </Modal>
+
+
+
                 </Box>
-            </Box>
-        ))}
 
-        {/* Кнопка "Применить" */}
-        <Button
-            variant="contained"
-            fullWidth
-            sx={{ mt: 3 }}
-            onClick={() => setModalOpen(false)}
-        >
-            Применить
-        </Button>
-    </Paper>
-</Modal>
+                {/*Logo*/}
+                <Box mt={3}>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                        Logo
+                    </Typography>
 
+                    <Box
+                        sx={{
+                            width: '100%',
+                            position: 'relative',
+                            paddingTop: '100%',
+                        }}>
 
+                        <Box
+                            component="img"
+                            src={logoUrl || ''}
+                            alt="User Logo"
+                            sx={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover',
+                                bgcolor: logoUrl ? 'transparent' : 'grey.300',
+                                borderRadius: 2,
+                            }}
+                        />
+                    </Box>
 
-        </Box>
+                    <Box mt={2} display="flex" justifyContent="center" gap={2}>
+                        <IconButton
+                            size="small"
+                            component="label"
+                            sx={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                color: 'black',
+                            }}
+                        >
+                            <UploadIcon />
+                            <input
+                                type="file"
+                                accept="image/*"
+                                hidden
+                                onChange={handleLogoFileChange}
+                            />
+                        </IconButton>
 
-                {/* Gallery Section */}
-                <Box mt={3} width="100%">
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>Gallery</Typography>
-                    <Box display="grid" gridTemplateColumns="repeat(3, 1fr)" gap={1} justifyContent="center">
-                        {galleryImages.map((src, index) => (
-                            <Box key={index} position="relative">
-                                <Avatar
-                                    variant="rounded"
-                                    src={src || undefined}
-                                    sx={{
-                                        width: 120,
-                                        height: 120,
-                                        bgcolor: src ? 'transparent' : 'grey.300',
-                                    }}
-                                />
-                                <IconButton
-                                    size="small"
-                                    onClick={() => src ? handleDeleteImage(index) : handleEditImage(index)}
-                                    sx={{
-                                        position: 'absolute',
-                                        top: 4,
-                                        right: 4,
-                                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                                        color: 'black'
-                                    }}
-                                >
-                                    {src ? <CloseIcon fontSize="small" /> : <EditIcon fontSize="small" />}
-                                </IconButton>
-                            </Box>
-                        ))}
+                        {logoUrl && (
+                            <IconButton
+                                size="small"
+                                onClick={handleEditLogo}
+                                sx={{
+                                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                    color: 'black',
+                                }}
+                            >
+                                <EditIcon />
+                            </IconButton>
+                        )}
+                    </Box>
+
+                    <Box mt={2} display="flex" justifyContent="center">
+                        <RoundButton onClick={handleSubmitLogo}>
+                            Save Logo
+                        </RoundButton>
                     </Box>
                 </Box>
+
+                {/*Gallery*/}
+                <Box mt={3}>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                        Additional Photos
+                    </Typography>
+
+                    <Gallery
+                        columns={3}
+                        rows={2}
+                        galleryImages={galleryImages}
+                        handleDeleteImage={handleDeleteImage}
+                        handleLoadImage={handleLoadImage}
+                        handleEditImage={handleEditImage}
+                        handleFileSelect={handleFileSelect}
+                    />
+
+                    <Box mt={2} display="flex" justifyContent="center">
+                        <RoundButton onClick={handleSubmitPhotos}>
+                            Save Additional Photos
+                        </RoundButton>
+                    </Box>
+                </Box>
+
+                {isEditingLogo && logoUrl && (
+                    <PhotoEditor
+                        image={logoUrl}
+                        onSave={edited => {
+                            handleSaveEditedLogo(edited);
+                            setIsEditingLogo(false);
+                        }}
+                        onClose={() => setIsEditingLogo(false)}
+                    />
+                )}
+
+                {isEditingPhoto && imageToEdit && (
+                    <PhotoEditor
+                        image={imageToEdit}
+                        onSave={edited => {
+                            handleSaveEditedImage(edited);
+                            setIsEditingPhoto(false);
+                        }}
+                        onClose={() => setIsEditingPhoto(false)}
+                    />
+                )}
 
                 {/* Premium Button Section */}
                 <Box mt={4} width="100%" display="flex" justifyContent="center" pb={8}>
@@ -457,6 +558,6 @@ const EditProfilePage: React.FC = () => {
             </Box>
         </Box>
     );
-};
+});
 
 export default EditProfilePage;

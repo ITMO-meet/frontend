@@ -15,6 +15,18 @@ export async function selectUsername(data: UsernameData) {
     await postJson('/auth/register/select_username', data);
 }
 
+interface ProfileDetailsData {
+    isu: number,
+    bio: string,
+    height: number,
+    weight: number,
+    zodiac_sign: string
+}
+
+export async function profileDetails(data: ProfileDetailsData) {
+    await postJson('/auth/register/profile_details', data);
+}
+
 interface PreferencesData {
     isu: number,
     gender_preference: string
