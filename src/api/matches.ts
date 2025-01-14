@@ -1,5 +1,6 @@
 import { getJson } from ".";
 
-export async function getChatsForUser(isu: number): Promise<{chats: {chat_id: string}[]}> {
-    return await getJson<{chats: {chat_id: string} []}>(`/chats/user_chats/${isu}`);
+export async function getUserChats(isu: number): Promise<{ chat_id: string; isu_1: number; isu_2: number }[]> {
+  const response = await getJson<{ chats: { chat_id: string; isu_1: number; isu_2: number }[] }>(`/chats/user_chats/${isu}`);
+  return response.chats;
 }

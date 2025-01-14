@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { logEvent, logPageView } from '../../analytics';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Profile } from '../../api/profile';
+import { matchesStore } from '../../stores/MatchesStore';
 
 interface MatchesPageProps {
     people: Profile[];
@@ -27,6 +28,8 @@ const MatchesPage: React.FC<MatchesPageProps> = ({ people }) => {
 
     const currentMatch = people[currentMatchIndex];
     const allPhotos = [currentMatch.logo, ...currentMatch.photos];
+
+    useEffect(() => {matchesStore.loadMatches()},[])
 
     useEffect(() => {
         logPageView("/matches")

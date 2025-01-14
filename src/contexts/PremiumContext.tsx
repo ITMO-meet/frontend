@@ -8,7 +8,7 @@ interface PremiumContextProps {
 export const PremiumContext = createContext<PremiumContextProps | undefined>(undefined);
 
 export const PremiumProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isPremium, setIsPremium] = useState(false);
+  const [isPremium, setIsPremium] = useState(true);
 
   return (
     <PremiumContext.Provider value={{ isPremium, setPremium: setIsPremium }}>
