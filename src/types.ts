@@ -57,3 +57,31 @@ export interface MessageType {
     audio?: Blob;
     video?: Blob;
 }
+
+export interface Test {
+    name: string,
+    description: string,
+    questions_count: number
+}
+
+export interface TestResult {
+    result_id: string
+}
+
+export interface TestQuestion {
+    description: string,
+    question_number: number
+}
+
+export interface TestGivenAnswers {
+    updated_answers: number[]
+}
+
+export interface TestScore {
+    score: number
+}
+
+export interface TestStatus {
+    answers: number[],
+    status: boolean
+}
