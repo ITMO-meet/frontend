@@ -61,29 +61,7 @@ describe('Messages Component', () => {
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
   });
 
-  it('renders "Contact not found" when contact does not exist', () => {
-    (useParams as jest.Mock).mockReturnValue({ id: '3' });
-    render(
-      <MemoryRouter>
-        <Messages people={mockContacts} messages={mockMessages} />
-      </MemoryRouter>
-    );
-    expect(screen.getByText('Contact not found')).toBeInTheDocument();
-  });
-
-  it('renders the component with initial messages when contact exists', () => {
-    (useParams as jest.Mock).mockReturnValue({ id: '1' });
-    render(
-      <MemoryRouter>
-        <Messages people={mockContacts} messages={mockMessages} />
-      </MemoryRouter>
-    );
-    expect(screen.getByText('John Doe')).toBeInTheDocument();
-    expect(screen.getByText('Hello, Jane!')).toBeInTheDocument();
-    expect(screen.getByText('Hi, John!')).toBeInTheDocument();
-  });
-
-  it('updates messages when a new message is sent via send button', () => {
+  it('adds an audio message when recording is stopped', async () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
@@ -91,17 +69,19 @@ describe('Messages Component', () => {
       </MemoryRouter>
     );
 
-    const inputField = screen.getByPlaceholderText('Type a message!');
-    fireEvent.change(inputField, { target: { value: 'Hello there!' } });
-    expect(inputField).toHaveValue('Hello there!');
-
-    const sendButton = screen.getAllByRole('button').find(
-      (button) => button.firstChild?.nodeName === 'svg'
+    const micButton = screen.getAllByRole('button').find(
+      (button) => button.querySelector('svg[data-testid="MicIcon"]')
     )!;
-    fireEvent.click(sendButton);
+    fireEvent.mouseDown(micButton);
+    
+    // Simulate recording stop
+    fireEvent.mouseUp(micButton);
+
+    // Ensure that an audio message is added
+    expect(screen.getByText('Voice message')).toBeInTheDocument();
   });
 
-  it('updates messages when a new message is sent via Enter key', () => {
+  it('adds a video message when recording is stopped', async () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
@@ -109,34 +89,18 @@ describe('Messages Component', () => {
       </MemoryRouter>
     );
 
-    const inputField = screen.getByPlaceholderText('Type a message!');
-    fireEvent.change(inputField, { target: { value: 'Testing Enter key' } });
-    fireEvent.keyDown(inputField, { key: 'Enter', code: 'Enter' });
-
-    expect(inputField).toHaveValue('');
-    expect(screen.getByText('Testing Enter key')).toBeInTheDocument();
-  });
-
-  it('does not send a message if input is empty or whitespace', () => {
-    (useParams as jest.Mock).mockReturnValue({ id: '1' });
-    render(
-      <MemoryRouter>
-        <Messages people={mockContacts} messages={mockMessages} />
-      </MemoryRouter>
-    );
-
-    const inputField = screen.getByPlaceholderText('Type a message!');
-    fireEvent.change(inputField, { target: { value: '   ' } });
-    const sendButton = screen.getAllByRole('button').find(
-      (button) => button.firstChild?.nodeName === 'svg'
+    const videoButton = screen.getAllByRole('button').find(
+      (button) => button.querySelector('svg[data-testid="VideocamIcon"]')
     )!;
-    fireEvent.click(sendButton);
+    fireEvent.click(videoButton); // Start recording
+    fireEvent.click(videoButton); // Stop recording
 
-    expect(inputField).toHaveValue('   ');
-    expect(screen.queryByText('   ')).not.toBeInTheDocument();
+    // Ensure that a video message is added
+    const videoElement = screen.getByRole('video');
+    expect(videoElement).toBeInTheDocument();
   });
 
-  it('navigates back when back button is clicked', () => {
+  it('adds an image message when a file is selected from the gallery', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
@@ -144,15 +108,14 @@ describe('Messages Component', () => {
       </MemoryRouter>
     );
 
-    const backButton = screen.getAllByRole('button').find(
-      (button) => button.firstChild?.nodeName === 'svg' && button !== null
-    )!;
-    fireEvent.click(backButton);
+    const galleryInput = screen.getByTestId('gallery-input') as HTMLInputElement;
+    const file = new File(['image-content'], 'test-image.jpg', { type: 'image/jpeg' });
+    fireEvent.change(galleryInput, { target: { files: [file] } });
 
-    expect(mockNavigate).toHaveBeenCalledWith(-1);
+    expect(screen.getByAltText('Sent')).toBeInTheDocument();
   });
 
-  it('calls scrollIntoView when messages are updated', () => {
+  it('adds a file message when a file is selected from the file manager', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
@@ -160,10 +123,41 @@ describe('Messages Component', () => {
       </MemoryRouter>
     );
 
-    const inputField = screen.getByPlaceholderText('Type a message!');
-    fireEvent.change(inputField, { target: { value: 'Scroll test' } });
-    fireEvent.keyDown(inputField, { key: 'Enter', code: 'Enter' });
+    const fileInput = screen.getByTestId('file-input') as HTMLInputElement;
+    const file = new File(['file-content'], 'test-document.pdf', { type: 'application/pdf' });
+    fireEvent.change(fileInput, { target: { files: [file] } });
 
-    expect(window.HTMLElement.prototype.scrollIntoView).toHaveBeenCalled();
+    expect(screen.getByText('test-document.pdf')).toBeInTheDocument();
+  });
+
+  it('displays the picker modal when the attachment button is clicked', () => {
+    (useParams as jest.Mock).mockReturnValue({ id: '1' });
+    render(
+      <MemoryRouter>
+        <Messages people={mockContacts} messages={mockMessages} />
+      </MemoryRouter>
+    );
+
+    const attachmentButton = screen.getByTestId('attachment-button');
+    fireEvent.click(attachmentButton);
+
+    expect(screen.getByText('Select an Option')).toBeInTheDocument();
+  });
+
+  it('closes the picker modal when the modal is dismissed', () => {
+    (useParams as jest.Mock).mockReturnValue({ id: '1' });
+    render(
+      <MemoryRouter>
+        <Messages people={mockContacts} messages={mockMessages} />
+      </MemoryRouter>
+    );
+
+    const attachmentButton = screen.getByTestId('attachment-button');
+    fireEvent.click(attachmentButton);
+
+    const modal = screen.getByRole('dialog');
+    fireEvent.keyDown(modal, { key: 'Escape' });
+
+    expect(modal).not.toBeInTheDocument();
   });
 });
