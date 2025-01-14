@@ -11,7 +11,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Profile } from '../../api/profile';
 import { matchesStore } from '../../stores/MatchesStore';
 import { observer } from 'mobx-react-lite';
-
+import StraightenIcon from '@mui/icons-material/Straighten';
+import ChurchIcon from '@mui/icons-material/Church';
+import MonitorWeightIcon from '@mui/icons-material/MonitorWeight';
+import ChildCareIcon from '@mui/icons-material/ChildCare';
+import LocalBarIcon from '@mui/icons-material/LocalBar';
+import SmokingRoomsIcon from '@mui/icons-material/SmokingRooms';
 
 const MatchesPage: React.FC = observer(() => {
     const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
@@ -26,9 +31,6 @@ const MatchesPage: React.FC = observer(() => {
     const matches = matchesStore.matches;
     const currentMatch = matches[currentMatchIndex];
     const allPhotos = currentMatch ? [currentMatch.logo, ...currentMatch.photos] : [];
-
-    //const currentMatch = people[currentMatchIndex];
-    //const allPhotos = [currentMatch.logo, ...currentMatch.photos];
 
     useEffect(() => { matchesStore.loadMatches() }, [])
 
@@ -64,6 +66,109 @@ const MatchesPage: React.FC = observer(() => {
         setCurrentPhotoIndex(0);
         setIsListVisible(false);
     };
+
+    const getFeatureValue = (profile: Profile, icon: string) =>
+        profile.mainFeatures.find((feature) => feature.icon === icon)?.text || "Unknown";
+
+    const renderMainFeatures = (profile: Profile) => {
+        const features = [
+            { icon: <StraightenIcon />, text: `${getFeatureValue(profile, "height")}` },
+            { icon: <MonitorWeightIcon />, text: `${getFeatureValue(profile, "weight")}` },
+            { icon: <Typography sx={{ fontSize: 20 }}>♈️</Typography>, text: `${getFeatureValue(profile, "zodiac_sign")}` },
+            { icon: <Typography>👤</Typography>, text: `${getFeatureValue(profile, "gender")}` },
+            { icon: <Typography>🎂</Typography>, text: `${getFeatureValue(profile, "birthdate")}` },
+            { icon: <ChurchIcon />, text: `${getFeatureValue(profile, "worldview")}` },
+            { icon: <ChildCareIcon />, text: `${getFeatureValue(profile, "children")}` },
+            { icon: <LocalBarIcon />, text: `${getFeatureValue(profile, "alcohol")}` },
+            { icon: <SmokingRoomsIcon />, text: `${getFeatureValue(profile, "smoking")}` },
+        ];
+
+        return (
+            <Box mt={2}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                    Main Features
+                </Typography>
+                <Box display="flex" gap={1} flexWrap="wrap">
+                    {features.map((feature, index) => (
+                        <Box
+                            key={index}
+                            display="flex"
+                            alignItems="center"
+                            sx={{
+                                bgcolor: 'rgba(214, 231, 255, 0.8)',
+                                border: '1px solid rgba(214, 231, 255, 0.8)',
+                                borderRadius: '8px',
+                                padding: '4px 8px',
+                                gap: '4px',
+                            }}
+                        >
+                            {feature.icon}
+                            <Typography>{feature.text}</Typography>
+                        </Box>
+                    ))}
+                </Box>
+            </Box>
+        );
+    };
+
+    const renderLanguages = (profile: Profile) => {
+        // Ищем массив языков в mainFeatures
+        const languagesFeature = profile.mainFeatures.find(
+            (feature) => Array.isArray(feature) && feature[0]?.icon === "languages"
+        );
+
+        const languages = languagesFeature || [];
+
+        return (
+            <Box mt={2}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                    Languages
+                </Typography>
+                <Box display="flex" gap={1} flexWrap="wrap">
+                    {languages.map((language: { text: string; icon: string }, index: number) => (
+                        <Box
+                            key={index}
+                            display="flex"
+                            alignItems="center"
+                            sx={{
+                                bgcolor: 'rgba(214, 231, 255, 0.8)',
+                                borderRadius: '8px',
+                                padding: '4px 8px',
+                                gap: '4px',
+                            }}
+                        >
+                            <Typography>{language.text}</Typography>
+                        </Box>
+                    ))}
+                </Box>
+            </Box>
+        );
+    };
+
+    const renderInterests = (profile: Profile) => (
+        <Box mt={2}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                Interests
+            </Typography>
+            <Box display="flex" gap={1} flexWrap="wrap">
+                {profile.interests.map((interest, index) => (
+                    <Box
+                        key={index}
+                        display="flex"
+                        alignItems="center"
+                        sx={{
+                            bgcolor: 'rgba(214, 231, 255, 0.8)',
+                            borderRadius: '8px',
+                            padding: '4px 8px',
+                            gap: '4px',
+                        }}
+                    >
+                        <Typography>{interest.text}</Typography>
+                    </Box>
+                ))}
+            </Box>
+        </Box>
+    );
 
 
     const animationVariants = {
@@ -286,61 +391,10 @@ const MatchesPage: React.FC = observer(() => {
                 </Button>
             </Box>
 
-            {/* Фичи и интересы */}
-            <Paper
-                sx={{
-                    p: 2,
-                    mb: 2,
-                    bgcolor: '#f5f5f5',
-                    borderRadius: '12px',
-                }}
-            >
-                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                    Main Features
-                </Typography>
-                <Box display="flex" gap={1} flexWrap="wrap" mb={2}>
-                    {currentMatch.mainFeatures.map((feature, index) => (
-                        <Box
-                            key={index}
-                            display="flex"
-                            alignItems="center"
-                            sx={{
-                                bgcolor: 'rgba(214, 231, 255, 0.8)',
-                                border: '1px solid rgba(214, 231, 255, 0.8)',
-                                borderRadius: '8px',
-                                padding: '4px 8px',
-                                gap: '4px',
-                            }}
-                        >
-                            {feature.icon}
-                            <Typography>{feature.text}</Typography>
-                        </Box>
-                    ))}
-                </Box>
-
-                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                    Interests
-                </Typography>
-                <Box display="flex" gap={1} flexWrap="wrap">
-                    {currentMatch.interests.map((interest, index) => (
-                        <Box
-                            key={index}
-                            display="flex"
-                            alignItems="center"
-                            sx={{
-                                bgcolor: 'rgba(214, 231, 255, 0.8)',
-                                border: '1px solid rgba(214, 231, 255, 0.8)',
-                                borderRadius: '8px',
-                                padding: '4px 8px',
-                                gap: '4px',
-                            }}
-                        >
-                            {interest.icon}
-                            <Typography>{interest.text}</Typography>
-                        </Box>
-                    ))}
-                </Box>
-            </Paper>
+            {/* Фичи, языкии интересы */}
+            {renderMainFeatures(currentMatch)}
+            {renderLanguages(currentMatch)}
+            {renderInterests(currentMatch)}
 
             {/* Навигация */}
             <Box display="flex" justifyContent="space-between" mt="auto">
