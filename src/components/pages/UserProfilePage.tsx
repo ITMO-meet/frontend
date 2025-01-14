@@ -68,8 +68,12 @@ const UserProfilePage: React.FC = observer(() => {
         profile.mainFeatures.find((feature) => feature.icon === icon)?.text || "Unknown";
 
     const handleBlock = async () => {
+        if (!currentUser?.isu) {
+            console.error("Viewed user isu is not defined");
+            return;
+        }
         try {
-            await blockPerson(userData.getIsu(), currentUser?.isu!);
+            await blockPerson(userData.getIsu(), currentUser.isu);
             setIsModalOpen(false);
             navigate('/matches');
         } catch (error) {
