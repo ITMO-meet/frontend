@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, IconButton, Paper, Button } from '@mui/material';
+import { Box, Typography, IconButton, Paper, Button, Modal } from '@mui/material';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -18,12 +18,15 @@ import SmokingRoomsIcon from '@mui/icons-material/SmokingRooms';
 import BadgeIcon from '@mui/icons-material/Badge';
 import HomeIcon from '@mui/icons-material/Home';
 import SchoolIcon from '@mui/icons-material/School';
+import { blockPerson } from '../../api/matches';
+import { userData } from '../../stores/UserDataStore';
 
 const UserProfilePage: React.FC = observer(() => {
     const navigate = useNavigate();
 
     useEffect(() => { logEvent("UserProfile", "User profile viewed", "") }, []);
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
 
     const { id } = useParams<{ id: string }>();
@@ -63,6 +66,19 @@ const UserProfilePage: React.FC = observer(() => {
 
     const getFeatureValue = (profile: Profile, icon: string) =>
         profile.mainFeatures.find((feature) => feature.icon === icon)?.text || "Unknown";
+
+    const handleBlock = async () => {
+        try {
+            await blockPerson(userData.getIsu(), currentUser?.isu!);
+            setIsModalOpen(false);
+            navigate('/matches');
+        } catch (error) {
+            console.error("Error blocking user:", error);
+        }
+    };
+
+    const handleOpenModal = () => setIsModalOpen(true);
+    const handleCloseModal = () => setIsModalOpen(false);
 
     const renderMainFeatures = (profile: Profile) => {
         const features = [
@@ -337,7 +353,7 @@ const UserProfilePage: React.FC = observer(() => {
                         variant="contained"
                         color="error"
                         startIcon={<BlockIcon />}
-                        onClick={() => console.log('User blocked')}
+                        onClick={handleOpenModal}
                         sx={{
                             fontWeight: 'bold',
                             fontSize: '16px',
@@ -348,6 +364,47 @@ const UserProfilePage: React.FC = observer(() => {
                         Block User
                     </Button>
                 </Box>
+
+                {/* Modal section */}
+                <Modal
+                    open={isModalOpen}
+                    onClose={handleCloseModal}
+                    aria-labelledby="modal-title"
+                    aria-describedby="modal-description"
+                >
+                    <Paper
+                        sx={{
+                            width: '80%',
+                            maxWidth: '350px',
+                            margin: '20% auto',
+                            p: 3,
+                            borderRadius: 2,
+                            boxShadow: 24,
+                            textAlign: 'center',
+                        }}
+                    >
+                        <Typography variant="h6" fontWeight="bold" gutterBottom>
+                            Это действие нельзя отменить
+                        </Typography>
+                        <Box display="flex" justifyContent="space-around">
+
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                onClick={handleCloseModal}
+                            >
+                                Закрыть
+                            </Button>
+                            <Button
+                                variant="contained"
+                                color="error"
+                                onClick={handleBlock}
+                            >
+                                Block
+                            </Button>
+                        </Box>
+                    </Paper>
+                </Modal>
             </Box>
         </PageWrapper>
     );
