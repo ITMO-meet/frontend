@@ -347,28 +347,6 @@ const people = [
   }
 ]
 
-const mockGetQuestions = (id: number) => {
-  if (id === 1) {
-    return [
-      {
-        id: 1,
-        text: 'Question 1?',
-      },
-    ]
-  } else {
-    return [
-      {
-        id: 1,
-        text: 'Question 1?',
-      },
-      {
-        id: 2,
-        text: 'Question 2?',
-      },
-    ];
-  }
-}
-
 const shouldHideNav = (pathname: string): boolean => {
   const hiddenRoutes = ['/login', '/register', '/edit-profile', '/settings'];
   const hiddenRoutesRegex = /^\/.+\/[^/]+$/;

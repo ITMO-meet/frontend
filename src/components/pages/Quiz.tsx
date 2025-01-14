@@ -111,7 +111,14 @@ export const Quiz: React.FC<QuizProps> = ({ onExit }) => {
                     exit={{ opacity: 0, y: 20 }} // Состояние при выходе
                     transition={{ duration: 0.5 }} // Длительность анимации
                 >
-                    <Typography variant="h6" sx={{ marginBottom: 2 }}>
+                    <Typography variant="h6"    
+                        sx={{ 
+                            marginBottom: 2, 
+                            textAlign: 'center', // Центрирование текста
+                            lineHeight: 1.5, // Увеличение междустрочного интервала для лучшей читаемости
+                            color: 'text.primary', // Цвет текста, можно изменить на любой другой
+                            padding: 2 // Добавление отступов, если нужно
+                        }}>
                         {currentQuestion}
                     </Typography>
                 </motion.div>
