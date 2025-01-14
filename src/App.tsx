@@ -424,14 +424,14 @@ function AppContent() {
             <Route path="/add-story" element={<AddStoryPage />} />
             <Route path="/chat/:id" element={<Messages people={people} messages={messages} />} />
             {/* <Route path="/chat/:id" element={<Messages contacts={contacts} />} /> */}
-            <Route path="/matches" element={<MatchesPage people={people} />} />
+            <Route path="/matches" element={<MatchesPage />} />
             <Route path="/feed" element={<FeedPage />} />
             <Route path="/tests" element={<TestsPage />} />
             <Route path="/tests/:id" element={<Quiz getQuestions={mockGetQuestions} onExit={() => navigate("/chats")} onFinish={console.log} />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/edit-profile" element={<EditProfilePage />} />
-            <Route path="/user-profile/:id" element={<UserProfilePage people={people} />} />
+            <Route path="/user-profile/:id" element={<UserProfilePage />} />
             <Route path="/schedule" element={<CalendarPage />} />
             <Route path="/premium" element={<PremiumPage />} />
             <Route path="/register" element={<RegisterPage />} />
