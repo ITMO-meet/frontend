@@ -19,3 +19,10 @@ export async function dislikePerson(user_id: number, target_id: number): Promise
         {user_id, target_id} as UserAction
     )
 }
+
+export async function superLikePerson(user_id: number, target_id: number): Promise<any> {
+    return await postJson<{message: string; matched?: boolean; chat_id?: string}> (
+        '/matches/superlike_person',
+        {user_id, target_id} as UserAction
+    );
+}
