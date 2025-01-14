@@ -347,28 +347,6 @@ const people = [
   }
 ]
 
-const mockGetQuestions = (id: number) => {
-  if (id === 1) {
-    return [
-      {
-        id: 1,
-        text: 'Question 1?',
-      },
-    ]
-  } else {
-    return [
-      {
-        id: 1,
-        text: 'Question 1?',
-      },
-      {
-        id: 2,
-        text: 'Question 2?',
-      },
-    ];
-  }
-}
-
 const shouldHideNav = (pathname: string): boolean => {
   const hiddenRoutes = ['/login', '/register', '/edit-profile', '/settings'];
   const hiddenRoutesRegex = /^\/.+\/[^/]+$/;
@@ -427,7 +405,7 @@ function AppContent() {
             <Route path="/matches" element={<MatchesPage />} />
             <Route path="/feed" element={<FeedPage />} />
             <Route path="/tests" element={<TestsPage />} />
-            <Route path="/tests/:id" element={<Quiz getQuestions={mockGetQuestions} onExit={() => navigate("/chats")} onFinish={console.log} />} />
+            <Route path="/tests/:id" element={<Quiz onExit={() => navigate("/tests")} />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/edit-profile" element={<EditProfilePage />} />
