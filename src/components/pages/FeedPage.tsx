@@ -28,13 +28,14 @@ import { userData } from '../../stores/UserDataStore';
 import { observer } from 'mobx-react-lite';
 import { usePremium } from '../../contexts/PremiumContext';
 import { feedStore } from '../../stores/FeedStore';
+import { dislikePerson, likePerson } from '../../api/feed';
 
 // Интерфейс для свойств компонента SwipeableCard
-interface Props {
-    onLike: (person: Profile) => void; // Функция для лайков
-    onSuperLike: (person: Profile) => void; // Функция для суперлайков
-    onDislike: (person: Profile) => void; // Функция для "не понравилось"
-}
+// interface Props {
+//     onLike: (person: Profile) => void; // Функция для лайков
+//     onSuperLike: (person: Profile) => void; // Функция для суперлайков
+//     onDislike: (person: Profile) => void; // Функция для "не понравилось"
+// }
 
 // Функция для создания стилей иконок
 const iconStyles = (size: number, color: string) => ({
@@ -50,7 +51,7 @@ const icons = {
 };
 
 // Основной компонент SwipeableCard
-const FeedPage: React.FC<Props> = observer(({ onLike, onDislike, onSuperLike }) => {
+const FeedPage: React.FC = observer(() => {
     const DURATION = 300; // Длительность анимации в миллисекундах
     const [swipeDirection, setSwipeDirection] = useState<string | null>(null); // Направление свайпа
     const [iconVisible, setIconVisible] = useState(false); // Видимость иконки
@@ -76,23 +77,36 @@ const FeedPage: React.FC<Props> = observer(({ onLike, onDislike, onSuperLike }) 
         logPageView("/feed"); // GA log on page open
     }, []); // Зависимость от функции получения следующего человека
 
+    // Обработчик суперлайка
+    const handleSuperLike = (user_id: number, target_id: number) => {
+        console.log("superlike:", {user_id, target_id})
+    };
+
+
     // Обработчик свайпа
     const handleSwipe = (dir: string) => {
         setSwipeDirection(dir); // Установка направления свайпа
         setIconVisible(true); // Показ иконки в процессе свайпа
 
+        const user_id = userData.getIsu(); // Он лайкает
+        const target_id = person.isu; // Его лайкаем
+
         // Вызов соответствующей функции в зависимости от направления свайпа
         switch (dir) {
             case "left":
-                onDislike(person); // Если свайп влево, вызвать функцию "не понравилось"
+                dislikePerson(user_id, target_id)
+                .then(response => console.log('Dislike response:', response))
+                .catch(error => console.error('Dislike error:', error));
                 logEvent("Feed", "User pressed/swiped dislike", "");
                 break;
             case "right":
-                onLike(person); // Если свайп вправо, вызвать функцию лайка
+                likePerson(user_id, target_id)
+                .then(response => console.log('Like response:', response))
+                .catch(error => console.error('Like error:', error));
                 logEvent("Feed", "User pressed/swiped like", "");
                 break;
             case "up":
-                onSuperLike(person); // Если свайп вверх, вызвать функцию суперлайка
+                handleSuperLike(user_id, target_id); // Если свайп вверх, вызвать функцию суперлайка
                 logEvent("Feed", "User pressed/swiped superlike", "");
                 break;
         }
