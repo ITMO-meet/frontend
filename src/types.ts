@@ -24,6 +24,18 @@ export interface UserAction {
     target_id: number;
 }
 
+export interface LikeResponse {
+    message: string;
+    matched?: boolean;
+    chat_id?: string;
+}
+
+export interface DislikeResponse {
+    message: string;
+}
+
+export type SuperLikeResponse = LikeResponse;
+
 export interface Message {
     sender: 'me' | 'them';
     text: string;

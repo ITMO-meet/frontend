@@ -22,7 +22,6 @@ import StarIcon from '@mui/icons-material/Star';
 import { useSwipeable } from 'react-swipeable';
 import ImageButton from '../basic/ImageButton';
 import { logEvent, logPageView } from '../../analytics';
-import { Profile } from '../../api/profile';
 
 import { userData } from '../../stores/UserDataStore';
 import { observer } from 'mobx-react-lite';
