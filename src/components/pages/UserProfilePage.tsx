@@ -6,22 +6,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import BlockIcon from '@mui/icons-material/Block';
 import { logEvent } from '../../analytics';
 import PageWrapper from '../../PageWrapper';
+import { observer } from "mobx-react-lite";
+import { userProfileStore } from '../../stores/UserProfileStore';
 
-interface UserProfilePageProps {
-    people: Array<{
-        isu: number;
-        username: string;
-        bio: string;
-        logo: string;
-        photos: string[];
-        mainFeatures: { text: string; icon: JSX.Element }[];
-        interests: { text: string; icon: JSX.Element }[];
-        itmo: { text: string; icon: JSX.Element }[];
-        isStudent: boolean;
-    }>;
-}
 
-const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
+
+const UserProfilePage: React.FC = observer(() => {
     const navigate = useNavigate();
 
     useEffect(() => { logEvent("UserProfile", "User profile viewed", "") }, []);
@@ -29,7 +19,18 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
     const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
 
     const { id } = useParams<{ id: string }>();
-    const currentUser = id ? people.find((person) => person.isu === Number(id)) : null;
+
+    useEffect(() => {
+        if (id) {
+            userProfileStore.loadProfile(Number(id));
+        }
+        return () => {
+            userProfileStore.clearProfile();
+        };
+    }, [id]);
+
+    const currentUser = userProfileStore.profile;
+
 
     if (!currentUser) {
         return (
@@ -270,6 +271,6 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ people }) => {
             </Box>
         </PageWrapper>
     );
-};
+});
 
 export default UserProfilePage;
