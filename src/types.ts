@@ -52,8 +52,12 @@ export interface RawMessage {
 }
 
 export interface MessageType {
+    // image(image: any): string | undefined;
+    image?: Blob;
     sender: 'me' | 'them';
     text: string;
     audio?: Blob;
     video?: Blob;
+    file?: File;
+    fileName?: string;
 }
