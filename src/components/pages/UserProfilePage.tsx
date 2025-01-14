@@ -80,6 +80,11 @@ const UserProfilePage: React.FC = observer(() => {
     const handleOpenModal = () => setIsModalOpen(true);
     const handleCloseModal = () => setIsModalOpen(false);
 
+    const handleViewSchedule = () => {
+        navigate('/schedule', { state: { itmoId: currentUser.isu } })
+    }
+
+
     const renderMainFeatures = (profile: Profile) => {
         const features = [
             { icon: <StraightenIcon />, text: `${getFeatureValue(profile, "height")}` },
@@ -339,7 +344,7 @@ const UserProfilePage: React.FC = observer(() => {
                             <Button
                                 variant="contained"
                                 color="secondary"
-                                onClick={() => navigate('/schedule', { state: { itmoId: currentUser.itmo[2]?.text } })}
+                                onClick={handleViewSchedule}
                             >
                                 View Schedule
                             </Button>
