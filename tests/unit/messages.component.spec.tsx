@@ -36,7 +36,7 @@ beforeAll(() => {
   global.MediaRecorder = class {
     private ondataavailable: ((event: BlobEvent) => void) | null = null;
     private onstop: (() => void) | null = null;
-  
+
     start() {
       console.log('MediaRecorder started');
       setTimeout(() => {
@@ -44,12 +44,12 @@ beforeAll(() => {
         this.ondataavailable?.(event);
       }, 50);
     }
-  
+
     stop() {
       console.log('MediaRecorder stopped');
       this.onstop?.();
     }
-  
+
     addEventListener<K extends 'dataavailable' | 'stop'>(
       event: K,
       callback: K extends 'dataavailable' ? (event: BlobEvent) => void : () => void
@@ -62,7 +62,7 @@ beforeAll(() => {
       }
     }
   };
-  
+
 });
 
 
@@ -176,15 +176,14 @@ describe('Messages Component', () => {
         <Messages people={mockContacts} messages={mockMessages} />
       </MemoryRouter>
     );
-  
+
     const micButton = screen.getByTestId('mic-button');
     await act(async () => {
       fireEvent.mouseDown(micButton);
       fireEvent.mouseUp(micButton);
     });
   });
-  
-  
+
   it('adds a video message when recording is stopped', async () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
@@ -192,15 +191,13 @@ describe('Messages Component', () => {
         <Messages people={mockContacts} messages={mockMessages} />
       </MemoryRouter>
     );
-  
+
     const videoButton = screen.getByTestId('video-button');
     await act(async () => {
       fireEvent.mouseDown(videoButton);
       fireEvent.mouseUp(videoButton);
     });
   });
-  
-  
 
   it('navigates to the previous page when back button is clicked', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
