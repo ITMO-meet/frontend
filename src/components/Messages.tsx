@@ -154,8 +154,9 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
       const blob = new Blob(chunks, { type: 'audio/webm' });
       console.log('Audio blob created:', blob);
       setChatMessages((prev) => {
-        console.log('Updating messages with audio:', [...prev, { sender: 'me', text: 'Voice message', audio: blob }]);
-        return [...prev, { sender: 'me', text: 'Voice message', audio: blob }];
+        const updatedMessages: MessageType[] = [...prev, { sender: 'me', text: 'Voice message', audio: blob }];
+        console.log('Updated messages:', updatedMessages);
+        return updatedMessages;
       });
     };
   
@@ -163,7 +164,6 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
     recorder.start();
     setIsRecording(true);
   };
-  
   
 
   const stopRecordingAudio = () => {
@@ -186,11 +186,12 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
       const blob = new Blob(chunks, { type: 'video/webm' });
       console.log('Video blob created:', blob);
       setChatMessages((prev) => {
-        console.log('Previous messages:', prev);
-        console.log('Adding Video sent');
-        return [...prev, { sender: 'me', text: 'Video sent', video: blob }];
+        const updatedMessages: MessageType[] = [...prev, { sender: 'me', text: 'Video sent', video: blob }];
+        console.log('Updated messages:', updatedMessages);
+        return updatedMessages;
       });
     };
+    
     
     
 
@@ -271,8 +272,9 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
           }}
         >
           {chatMessages.map((message, index) => (
-            <UserMessage key={index} message={message} />
-          ))}
+  <UserMessage key={index} message={message} />
+))}
+
           <div ref={messagesEndRef} />
         </List>
       </PageWrapper>
