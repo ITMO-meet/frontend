@@ -4,7 +4,6 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import GenderStep from '../../../src/components/registerSteps/GenderStep';
 import '@testing-library/jest-dom';
 import { ErrorProvider } from "../../../src/contexts/ErrorContext";
-import { selectPreferences } from '../../../src/api/register';
 
 // 1) Mock useError + selectPreferences:
 

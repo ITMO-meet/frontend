@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import LanguageIcon from '@mui/icons-material/Language';
+// import LanguageIcon from '@mui/icons-material/Language';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useNavigate } from 'react-router-dom';
@@ -27,7 +27,7 @@ import { userData } from '../../stores/UserDataStore';
 
 const SettingsPage: React.FC = () => {
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-    const [selectedLanguage, setSelectedLanguage] = useState('Русский');
+    // const [selectedLanguage, setSelectedLanguage] = useState('Русский');
     const [isNotificationsDialogOpen, setNotificationsDialogOpen] = useState(false);
     const [isLanguageDialogOpen, setLanguageDialogOpen] = useState(false);
     const [isProblemDialogOpen, setProblemDialogOpen] = useState(false);
@@ -41,7 +41,7 @@ const SettingsPage: React.FC = () => {
     const handleOpenNotificationsDialog = () => setNotificationsDialogOpen(true);
     const handleCloseNotificationsDialog = () => setNotificationsDialogOpen(false);
 
-    const handleOpenLanguageDialog = () => setLanguageDialogOpen(true);
+    // const handleOpenLanguageDialog = () => setLanguageDialogOpen(true);
     const handleCloseLanguageDialog = () => setLanguageDialogOpen(false);
 
     const handleOpenProblemDialog = () => setProblemDialogOpen(true);
