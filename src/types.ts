@@ -64,15 +64,19 @@ export interface RawMessage {
     chat_id: string;
     sender_id: number;
     receiver_id: number;
-    text: string;
+    text?: string;
     timestamp: string;
+    image?: Blob;
+    audio?: Blob;
+    video?: Blob;
+    file?: File;
 }
 
 export interface MessageType {
     // image(image: any): string | undefined;
-    image?: Blob;
     sender: 'me' | 'them';
     text: string;
+    image?: Blob;
     audio?: Blob;
     video?: Blob;
     file?: File;

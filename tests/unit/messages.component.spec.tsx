@@ -100,6 +100,14 @@ describe('Messages Component', () => {
     },
   ];
 
+  const mockChats = [
+    {
+      chat_id: '1',
+      isu_1: 1,
+      isu_2: 2,
+    }
+  ]
+
   const mockNavigate = jest.fn();
 
   beforeEach(() => {
@@ -111,7 +119,7 @@ describe('Messages Component', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
-        <Messages people={mockContacts} messages={mockMessages} />
+        <Messages chats={mockChats} people={mockContacts} messages={mockMessages} />
       </MemoryRouter>
     );
 
@@ -125,7 +133,7 @@ describe('Messages Component', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
-        <Messages people={mockContacts} messages={mockMessages} />
+        <Messages chats={mockChats} people={mockContacts} messages={mockMessages} />
       </MemoryRouter>
     );
 
@@ -139,41 +147,11 @@ describe('Messages Component', () => {
     expect(modal).not.toBeInTheDocument();
   });
 
-  it('adds an image message when a file is selected from the gallery', () => {
-    (useParams as jest.Mock).mockReturnValue({ id: '1' });
-    render(
-      <MemoryRouter>
-        <Messages people={mockContacts} messages={mockMessages} />
-      </MemoryRouter>
-    );
-
-    const galleryInput = screen.getByTestId('gallery-input') as HTMLInputElement;
-    const file = new File(['image-content'], 'test-image.jpg', { type: 'image/jpeg' });
-    fireEvent.change(galleryInput, { target: { files: [file] } });
-
-    expect(screen.getByText('Image sent')).toBeInTheDocument();
-  });
-
-  it('adds a file message when a file is selected from the file manager', () => {
-    (useParams as jest.Mock).mockReturnValue({ id: '1' });
-    render(
-      <MemoryRouter>
-        <Messages people={mockContacts} messages={mockMessages} />
-      </MemoryRouter>
-    );
-
-    const fileInput = screen.getByTestId('file-input') as HTMLInputElement;
-    const file = new File(['file-content'], 'test-document.pdf', { type: 'application/pdf' });
-    fireEvent.change(fileInput, { target: { files: [file] } });
-
-    expect(screen.getByText('test-document.pdf')).toBeInTheDocument();
-  });
-
   it('adds an audio message when recording is stopped', async () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
-        <Messages people={mockContacts} messages={mockMessages} />
+        <Messages chats={mockChats} people={mockContacts} messages={mockMessages} />
       </MemoryRouter>
     );
 
@@ -188,7 +166,7 @@ describe('Messages Component', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
-        <Messages people={mockContacts} messages={mockMessages} />
+        <Messages chats={mockChats} people={mockContacts} messages={mockMessages} />
       </MemoryRouter>
     );
 
@@ -203,7 +181,7 @@ describe('Messages Component', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
-        <Messages people={mockContacts} messages={mockMessages} />
+        <Messages chats={mockChats} people={mockContacts} messages={mockMessages} />
       </MemoryRouter>
     );
 

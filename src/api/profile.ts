@@ -125,8 +125,7 @@ export async function updateSmoking(isu: number, smoking: string) {
 
 export async function updateTags(isu: number, tagIds: string[]) {
     return await putJson(`/profile/update_tags`, {
-      isu,
-      tags: tagIds
+        isu,
+        tags: tagIds
     });
-  }
-  
+}
