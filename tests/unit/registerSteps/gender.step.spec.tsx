@@ -4,7 +4,6 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import GenderStep from '../../../src/components/registerSteps/GenderStep';
 import '@testing-library/jest-dom';
 import { ErrorProvider } from "../../../src/contexts/ErrorContext";
-import { selectPreferences } from '../../../src/api/register';
 
 // 1) Mock useError + selectPreferences:
 
@@ -25,8 +24,6 @@ jest.mock('../../../src/api/register', () => ({
   __esModule: true,
   selectPreferences: jest.fn().mockResolvedValue({}),
 }));
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const mockSelectPreferences = selectPreferences as jest.Mock;
 
 describe('GenderStep', () => {
   const mockOnNext = jest.fn();
@@ -42,20 +39,20 @@ describe('GenderStep', () => {
   });
 
   it('renders the component', () => {
-    expect(screen.getByText(/Show me/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
+    expect(screen.getByText(/Показывать мне/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /продолжить/i })).toBeInTheDocument();
   });
 
   it('button is disabled when no gender is selected', () => {
-    const nextButton = screen.getByRole('button', { name: /next/i });
+    const nextButton = screen.getByRole('button', { name: /продолжить/i });
     expect(nextButton).toBeDisabled();
   });
 
   it('button is enabled when a gender is selected', async () => {
     await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /Female/i }));
+      fireEvent.click(screen.getByRole('button', { name: /женщины/i }));
     });
-    const nextButton = screen.getByRole('button', { name: /next/i });
+    const nextButton = screen.getByRole('button', { name: /продолжить/i });
     expect(nextButton).toBeEnabled();
   });
 });

@@ -1,12 +1,9 @@
 import React from 'react';
 import { Box, Typography, Card, CardActionArea, CardContent, Avatar, Stack } from '@mui/material';
+import { Profile } from '../api/profile';
 
 interface ContactProps {
-  person: {
-    isu: number;
-    username: string;
-    logo: string;
-  };
+  person: Profile;
   lastMessage: string;
   handleClick: (isu: number) => void;
 }

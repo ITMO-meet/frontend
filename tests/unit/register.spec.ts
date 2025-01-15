@@ -8,6 +8,7 @@ import {
     selectRelationship,
     fetchTags,
     fetchPreferences,
+    profileDetails,
 } from '../../src/api/register';
 import * as apiIndex from '../../src/api/index';
 import {any} from "prop-types";
@@ -32,6 +33,20 @@ describe('register API', () => {
         mockPostJson.mockResolvedValue({});
         await selectUsername({ isu: 123456, username: 'testuser' });
         expect(mockPostJson).toHaveBeenCalledWith('/auth/register/select_username', { isu: 123456, username: 'testuser' });
+    });
+
+    it('profileDetails calls postJson with correct data', async () => {
+        mockPostJson.mockResolvedValue({});
+        const profileData = {
+            isu: 123456,
+            bio: 'Hello, I am a test user.',
+            height: 175,
+            weight: 70,
+            zodiac_sign: 'Aquarius'
+        };
+
+        await profileDetails(profileData);
+        expect(mockPostJson).toHaveBeenCalledWith('/auth/register/profile_details', profileData);
     });
 
     it('selectPreferences calls postJson with correct data', async () => {

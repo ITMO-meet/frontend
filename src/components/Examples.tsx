@@ -19,7 +19,11 @@ function Examples() {
       <Typography color={theme.palette.primary.main} fontSize={"16px"}>It’s recommended to give your actual name</Typography>
         <RoundButton id="123" width={"30%"} onClick={() => console.log(10)}>Continue</RoundButton>
       <br />
-      <ImageButton onClick={() => console.log(1)} radius="70px"><WestIcon /></ImageButton>
+      <ImageButton onClick={() => console.log(1)} radius="70px" sx = {{ '&:active': {
+                        backgroundColor: '#6a8afc', // Цвет при нажатии
+                    },
+                    borderRadius: '50%', // Круглая форма
+                    }}><WestIcon /></ImageButton>
       <br />
       <InputText id="123" width={"50%"} label={"Type your name"} onChange={(e) => console.log(e.target.value)} />
       <br />

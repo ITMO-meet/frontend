@@ -47,8 +47,8 @@ describe('AdditionalPhotosStep', () => {
   });
 
   it('renders the component', () => {
-    expect(screen.getByText(/Add additional photos/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
+    expect(screen.getByText(/Выберите дополнительные фотографии/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /продолжить/i })).toBeInTheDocument();
   });
 
   // it('calls onNext with the correct additionalPhotos', async () => {
@@ -66,7 +66,7 @@ describe('AdditionalPhotosStep', () => {
   //
   //   // Click the "Next" button
   //   await act(async () => {
-  //     fireEvent.click(screen.getByRole('button', { name: /next/i }));
+  //     fireEvent.click(screen.getByRole('button', { name: /продолжить/i }));
   //   });
   //
   //   // Wait for onNext to be called
@@ -83,7 +83,7 @@ describe('AdditionalPhotosStep', () => {
   // it('shows error if no photos selected', async () => {
   //   // Click the "Next" button without selecting any photos
   //   await act(async () => {
-  //     fireEvent.click(screen.getByRole('button', { name: /next/i }));
+  //     fireEvent.click(screen.getByRole('button', { name: /продолжить/i }));
   //   });
   //
   //   // Wait for showError to be called
@@ -109,7 +109,7 @@ describe('AdditionalPhotosStep', () => {
   //
   //   // Click the "Next" button
   //   await act(async () => {
-  //     fireEvent.click(screen.getByRole('button', { name: /next/i }));
+  //     fireEvent.click(screen.getByRole('button', { name: /продолжить/i }));
   //   });
   //
   //   // Wait for showError to be called

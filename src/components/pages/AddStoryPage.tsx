@@ -1,20 +1,48 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, IconButton, Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  IconButton,
+  Button,
+  Snackbar,
+  Alert
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import PhotoEditor from "./PhotoEditor";
 import { logEvent, logPageView } from "../../analytics";
-
+import { createStory } from "../../api/stories";
+import { dataURLtoFile } from "../../utils";
+import { userData } from "../../stores/UserDataStore";
 
 const AddStoryPage: React.FC = () => {
   const navigate = useNavigate();
 
+  const currentUserISU = userData.getIsu();
+
   const [isEditing, setIsEditing] = useState(false);
   const [imageToEdit, setImageToEdit] = useState<string | null>(null);
+  const [originalFile, setOriginalFile] = useState<File | null>(null);
+
+  // Snackbar state
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
+
+  useEffect(() => {
+    logPageView("/add-story");
+  }, []);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      setOriginalFile(file); // Keep the original file if needed
       const reader = new FileReader();
       reader.onload = () => {
         setImageToEdit(reader.result as string);
@@ -24,21 +52,63 @@ const AddStoryPage: React.FC = () => {
     }
   };
 
-  useEffect(() => { 
-    logPageView("/add-story")
-  }, [])
-
   const handleCancel = () => {
     navigate("/chats");
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleSave = (editedImage: string) => {
-    //console.log( imageData.imageBase64);
-    logEvent("Stories", "Save story", "")
-    alert("Image saved!");
-    setIsEditing(false);
-    navigate("/chats");
+  const handleSnackbarClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
+  /**
+   * Called once the user hits "Save" on the PhotoEditor
+   * or if you prefer, once they confirm they're ready
+   * to post their story
+   */
+  const handleSave = async (editedImage: string) => {
+    try {
+      logEvent("Stories", "Save story", "");
+
+      // Convert the edited base64 image back to a File
+      const editedFile = dataURLtoFile(editedImage, originalFile?.name || "story.png");
+
+      // Send the story to the backend
+      await createStory(currentUserISU, editedFile);
+
+      // If successful, show a success Snackbar and navigate away
+      setSnackbar({
+        open: true,
+        message: "Story successfully uploaded!",
+        severity: "success",
+      });
+      setTimeout(() => {
+        navigate("/chats");
+      }, 2000);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error);
+        setSnackbar({
+          open: true,
+          message: `Failed to save the story: ${error.message}`,
+          severity: "error",
+        });
+      } else {
+        console.error(error);
+        setSnackbar({
+          open: true,
+          message: "Failed to save the story: Unknown error",
+          severity: "error",
+        });
+      }
+    } finally {
+      setIsEditing(false);
+    }
   };
 
   return (
@@ -55,7 +125,7 @@ const AddStoryPage: React.FC = () => {
       }}
     >
       <Typography variant="h5" sx={{ fontWeight: "bold", marginBottom: "16px" }}>
-        Add a Story
+        Добавить историю
       </Typography>
 
       {!isEditing && (
@@ -84,9 +154,20 @@ const AddStoryPage: React.FC = () => {
               variant="contained"
               color="secondary"
               onClick={handleCancel}
-              sx={{ marginRight: "8px" }}
+              sx={{
+                backgroundColor: '#4d60bf', // Цвет кнопки
+                color: 'white', // Цвет текста
+                borderRadius: '30px', // Скруглённые края
+                textTransform: 'none', // Убрать CAPS
+                fontSize: '1.1rem', // Увеличенный размер текста
+                fontWeight: 700, // Жирный текст
+                fontFamily: "'Poppins', Arial, sans-serif",
+                letterSpacing: '0.05em', // Расширение текста
+                padding: '10px 20px', // Пространство внутри кнопки
+                '&:hover': { backgroundColor: '#1e4dc7' }, // Тёмный оттенок при наведении
+            }}
             >
-              Cancel
+              Отменить
             </Button>
             {imageToEdit && (
               <Button
@@ -94,7 +175,7 @@ const AddStoryPage: React.FC = () => {
                 color="primary"
                 onClick={() => setIsEditing(true)}
               >
-                Edit Image
+                Редактировать изображение
               </Button>
             )}
           </Box>
@@ -108,6 +189,23 @@ const AddStoryPage: React.FC = () => {
           onClose={() => setIsEditing(false)}
         />
       )}
+
+      {/* Snackbar for Notifications */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+          variant="filled"
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

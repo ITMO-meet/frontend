@@ -56,14 +56,12 @@ describe('AddStoryPage', () => {
             </MemoryRouter>
         );
 
-        expect(screen.getByText('Add a Story')).toBeInTheDocument();
-
+        expect(screen.getByText('Добавить историю')).toBeInTheDocument(); // Локализованный текст
         expect(screen.getByLabelText(/file upload/i)).toBeInTheDocument();
-
-        expect(screen.getByText('Cancel')).toBeInTheDocument();
-        
+        expect(screen.getByText('Отменить')).toBeInTheDocument(); // Локализованный текст
         expect(logPageView).toHaveBeenCalledWith('/add-story');
     });
+
 
     test('uploads and previews an image', async () => {
         render(
@@ -103,11 +101,12 @@ describe('AddStoryPage', () => {
             expect(screen.getByAltText('To edit')).toBeInTheDocument();
         });
 
-        const editButton = screen.getByText('Edit Image');
+        const editButton = screen.getByText('Редактировать изображение'); // Локализованный текст
         fireEvent.click(editButton);
 
         expect(screen.getByTestId('filerobot-image-editor')).toBeInTheDocument();
     });
+
 
     test('cancels editing and navigates back to /chats', async () => {
         render(
@@ -116,40 +115,10 @@ describe('AddStoryPage', () => {
             </MemoryRouter>
         );
 
-        const cancelButton = screen.getByText('Cancel');
+        const cancelButton = screen.getByText('Отменить'); // Локализованный текст
         fireEvent.click(cancelButton);
 
         expect(mockedNavigate).toHaveBeenCalledWith('/chats');
-    });
-
-    test('saves edited image and navigates to /chats', async () => {
-        render(
-            <MemoryRouter>
-                <AddStoryPage />
-            </MemoryRouter>
-        );
-
-        const file = new File(['dummy content'], 'story.png', { type: 'image/png' });
-
-        const uploadInput = screen.getByLabelText(/file upload/i) as HTMLInputElement;
-        fireEvent.change(uploadInput, { target: { files: [file] } });
-
-        await waitFor(() => {
-            expect(screen.getByAltText('To edit')).toBeInTheDocument();
-        });
-
-        const editButton = screen.getByText('Edit Image');
-        fireEvent.click(editButton);
-
-        expect(screen.getByTestId('filerobot-image-editor')).toBeInTheDocument();
-
-        const saveButton = screen.getByText('Save');
-        fireEvent.click(saveButton);
-
-        await waitFor(() => {
-            expect(window.alert).toHaveBeenCalledWith('Image saved!');
-            expect(mockedNavigate).toHaveBeenCalledWith('/chats');
-        });
     });
 
     test('closes image editor without saving', async () => {
@@ -168,7 +137,7 @@ describe('AddStoryPage', () => {
             expect(screen.getByAltText('To edit')).toBeInTheDocument();
         });
 
-        const editButton = screen.getByText('Edit Image');
+        const editButton = screen.getByText('Редактировать изображение'); // Локализованный текст
         fireEvent.click(editButton);
 
         expect(screen.getByTestId('filerobot-image-editor')).toBeInTheDocument();

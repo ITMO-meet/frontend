@@ -13,19 +13,21 @@ import {
     TextField,
     List,
     ListItemText,
-    ListItemButton
+    ListItemButton,
+    CircularProgress
 } from '@mui/material';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import LanguageIcon from '@mui/icons-material/Language';
+// import LanguageIcon from '@mui/icons-material/Language';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useNavigate } from 'react-router-dom';
 import { logEvent, logPageView } from '../../analytics';
+import { userData } from '../../stores/UserDataStore';
 
 const SettingsPage: React.FC = () => {
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-    const [selectedLanguage, setSelectedLanguage] = useState('Русский');
+    // const [selectedLanguage, setSelectedLanguage] = useState('Русский');
     const [isNotificationsDialogOpen, setNotificationsDialogOpen] = useState(false);
     const [isLanguageDialogOpen, setLanguageDialogOpen] = useState(false);
     const [isProblemDialogOpen, setProblemDialogOpen] = useState(false);
@@ -39,7 +41,7 @@ const SettingsPage: React.FC = () => {
     const handleOpenNotificationsDialog = () => setNotificationsDialogOpen(true);
     const handleCloseNotificationsDialog = () => setNotificationsDialogOpen(false);
 
-    const handleOpenLanguageDialog = () => setLanguageDialogOpen(true);
+    // const handleOpenLanguageDialog = () => setLanguageDialogOpen(true);
     const handleCloseLanguageDialog = () => setLanguageDialogOpen(false);
 
     const handleOpenProblemDialog = () => setProblemDialogOpen(true);
@@ -49,7 +51,7 @@ const SettingsPage: React.FC = () => {
     const handleCloseExitDialog = () => setExitDialogOpen(false);
 
     const handleLanguageSelect = (language: string) => {
-        setSelectedLanguage(language);
+        // setSelectedLanguage(language);
         logEvent("Settings", "Set language", language);
         setLanguageDialogOpen(false);
     };
@@ -65,10 +67,19 @@ const SettingsPage: React.FC = () => {
         navigate('/login');
     }
 
+    if (userData.loading) {
+        return <CircularProgress  />; // Show a loading spinner while data is being fetched
+    }
+
     return (
         <Box sx={{ px: 2, py: 1 }}>
             <Box display="flex" alignItems="center" mb={2}>
-                <IconButton data-testid="BackToProfile" onClick={() => navigate('/profile')}>
+                <IconButton data-testid="BackToProfile" onClick={() => navigate('/profile')} sx={{
+                    '&:active': {
+                        backgroundColor: '#6a8afc', // Цвет при нажатии
+                    },
+                    borderRadius: '50%', // Круглая форма
+                    }}>
                     <ArrowBackIosIcon />
                 </IconButton>
                 <Typography variant="h6" fontWeight="bold">
@@ -83,17 +94,17 @@ const SettingsPage: React.FC = () => {
             <Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                     <Typography>Имя</Typography>
-                    <Typography color="text.secondary">Алиса</Typography>
+                    <Typography color="text.secondary">{userData.getUsername()}</Typography>
                 </Box>
                 <Divider />
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                     <Typography>Дата рождения</Typography>
-                    <Typography color="text.secondary">01 дек. 2004</Typography>
+                    <Typography color="text.secondary">{userData.getBirthdate()}</Typography>
                 </Box>
                 <Divider />
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                     <Typography>Пол</Typography>
-                    <Typography color="text.secondary">Женщина</Typography>
+                    <Typography color="text.secondary">{userData.getGender()}</Typography>
                 </Box>
             </Box>
 
@@ -109,14 +120,14 @@ const SettingsPage: React.FC = () => {
                     </Box>
                     <Typography color="text.secondary">{notificationsEnabled ? 'Включены' : 'Выключены'}</Typography>
                 </Box>
-                <Divider />
-                <Box display="flex" justifyContent="space-between" alignItems="center" py={1} onClick={handleOpenLanguageDialog}>
+                {/* <Divider /> */}
+                {/* <Box display="flex" justifyContent="space-between" alignItems="center" py={1} onClick={handleOpenLanguageDialog}>
                     <Box display="flex" alignItems="center">
                         <LanguageIcon sx={{ mr: 1 }} />
                         <Typography>Язык</Typography>
                     </Box>
                     <Typography color="text.secondary">{selectedLanguage}</Typography>
-                </Box>
+                </Box> */}
                 <Divider />
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1} onClick={handleOpenProblemDialog}>
                     <Box display="flex" alignItems="center">

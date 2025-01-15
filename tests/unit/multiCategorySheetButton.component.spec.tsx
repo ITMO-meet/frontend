@@ -1,33 +1,7 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import MultiCategorySheetButton from '../../src/components/basic/MultiCategorySheetButton';
-
-interface SliderCategoryOption {
-    label: string;
-    type: 'slider';
-    min: number;
-    max: number;
-}
-
-interface SelectCategoryOption {
-    label: string;
-    type: 'select';
-    options: string[];
-}
-
-interface ButtonSelectCategoryOption {
-    label: string;
-    type: 'buttonSelect';
-    options: string[];
-}
-
-interface LanguageSelectCategoryOption {
-    label: string;
-    type: 'languageSelect';
-}
-
-type CategoryOption = SliderCategoryOption | SelectCategoryOption | ButtonSelectCategoryOption | LanguageSelectCategoryOption;
+import MultiCategorySheetButton, { ButtonSelectCategoryOption, CategoryOption, LanguageSelectCategoryOption, SelectCategoryOption, SliderCategoryOption } from '../../src/components/basic/MultiCategorySheetButton';
 
 describe('MultiCategorySheetButton', () => {
     const mockOnSave = jest.fn();
@@ -73,17 +47,17 @@ describe('MultiCategorySheetButton', () => {
         renderComponent(category);
 
         fireEvent.click(screen.getByText('Test Label'));
-        expect(screen.getByPlaceholderText('Search language')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Поиск языка')).toBeInTheDocument();
     });
 
     test('calls onSave when save button is clicked', () => {
-        const sliderCategory: SliderCategoryOption = { type: 'slider', label: 'Height', min: 0, max: 200 };
+        const sliderCategory: SliderCategoryOption = { type: 'slider', label: 'Height', min: 0, max: 200, selectedValue: 100 };
         renderComponent(sliderCategory);
 
-        fireEvent.click(screen.getByText('Test Label'));
+        fireEvent.click(screen.getByText('Height'));
 
         // Wait for the dialog to appear and locate the Save button
-        const saveButton = screen.getByRole('button', { name: /save/i });
+        const saveButton = screen.getByRole('button', { name: /Сохранить/i });
         expect(saveButton).toBeInTheDocument();
 
         // Simulate clicking the "Save" button
@@ -91,5 +65,6 @@ describe('MultiCategorySheetButton', () => {
 
         // Verify that onSave was called once
         expect(mockOnSave).toHaveBeenCalledTimes(1);
+        expect(mockOnSave).toHaveBeenCalledWith("Height", 100);
     });
 });

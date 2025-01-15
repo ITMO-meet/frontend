@@ -17,31 +17,39 @@ import { Box, Button, Typography, Dialog, DialogContent, DialogActions, Slider, 
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import MultiSelectButtonGroup from './MultiSelectButtonGroup';
 
-interface SliderCategoryOption {
+export interface SliderCategoryOption {
     label: string;
     type: 'slider';
+    onConfirm?: (v: number) => void;
+    selectedValue?: number | null;
     min: number;
     max: number;
 }
 
-interface SelectCategoryOption {
+export interface SelectCategoryOption {
     label: string;
     type: 'select';
+    selectedValue?: string | null;
+    onConfirm?: (v: string) => void;
     options: string[];
 }
 
-interface ButtonSelectCategoryOption {
+export interface ButtonSelectCategoryOption {
     label: string;
     type: 'buttonSelect';
+    selectedValue?: string | null;
+    onConfirm?: (v: string) => void;
     options: string[];
 }
 
-interface LanguageSelectCategoryOption {
+export interface LanguageSelectCategoryOption {
     label: string;
     type: 'languageSelect';
+    selectedValue?: string[] | null;
+    onConfirm?: (v: string[]) => void;
 }
 
-type CategoryOption = SliderCategoryOption | SelectCategoryOption | ButtonSelectCategoryOption | LanguageSelectCategoryOption;
+export type CategoryOption = SliderCategoryOption | SelectCategoryOption | ButtonSelectCategoryOption | LanguageSelectCategoryOption;
 
 interface MultiCategorySheetButtonProps {
     label: string;
@@ -64,15 +72,15 @@ const CustomButton = styled(Button)({
 
 // Список языков для поиска
 const languageList = [
-    'English', 'Russian', 'Spanish', 'French', 'German', 'Chinese', 'Japanese', 'Korean', 'Italian', 'Portuguese', 'Arabic',
-    'Dutch', 'Swedish', 'Norwegian', 'Danish', 'Finnish', 'Turkish', 'Hebrew', 'Polish', 'Czech', 'Greek', 'Hindi'
+    'Английский', 'Русский', 'Испанский', 'Французский', 'Немецкий', 'Китайский', 'Японский', 'Корейский', 'Итальянский', 'Португальский', 'Арабский',
+    'Голландский', 'Шведский', 'Норвежский', 'Датский', 'Финский', 'Турецкий', 'Иврит', 'Польский', 'Чешский', 'Греческий', 'Хинди'
 ];
 
 const MultiCategorySheetButton: React.FC<MultiCategorySheetButtonProps> = ({ label, category, onSave }) => {
     // Управление состоянием BottomSheet
     const [isBottomSheetOpen, setBottomSheetOpen] = useState(false);
     // Значение, выбранное пользователем, для сохранения
-    const [selectedOption, setSelectedOption] = useState<string | number | string[] | null>(category.type === 'slider' ? category.min : null);
+    const [selectedOption, setSelectedOption] = useState<string | number | string[] | null | undefined>(category.selectedValue);
     // Значение для фильтрации списка языков
     const [searchTerm, setSearchTerm] = useState('');
     // Отфильтрованный список языков, отображаемый в поле поиска
@@ -83,7 +91,19 @@ const MultiCategorySheetButton: React.FC<MultiCategorySheetButtonProps> = ({ lab
 
     // Сохранение выбранного значения и закрытие BottomSheet
     const handleSave = () => {
-        onSave(category.label, selectedOption as string | string[]);
+        if (category.onConfirm && selectedOption) {
+            if (category.type === "slider") {
+                category.onConfirm(selectedOption as number)
+            } else if (category.type === "select" || category.type === "buttonSelect") {
+                category.onConfirm(selectedOption as string)
+            } else if (category.type === "languageSelect") {
+                category.onConfirm(selectedOption as string[])
+            }
+        } 
+
+        if (selectedOption) {
+            onSave(category.label, selectedOption as string | string[]);
+        }
         closeBottomSheet();
     };
 
@@ -135,7 +155,7 @@ const MultiCategorySheetButton: React.FC<MultiCategorySheetButtonProps> = ({ lab
                         {category.type === 'slider' && (
                             <>
                                 <Typography variant="subtitle1" align="center" sx={{ mb: 1 }}>
-                                    {selectedOption} cm
+                                    {selectedOption}
                                 </Typography>
                                 <Slider
                                     min={category.min}
@@ -168,7 +188,7 @@ const MultiCategorySheetButton: React.FC<MultiCategorySheetButtonProps> = ({ lab
                         {category.type === 'languageSelect' && (
                             <Box>
                                 <TextField
-                                    placeholder="Search language"
+                                    placeholder="Поиск языка"
                                     value={searchTerm}
                                     onChange={handleSearch}
                                     fullWidth
@@ -184,7 +204,7 @@ const MultiCategorySheetButton: React.FC<MultiCategorySheetButtonProps> = ({ lab
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleSave} fullWidth variant="contained" color="primary">
-                        Save
+                        Сохранить
                     </Button>
                 </DialogActions>
             </Dialog>

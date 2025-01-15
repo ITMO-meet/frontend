@@ -25,9 +25,10 @@ import { Box, Typography, Dialog, DialogContent, DialogActions, Button, TextFiel
 interface EditableFieldProps {
     label: string;
     initialValue: string;
+    onSave?: (value: string) => void
 }
 
-const EditableField: React.FC<EditableFieldProps> = ({ label, initialValue }) => {
+const EditableField: React.FC<EditableFieldProps> = ({ label, initialValue, onSave }) => {
     const [value, setValue] = useState(initialValue); // Основное значение, которое отображается в поле
     const [tempValue, setTempValue] = useState(initialValue); // Временное значение для модального окна
     const [isBottomSheetOpen, setBottomSheetOpen] = useState(false); // Состояние для управления видимостью модального окна
@@ -46,6 +47,7 @@ const EditableField: React.FC<EditableFieldProps> = ({ label, initialValue }) =>
     // Сохранение временного значения в основное и закрытие модального окна
     const handleSave = () => {
         setValue(tempValue);
+        if (onSave) onSave(tempValue);
         closeBottomSheet();
     };
 
@@ -92,13 +94,13 @@ const EditableField: React.FC<EditableFieldProps> = ({ label, initialValue }) =>
                         minRows={3}
                         value={tempValue}
                         onChange={(e) => setTempValue(e.target.value)}
-                        placeholder={`Edit your ${label.toLowerCase()}...`}
+                        placeholder={`Вы редактируете ${label.toLowerCase()}...`}
                     />
                 </DialogContent>
                 <DialogActions>
                     {/* Кнопки "Отмена" и "Сохранить" */}
-                    <Button onClick={closeBottomSheet}>Cancel</Button>
-                    <Button onClick={handleSave} variant="contained">Save</Button>
+                    <Button onClick={closeBottomSheet}>Отмена</Button>
+                    <Button onClick={handleSave} variant="contained">Сохранить</Button>
                 </DialogActions>
             </Dialog>
         </Box>
