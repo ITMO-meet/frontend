@@ -51,7 +51,7 @@ const SettingsPage: React.FC = () => {
     const handleCloseExitDialog = () => setExitDialogOpen(false);
 
     const handleLanguageSelect = (language: string) => {
-        setSelectedLanguage(language);
+        // setSelectedLanguage(language);
         logEvent("Settings", "Set language", language);
         setLanguageDialogOpen(false);
     };
@@ -120,7 +120,7 @@ const SettingsPage: React.FC = () => {
                     </Box>
                     <Typography color="text.secondary">{notificationsEnabled ? 'Включены' : 'Выключены'}</Typography>
                 </Box>
-                <Divider />
+                {/* <Divider /> */}
                 {/* <Box display="flex" justifyContent="space-between" alignItems="center" py={1} onClick={handleOpenLanguageDialog}>
                     <Box display="flex" alignItems="center">
                         <LanguageIcon sx={{ mr: 1 }} />
