@@ -29,8 +29,10 @@ const MatchesPage: React.FC = observer(() => {
     const [direction, setDirection] = useState(1);
 
     const matches = matchesStore.matches;
-    const currentMatch = matches[currentMatchIndex];
+    const currentMatch = matches.length > 0 ? matches[currentMatchIndex] : null;
     const allPhotos = currentMatch ? [currentMatch.logo, ...currentMatch.photos] : [];
+
+    console.log(matches);
 
     useEffect(() => { matchesStore.loadMatches() }, [])
 
@@ -231,14 +233,14 @@ const MatchesPage: React.FC = observer(() => {
     }
 
     return (
-        <Box display="flex" flexDirection="column" minHeight="100vh" p={2}>
+        <Box display="flex" flexDirection="column" minHeight="95vh" p={2}>
             {/* Header */}
             <Box display="flex" alignItems="center" mb={2}>
                 <IconButton aria-label="Open match list" onClick={() => setIsListVisible(true)} sx={{ mr: 2 }}>
                     <ListIcon />
                 </IconButton>
             </Box>
-
+            
             {/* Список метчей */}
             {isListVisible && (
                 <Box
@@ -315,11 +317,12 @@ const MatchesPage: React.FC = observer(() => {
             {/* Username */}
             <Box display="flex" minHeight="10px">
                 <Typography variant="h5" sx={{ fontWeight: 'bold', textAlign: 'center', flexGrow: 1 }}>
-                    {currentMatch ? currentMatch.username : 'No Match Available'}
+                    {currentMatch ? currentMatch.username : 'Мэтчи не найдены'}
                 </Typography>
             </Box>
 
             {/* Фотографии */}
+            {currentMatch && (
             <Box position="relative" height="400px" display="flex" justifyContent="center" alignItems="center" overflow="hidden">
                 <AnimatePresence initial={false} custom={direction}>
                     <motion.div
@@ -386,8 +389,10 @@ const MatchesPage: React.FC = observer(() => {
                     </motion.div>
                 </AnimatePresence>
             </Box>
+            )}
 
             {/* Просмотр профиля */}
+            {currentMatch && (
             <Box
                 textAlign='center'
                 mb={2}
@@ -406,11 +411,12 @@ const MatchesPage: React.FC = observer(() => {
                     Просмотреть профиль
                 </Button>
             </Box>
+            )}
 
             {/* Фичи, языкии интересы */}
-            {renderMainFeatures(currentMatch)}
-            {renderLanguages(currentMatch)}
-            {renderInterests(currentMatch)}
+            {currentMatch && renderMainFeatures(currentMatch)}
+            {currentMatch && renderLanguages(currentMatch)}
+            {currentMatch && renderInterests(currentMatch)}
 
             {/* Навигация */}
             <Box display="flex" justifyContent="space-between" mt="auto">
@@ -418,7 +424,7 @@ const MatchesPage: React.FC = observer(() => {
                     <ArrowBackIosIcon />
                 </IconButton>
                 <Typography>
-                    Мэтч {currentMatchIndex + 1} из {matches.length}
+                    Мэтч {currentMatch ? currentMatchIndex + 1 : 0} из {matches.length}
                 </Typography>
                 <IconButton aria-label="Next match" onClick={handleNextMatch}>
                     <ArrowForwardIosIcon />

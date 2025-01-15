@@ -155,7 +155,7 @@ const MultiCategorySheetButton: React.FC<MultiCategorySheetButtonProps> = ({ lab
                         {category.type === 'slider' && (
                             <>
                                 <Typography variant="subtitle1" align="center" sx={{ mb: 1 }}>
-                                    {selectedOption} cm
+                                    {selectedOption}
                                 </Typography>
                                 <Slider
                                     min={category.min}
