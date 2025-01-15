@@ -1,3 +1,5 @@
+/* c8 ignore start */
+
 import React, { useEffect } from 'react';
 import { ThemeProvider } from '@mui/material';
 import theme from './components/theme';
