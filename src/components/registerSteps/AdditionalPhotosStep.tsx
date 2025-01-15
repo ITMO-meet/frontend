@@ -103,7 +103,7 @@ const AdditionalPhotosStep: React.FC<AdditionalPhotosStepProps> = ({ isu, onNext
                         sx={{ width: "100%", marginTop: "20px" }}
                         disabled={files.filter((f): f is File => f !== null).length === 0}
                     >
-                        Next
+                        Продолжить
                     </RoundButton>
                 </>
             )}

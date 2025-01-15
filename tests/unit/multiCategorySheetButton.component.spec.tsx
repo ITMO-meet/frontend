@@ -47,7 +47,7 @@ describe('MultiCategorySheetButton', () => {
         renderComponent(category);
 
         fireEvent.click(screen.getByText('Test Label'));
-        expect(screen.getByPlaceholderText('Search language')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Поиск языка')).toBeInTheDocument();
     });
 
     test('calls onSave when save button is clicked', () => {
@@ -57,7 +57,7 @@ describe('MultiCategorySheetButton', () => {
         fireEvent.click(screen.getByText('Height'));
 
         // Wait for the dialog to appear and locate the Save button
-        const saveButton = screen.getByRole('button', { name: /save/i });
+        const saveButton = screen.getByRole('button', { name: /Сохранить/i });
         expect(saveButton).toBeInTheDocument();
 
         // Simulate clicking the "Save" button

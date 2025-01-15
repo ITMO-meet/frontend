@@ -43,14 +43,14 @@ describe('UsernameStep', () => {
   });
 
   it('renders the component', () => {
-    expect(screen.getByText(/Choose a username/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Username/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
+    expect(screen.getByText(/Введите логин/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Логин/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /продолжить/i })).toBeInTheDocument();
   });
 
   it('calls onNext with the correct username when Next is clicked', async () => {
-    fireEvent.change(screen.getByLabelText(/Username/i), { target: { value: 'testuser' } });
-    const nextBtn = screen.getByRole('button', { name: /next/i });
+    fireEvent.change(screen.getByLabelText(/Логин/i), { target: { value: 'testuser' } });
+    const nextBtn = screen.getByRole('button', { name: /продолжить/i });
     await act(async () => {
       fireEvent.click(nextBtn);
     });
@@ -59,8 +59,8 @@ describe('UsernameStep', () => {
 
   it('shows error if selectUsername fails', async () => {
     mockSelectUsername.mockRejectedValueOnce(new Error('Server error'));
-    fireEvent.change(screen.getByLabelText(/Username/i), { target: { value: 'testuser' } });
-    const nextBtn = screen.getByRole('button', { name: /next/i });
+    fireEvent.change(screen.getByLabelText(/Логин/i), { target: { value: 'testuser' } });
+    const nextBtn = screen.getByRole('button', { name: /продолжить/i });
 
     await act(async () => {
       fireEvent.click(nextBtn);
@@ -70,7 +70,7 @@ describe('UsernameStep', () => {
   });
 
   it('button is disabled when username is empty', () => {
-    const nextButton = screen.getByRole('button', { name: /next/i });
+    const nextButton = screen.getByRole('button', { name: /продолжить/i });
     fireEvent.click(nextButton); // Нажимаем кнопку "Next" без выбора
 
     expect(nextButton).toBeDisabled();
@@ -79,10 +79,10 @@ describe('UsernameStep', () => {
 
   it('button is enabled when username is provided', () => {
     // Вводим имя пользователя
-    const usernameInput = screen.getByLabelText(/Username/i);
+    const usernameInput = screen.getByLabelText(/Логин/i);
     fireEvent.change(usernameInput, { target: { value: 'testuser' } });
 
-    const nextButton = screen.getByRole('button', { name: /next/i });
+    const nextButton = screen.getByRole('button', { name: /продолжить/i });
     expect(nextButton).toBeEnabled();// Проверяем, что кнопка "Next" включена
   });
 });

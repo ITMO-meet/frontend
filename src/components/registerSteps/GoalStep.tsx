@@ -62,7 +62,7 @@ const GoalStep: React.FC<GoalStepProps> = ({ isu, onNext }) => {
     if (loading) {
         return (
             <Box padding="20px" textAlign="center">
-                <Typography variant="h6">Loading goals...</Typography>
+                <Typography variant="h6">Загрузка целей...</Typography>
             </Box>
         );
     }

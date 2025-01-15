@@ -120,7 +120,7 @@ const ProfilePage: React.FC = observer(() => {
                 {/* Секция Bio */}
                 <Box mt={2} width="100%">
                     <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                        Био
+                        Краткая информация
                     </Typography>
                     <Box sx={{ border: '1px solid #ddd', borderRadius: '8px', padding: 2 }}>
                         <Typography variant="body1" textAlign="left">

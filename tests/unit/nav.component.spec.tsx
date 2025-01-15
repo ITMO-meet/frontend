@@ -26,11 +26,11 @@ describe('Nav component', () => {
         <Nav />
       </MemoryRouter>
     );
-    expect(screen.getByRole('button', { name: 'Chats' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Matches' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Feed' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Tests' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Profile' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Чаты' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Мэтчи' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Лента' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Тесты' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Профиль' })).toBeInTheDocument();
   });
 
   test('initially selects "Feed"', () => {
@@ -39,7 +39,7 @@ describe('Nav component', () => {
         <Nav />
       </MemoryRouter>
     );
-    const searchAction = screen.getByRole('button', { name: 'Feed' });
+    const searchAction = screen.getByRole('button', { name: 'Лента' });
     expect(searchAction).toHaveClass('Mui-selected');
   });
 
@@ -49,7 +49,7 @@ describe('Nav component', () => {
         <Nav />
       </MemoryRouter>
     );
-    const chatsAction = screen.getByRole('button', { name: 'Chats' });
+    const chatsAction = screen.getByRole('button', { name: 'Чаты' });
     expect(chatsAction).toHaveClass('Mui-selected');
   });
 
@@ -65,7 +65,7 @@ describe('Nav component', () => {
       </MemoryRouter>
     );
 
-    const testsAction = screen.getByRole('button', { name: 'Tests' });
+    const testsAction = screen.getByRole('button', { name: 'Тесты' });
     await user.click(testsAction);
 
     expect(navigateMock).toHaveBeenCalledWith('/tests');

@@ -11,7 +11,7 @@ interface GenderStepProps {
     onNext: (data: { gender: string }) => void;
 }
 
-const options = ["Male", "Female", "Everyone"];
+const options = ["Мужчины", "Женщины", "Не важно"];
 
 const GenderStep: React.FC<GenderStepProps> = ({ isu, onNext }) => {
     const { showError } = useError();

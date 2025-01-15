@@ -51,8 +51,8 @@ describe('GoalStep', () => {
   });
 
   it('renders the component', () => {
-    expect(screen.getByText(/What are you looking for?/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
+    expect(screen.getByText(/Что вы ищите?/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /продолжить/i })).toBeInTheDocument();
   });
 
   it('loads goals from fetchPreferences', () => {
@@ -67,14 +67,14 @@ describe('GoalStep', () => {
   // });
 
   it('does not call onNext if no goal is selected', () => {
-    const nextButton = screen.getByRole('button', { name: /next/i });
+    const nextButton = screen.getByRole('button', { name: /продолжить/i });
     fireEvent.click(nextButton);
     expect(nextButton).toBeDisabled();
     expect(mockOnNext).not.toHaveBeenCalled();
   });
 
   it('enables the Next button when goal is selected', () => {
-    const nextButton = screen.getByRole('button', { name: /next/i });
+    const nextButton = screen.getByRole('button', { name: /продолжить/i });
     expect(nextButton).toBeDisabled();
     fireEvent.click(screen.getByText(/friendship/i).closest('div')!);
     expect(nextButton).toBeEnabled();
@@ -86,7 +86,7 @@ describe('GoalStep', () => {
     mockSelectRelationship.mockRejectedValueOnce(new Error('Relationship error'));
     fireEvent.click(screen.getByText(/friendship/i).closest('div')!);
     await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /next/i }));
+      fireEvent.click(screen.getByRole('button', { name: /продолжить/i }));
     });
     expect(mockShowError).toHaveBeenCalledWith('Relationship error');
     expect(mockOnNext).not.toHaveBeenCalled();

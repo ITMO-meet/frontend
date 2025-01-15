@@ -67,7 +67,7 @@ describe('ProfilePage', () => {
         expect(screen.getByTestId('SettingsIcon')).toBeInTheDocument();
 
         // Проверка наличия секции Bio
-        expect(screen.getByText('Био')).toBeInTheDocument();
+        expect(screen.getByText('Краткая информация')).toBeInTheDocument();
 
         // Проверка наличия секции Main Features
         expect(screen.getByText('Основные характеристики')).toBeInTheDocument();
@@ -79,7 +79,7 @@ describe('ProfilePage', () => {
         expect(screen.getByText('Языки')).toBeInTheDocument();
 
         // Проверка наличия кнопки Premium
-        expect(screen.getByText('Premium')).toBeInTheDocument();
+        expect(screen.getByText('Премиум')).toBeInTheDocument();
 
         expect(logPageView).toHaveBeenCalledWith('/profile');
     });
@@ -119,7 +119,7 @@ describe('ProfilePage', () => {
         );
 
         // Нажатие на кнопку Premium
-        fireEvent.click(screen.getByText('Premium'));
+        fireEvent.click(screen.getByText('Премиум'));
 
         // Проверка, что навигация выполнена
         await waitFor(() => {
