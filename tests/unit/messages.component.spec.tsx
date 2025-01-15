@@ -65,6 +65,7 @@ beforeAll(() => {
   
 });
 
+
 describe('Messages Component', () => {
   const mockContacts = [
     {
