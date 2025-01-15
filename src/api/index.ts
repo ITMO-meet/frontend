@@ -8,6 +8,7 @@ const AUTH_BASE_URL = 'http://185.178.47.42:3000'
 // const TEST_BASE_URL = 'http://185.178.47.42:7000'
 const BASE_URL = 'http://185.178.47.42:8000';
 //const BASE_URL = 'http://127.0.0.1:8000';
+// const BASE_URL = 'http://127.0.0.1:28000';
 
 
 interface RequestOptions {
@@ -16,13 +17,13 @@ interface RequestOptions {
     body?: BodyInit | null;
 }
 
-async function request(url: string, options: RequestOptions) {
+export async function request(url: string, options: RequestOptions) {
     let resp: Response;
 
     const baseUrl = url
-        .startsWith("/auth/") 
+        .startsWith("/auth/")
         && !(url.startsWith("/auth/register/upload_carousel") || url.startsWith("/auth/register/upload_logo"))
-        ? AUTH_BASE_URL 
+        ? AUTH_BASE_URL
         : BASE_URL
 
     try {
@@ -40,10 +41,11 @@ async function request(url: string, options: RequestOptions) {
     return resp;
 }
 
+
 export async function postJson<T>(url: string, data: unknown): Promise<T> {
     const resp = await request(url, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
     });
     return resp.json() as Promise<T>;
@@ -66,7 +68,7 @@ export async function getJson<T>(url: string): Promise<T> {
 export async function putJson<T>(url: string, data: unknown = {}): Promise<T> {
     const resp = await request(url, {
         method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
     });
     return resp.json() as Promise<T>;

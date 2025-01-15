@@ -23,7 +23,7 @@ const ChatsPage: React.FC = () => {
             <Box width="100%" position="fixed" bottom={0} left={0} zIndex={2} bgcolor="white">
                 <NavBar />
             </Box>
-        </Box> 
+        </Box>
     );
 };
 
