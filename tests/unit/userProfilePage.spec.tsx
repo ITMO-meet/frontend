@@ -103,7 +103,7 @@ describe('UserProfilePage', () => {
 
     test('displays "Profile not found" if user does not exist', () => {
         renderUserProfilePage('999');
-        expect(screen.getByText('Profile not found.')).toBeInTheDocument();
+        expect(screen.getByText('Профиль не найден.')).toBeInTheDocument();
 
         expect(logEvent).toHaveBeenCalledWith('UserProfile', 'User profile viewed', '');
     });
@@ -152,7 +152,7 @@ describe('UserProfilePage', () => {
         userProfileStore.profile = { ...user, isStudent: false };
 
         renderUserProfilePage('789852');
-        expect(screen.getByText('This person is not a student.')).toBeInTheDocument();
+        expect(screen.getByText('Этот человек не является студентом.')).toBeInTheDocument();
 
         expect(logEvent).toHaveBeenCalledWith('UserProfile', 'User profile viewed', '');
     });
@@ -161,10 +161,10 @@ describe('UserProfilePage', () => {
         userProfileStore.profile = user;
 
         renderUserProfilePage('123456');
-        const blockButton = screen.getByRole('button', { name: /Block user/i });
+        const blockButton = screen.getByRole('button', { name: /заблокировать пользователя/i });
         fireEvent.click(blockButton);
 
-        const confirmButton = screen.getByRole('button', { name: /Block/i });
+        const confirmButton = screen.getByRole('button', { name: /заблокировать/i });
         fireEvent.click(confirmButton);
 
         await waitFor(() => {

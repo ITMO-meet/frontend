@@ -38,10 +38,8 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
   const { id } = useParams<{ id: string }>();
   const contact = people.find((person) => person.isu === Number(id));
 
-
-  
   // Audio recorder state
-  const [, setIsRecording] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
 
   // Video recorder state
@@ -65,7 +63,7 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
         .map((message) => ({
           sender: message.sender_id === contact.isu ? 'them' : 'me',
           text: message.text,
-          image: undefined, // или инициализация blob, если нужно
+          image: undefined,
           video: undefined,
           audio: undefined,
           file: undefined,
@@ -73,7 +71,6 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
       setChatMessages(initialMessages);
     }
   }, [contact, messages]);
-  
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -87,15 +84,11 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
 
   const handleSendText = () => {
     if (inputValue.trim() !== '') {
-      setChatMessages((prev) => [
-        ...prev,
-        { sender: 'me', text: inputValue }
-      ]);
+      setChatMessages((prev) => [...prev, { sender: 'me', text: inputValue }]);
       setInputValue('');
       scrollToBottom();
     }
   };
-  
 
   const handleOpenPicker = () => setIsPickerOpen(true);
   const handleClosePicker = () => setIsPickerOpen(false);
@@ -117,7 +110,7 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
       const file = event.target.files[0];
       const isImage = file.type.startsWith('image/');
       const isVideo = file.type.startsWith('video/');
-    
+
       if (isImage) {
         setChatMessages((prev) => [
           ...prev,
@@ -143,29 +136,34 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
       scrollToBottom();
     }
   };
-  
 
+  // -----------------------------
+  // AUDIO RECORDING
+  // -----------------------------
   const startRecordingAudio = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const recorder = new MediaRecorder(stream);
-    const chunks: BlobPart[] = [];
-  
-    recorder.ondataavailable = (e) => chunks.push(e.data);
-    recorder.onstop = () => {
-      const blob = new Blob(chunks, { type: 'audio/webm' });
-      console.log('Audio blob created:', blob);
-      setChatMessages((prev) => {
-        const updatedMessages: MessageType[] = [...prev, { sender: 'me', text: 'Voice message', audio: blob }];
-        console.log('Updated messages:', updatedMessages);
-        return updatedMessages;
-      });
-    };
-  
-    setMediaRecorder(recorder);
-    recorder.start();
-    setIsRecording(true);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      const chunks: BlobPart[] = [];
+
+      recorder.ondataavailable = (e) => chunks.push(e.data);
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+        setChatMessages((prev) => [
+          ...prev,
+          { sender: 'me', text: 'Voice message', audio: blob }
+        ]);
+        // Stop the tracks to release the mic
+        stream.getTracks().forEach((track) => track.stop());
+      };
+
+      setMediaRecorder(recorder);
+      recorder.start();
+      setIsRecording(true);
+    } catch (err) {
+      console.error('Failed to record audio:', err);
+    }
   };
-  
 
   const stopRecordingAudio = () => {
     if (mediaRecorder) {
@@ -174,9 +172,17 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
     }
   };
 
-  const handleMicMouseDown = () => startRecordingAudio();
-  const handleMicMouseUp = () => stopRecordingAudio();
+  const toggleAudioRecording = async () => {
+    if (isRecording) {
+      stopRecordingAudio();
+    } else {
+      await startRecordingAudio();
+    }
+  };
 
+  // -----------------------------
+  // VIDEO RECORDING
+  // -----------------------------
   const startRecordingVideo = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
     const recorder = new MediaRecorder(stream);
@@ -185,16 +191,12 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
     recorder.ondataavailable = (e) => chunks.push(e.data);
     recorder.onstop = () => {
       const blob = new Blob(chunks, { type: 'video/webm' });
-      console.log('Video blob created:', blob);
-      setChatMessages((prev) => {
-        const updatedMessages: MessageType[] = [...prev, { sender: 'me', text: 'Video sent', video: blob }];
-        console.log('Updated messages:', updatedMessages);
-        return updatedMessages;
-      });
+      setChatMessages((prev) => [
+        ...prev,
+        { sender: 'me', text: 'Video sent', video: blob }
+      ]);
+      stream.getTracks().forEach((track) => track.stop());
     };
-    
-    
-    
 
     setVideoStream(stream);
     setIsRecordingVideo(true);
@@ -208,6 +210,9 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
     }
   };
 
+  // -----------------------------
+  // RENDER
+  // -----------------------------
   return (
     <Box sx={{ pb: 7 }}>
       {/* Hidden Inputs */}
@@ -224,9 +229,8 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
         ref={fileInputRef}
         data-testid="file-input"
         style={{ display: 'none' }}
-        onChange={handleFileChange} // Use the newly defined function
+        onChange={handleFileChange}
       />
-
 
       {/* Header */}
       <Paper
@@ -242,7 +246,12 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
           backgroundColor: '#fff',
         }}
       >
-        <IconButton onClick={() => navigate(-1)} data-testid="back-button">
+        <IconButton onClick={() => navigate(-1)} data-testid="back-button" sx={{
+      '&:active': {
+        backgroundColor: '#6a8afc', // Цвет при нажатии
+      },
+      borderRadius: '50%', // Круглая форма
+    }}>
           <ArrowBackIosIcon />
         </IconButton>
         <Box
@@ -260,7 +269,6 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
         </Box>
       </Paper>
 
-
       {/* Messages */}
       <PageWrapper direction={1}>
         <List
@@ -273,9 +281,8 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
           }}
         >
           {chatMessages.map((message, index) => (
-  <UserMessage key={index} message={message} />
-))}
-
+            <UserMessage key={index} message={message} />
+          ))}
           <div ref={messagesEndRef} />
         </List>
       </PageWrapper>
@@ -296,63 +303,85 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
           variant="outlined"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          InputProps={{
-            startAdornment: ( 
-              <InputAdornment position="start">
-                <IconButton onClick={handleOpenPicker} data-testid="attachment-button">
-                  <AttachmentIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={handleSendText}>
-                  <SendIcon />
-                </IconButton>
-                <IconButton onMouseDown={handleMicMouseDown} onMouseUp={handleMicMouseUp} data-testid="mic-button">
-                  <MicIcon />
-                </IconButton>
-                <IconButton
-                  onClick={isRecordingVideo ? stopRecordingVideo : startRecordingVideo}
-                  data-testid="video-button"
-                >
-                  {isRecordingVideo ? <StopIcon /> : <VideocamIcon />}
-                </IconButton>
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <IconButton onClick={handleOpenPicker} data-testid="attachment-button">
+                    <AttachmentIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleSendText}>
+                    <SendIcon />
+                  </IconButton>
+                  <IconButton
+                    onClick={toggleAudioRecording}
+                    color={isRecording ? 'error' : 'default'}
+                    data-testid="mic-button"
+                  >
+                    {isRecording ? <StopIcon /> : <MicIcon />}
+                  </IconButton>
+                  <IconButton
+                    onClick={isRecordingVideo ? stopRecordingVideo : startRecordingVideo}
+                    color={isRecordingVideo ? 'error' : 'default'}
+                    data-testid="video-button"
+                  >
+                    {isRecordingVideo ? <StopIcon /> : <VideocamIcon />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
           }}
         />
+        {/* Optional small text indicator for audio recording */}
+        {isRecording && (
+          <Typography variant="caption" color="error" sx={{ display: 'block', mt: 1 }}>
+            Recording audio...
+          </Typography>
+        )}
+        {isRecordingVideo && (
+          <Typography variant="caption" color="error" sx={{ display: 'block', mt: 1 }}>
+            Recording video...
+          </Typography>
+        )}
       </Box>
-
 
       {/* Picker Modal */}
       <Modal
-          open={isPickerOpen}
-          onClose={handleClosePicker}
-          aria-labelledby="picker-modal-title" // Add accessible label
-          role="dialog" // Explicitly define the role
+        open={isPickerOpen}
+        onClose={handleClosePicker}
+        aria-labelledby="picker-modal-title"
+        role="dialog"
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: '10%',
+            left: '50%',
+            transform: 'translate(-50%, 0)',
+            width: '90%',
+            maxWidth: 400,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            borderRadius: 3,
+            p: 3,
+            textAlign: 'center',
+          }}
         >
-          <Box
-            sx={{
-              position: 'absolute',
-              bottom: '10%',
-              left: '50%',
-              transform: 'translate(-50%, 0)',
-              width: '90%',
-              maxWidth: 400,
-              bgcolor: 'background.paper',
-              boxShadow: 24,
-              borderRadius: 3,
-              p: 3,
-              textAlign: 'center',
-            }}
-          >
+          <Typography
+            id="picker-modal-title"
+            variant="h6"
+            sx={{ mb: 3, fontWeight: 'bold' }}
+          />
             <Typography
               id="picker-modal-title" // Match the aria-labelledby
               variant="h6"
               sx={{ mb: 3, fontWeight: 'bold' }}
             >
-              Select an Option
+              Выбрать опцию
             </Typography>
             <Grid container spacing={3} justifyContent="center">
               <Grid item>
@@ -378,7 +407,7 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
                   <ImageIcon sx={{ fontSize: 40, color: '#616161' }} />
                 </Box>
                 <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
-                  Gallery
+                  Галлерея
                 </Typography>
               </Grid>
               <Grid item>
@@ -404,7 +433,7 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
                   <FolderIcon sx={{ fontSize: 40, color: '#616161' }} />
                 </Box>
                 <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
-                  File
+                  Файл
                 </Typography>
               </Grid>
             </Grid>

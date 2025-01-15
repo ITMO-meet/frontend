@@ -73,22 +73,28 @@ describe('MatchesPage', () => {
 
     test('opens and closes the match list', async () => {
         renderWithPremium(true);
-
+    
+        // Поиск кнопки с актуальным текстом
         const openListButton = screen.getByRole('button', { name: /open match list/i });
         fireEvent.click(openListButton);
-
-        const matchList = screen.getByText('Match list');
+    
+        // Проверяем, что список мэтчей отобразился
+        const matchList = screen.getByText(/Список мэтчей/i);
         expect(matchList).toBeInTheDocument();
-
+    
+        // Поиск кнопки для закрытия списка
         const closeListButton = screen.getByRole('button', { name: /close match list/i });
         fireEvent.click(closeListButton);
-
+    
+        // Проверяем, что список закрылся
         await waitFor(() => {
-            expect(screen.queryByText('Match list')).not.toBeInTheDocument();
+            expect(screen.queryByText(/Список мэтчей/i)).not.toBeInTheDocument();
         });
-
+    
         expect(logPageView).toHaveBeenCalledWith('/matches');
     });
+    
+    
 
     test('selects a match from the list', async () => {
         renderWithPremium(true);
@@ -107,6 +113,7 @@ describe('MatchesPage', () => {
 
         expect(logPageView).toHaveBeenCalledWith('/matches');
     });
+    
 
     test('navigates between matches', async () => {
         renderWithPremium(true);

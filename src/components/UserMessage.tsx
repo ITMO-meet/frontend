@@ -170,7 +170,12 @@ const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
               width: '100%',
             }}
           >
-            <IconButton onClick={handlePlayPause} size="small">
+            <IconButton onClick={handlePlayPause} size="small" sx={{
+                    '&:active': {
+                        backgroundColor: '#6a8afc', // Цвет при нажатии
+                    },
+                    borderRadius: '50%', // Круглая форма
+                    }}>
               {isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
             </IconButton>
             <audio
@@ -186,7 +191,7 @@ const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
                 color: 'rgba(0,0,0,0.6)',
               }}
             >
-              Voice message
+              Голосовое сообщение
             </Box>
           </Box>
         )}

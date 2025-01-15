@@ -9,7 +9,7 @@ const SearchPage: React.FC = () => {
 
             {/* Header with Chats title */}
             <Box width="100%" position="fixed" top={0} bgcolor="white" display="flex" justifyContent="space-between" alignItems="center" p={2}>
-                <Typography variant="h5">Search</Typography>
+                <Typography variant="h5">Поиск</Typography>
             </Box>
 
             {/* Navigation Bar */}

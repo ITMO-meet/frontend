@@ -63,14 +63,14 @@ class FeedStore {
             const birthdateFeature = profile.mainFeatures.find(f => f.icon === "birthdate");
             if (birthdateFeature && birthdateFeature.text) {
                 const profileAge = calculateAge(birthdateFeature.text);
-                ageOk = profileAge >= agePreference[0] && profileAge <= agePreference[1];
+                ageOk = profileAge >= agePreference![0] && profileAge <= agePreference![1];
             }
 
             let heightOk = false;
             const heightFeature = profile.mainFeatures.find(f => f.icon === "height");
             if (heightFeature && heightFeature.text) {
                 const profileHeight = parseFloat(heightFeature.text.split(" ")[0]);
-                heightOk = profileHeight >= heightPreference[0] && profileHeight <= heightPreference[1];
+                heightOk = profileHeight >= heightPreference![0] && profileHeight <= heightPreference![1];
             }
 
             let relationshipOk = false;

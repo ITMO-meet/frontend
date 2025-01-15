@@ -35,13 +35,64 @@ const Nav: React.FC = () => {
       value={value}
       onChange={handleChange}
       showLabels
-      sx={{ position: 'fixed', bottom: 0, width: '100%' }}
+      sx={{
+        position: 'fixed',
+        bottom: 0,
+        width: '100%',
+        backgroundColor: '#f5f5f5', // Светлый фон
+        boxShadow: '0px -2px 5px rgba(0, 0, 0, 0.15)',
+      }}
     >
-      <BottomNavigationAction label="Chats" value="chats" icon={<ChatIcon />} />
-      <BottomNavigationAction label="Matches" value="matches" icon={<FavoriteIcon />} />
-      <BottomNavigationAction label="Feed" value="feed" icon={<SearchIcon />} />
-      <BottomNavigationAction label="Tests" value="tests" icon={<FormatListBulletedIcon />} />
-      <BottomNavigationAction label="Profile" value="profile" icon={<AccountCircleIcon />} />
+      <BottomNavigationAction
+        label="Chats"
+        value="chats"
+        icon={<ChatIcon />}
+        sx={{
+          '&.Mui-selected': {
+            color: '#4d60bf', // Цвет для выбранного элемента
+          },
+        }}
+      />
+      <BottomNavigationAction
+        label="Matches"
+        value="matches"
+        icon={<FavoriteIcon />}
+        sx={{
+          '&.Mui-selected': {
+            color: '#4d60bf', // Цвет для выбранного элемента
+          },
+        }}
+      />
+      <BottomNavigationAction
+        label="Feed"
+        value="feed"
+        icon={<SearchIcon />}
+        sx={{
+          '&.Mui-selected': {
+            color: '#4d60bf', // Цвет для выбранного элемента
+          },
+        }}
+      />
+      <BottomNavigationAction
+        label="Tests"
+        value="tests"
+        icon={<FormatListBulletedIcon />}
+        sx={{
+          '&.Mui-selected': {
+            color: '#4d60bf', // Цвет для выбранного элемента
+          },
+        }}
+      />
+      <BottomNavigationAction
+        label="Profile"
+        value="profile"
+        icon={<AccountCircleIcon />}
+        sx={{
+          '&.Mui-selected': {
+            color: '#4d60bf', // Цвет для выбранного элемента
+          },
+        }}
+      />
     </BottomNavigation>
   );
 };

@@ -77,7 +77,7 @@ class UserData {
         this.additionalPhotos = profile.photos
 
         this.interests = (profile.interests || []).map(item => item.text);
-        
+
         this.setLoading(false);
     }
 

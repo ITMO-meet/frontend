@@ -1,22 +1,3 @@
-/**
- * Компонент NavBar представляет собой нижнюю панель навигации с пятью основными разделами:
- * - Chats: Переход к странице чатов
- * - Matches: Переход к странице тех кто тебя лайкнул
- * - Search: Переход к странице с лентой поиска
- * - Tests: Переход к странице тестов
- * - Profile: Переход к странице профиля
- * 
- * Компонент использует библиотеку React Router для управления маршрутизацией. 
- * Текущее активное значение в навигации устанавливается на основе текущего пути.
- * 
- * Функция handleNavigationChange обновляет состояние и значение активного раздела навигации,
- * что вызывает перенаправление на соответствующую страницу.
- * 
- * Основные зависимости:
- * - useNavigate и useLocation из React Router для работы с навигацией.
- * - BottomNavigation и BottomNavigationAction из MUI для создания интерфейса навигации.
- */
-
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import BottomNavigation from '@mui/material/BottomNavigation';
@@ -32,7 +13,7 @@ const NavBar: React.FC = () => {
     const location = useLocation();
 
     // Инициализируем значение на основе текущего пути
-    const [value, setValue] = React.useState(location.pathname.substring(1) || 'search');
+    const [value, setValue] = React.useState(location.pathname.substring(1) || 'feed');
 
     // Обновляем маршрут при изменении значения value
     useEffect(() => {
@@ -51,12 +32,66 @@ const NavBar: React.FC = () => {
             value={value}
             onChange={handleNavigationChange}
             showLabels
+            sx={{
+                backgroundColor: '#fff', // Белый фон
+                boxShadow: '0px -2px 5px rgba(0, 0, 0, 0.1)', // Тень
+            }}
         >
-            <BottomNavigationAction label="Chats" value="chats" icon={<ChatIcon />} />
-            <BottomNavigationAction label="Matches" value="matches" icon={<FavoriteIcon />} />
-            <BottomNavigationAction label="Feed" value="feed" icon={<SearchIcon />} />
-            <BottomNavigationAction label="Tests" value="tests" icon={<FormatListBulletedIcon />} />
-            <BottomNavigationAction label="Profile" value="profile" icon={<AccountCircleIcon />} />
+            <BottomNavigationAction
+                label="Chats"
+                value="chats"
+                icon={<ChatIcon />}
+                sx={{
+                    color: value === 'chats' ? '#4d60bf' : 'gray', // Цвет текста и иконки
+                    '&.Mui-selected': {
+                        color: '#4d60bf', // Цвет при выборе
+                    },
+                }}
+            />
+            <BottomNavigationAction
+                label="Matches"
+                value="matches"
+                icon={<FavoriteIcon />}
+                sx={{
+                    color: value === 'matches' ? '#4d60bf' : 'gray',
+                    '&.Mui-selected': {
+                        color: '#4d60bf',
+                    },
+                }}
+            />
+            <BottomNavigationAction
+                label="Feed"
+                value="feed"
+                icon={<SearchIcon />}
+                sx={{
+                    color: value === 'feed' ? '#4d60bf' : 'gray',
+                    '&.Mui-selected': {
+                        color: '#4d60bf',
+                    },
+                }}
+            />
+            <BottomNavigationAction
+                label="Tests"
+                value="tests"
+                icon={<FormatListBulletedIcon />}
+                sx={{
+                    color: value === 'tests' ? '#4d60bf' : 'gray',
+                    '&.Mui-selected': {
+                        color: '#4d60bf',
+                    },
+                }}
+            />
+            <BottomNavigationAction
+                label="Profile"
+                value="profile"
+                icon={<AccountCircleIcon />}
+                sx={{
+                    color: value === 'profile' ? '#4d60bf' : 'gray',
+                    '&.Mui-selected': {
+                        color: '#4d60bf',
+                    },
+                }}
+            />
         </BottomNavigation>
     );
 };

@@ -114,7 +114,7 @@ describe('RegisterPage', () => {
 	});
 
 	it('renders the registration page', () => {
-		expect(screen.getByText(/Registration/i)).toBeInTheDocument();
+		expect(screen.getByText(/Регистрация/i)).toBeInTheDocument();
 	});
 
 	it('navigates through steps', async () => {
