@@ -82,8 +82,8 @@ export async function sendMessage(chat_id: string, sender_id: number, receiver_i
 
         console.log("media_id:", media_id);
 
-        await postJson("/chats/send_message", { chat_id, sender_id, receiver_id, text, media_id });
+        return (await postJson<{ message_id: string }>("/chats/send_message", { chat_id, sender_id, receiver_id, text, media_id })).message_id;
     } else {
-        await postJson("/chats/send_message", { chat_id, sender_id, receiver_id, text });
+        return (await postJson<{ message_id: string }>("/chats/send_message", { chat_id, sender_id, receiver_id, text })).message_id;
     }
 }

@@ -126,13 +126,22 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
 
     // Make the API call
     try {
-      await sendMessage(
+      const message_id = await sendMessage(
         chatId,               // chat_id
         currentUserIsu,       // sender_id
         contact.isu,          // receiver_id
         tempText              // text
       );
       console.log('Message sent:', tempText);
+
+      messages.push({
+        id: message_id,
+        sender_id: currentUserIsu,
+        receiver_id: contact.isu,
+        text: inputValue,
+        chat_id: chatId,
+        timestamp: new Date().toISOString(),
+      });
     } catch (error) {
       console.error('Error sending message:', error);
       // Optionally revert the local state or show a notification.
@@ -184,7 +193,7 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
 
       // Send to the backend
       try {
-        await sendMessage(
+        const message_id = await sendMessage(
           chatId,
           currentUserIsu,
           contact.isu,
@@ -192,6 +201,22 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
           file // pass the file as media
         );
         console.log('Message sent:', file);
+
+        messages.push({
+          id: message_id,
+          sender_id: currentUserIsu,
+          receiver_id: contact.isu,
+          text:
+            file.type.startsWith('image/')
+              ? 'Image sent'
+              : file.type.startsWith('video/')
+                ? 'Video sent'
+                : 'Media sent',
+          image: file.type.startsWith('image/') ? file : undefined,
+          video: file.type.startsWith('video/') ? file : undefined,
+          chat_id: chatId,
+          timestamp: new Date().toISOString(),
+        });
       } catch (error) {
         console.error('Error sending media message:', error);
       }
@@ -215,15 +240,25 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
 
       // Send to the backend
       try {
-        await sendMessage(
+        const message_id = await sendMessage(
           chatId,
           currentUserIsu,
           contact.isu,
           '', // no text
           file
         );
+
+        messages.push({
+          id: message_id,
+          sender_id: currentUserIsu,
+          receiver_id: contact.isu,
+          text: 'File sent',
+          file: file,
+          chat_id: chatId,
+          timestamp: new Date().toISOString(),
+        });
       } catch (error) {
-        console.error('Error sending file:', error);
+        console.error('Error sending media message:', error);
       }
     }
   };
@@ -250,7 +285,7 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
         if (contact && chatId) {
           try {
             const file = new File([blob], 'audio.webm', { type: 'audio/webm' });
-            await sendMessage(
+            const message_id = await sendMessage(
               chatId,
               currentUserIsu,
               contact.isu,
@@ -258,6 +293,16 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
               file
             );
             console.log('Audio sent:', file);
+
+            messages.push({
+              id: message_id,
+              sender_id: currentUserIsu,
+              receiver_id: contact.isu,
+              text: 'File sent',
+              audio: file,
+              chat_id: chatId,
+              timestamp: new Date().toISOString(),
+            });
           } catch (error) {
             console.error('Error sending audio:', error);
           }
@@ -311,13 +356,23 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
         if (contact && chatId) {
           try {
             const file = new File([blob], 'video.webm', { type: 'video/webm' });
-            await sendMessage(
+            const message_id = await sendMessage(
               chatId,
               currentUserIsu,
               contact.isu,
               '', // no text
               file
             );
+
+            messages.push({
+              id: message_id,
+              sender_id: currentUserIsu,
+              receiver_id: contact.isu,
+              text: 'File sent',
+              video: file,
+              chat_id: chatId,
+              timestamp: new Date().toISOString(),
+            });
           } catch (error) {
             console.error('Error sending video:', error);
           }
