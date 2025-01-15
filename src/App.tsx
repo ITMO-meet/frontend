@@ -32,22 +32,12 @@ import { Profile } from './api/profile';
 import { getUserContacts, getUserMessages, UserChat } from './api/chats';
 import { userData } from './stores/UserDataStore';
 import { RawMessage } from './types';
+import {
+  getStory,
+  getUserStories,
+  GetStoryResponse,
+} from './api/stories';
 
-
-const stories = [
-  {
-    id: '6739c9f339fddecc6b8a44d8',
-    isu: 789852,
-    url: 'https://www.avsimrus.com/file_images/110/img25865_1.jpg',
-    expiration_date: 1731926899,
-  },
-  {
-    id: '6739c9f339fddecc6b8a44d9',
-    isu: 123456,
-    url: 'https://www.avsim.su/w/images/0/09/003_006.jpg',
-    expiration_date: 1731926899,
-  },
-];
 
 const shouldHideNav = (pathname: string): boolean => {
   const hiddenRoutes = ['/login', '/register', '/edit-profile', '/settings'];
@@ -82,9 +72,10 @@ function App() {
 }
 
 function AppContent() {
-  const [contacts, setContacts] = React.useState<Profile[] | null>(null)
+  const [contacts, setContacts] = React.useState<Profile[] | null>(null);
   const [chats, setChats] = React.useState<UserChat[] | null>(null);
   const [messages, setMessages] = React.useState<RawMessage[]>([]);
+  const [stories, setStories] = React.useState<GetStoryResponse[] | null>(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -104,8 +95,7 @@ function AppContent() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // const user_id = userData.getIsu();
-        const user_id = 386872;
+        const user_id = 387612;
         const fetchedContacts = await getUserContacts(user_id, true) as Profile[];
         const fetchedChats = await getUserContacts(user_id, false) as UserChat[];
         const fetchedMessages = await getUserMessages(fetchedChats);
@@ -113,6 +103,17 @@ function AppContent() {
         setContacts(fetchedContacts);
         setChats(fetchedChats);
         setMessages(fetchedMessages);
+
+        // --- Fetch stories ---
+        const userStories = await getUserStories(user_id);  // returns { stories: string[] }
+        const storyIds = userStories.stories;
+
+        // For each story ID, fetch the story details
+        const fetchedStories = await Promise.all(
+          storyIds.map((storyId) => getStory(storyId))
+        );
+        setStories(fetchedStories);
+
       } catch (err) {
         console.error("Error fetching data:", err);
       }
@@ -122,7 +123,12 @@ function AppContent() {
   }, []);
 
   // Show a loading screen or skeleton UI while data is being fetched
-  if (contacts === null || chats === null || messages === null) {
+  if (
+    contacts === null ||
+    chats === null ||
+    messages === null ||
+    stories === null
+  ) {
     return <div>Loading...</div>;
   }
 

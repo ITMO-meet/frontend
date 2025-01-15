@@ -38,7 +38,7 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
    * from a global store or context. For now, let's just hard-code:
    */
   // const currentUserIsu = userData.getIsu();
-  const currentUserIsu = 386872;
+  const currentUserIsu = 387612;
 
   const [chatMessages, setChatMessages] = useState<MessageType[]>([]);
   const [inputValue, setInputValue] = useState('');
