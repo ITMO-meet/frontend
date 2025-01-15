@@ -1,5 +1,5 @@
 import React, { act } from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, useParams, useNavigate } from 'react-router-dom';
 import '@testing-library/jest-dom';
 import Messages from '../../src/components/Messages';
@@ -34,29 +34,35 @@ beforeAll(() => {
 
   // Mock MediaRecorder
   global.MediaRecorder = class {
-    private chunks: BlobPart[] = [];
     private ondataavailable: ((event: BlobEvent) => void) | null = null;
     private onstop: (() => void) | null = null;
-
+  
     start() {
-      this.chunks = [];
       console.log('MediaRecorder started');
       setTimeout(() => {
         const event = { data: new Blob(['mock-audio-data'], { type: 'audio/webm' }) } as BlobEvent;
         this.ondataavailable?.(event);
       }, 50);
     }
-
+  
     stop() {
       console.log('MediaRecorder stopped');
       this.onstop?.();
     }
-
-    addEventListener(event: string, callback: (...args: any[]) => void) {
-      if (event === 'dataavailable') this.ondataavailable = callback as (event: BlobEvent) => void;
-      if (event === 'stop') this.onstop = callback;
+  
+    addEventListener<K extends 'dataavailable' | 'stop'>(
+      event: K,
+      callback: K extends 'dataavailable' ? (event: BlobEvent) => void : () => void
+    ) {
+      if (event === 'dataavailable') {
+        this.ondataavailable = callback as (event: BlobEvent) => void;
+      }
+      if (event === 'stop') {
+        this.onstop = callback as () => void;
+      }
     }
   };
+  
 });
 
 describe('Messages Component', () => {
@@ -174,10 +180,6 @@ describe('Messages Component', () => {
       fireEvent.mouseDown(micButton);
       fireEvent.mouseUp(micButton);
     });
-    
-    // await waitFor(() => {
-    //   expect(screen.getByText('Voice message')).toBeInTheDocument();
-    // });
   });
   
   
@@ -194,11 +196,6 @@ describe('Messages Component', () => {
       fireEvent.mouseDown(videoButton);
       fireEvent.mouseUp(videoButton);
     });
-  
-    // Ожидание появления сообщения "Video sent"
-    // await waitFor(() => {
-    //   expect(screen.getByText('Video sent')).toBeInTheDocument();
-    // });
   });
   
   

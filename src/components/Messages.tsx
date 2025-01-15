@@ -40,7 +40,7 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
 
 
   // Audio recorder state
-  const [isRecording, setIsRecording] = useState(false);
+  const [, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
 
   // Video recorder state
