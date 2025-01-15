@@ -4,41 +4,65 @@ import { QuestionMark, Close } from '@mui/icons-material';
 import QuestionChoice from '../basic/QuestionChoice';
 import ImageButton from '../basic/ImageButton';
 import { motion } from 'framer-motion';
-import { useParams } from 'react-router-dom';
-
-interface Question {
-    id: number;
-    text: string;
-}
-
-interface Answer {
-    id: number;
-    answerIndex: number;
-}
+import { useNavigate, useParams } from 'react-router-dom';
+import { answerQuestion, completeTest, getQuestion, getTest, startTest } from '../../api/tests';
+import { userData } from '../../stores/UserDataStore';
 
 interface QuizProps {
-    getQuestions: (id: number) => Question[];
     onExit: () => void; // Функция для выхода из теста
-    onFinish: (answers: Answer[]) => void; // Функция при завершении теста 
 }
 
-export const Quiz: React.FC<QuizProps> = ({ getQuestions, onExit, onFinish }) => {
-    const id = Number(useParams().id);
-    const [questions, setQuestions] = useState<Question[]>([])
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [selectedAnswers, setSelectedAnswers] = useState<Answer[]>([]);
-    const [isExiting, setIsExiting] = useState(false); // Состояние для управления анимацией выхода
+export const Quiz: React.FC<QuizProps> = ({ onExit }) => {
+    const navigate = useNavigate();
 
-    const currentQuestion = questions[currentQuestionIndex] || '';
+    const test_id = useParams().id || "default"
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [currentQuestion, setCurrentQuestion] = useState("Вопрос загружается");
+    const [resultId, setResultId] = useState("");
+    const [questionCount, setQuestionCount] = useState(1);
+
+    const [isExiting, setIsExiting] = useState(false); // Состояние для управления анимацией выхода
     const delay = 500; // Задержка для анимаций
 
+
+    // load question count and resultId
+    useEffect(() => {        
+        if (test_id == "default") {
+            console.warn("Wrong test_id!");
+            return;
+        }
+
+        const fetchTest = async () => {
+            const test = await getTest(test_id);
+            setQuestionCount(test.questions_count);
+        }
+        const start = async () => {
+            const resultId = await startTest(test_id, userData.getIsu());
+            setResultId(resultId.result_id);
+        }
+        
+        fetchTest();
+        start();
+    }, []);
+
+    // load current question
     useEffect(() => {
-        setQuestions(getQuestions(id));
-    }, [])
+        if (test_id == "default") {
+            console.warn("Wrong test_id!");
+            return;
+        }
+
+        const fetchQuestion = async () => {
+            const question = await getQuestion(test_id, currentQuestionIndex);
+            setCurrentQuestion(question.description);
+        }
+        
+        fetchQuestion();
+    }, [currentQuestionIndex]);
 
     const handleConfirm = (ansIndex: number) => {
-        setSelectedAnswers([...selectedAnswers, { id: currentQuestion.id, answerIndex: ansIndex }]);
         setIsExiting(true); // Устанавливаем состояние выхода
+        answerQuestion(resultId, currentQuestionIndex, ansIndex);
 
         // Задержка перед переходом к следующему вопросу
         setTimeout(() => {
@@ -46,11 +70,13 @@ export const Quiz: React.FC<QuizProps> = ({ getQuestions, onExit, onFinish }) =>
             setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
             
             // Завершение теста, если это последний вопрос
-            if (currentQuestionIndex === questions.length - 1) {
-                onFinish([...selectedAnswers, { id: currentQuestion.id, answerIndex: ansIndex }]);
+            if (currentQuestionIndex === questionCount - 1) {
+                completeTest(resultId);
+                navigate("/tests");
             }
         }, delay); // Задержка, равная длительности анимации
     };
+
 
     return (
         <Box sx={{ 
@@ -66,7 +92,7 @@ export const Quiz: React.FC<QuizProps> = ({ getQuestions, onExit, onFinish }) =>
                 {/* Прогресс-бар */}
                 <LinearProgress 
                     variant="determinate" 
-                    value={(currentQuestionIndex / questions.length) * 100} 
+                    value={(currentQuestionIndex / questionCount) * 100} 
                     sx={{ flexGrow: 1, marginLeft: 2 }} // Занять оставшееся пространство
                 />
             </Box>
@@ -85,8 +111,15 @@ export const Quiz: React.FC<QuizProps> = ({ getQuestions, onExit, onFinish }) =>
                     exit={{ opacity: 0, y: 20 }} // Состояние при выходе
                     transition={{ duration: 0.5 }} // Длительность анимации
                 >
-                    <Typography variant="h6" sx={{ marginBottom: 2 }}>
-                        {currentQuestion.text}
+                    <Typography variant="h6"    
+                        sx={{ 
+                            marginBottom: 2, 
+                            textAlign: 'center', // Центрирование текста
+                            lineHeight: 1.5, // Увеличение междустрочного интервала для лучшей читаемости
+                            color: 'text.primary', // Цвет текста, можно изменить на любой другой
+                            padding: 2 // Добавление отступов, если нужно
+                        }}>
+                        {currentQuestion}
                     </Typography>
                 </motion.div>
 

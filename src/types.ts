@@ -19,6 +19,23 @@ export interface Person {
     username: string
 }
 
+export interface UserAction {
+    user_id: number;
+    target_id: number;
+}
+
+export interface LikeResponse {
+    message: string;
+    matched?: boolean;
+    chat_id?: string;
+}
+
+export interface DislikeResponse {
+    message: string;
+}
+
+export type SuperLikeResponse = LikeResponse;
+
 export interface Message {
     sender: 'me' | 'them';
     text: string;
@@ -60,4 +77,32 @@ export interface MessageType {
     video?: Blob;
     file?: File;
     fileName?: string;
+}
+
+export interface Test {
+    name: string,
+    description: string,
+    questions_count: number
+}
+
+export interface TestResult {
+    result_id: string
+}
+
+export interface TestQuestion {
+    description: string,
+    question_number: number
+}
+
+export interface TestGivenAnswers {
+    updated_answers: number[]
+}
+
+export interface TestScore {
+    score: number
+}
+
+export interface TestStatus {
+    answers: number[],
+    status: boolean
 }
