@@ -25,6 +25,7 @@ import PageWrapper from '../PageWrapper';
 import { MessageType, RawMessage } from '../types';
 import { Profile } from '../api/profile';
 import { sendMessage, UserChat } from '../api/chats';
+import { userData } from '../stores/UserDataStore';
 
 interface MessagesProps {
   people: Profile[];
@@ -37,8 +38,7 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
    * In a real app, you'd probably get the current user's ISU
    * from a global store or context. For now, let's just hard-code:
    */
-  // const currentUserIsu = userData.getIsu();
-  const currentUserIsu = 387612;
+  const currentUserIsu = userData.getIsu();
 
   const [chatMessages, setChatMessages] = useState<MessageType[]>([]);
   const [inputValue, setInputValue] = useState('');

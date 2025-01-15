@@ -13,12 +13,12 @@ import PhotoEditor from "./PhotoEditor";
 import { logEvent, logPageView } from "../../analytics";
 import { createStory } from "../../api/stories";
 import { dataURLtoFile } from "../../utils";
+import { userData } from "../../stores/UserDataStore";
 
 const AddStoryPage: React.FC = () => {
   const navigate = useNavigate();
 
-  // TODO: Replace this with your actual user's ISU (from Redux, context, etc.)
-  const currentUserISU = 387612;
+  const currentUserISU = userData.getIsu();
 
   const [isEditing, setIsEditing] = useState(false);
   const [imageToEdit, setImageToEdit] = useState<string | null>(null);

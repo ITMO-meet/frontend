@@ -95,7 +95,7 @@ function AppContent() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const user_id = 387612;
+        const user_id = userData.getIsu();
         const fetchedContacts = await getUserContacts(user_id, true) as Profile[];
         const fetchedChats = await getUserContacts(user_id, false) as UserChat[];
         const fetchedMessages = await getUserMessages(fetchedChats);
@@ -151,9 +151,9 @@ function AppContent() {
             <Route path="/user-profile/:id" element={<UserProfilePage />} />
             <Route path="/schedule" element={<CalendarPage />} />
             <Route path="/premium" element={<PremiumPage />} />
-            {/* <Route path="/register" element={<RegisterPage />} /> */}
-            {/* <Route path="/login" element={<LoginPage />} /> */}
-            {/* <Route path="*" element={<Navigate to="/login" replace />} /> */}
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </AnimatePresence>
       </Box>
