@@ -10,7 +10,6 @@ import {
   List,
   Paper,
   Modal,
-  Grid2,
   Grid,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
