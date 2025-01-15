@@ -283,7 +283,7 @@ const FeedPage: React.FC = observer(() => {
                         <ToggleButtonGroup
                             disabled={!isPremium}
                             value={relationshipType}
-                            onClick={isPremium ? () => { } : handlePremiumModalOpen} // Открытие премиум-сообщения
+                            onClick={isPremium ? () => {} : handlePremiumModalOpen} // Открытие премиум-сообщения
                             onChange={(e, value) => {
                                 setRelationshipType(value);
                                 feedStore.setRelationshipPreference(value);
