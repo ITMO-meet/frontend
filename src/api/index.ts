@@ -17,7 +17,7 @@ interface RequestOptions {
     body?: BodyInit | null;
 }
 
-async function request(url: string, options: RequestOptions) {
+export async function request(url: string, options: RequestOptions) {
     let resp: Response;
 
     const baseUrl = url
@@ -40,6 +40,7 @@ async function request(url: string, options: RequestOptions) {
     }
     return resp;
 }
+
 
 export async function postJson<T>(url: string, data: unknown): Promise<T> {
     const resp = await request(url, {

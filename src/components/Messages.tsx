@@ -24,35 +24,60 @@ import UserMessage from './UserMessage';
 import PageWrapper from '../PageWrapper';
 import { MessageType, RawMessage } from '../types';
 import { Profile } from '../api/profile';
+import { sendMessage, UserChat } from '../api/chats';
 
 interface MessagesProps {
   people: Profile[];
+  chats: UserChat[];
   messages: RawMessage[];
 }
 
-const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
+const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
+  /**
+   * In a real app, you'd probably get the current user's ISU
+   * from a global store or context. For now, let's just hard-code:
+   */
+  // const currentUserIsu = userData.getIsu();
+  const currentUserIsu = 386872;
+
   const [chatMessages, setChatMessages] = useState<MessageType[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
+  // Identify the contact from the URL param
   const contact = people.find((person) => person.isu === Number(id));
 
-  // Audio recorder state
+  // Identify the chat from the URL param
+  const chat = chats.find((chat) => chat.isu_2 === Number(id));
+
+  // This is how we'll get the chat_id from the messages array
+  const chatId = React.useMemo(() => {
+    if (!chat) return undefined;
+    return chat.chat_id;
+  }, [contact, messages, currentUserIsu]);
+
+  /**
+   * -------------- State for audio and video recordings --------------
+   */
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
 
-  // Video recorder state
   const [isRecordingVideo, setIsRecordingVideo] = useState(false);
   const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
 
+  /**
+   * -------------- File/Media input references --------------
+   */
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const galleryInputRef = useRef<HTMLInputElement | null>(null);
-
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  const navigate = useNavigate();
-
+  /**
+   * -------------- Populate local state with existing messages --------------
+   */
   useEffect(() => {
     if (contact) {
       const initialMessages: MessageType[] = messages
@@ -62,15 +87,17 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
         )
         .map((message) => ({
           sender: message.sender_id === contact.isu ? 'them' : 'me',
-          text: message.text,
+          text: message.text ?? '',
           image: message.image,
           video: message.video,
           audio: message.audio,
           file: message.file,
         }));
+      console.log("initialMessages: ", initialMessages)
       setChatMessages(initialMessages);
     }
   }, [contact, messages]);
+
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -82,14 +109,39 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
     scrollToBottom();
   }, [chatMessages]);
 
-  const handleSendText = () => {
-    if (inputValue.trim() !== '') {
-      setChatMessages((prev) => [...prev, { sender: 'me', text: inputValue }]);
-      setInputValue('');
-      scrollToBottom();
+  /**
+   * -------------- Sending a text message --------------
+   */
+  const handleSendText = async () => {
+    console.log('Sending message:', inputValue);
+    console.log('Contact:', contact);
+    console.log('chatId:', chatId);
+    if (inputValue.trim() === '' || !contact || !chatId) return;
+
+    // Optimistically update local state
+    setChatMessages((prev) => [...prev, { sender: 'me', text: inputValue }]);
+    const tempText = inputValue; // store before resetting
+    setInputValue('');
+    scrollToBottom();
+
+    // Make the API call
+    try {
+      await sendMessage(
+        chatId,               // chat_id
+        currentUserIsu,       // sender_id
+        contact.isu,          // receiver_id
+        tempText              // text
+      );
+      console.log('Message sent:', tempText);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      // Optionally revert the local state or show a notification.
     }
   };
 
+  /**
+   * -------------- File & Media Picker --------------
+   */
   const handleOpenPicker = () => setIsPickerOpen(true);
   const handleClosePicker = () => setIsPickerOpen(false);
 
@@ -105,41 +157,80 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
     }
   };
 
-  const handleGalleryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  /**
+   * -------------- Gallery input change (images/videos) --------------
+   */
+  const handleGalleryChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!contact || !chatId) return;
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
-      const isImage = file.type.startsWith('image/');
-      const isVideo = file.type.startsWith('video/');
 
-      if (isImage) {
-        setChatMessages((prev) => [
-          ...prev,
-          { sender: 'me', text: 'Image sent', image: file }
-        ]);
-      } else if (isVideo) {
-        setChatMessages((prev) => [
-          ...prev,
-          { sender: 'me', text: 'Video sent', video: file }
-        ]);
-      }
-      scrollToBottom();
-    }
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
+      // Immediately push a placeholder message locally
       setChatMessages((prev) => [
         ...prev,
-        { sender: 'me', text: file.name, file }
+        {
+          sender: 'me',
+          text:
+            file.type.startsWith('image/')
+              ? 'Image sent'
+              : file.type.startsWith('video/')
+                ? 'Video sent'
+                : 'Media sent',
+          image: file.type.startsWith('image/') ? file : undefined,
+          video: file.type.startsWith('video/') ? file : undefined,
+        },
       ]);
       scrollToBottom();
+
+      // Send to the backend
+      try {
+        await sendMessage(
+          chatId,
+          currentUserIsu,
+          contact.isu,
+          '', // no text
+          file // pass the file as media
+        );
+        console.log('Message sent:', file);
+      } catch (error) {
+        console.error('Error sending media message:', error);
+      }
     }
   };
 
-  // -----------------------------
-  // AUDIO RECORDING
-  // -----------------------------
+  /**
+   * -------------- File input change (generic file) --------------
+   */
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!contact || !chatId) return;
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+
+      // Update local state
+      setChatMessages((prev) => [
+        ...prev,
+        { sender: 'me', text: file.name, file },
+      ]);
+      scrollToBottom();
+
+      // Send to the backend
+      try {
+        await sendMessage(
+          chatId,
+          currentUserIsu,
+          contact.isu,
+          '', // no text
+          file
+        );
+      } catch (error) {
+        console.error('Error sending file:', error);
+      }
+    }
+  };
+
+  /**
+   * -------------- Audio Recording --------------
+   */
   const startRecordingAudio = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -147,12 +238,30 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
       const chunks: BlobPart[] = [];
 
       recorder.ondataavailable = (e) => chunks.push(e.data);
-      recorder.onstop = () => {
+      recorder.onstop = async () => {
         const blob = new Blob(chunks, { type: 'audio/webm' });
+
+        // Immediately update chat UI
         setChatMessages((prev) => [
           ...prev,
-          { sender: 'me', text: 'Voice message', audio: blob }
+          { sender: 'me', text: 'Voice message', audio: blob },
         ]);
+        // Make the backend call if we have a contact and chatId
+        if (contact && chatId) {
+          try {
+            const file = new File([blob], 'audio.webm', { type: 'audio/webm' });
+            await sendMessage(
+              chatId,
+              currentUserIsu,
+              contact.isu,
+              '', // no text
+              file
+            );
+            console.log('Audio sent:', file);
+          } catch (error) {
+            console.error('Error sending audio:', error);
+          }
+        }
         // Stop the tracks to release the mic
         stream.getTracks().forEach((track) => track.stop());
       };
@@ -180,45 +289,68 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
     }
   };
 
-  // -----------------------------
-  // VIDEO RECORDING
-  // -----------------------------
+  /**
+   * -------------- Video Recording --------------
+   */
   const startRecordingVideo = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-    const recorder = new MediaRecorder(stream);
-    const chunks: BlobPart[] = [];
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+      const recorder = new MediaRecorder(stream);
+      const chunks: BlobPart[] = [];
 
-    recorder.ondataavailable = (e) => chunks.push(e.data);
-    recorder.onstop = () => {
-      const blob = new Blob(chunks, { type: 'video/webm' });
-      setChatMessages((prev) => [
-        ...prev,
-        { sender: 'me', text: 'Video sent', video: blob }
-      ]);
-      stream.getTracks().forEach((track) => track.stop());
-    };
+      recorder.ondataavailable = (e) => chunks.push(e.data);
+      recorder.onstop = async () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
 
-    setVideoStream(stream);
-    setIsRecordingVideo(true);
-    recorder.start();
+        // Immediately update chat UI
+        setChatMessages((prev) => [
+          ...prev,
+          { sender: 'me', text: 'Video sent', video: blob },
+        ]);
+        // Send to backend
+        if (contact && chatId) {
+          try {
+            const file = new File([blob], 'video.webm', { type: 'video/webm' });
+            await sendMessage(
+              chatId,
+              currentUserIsu,
+              contact.isu,
+              '', // no text
+              file
+            );
+          } catch (error) {
+            console.error('Error sending video:', error);
+          }
+        }
+        // Stop the tracks
+        stream.getTracks().forEach((track) => track.stop());
+      };
+
+      setVideoStream(stream);
+      setIsRecordingVideo(true);
+      recorder.start();
+    } catch (error) {
+      console.error('Failed to record video:', error);
+    }
   };
 
   const stopRecordingVideo = () => {
     if (isRecordingVideo && videoStream) {
+      // This triggers recorder.onstop
       videoStream.getTracks().forEach((track) => track.stop());
       setIsRecordingVideo(false);
     }
   };
 
-  // -----------------------------
-  // RENDER
-  // -----------------------------
+  /**
+   * -------------- Render --------------
+   */
   return (
     <Box sx={{ pb: 7 }}>
       {/* Hidden Inputs */}
       <input
         type="file"
-        accept="image/*"
+        accept="image/*,video/*"
         ref={galleryInputRef}
         data-testid="gallery-input"
         style={{ display: 'none' }}
@@ -282,7 +414,7 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
         </List>
       </PageWrapper>
 
-      {/* Input */}
+      {/* Input Area */}
       <Box
         sx={{
           position: 'fixed',
@@ -331,7 +463,7 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
             },
           }}
         />
-        {/* Optional small text indicator for audio recording */}
+        {/* Optional small text indicators */}
         {isRecording && (
           <Typography variant="caption" color="error" sx={{ display: 'block', mt: 1 }}>
             Recording audio...

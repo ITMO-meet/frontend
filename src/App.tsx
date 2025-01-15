@@ -134,7 +134,7 @@ function AppContent() {
           <Routes>
             <Route path="/chats" element={<ChatPage people={contacts} stories={stories} messages={messages} />} />
             <Route path="/add-story" element={<AddStoryPage />} />
-            <Route path="/chat/:id" element={<Messages people={contacts} messages={messages} />} />
+            <Route path="/chat/:id" element={<Messages people={contacts} chats={chats} messages={messages} />} />
             <Route path="/matches" element={<MatchesPage />} />
             <Route path="/feed" element={<FeedPage />} />
             <Route path="/tests" element={<TestsPage />} />

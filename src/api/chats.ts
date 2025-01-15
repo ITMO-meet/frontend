@@ -1,6 +1,6 @@
 import { getProfile } from "./profile";
 import { RawMessage } from "../types";
-import { getJson } from ".";
+import { getJson, postJson, request } from ".";
 
 export interface UserChat {
     chat_id: string;
@@ -29,6 +29,8 @@ export async function getUserMessages(UserContacts: UserChat[]) {
     const messages = await Promise.all(
         UserContacts.map(contact => getJson<{ messages: UserMessage[] }>(`/chats/get_messages/${contact.chat_id}`))
     );
+
+    console.log(messages)
 
     const raw_messages = await Promise.all(messages.flatMap(messageGroup =>
         messageGroup.messages.map(async message => {
@@ -59,4 +61,29 @@ export async function getUserMessages(UserContacts: UserChat[]) {
         })));
 
     return raw_messages;
+}
+
+export async function uploadMedia(sender_id: number, chat_id: string, file: File) {
+    const formData = new FormData();
+    formData.append("isu", sender_id.toString());
+    formData.append("file", file);
+    formData.append("chat_id", chat_id);
+
+    const { media_id } = await (await request("/chats/upload_media", {
+        method: 'POST',
+        body: formData
+    })).json();
+    return media_id;
+}
+
+export async function sendMessage(chat_id: string, sender_id: number, receiver_id: number, text: string, media?: Blob) {
+    if (media) {
+        const media_id = await uploadMedia(sender_id, chat_id.toString(), new File([media], "media"));
+
+        console.log("media_id:", media_id);
+
+        await postJson("/chats/send_message", { chat_id, sender_id, receiver_id, text, media_id });
+    } else {
+        await postJson("/chats/send_message", { chat_id, sender_id, receiver_id, text });
+    }
 }
