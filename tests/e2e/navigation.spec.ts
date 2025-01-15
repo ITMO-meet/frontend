@@ -7,7 +7,7 @@ describe('Navigation', function() {
         await makeLogin(page);
 
         // click buttons
-        const buttons = ["Chats", "Matches", "Feed", "Tests", "Profile", "Chats"]
+        const buttons = ["Чаты", "Мэтчи", "Лента", "Тесты", "Профиль", "Чаты"]
         // check url
         const urls = ["/chats", "/matches", "/feed", "/tests", "/profile", "/chats"]
 

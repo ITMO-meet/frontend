@@ -17,6 +17,12 @@ const GenderStep: React.FC<GenderStepProps> = ({ isu, onNext }) => {
     const { showError } = useError();
     const [gender, setGender] = useState('');
 
+    const handleChoose = (option: string) => {
+        if (option === "Мужчины") setGender("Male")
+        if (option === "Женщины") setGender("Female")
+        if (option === "Не важно") setGender("Everyone")
+    }
+
     const handleSubmit = async () => {
         if (!gender) {
             showError('Выберите ваше предпочтение');
@@ -43,7 +49,7 @@ const GenderStep: React.FC<GenderStepProps> = ({ isu, onNext }) => {
                 <HorizontalButtonGroup
                     options={options} // Передаем доступные варианты
                     spacing={10} // Промежуток между кнопками
-                    onButtonClick={setGender} // Обработчик клика по кнопке для установки пола
+                    onButtonClick={handleChoose} // Обработчик клика по кнопке для установки пола
                 />
             </Box>
             <RoundButton

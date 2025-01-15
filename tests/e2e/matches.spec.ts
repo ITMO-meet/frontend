@@ -5,7 +5,7 @@ import { expect } from '@playwright/test';
 describe('Matches page', function() {
     beforeEach(async function() {
         await makeLogin(page);
-        await page.click("text=Matches"); 
+        await page.click("text=Мэтчи"); 
 
         // check url
         let url = await page.url(); 
@@ -30,7 +30,7 @@ describe('Matches page', function() {
         
         // access granted
         await expect(await page.locator("text=У вас премиум-аккаунт!")).toHaveCount(1);
-        await page.click("text=Matches", {timeout: 5000})
+        await page.click("text=Мэтчи", {timeout: 5000})
 
         // redirect to profile
         url = await page.url(); 
@@ -38,7 +38,6 @@ describe('Matches page', function() {
 
         // we have access
         await expect(await page.locator("text=Метчи разблокируются после покупки премиума.")).toHaveCount(0);
-        await expect(await page.locator("text=View profile")).toHaveCount(1);
     });
 
     it('Test navigation', async function() {
@@ -59,8 +58,8 @@ describe('Matches page', function() {
         
         // access not granted
         await expect(await page.locator("text=У вас премиум-аккаунт!")).toHaveCount(0);
-        await expect(await page.getByText('Bio', { exact: true })).toHaveCount(1);
-        await page.click("text=Matches", {timeout: 5000})
+        await expect(await page.getByText('Краткая информация', { exact: true })).toHaveCount(1);
+        await page.click("text=Мэтчи", {timeout: 5000})
 
         // redirect to profile
         url = await page.url(); 

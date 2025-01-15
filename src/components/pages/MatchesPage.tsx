@@ -32,8 +32,6 @@ const MatchesPage: React.FC = observer(() => {
     const currentMatch = matches.length > 0 ? matches[currentMatchIndex] : null;
     const allPhotos = currentMatch ? [currentMatch.logo, ...currentMatch.photos] : [];
 
-    console.log(matches);
-
     useEffect(() => { matchesStore.loadMatches() }, [])
 
     useEffect(() => {

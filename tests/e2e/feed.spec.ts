@@ -5,7 +5,7 @@ import { page } from './setup';
 describe('Feed page', function() {
     beforeEach(async function() {
         await makeLogin(page);
-        await page.click("text=Feed"); 
+        await page.click("text=Лента"); 
 
         let url = await page.url(); 
         await expect(url).toContain("/feed");
@@ -13,7 +13,7 @@ describe('Feed page', function() {
 
     it('Test Render', async function() {
         // check text
-        await expect(await page.locator("text=Search")).toHaveCount(1);
+        await expect(await page.locator("text=Поиск")).toHaveCount(1);
         await expect(await page.locator("text=Фильтры")).toHaveCount(1);
         await expect(await page.locator('[data-testid="CloseIcon"]')).toHaveCount(1);
         await expect(await page.locator('[data-testid="StarIcon"]')).toHaveCount(1);
