@@ -65,23 +65,29 @@ describe('EditProfilePage', () => {
                 </MemoryRouter>
             </PremiumProvider>
         );
-
+    
         // Проверка наличия заголовка
         expect(screen.getByText('Alisa Pipisa')).toBeInTheDocument();
-        expect(screen.getByText('Age: 20 yo')).toBeInTheDocument();
-
+    
+        // Гибкая проверка текста возраста
+        expect(
+            screen.getByText((content) => content.includes('Возраст: 20 yo'))
+        ).toBeInTheDocument();
+    
         // Проверка наличия секций
         expect(screen.getByText('Bio')).toBeInTheDocument();
-        expect(screen.getByText('Target')).toBeInTheDocument();
-        expect(screen.getByText('Main Features')).toBeInTheDocument();
+        expect(screen.getByText('Цель')).toBeInTheDocument();
+        expect(screen.getByText('Основные характеристики')).toBeInTheDocument();
         expect(screen.getByText((content) => content.includes('Интересы'))).toBeInTheDocument();
-        expect(screen.getByText('Logo')).toBeInTheDocument();
-        expect(screen.getByText('Additional Photos')).toBeInTheDocument();
+        expect(screen.getByText('Лого')).toBeInTheDocument();
+        expect(screen.getByText('Дополнительные фотографии')).toBeInTheDocument();
         expect(screen.getByText('Premium')).toBeInTheDocument();
-
+    
         // Проверка вызова logPageView
         expect(logPageView).toHaveBeenCalledWith('/edit-profile');
     });
+    
+    
 
     test('opens and selects target option', async () => {
         render(

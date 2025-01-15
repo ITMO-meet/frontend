@@ -100,7 +100,7 @@ describe('FeedPage', () => {
 
         expect(feedStore.getCurrentPerson).toHaveBeenCalledTimes(1);
         expect(feedStore.loadNewPerson).toHaveBeenCalledTimes(0);
-        expect(screen.getByText('Search')).toBeInTheDocument();
+        expect(screen.getByText('Поиск')).toBeInTheDocument();
         expect(screen.getByText('John Doe')).toBeInTheDocument();
         expect(screen.getByText('A sample person')).toBeInTheDocument();
 

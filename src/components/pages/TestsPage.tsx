@@ -11,7 +11,7 @@ interface Test {
 }
 
 const tests: Test[] = [
-  { id: 'dreams', title: 'Мечты', icon: '/images/dreams.jpg', section: 'О личном', premium: true },
+  { id: 'fetishes', title: 'Фетиши', icon: '/images/dreams.jpg', section: 'О личном', premium: true },
   { id: 'psychology', title: 'Психология', icon: '/images/psychology.jpg', section: 'О личном', premium: true },
   { id: 'household', title: 'Бытовуха', icon: '/images/household.jpg', section: 'Поговорим серьезно?', premium: true },
   { id: 'future', title: 'Будущее', icon: '/images/future.jpg', section: 'Поговорим серьезно?', premium: true },
@@ -39,15 +39,27 @@ const TestsPage: React.FC = () => {
     <Box p={2}>
       {/* Заголовок страницы */}
       <Box mb={3} textAlign="center">
-        <Typography variant="h4" fontWeight="bold">
-          Tests
+        <Typography variant="h4"
+                align="center"
+                gutterBottom
+                sx={{
+                    color: '#4a4a4a', // Тёмно-серый цвет заголовка
+                    fontFamily: "'Poppins', Arial, sans-serif",
+                    fontWeight: 600,
+                }}>
+          Тесты
         </Typography>
       </Box>
 
       {sections.map((section) => (
         <Box key={section} mb={4}>
           {/* Заголовок раздела */}
-          <Typography variant="h5" sx={{ mb: 2 }}>
+          <Typography variant="h5" sx={{
+                    color: '#4a4a4a', 
+                    fontFamily: "'Poppins', Arial, sans-serif",
+                    fontWeight: 600,
+                    mb: 2,
+                }}>
             {section}
           </Typography>
 
@@ -80,7 +92,8 @@ const TestsPage: React.FC = () => {
                         />
                       </Box>
                       <CardContent sx={{ textAlign: 'center', p: 1 }}>
-                        <Typography variant="subtitle1" fontWeight="bold">
+                        <Typography variant="subtitle1" fontWeight="bold" 
+                        sx={{color: '#4a4a4a' }}>
                           {test.title}
                         </Typography>
                       </CardContent>

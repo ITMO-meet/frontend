@@ -61,22 +61,22 @@ describe('ProfilePage', () => {
         );
 
         // Проверка наличия заголовка
-        expect(screen.getByRole('heading', { name: 'Profile' })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: 'Профиль' })).toBeInTheDocument();
 
         // Проверка наличия кнопки настроек
         expect(screen.getByTestId('SettingsIcon')).toBeInTheDocument();
 
         // Проверка наличия секции Bio
-        expect(screen.getByText('Bio')).toBeInTheDocument();
+        expect(screen.getByText('Био')).toBeInTheDocument();
 
         // Проверка наличия секции Main Features
-        expect(screen.getByText('Main Features')).toBeInTheDocument();
+        expect(screen.getByText('Основные характеристики')).toBeInTheDocument();
 
         // Проверка наличия секции Interests
-        expect(screen.getByText('Interests')).toBeInTheDocument();
+        expect(screen.getByText('Интересы')).toBeInTheDocument();
 
         // Проверка наличия секции Languages
-        expect(screen.getByText('Languages')).toBeInTheDocument();
+        expect(screen.getByText('Языки')).toBeInTheDocument();
 
         // Проверка наличия кнопки Premium
         expect(screen.getByText('Premium')).toBeInTheDocument();

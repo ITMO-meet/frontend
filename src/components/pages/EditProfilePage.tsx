@@ -298,7 +298,12 @@ const EditProfilePage: React.FC = observer(() => {
         <Box position="relative" minHeight="100vh" display="flex" flexDirection="column">
             {/* Header */}
             <Box width="100%" color="white" display="flex" alignItems="center" p={2}>
-                <IconButton data-testid="BackToProfile" onClick={() => navigate('/profile')} sx={{ color: 'grey.800' }}>
+                <IconButton data-testid="BackToProfile" onClick={() => navigate('/profile')} 
+                    sx={{ '&:active': {
+                        backgroundColor: '#6a8afc', // Цвет при нажатии
+                        },
+                        borderRadius: '50%', // Круглая форма
+                        color: 'grey.800' }}>
                     <WestIcon />
                 </IconButton>
             </Box>
@@ -321,19 +326,19 @@ const EditProfilePage: React.FC = observer(() => {
                 {/* Bio Section */}
                 <Box display="flex" flexDirection="column">
                     <EditableField label="Username" initialValue={userData.getUsername()} onSave={(v) => userData.setUsername(v)} />
-                    <Typography variant="h6" sx={{ mb: 1 }}>Age: {userData.getAge()} yo</Typography>
+                    <Typography variant="h6" sx={{ mb: 1 }}>Возраст: {userData.getAge()} yo</Typography>
                 </Box>
                 <EditableField label="Bio" initialValue={userData.getBio()} onSave={(v) => userData.setBio(v)} />
 
                 {/* Target Section */}
                 <Box mt={2} width="100%">
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>Target</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>Цель</Typography>
                     <TargetSheetButton label={selectedTarget?.label || initRelation.label} icon={selectedTarget?.icon || initRelation.icon} options={targetOptions} onSelect={handleTargetSelect} />
                 </Box>
 
                 {/* Main Features Section */}
                 <Box mt={2} width="100%">
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>Main Features</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>Основные характеристики</Typography>
                     {categoriesConfig.map((category, index) => (
                         <Box key={index} sx={{ mb: 1 }}>
                             <MultiCategorySheetButton
@@ -440,7 +445,7 @@ const EditProfilePage: React.FC = observer(() => {
                 {/*Logo*/}
                 <Box mt={3}>
                     <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                        Logo
+                        Лого
                     </Typography>
 
                     <Box
@@ -501,7 +506,7 @@ const EditProfilePage: React.FC = observer(() => {
 
                     <Box mt={2} display="flex" justifyContent="center">
                         <RoundButton onClick={handleSubmitLogo}>
-                            Save Logo
+                            Сохранить лого
                         </RoundButton>
                     </Box>
                 </Box>
@@ -509,7 +514,7 @@ const EditProfilePage: React.FC = observer(() => {
                 {/*Gallery*/}
                 <Box mt={3}>
                     <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                        Additional Photos
+                    Дополнительные фотографии
                     </Typography>
 
                     <Gallery
@@ -524,7 +529,7 @@ const EditProfilePage: React.FC = observer(() => {
 
                     <Box mt={2} display="flex" justifyContent="center">
                         <RoundButton onClick={handleSubmitPhotos}>
-                            Save Additional Photos
+                            Сохранить дополнительные фотографии
                         </RoundButton>
                     </Box>
                 </Box>
