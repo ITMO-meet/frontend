@@ -121,8 +121,11 @@ describe('EditProfilePage', () => {
         const chooseHeightButton = screen.getByRole('button', { name: "Рост 100" });
         await userEvent.click(chooseHeightButton);
 
-        const heightText = await screen.findByText('100');
-        expect(heightText).toBeInTheDocument();
+        const countOfHundred = screen.getAllByText('100');
+        expect(countOfHundred.length).toBe(2);
+
+        const saveText = await screen.findByText('Сохранить');
+        expect(saveText).toBeInTheDocument();
     });
 
     test('edits and deletes gallery images', async () => {

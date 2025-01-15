@@ -317,7 +317,7 @@ const MatchesPage: React.FC = observer(() => {
             {/* Username */}
             <Box display="flex" minHeight="10px">
                 <Typography variant="h5" sx={{ fontWeight: 'bold', textAlign: 'center', flexGrow: 1 }}>
-                    {currentMatch ? currentMatch.username : 'No Match Available'}
+                    {currentMatch ? currentMatch.username : 'Мэтчи не найдены'}
                 </Typography>
             </Box>
 
