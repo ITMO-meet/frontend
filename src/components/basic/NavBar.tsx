@@ -38,7 +38,7 @@ const NavBar: React.FC = () => {
             }}
         >
             <BottomNavigationAction
-                label="Chats"
+                label="Чаты"
                 value="chats"
                 icon={<ChatIcon />}
                 sx={{
@@ -49,7 +49,7 @@ const NavBar: React.FC = () => {
                 }}
             />
             <BottomNavigationAction
-                label="Matches"
+                label="Мэтчи"
                 value="matches"
                 icon={<FavoriteIcon />}
                 sx={{
@@ -60,7 +60,7 @@ const NavBar: React.FC = () => {
                 }}
             />
             <BottomNavigationAction
-                label="Feed"
+                label="Лента"
                 value="feed"
                 icon={<SearchIcon />}
                 sx={{
@@ -71,7 +71,7 @@ const NavBar: React.FC = () => {
                 }}
             />
             <BottomNavigationAction
-                label="Tests"
+                label="Тесты"
                 value="tests"
                 icon={<FormatListBulletedIcon />}
                 sx={{
@@ -82,7 +82,7 @@ const NavBar: React.FC = () => {
                 }}
             />
             <BottomNavigationAction
-                label="Profile"
+                label="Профиль"
                 value="profile"
                 icon={<AccountCircleIcon />}
                 sx={{

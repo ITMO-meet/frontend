@@ -299,7 +299,7 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
       >
         <TextField
           fullWidth
-          placeholder="Type a message"
+          placeholder="Введите сообщение"
           variant="outlined"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
@@ -339,12 +339,12 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
         {/* Optional small text indicator for audio recording */}
         {isRecording && (
           <Typography variant="caption" color="error" sx={{ display: 'block', mt: 1 }}>
-            Recording audio...
+            Запись аудио...
           </Typography>
         )}
         {isRecordingVideo && (
           <Typography variant="caption" color="error" sx={{ display: 'block', mt: 1 }}>
-            Recording video...
+            Запись видео...
           </Typography>
         )}
       </Box>

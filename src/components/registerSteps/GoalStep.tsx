@@ -28,7 +28,7 @@ const GoalStep: React.FC<GoalStepProps> = ({ isu, onNext }) => {
                 /* eslint-disable @typescript-eslint/no-explicit-any */
             } catch (err: any) {
                 console.error("Error fetching preferences:", err);
-                showError(err.message || "Failed to load preferences");
+                showError(err.message || "Ошибка при загрузке предпочтений");
             } finally {
                 setLoading(false);
             }
@@ -39,7 +39,7 @@ const GoalStep: React.FC<GoalStepProps> = ({ isu, onNext }) => {
 
     const handleSubmit = async () => {
         if (!selectedGoalId) {
-            showError('Please select your relationship preference');
+            showError('Выберите ваше предпочтение');
             return;
         }
         try {
@@ -47,7 +47,7 @@ const GoalStep: React.FC<GoalStepProps> = ({ isu, onNext }) => {
             onNext({ goal: selectedGoalId }); // Sending the goal ID
             /* eslint-disable @typescript-eslint/no-explicit-any */
         } catch (e: any) {
-            showError(e.message || "Failed to select relationship preference");
+            showError(e.message || "Ошибка при загрузке предпочтений");
         }
     };
 
@@ -56,7 +56,7 @@ const GoalStep: React.FC<GoalStepProps> = ({ isu, onNext }) => {
     const mapPreferenceToDisplay = (preference: Preference) => ({
         id: preference.id,
         title: preference.title || preference.text, // Use 'title' if available, else fallback to 'text'
-        description: preference.description || 'No description provided.', // Provide a default description
+        description: preference.description || '', // Provide a default description
     });
 
     if (loading) {
@@ -70,10 +70,10 @@ const GoalStep: React.FC<GoalStepProps> = ({ isu, onNext }) => {
     return (
         <Box style={{ padding: '20px' }}> {/* Обертка с отступами */}
             <Typography variant="h5" align='center' sx={{ marginBottom: "20px" }}>
-                What are you looking for?
+                Что вы ищите?
             </Typography> {/* Заголовок */}
             <Typography variant="h6" align='center' sx={{ marginBottom: "20px" }}>
-                It can be changed at any time
+                Это можно поменять в будущем
             </Typography> {/* Подзаголовок с инструкцией */}
             {allGoals.map(preference => {
                 const { id, title, description } = mapPreferenceToDisplay(preference);
@@ -105,7 +105,7 @@ const GoalStep: React.FC<GoalStepProps> = ({ isu, onNext }) => {
                 onClick={handleSubmit} // Обработчик клика по кнопке
                 sx={{ width: "100%", marginTop: "20px" }} // Стили для кнопки
             >
-                Next
+                Продолжить
             </RoundButton>
         </Box>
     );

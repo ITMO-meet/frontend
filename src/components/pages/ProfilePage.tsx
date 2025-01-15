@@ -206,7 +206,7 @@ const ProfilePage: React.FC = observer(() => {
 
                 {/* Кнопка Premium */}
                 <Box mt={4} width="100%" display="flex" justifyContent="center" pb={8}>
-                    <RoundButton onClick={handlePremiumClick}>Premium</RoundButton>
+                    <RoundButton onClick={handlePremiumClick}>Премиум</RoundButton>
                 </Box>
             </Box>
 

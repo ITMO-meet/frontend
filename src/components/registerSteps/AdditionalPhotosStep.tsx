@@ -69,7 +69,7 @@ const AdditionalPhotosStep: React.FC<AdditionalPhotosStepProps> = ({ isu, onNext
     const handleSubmit = async () => {
         const selectedFiles = files.filter((f): f is File => f !== null);
         if (selectedFiles.length === 0) {
-            showError('Please select at least one photo');
+            showError('Выберите хотя бы одно фото');
             return;
         }
         try {
@@ -83,9 +83,9 @@ const AdditionalPhotosStep: React.FC<AdditionalPhotosStepProps> = ({ isu, onNext
 
     return (
         <Box style={{ padding: '20px' }}>
-            <Typography variant="h5" align='center' sx={{ marginBottom: "20px" }}>Add additional photos</Typography>
+            <Typography variant="h5" align='center' sx={{ marginBottom: "20px" }}>Выберите дополнительные фотографии</Typography>
             <Typography variant="h6" align='center' sx={{ marginBottom: "20px" }}>
-                At least one, but all six would be even better
+                Хотя бы одну, но чем больше, тем лучше
             </Typography>
             {!isEditing && (
                 <>
