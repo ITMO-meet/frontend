@@ -56,7 +56,7 @@ describe('TestsPage', () => {
     const testCard = screen.getByAltText('Фетиши');
     fireEvent.click(testCard);
 
-    expect(navigateMock).toHaveBeenCalledWith('/tests/6787dc30c35a41da41946137');
+    expect(navigateMock).toHaveBeenCalledWith('/tests/6787dc52c35a41da41946138');
   });
 
   test('shows alert for completed test', () => {
