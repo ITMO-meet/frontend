@@ -11,12 +11,14 @@ interface Test {
 }
 
 const tests: Test[] = [
-  { id: 'dreams', title: 'Мечты', icon: '/images/dreams.jpg', section: 'О личном', premium: true },
-  { id: 'psychology', title: 'Психология', icon: '/images/psychology.jpg', section: 'О личном', premium: true },
-  { id: 'household', title: 'Бытовуха', icon: '/images/household.jpg', section: 'Поговорим серьезно?', premium: true },
-  { id: 'future', title: 'Будущее', icon: '/images/future.jpg', section: 'Поговорим серьезно?', premium: true },
-  { id: 'hobby', title: 'Хобби', icon: '/images/hobby.jpg', section: 'Обо всем на свете', premium: true },
-  { id: 'media', title: 'Медиа', icon: '/images/media.jpg', section: 'Обо всем на свете', premium: true },
+  { id: '6787dc30c35a41da41946137', title: 'Мечты', icon: '/images/dreams.jpg', section: 'О личном', premium: true },
+  { id: '6787db23c35a41da41946132', title: 'Психология', icon: '/images/psychology.jpg', section: 'О личном', premium: true },
+  { id: '6787db90c35a41da41946134', title: 'Бытовуха', icon: '/images/household.jpg', section: 'Поговорим серьезно?', premium: true },
+  { id: '6787cbc24260c6a278175e8c', title: 'Будущее', icon: '/images/future.jpg', section: 'Поговорим серьезно?', premium: true },
+  { id: '6787dbe4c35a41da41946135', title: 'Хобби', icon: '/images/hobby.jpg', section: 'Обо всем на свете', premium: true },
+  { id: '6787dc0ac35a41da41946136', title: 'Медиа', icon: '/images/media.jpg', section: 'Обо всем на свете', premium: true },
+  // { id: '6787db67c35a41da41946133', title: 'Мем', icon: '', section: 'Другое))', premium: true },
+  // { id: '6787dc52c35a41da41946138', title: 'Фетиши', icon: '', section: 'Другое))', premium: true },
 ];
 
 const TestsPage: React.FC = () => {

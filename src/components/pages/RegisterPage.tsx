@@ -55,7 +55,7 @@ export const RegisterPage: React.FC = () => {
 
 	const handleFinish = () => {
 		// After registration, navigate to tests
-		const initialTestId = 1;
+		const initialTestId = "6787db67c35a41da41946133";
 		navigate(`/tests/${initialTestId}`);
 	};
 
@@ -64,7 +64,7 @@ export const RegisterPage: React.FC = () => {
 			case 'username':
 				return <UsernameStep isu={isu} onNext={handleNext} />;
 			case 'bio':
-				return <BioStep isu={isu} onNext={handleNextBio} />;
+				return <BioStep onNext={handleNextBio} />;
 			case 'main-feats':
 				return <MainFeaturesStep isu={isu} bio={bio} onNext={handleNext} />;
 			case 'gender':
