@@ -315,14 +315,14 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
                   <IconButton
                     onClick={toggleAudioRecording}
                     color={isRecording ? 'error' : 'default'}
-                    id="mic-button"
+                    data-testid="mic-button"
                   >
                     {isRecording ? <StopIcon /> : <MicIcon />}
                   </IconButton>
                   <IconButton
                     onClick={isRecordingVideo ? stopRecordingVideo : startRecordingVideo}
                     color={isRecordingVideo ? 'error' : 'default'}
-                    id="video-button"
+                    data-testid="video-button"
                   >
                     {isRecordingVideo ? <StopIcon /> : <VideocamIcon />}
                   </IconButton>
