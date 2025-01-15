@@ -1,6 +1,8 @@
 import React from "react";
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, ThemeProvider } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import RoundButton from "./basic/RoundButton";
+import theme from "./theme";
 
 interface Props {
     error: Error | null;
@@ -12,10 +14,11 @@ export const FallbackUI: React.FC<Props> = ({ resetError }) => {
 
     const handleClick = () => {
         resetError();
-        navigate("/");
+        navigate("/profile");
     }
 
     return (
+        <ThemeProvider theme={theme}>
         <Box 
             sx={{
                 display: 'flex',
@@ -36,17 +39,19 @@ export const FallbackUI: React.FC<Props> = ({ resetError }) => {
                         fontWeight: 600 }}>
             Ой... Что-то не так
             </Typography>
-            <Button 
-                variant="contained" 
-                onClick={handleClick} 
-                sx={{ padding: '10px 20px', 
-                        color: '#4a4a4a', // Тёмно-серый цвет заголовка
-                        fontFamily: "'Poppins', Arial, sans-serif",
-                        fontWeight: 600
+            <RoundButton
+                sx={{
+                    fontSize: '1.1rem', // Увеличенный размер текста
+                    fontWeight: 700, // Жирный текст
+                    fontFamily: "'Poppins', Arial, sans-serif",
+                    letterSpacing: '0.05em', // Расширение текста
+                    padding: '10px 20px', // Увеличенный внутренний отступ
                 }}
+                onClick={handleClick} // Обработчик клика по кнопке
             >
                 Вернуться на главную
-            </Button>
+            </RoundButton>
         </Box>
+        </ThemeProvider>
     );
 };

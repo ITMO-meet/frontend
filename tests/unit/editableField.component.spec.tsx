@@ -27,7 +27,7 @@ describe('EditableField', () => {
 
         fireEvent.click(getByText(label));
 
-        expect(getByPlaceholderText(`Edit your ${label.toLowerCase()}...`)).toBeTruthy();
+        expect(getByPlaceholderText(`Вы редактируете ${label.toLowerCase()}...`)).toBeTruthy();
     });
 
     test('updates value on save', () => {
@@ -35,10 +35,10 @@ describe('EditableField', () => {
 
         fireEvent.click(getByText(label));
 
-        const input = getByPlaceholderText(`Edit your ${label.toLowerCase()}...`);
+        const input = getByPlaceholderText(`Вы редактируете ${label.toLowerCase()}...`);
         fireEvent.change(input, { target: { value: 'Новое значение' } });
 
-        fireEvent.click(getByText('Save'));
+        fireEvent.click(getByText('Сохранить'));
 
         // Проверяем, что новое значение отображается в основном поле
         const valueElement = container.querySelector('p');
@@ -54,10 +54,10 @@ describe('EditableField', () => {
 
         fireEvent.click(getByText(label));
 
-        const input = getByPlaceholderText(`Edit your ${label.toLowerCase()}...`);
+        const input = getByPlaceholderText(`Вы редактируете ${label.toLowerCase()}...`);
         fireEvent.change(input, { target: { value: 'Новое значение' } });
 
-        fireEvent.click(getByText('Cancel'));
+        fireEvent.click(getByText('Отмена'));
 
         // Проверяем, что значение осталось прежним
         const valueElement = container.querySelector('p');

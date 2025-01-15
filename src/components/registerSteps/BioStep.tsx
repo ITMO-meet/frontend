@@ -16,7 +16,7 @@ const BioStep: React.FC<BioStepProps> = ({ onNext }) => {
     // Функция для обработки отправки данных
     const handleSubmit = async () => {
         if (!bio.trim()) {
-            showError('Please provide short bio');
+            showError('Предоставьте краткую информацию о себе');
             return;
         }
         onNext({ bio: bio.trim() });
@@ -24,14 +24,14 @@ const BioStep: React.FC<BioStepProps> = ({ onNext }) => {
 
     return (
         <Box style={{ padding: '20px' }}> {/* Обертка с отступами */}
-            <Typography variant="h5" align='center'>Enter information about yourself</Typography> {/* Заголовок */}
+            <Typography variant="h5" align='center'>Предоставьте краткую информацию о себе</Typography> {/* Заголовок */}
             {/* Текстовое поле для редактирования значения */}
             <TextField
                 fullWidth
                 multiline
                 minRows={3}
                 onChange={(e) => setBio(e.target.value)}
-                placeholder={'Edit your bio...'}
+                placeholder={'Введите текст...'}
                 sx={{ marginY: "20px" }}
             />
             <RoundButton
@@ -39,7 +39,7 @@ const BioStep: React.FC<BioStepProps> = ({ onNext }) => {
                 onClick={handleSubmit} // Обработчик клика по кнопке
                 sx={{ width: "100%" }} // Стили для кнопки
             >
-                Next
+                Продолжить
             </RoundButton>
         </Box>
     );

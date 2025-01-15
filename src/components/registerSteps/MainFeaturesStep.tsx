@@ -32,10 +32,10 @@ const MainFeaturesStep: React.FC<MainFeaturesStepProps> = ({ isu, bio, onNext })
 
     return (
         <Box style={{ padding: '20px' }}> {/* Обертка с отступами */}
-            <Typography variant="h5" align='center'>Enter some main information</Typography> {/* Заголовок */}
+            <Typography variant="h5" align='center'>Введите основную информацию</Typography> {/* Заголовок */}
             
             {/* Слайдер для роста */}
-            <Typography gutterBottom sx={{ marginTop: "20px" }}>Height: {height}</Typography>
+            <Typography gutterBottom sx={{ marginTop: "20px" }}>Рост: {height}</Typography>
             <Slider
                 data-testid="height-slider"
                 name="height"
@@ -48,7 +48,7 @@ const MainFeaturesStep: React.FC<MainFeaturesStepProps> = ({ isu, bio, onNext })
             />
 
             {/* Слайдер для веса */}
-            <Typography gutterBottom sx={{ marginTop: "20px" }}>Weight: {weight} kg</Typography>
+            <Typography gutterBottom sx={{ marginTop: "20px" }}>Вес: {weight} kg</Typography>
             <Slider
                 data-testid="height-slider"
                 name="weight"
@@ -62,33 +62,33 @@ const MainFeaturesStep: React.FC<MainFeaturesStepProps> = ({ isu, bio, onNext })
 
             {/* Выбор знака зодиака */}
             <FormControl fullWidth>
-                <Typography gutterBottom sx={{ marginTop: "20px" }}>Zodiac Sign</Typography>
+                <Typography gutterBottom sx={{ marginTop: "20px" }}>Знак зодиака</Typography>
                 <Select
                     name='zodiac'
                     value={zodiac}
                     onChange={(e) => setZodiac(e.target.value as string)}
                     sx={{ marginY: "10px" }}
                 >
-                    <MenuItem value="None">None</MenuItem>
-                    <MenuItem value="Aries">Aries</MenuItem>
-                    <MenuItem value="Taurus">Taurus</MenuItem>
-                    <MenuItem value="Gemini">Gemini</MenuItem>
-                    <MenuItem value="Cancer">Cancer</MenuItem>
-                    <MenuItem value="Leo">Leo</MenuItem>
-                    <MenuItem value="Virgo">Virgo</MenuItem>
-                    <MenuItem value="Libra">Libra</MenuItem>
-                    <MenuItem value="Scorpio">Scorpio</MenuItem>
-                    <MenuItem value="Sagittarius">Sagittarius</MenuItem>
-                    <MenuItem value="Capricorn">Capricorn</MenuItem>
-                    <MenuItem value="Aquarius">Aquarius</MenuItem>
-                    <MenuItem value="Pisces">Pisces</MenuItem>
+                    <MenuItem value="None">Нет</MenuItem>
+                    <MenuItem value="Aries">Овен</MenuItem>
+                    <MenuItem value="Taurus">Телец</MenuItem>
+                    <MenuItem value="Gemini">Близнецы</MenuItem>
+                    <MenuItem value="Cancer">Рак</MenuItem>
+                    <MenuItem value="Leo">Лев</MenuItem>
+                    <MenuItem value="Virgo">Дева</MenuItem>
+                    <MenuItem value="Libra">Весы</MenuItem>
+                    <MenuItem value="Scorpio">Скорпион</MenuItem>
+                    <MenuItem value="Sagittarius">Стрелец</MenuItem>
+                    <MenuItem value="Capricorn">Козерог</MenuItem>
+                    <MenuItem value="Aquarius">Водолей</MenuItem>
+                    <MenuItem value="Pisces">Рыбы</MenuItem>
                 </Select>
             </FormControl>
             <RoundButton
                 onClick={handleSubmit} // Обработчик клика по кнопке
                 sx={{ width: "100%" }} // Стили для кнопки
             >
-                Next
+                Продолжить
             </RoundButton>
         </Box>
     );

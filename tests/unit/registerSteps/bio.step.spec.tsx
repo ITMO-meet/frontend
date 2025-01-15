@@ -32,25 +32,25 @@ describe('BioStep', () => {
   });
 
   it('renders the component', () => {
-    expect(screen.getByText(/Enter information about yourself/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Edit your bio.../i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
+    expect(screen.getByText(/Предоставьте краткую информацию о себе/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Введите текст.../i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /продолжить/i })).toBeInTheDocument();
   });
 
   it('calls onNext with the correct bio when Next is clicked', () => {
     // Вводим описание
-    const bioInput = screen.getByPlaceholderText(/Edit your bio.../i);
+    const bioInput = screen.getByPlaceholderText(/Введите текст.../i);
     fireEvent.change(bioInput, { target: { value: 'This is my bio.' } });
 
     // Нажимаем кнопку "Next"
-    fireEvent.click(screen.getByRole('button', { name: /next/i }));
+    fireEvent.click(screen.getByRole('button', { name: /продолжить/i }));
 
     expect(mockOnNext).toHaveBeenCalledWith({ bio: 'This is my bio.' });
     expect(mockOnNext).toHaveBeenCalledTimes(1);
   });
 
   it('button is disabled when bio is empty', () => {
-    const nextButton = screen.getByRole('button', { name: /next/i });
+    const nextButton = screen.getByRole('button', { name: /продолжить/i });
     fireEvent.click(nextButton); // Нажимаем кнопку "Next" без ввода
 
     expect(nextButton).toBeDisabled();
@@ -59,10 +59,10 @@ describe('BioStep', () => {
 
   it('button is enabled when bio is provided', () => {
     // Вводим описание
-    const bioInput = screen.getByPlaceholderText(/Edit your bio.../i);
+    const bioInput = screen.getByPlaceholderText(/Введите текст.../i);
     fireEvent.change(bioInput, { target: { value: 'This is my bio.' } });
 
-    const nextButton = screen.getByRole('button', { name: /next/i });
+    const nextButton = screen.getByRole('button', { name: /продолжить/i });
     expect(nextButton).toBeEnabled(); // Проверяем, что кнопка "Next" включена
   });
 });

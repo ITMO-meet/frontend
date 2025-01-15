@@ -11,7 +11,7 @@ interface GenderStepProps {
     onNext: (data: { gender: string }) => void;
 }
 
-const options = ["Male", "Female", "Everyone"];
+const options = ["Мужчины", "Женщины", "Не важно"];
 
 const GenderStep: React.FC<GenderStepProps> = ({ isu, onNext }) => {
     const { showError } = useError();
@@ -19,7 +19,7 @@ const GenderStep: React.FC<GenderStepProps> = ({ isu, onNext }) => {
 
     const handleSubmit = async () => {
         if (!gender) {
-            showError('Please select a gender preference');
+            showError('Выберите ваше предпочтение');
             return;
         }
         try {
@@ -34,10 +34,10 @@ const GenderStep: React.FC<GenderStepProps> = ({ isu, onNext }) => {
     return (
         <Box padding="20px"> {/* Обертка с отступами */}
             <Typography variant="h5" align="center" sx={{ marginBottom: "20px" }}>
-                Dating Settings
+                Настройки знакомств
             </Typography> {/* Заголовок */}
             <Typography variant="h6" align="center">
-                Show me
+                Показывать мне
             </Typography> {/* Подзаголовок с инструкцией */}
             <Box display="flex" justifyContent="center" padding="20px"> {/* Центрируем группу кнопок */}
                 <HorizontalButtonGroup
@@ -51,7 +51,7 @@ const GenderStep: React.FC<GenderStepProps> = ({ isu, onNext }) => {
                 disabled={gender === ''} // Кнопка отключена, если пол не выбран
                 sx={{ width: "100%" }} // Стили для кнопки
             >
-                Next
+                Продолжить
             </RoundButton>
         </Box>
     );

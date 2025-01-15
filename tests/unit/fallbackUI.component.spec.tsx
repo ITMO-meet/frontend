@@ -36,6 +36,6 @@ describe('FallbackUI Component', () => {
 
         // Проверяем, что функции были вызваны
         expect(mockResetError).toHaveBeenCalledTimes(1);
-        expect(mockNavigate).toHaveBeenCalledWith('/');
+        expect(mockNavigate).toHaveBeenCalledWith('/profile');
     });
 });

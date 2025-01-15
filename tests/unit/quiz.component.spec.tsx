@@ -82,7 +82,7 @@ describe('Quiz component', () => {
     ({ container } = render(<MemoryRouter><Quiz onExit={mockOnExit} /></MemoryRouter>));
 
     const firstOpt = container.getElementsByClassName("option-choice")[0]
-    const button = screen.getByRole('button', { name: /Continue/i });
+    const button = screen.getByRole('button', { name: /продолжить/i });
 
     await new Promise(resolve => setTimeout(resolve, 0)); // Wait for 0 seconds (so the useEffects complete)
 
@@ -115,7 +115,7 @@ describe('Quiz component', () => {
     ({ container } = render(<MemoryRouter><Quiz onExit={mockOnExit} /></MemoryRouter>));
 
     const firstOpt = container.getElementsByClassName("option-choice")[0]
-    const button = screen.getByRole('button', { name: /Continue/i });
+    const button = screen.getByRole('button', { name: /продолжить/i });
 
     expect(button).toBeDisabled();
     fireEvent.click(firstOpt);

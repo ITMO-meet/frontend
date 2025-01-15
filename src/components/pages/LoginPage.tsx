@@ -14,12 +14,12 @@ export const LoginPage: React.FC = () => {
 
     const handleSubmit = async () => {
         if (userId.length !== 6) {
-            showError('ID must be exactly 6 symbols');
+            showError('ISU должен быть ровно 6 символов');
             return;
         }
 
         if (password.trim() === '') {
-            showError('Password must not be empty');
+            showError('Пароль не должен быть пустым');
             return;
         }
 
@@ -32,7 +32,7 @@ export const LoginPage: React.FC = () => {
         } else if (redirectUrl.endsWith('/auth/register/select_username')) {
             navigate("/register");
         } else {
-            showError('Unexpected redirect from server');
+            showError('Неожиданный ответ с сервера');
         }
     };
 
@@ -57,11 +57,11 @@ export const LoginPage: React.FC = () => {
                     fontWeight: 600,
                 }}
             >
-                Login with ITMO.ID
+                Вход через ITMO.ID
             </Typography>
             <InputText
                 width="80%"
-                label="ID"
+                label="ISU"
                 onChange={(e) => setUserId(e.target.value)}
                 sx={{
                     marginBottom: '20px',
@@ -70,7 +70,7 @@ export const LoginPage: React.FC = () => {
             />
             <InputText
                 width="80%"
-                label="Password"
+                label="Пароль"
                 onChange={(e) => setPassword(e.target.value)}
                 type="password"
                 sx={{
@@ -88,7 +88,7 @@ export const LoginPage: React.FC = () => {
                     padding: '10px 20px', // Увеличенный внутренний отступ
                 }}
             >
-                Continue
+                Продолжить
             </RoundButton>
 
         </Box>
