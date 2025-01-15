@@ -2,26 +2,39 @@ import React, { useRef, useState, useMemo } from 'react';
 import { ListItem, Box, IconButton } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
+import { MessageType } from '../types';
 
 interface UserMessageProps {
-  message: {
-    sender: 'me' | 'them';
-    text: string;
-    audio?: Blob;
-  };
+  message: MessageType;
 }
 
 const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  // Generate URLs for media content
+  const imageURL = useMemo(() => {
+    if (message.image && message.image instanceof Blob) {
+      return URL.createObjectURL(message.image);
+    }
+    return undefined;
+  }, [message.image]);
+
+  const videoURL = useMemo(() => {
+    if (message.video && message.video instanceof Blob) {
+      return URL.createObjectURL(message.video);
+    }
+    return undefined;
+  }, [message.video]);
+
   const audioURL = useMemo(() => {
-    if (message.audio) {
+    if (message.audio && message.audio instanceof Blob) {
       return URL.createObjectURL(message.audio);
     }
     return undefined;
   }, [message.audio]);
 
+  // Handle play/pause for audio
   const handlePlayPause = () => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -71,12 +84,98 @@ const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
           wordBreak: 'break-word',
           boxShadow: 1,
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
         }}
       >
-        {message.audio ? (
-          <>
-            <IconButton onClick={handlePlayPause} size="small">
+        {/* IMAGE MESSAGE */}
+        {imageURL && (
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: 250,
+              borderRadius: 2,
+              overflow: 'hidden',
+            }}
+          >
+            <img
+              src={imageURL}
+              style={{
+                width: '100%',
+                height: 'auto',
+                borderRadius: '8px',
+              }}
+            />
+          </Box>
+        )}
+
+        {/* VIDEO MESSAGE */}
+        {videoURL && (
+          <Box
+            sx={{
+              width: 150,
+              height: 150,
+              borderRadius: '50%',
+              overflow: 'hidden',
+              position: 'relative',
+              backgroundColor: '#000',
+            }}
+          >
+            <video
+              src={videoURL}
+              data-testid="video-element" // Добавьте data-testid для тестов
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+              }}
+              controls
+            />
+          </Box>
+        )}
+
+
+        {/* FILE MESSAGE */}
+        {message.file && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              maxWidth: 250,
+              padding: '8px',
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              backgroundColor: '#f9f9f9',
+              wordBreak: 'break-word',
+            }}
+          >
+            <a
+              href={URL.createObjectURL(message.file)}
+              download={message.file.name}
+              style={{ textDecoration: 'none', color: '#000' }}
+            >
+              {message.file.name}
+            </a>
+          </Box>
+        )}
+
+        {/* AUDIO MESSAGE */}
+        {audioURL && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              width: '100%',
+            }}
+          >
+            <IconButton onClick={handlePlayPause} size="small" sx={{
+                    '&:active': {
+                        backgroundColor: '#6a8afc', // Цвет при нажатии
+                    },
+                    borderRadius: '50%', // Круглая форма
+                    }}>
               {isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
             </IconButton>
             <audio
@@ -92,11 +191,21 @@ const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
                 color: 'rgba(0,0,0,0.6)',
               }}
             >
-              Voice message
+              Голосовое сообщение
             </Box>
-          </>
-        ) : (
-          message.text
+          </Box>
+        )}
+
+        {/* TEXT MESSAGE */}
+        {!imageURL && !videoURL && !audioURL && message.text && (
+          <Box
+            sx={{
+              wordBreak: 'break-word',
+              textAlign: 'left',
+            }}
+          >
+            {message.text}
+          </Box>
         )}
       </Box>
     </ListItem>

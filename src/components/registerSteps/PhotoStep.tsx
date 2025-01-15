@@ -67,7 +67,7 @@ const PhotoStep: React.FC<PhotoStepProps> = ({ isu, onNext }) => {
     const handleSubmit = async () => {
         const selectedFile = files[0];
         if (!selectedFile) {
-            showError('Please select a photo');
+            showError('Выберите фото');
             return;
         }
         try {
@@ -82,10 +82,10 @@ const PhotoStep: React.FC<PhotoStepProps> = ({ isu, onNext }) => {
     return (
         <Box style={{ padding: "20px" }}>
             <Typography variant="h5" align="center" sx={{ marginBottom: "20px" }}>
-                Upload your photo
+                Выберите основное фото
             </Typography>
             <Typography variant="h6" align="center" sx={{ marginBottom: "20px" }}>
-                Make sure the photo of your face is clear so that it can be easily verified
+                Убедитесь, что лицо хорошо видно, и вас легко узнать
             </Typography>
 
             {!isEditing && (
@@ -104,7 +104,7 @@ const PhotoStep: React.FC<PhotoStepProps> = ({ isu, onNext }) => {
                         disabled={files[0] === null}
                         onClick={handleSubmit}
                     >
-                        Next
+                        Продолжить
                     </RoundButton>
                 </>
             )}

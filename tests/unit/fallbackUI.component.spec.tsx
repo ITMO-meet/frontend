@@ -23,19 +23,19 @@ describe('FallbackUI Component', () => {
         render(<FallbackUI error={null} resetError={mockResetError} />);
 
         // Проверяем наличие элементов на экране
-        expect(screen.getByText('😵‍💫')).toBeInTheDocument();
-        expect(screen.getByText("Oops... Something wrong")).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /Return to Main/i })).toBeInTheDocument();
+        expect(screen.getByText('😵‍💫')).toBeInTheDocument(); // Проверяем эмодзи
+        expect(screen.getByText("Ой... Что-то не так")).toBeInTheDocument(); // Проверяем заголовок
+        expect(screen.getByRole('button', { name: /Вернуться на главную/i })).toBeInTheDocument(); // Проверяем кнопку
     });
 
     it('calls resetError and navigate on button click', () => {
         render(<FallbackUI error={null} resetError={mockResetError} />);
 
         // Находим кнопку и кликаем по ней
-        fireEvent.click(screen.getByRole('button', { name: /Return to Main/i }));
+        fireEvent.click(screen.getByRole('button', { name: /Вернуться на главную/i }));
 
         // Проверяем, что функции были вызваны
         expect(mockResetError).toHaveBeenCalledTimes(1);
-        expect(mockNavigate).toHaveBeenCalledWith('/');
+        expect(mockNavigate).toHaveBeenCalledWith('/profile');
     });
 });

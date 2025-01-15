@@ -72,8 +72,8 @@ const CustomButton = styled(Button)({
 
 // Список языков для поиска
 const languageList = [
-    'English', 'Russian', 'Spanish', 'French', 'German', 'Chinese', 'Japanese', 'Korean', 'Italian', 'Portuguese', 'Arabic',
-    'Dutch', 'Swedish', 'Norwegian', 'Danish', 'Finnish', 'Turkish', 'Hebrew', 'Polish', 'Czech', 'Greek', 'Hindi'
+    'Английский', 'Русский', 'Испанский', 'Французский', 'Немецкий', 'Китайский', 'Японский', 'Корейский', 'Итальянский', 'Португальский', 'Арабский',
+    'Голландский', 'Шведский', 'Норвежский', 'Датский', 'Финский', 'Турецкий', 'Иврит', 'Польский', 'Чешский', 'Греческий', 'Хинди'
 ];
 
 const MultiCategorySheetButton: React.FC<MultiCategorySheetButtonProps> = ({ label, category, onSave }) => {
@@ -155,7 +155,7 @@ const MultiCategorySheetButton: React.FC<MultiCategorySheetButtonProps> = ({ lab
                         {category.type === 'slider' && (
                             <>
                                 <Typography variant="subtitle1" align="center" sx={{ mb: 1 }}>
-                                    {selectedOption} cm
+                                    {selectedOption}
                                 </Typography>
                                 <Slider
                                     min={category.min}
@@ -188,7 +188,7 @@ const MultiCategorySheetButton: React.FC<MultiCategorySheetButtonProps> = ({ lab
                         {category.type === 'languageSelect' && (
                             <Box>
                                 <TextField
-                                    placeholder="Search language"
+                                    placeholder="Поиск языка"
                                     value={searchTerm}
                                     onChange={handleSearch}
                                     fullWidth
@@ -204,7 +204,7 @@ const MultiCategorySheetButton: React.FC<MultiCategorySheetButtonProps> = ({ lab
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleSave} fullWidth variant="contained" color="primary">
-                        Save
+                        Сохранить
                     </Button>
                 </DialogActions>
             </Dialog>

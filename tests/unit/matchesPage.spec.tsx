@@ -11,40 +11,29 @@ jest.mock('../../src/analytics', () => ({
     logPageView: jest.fn(),
 }));
 
-const mockPeople = [
-    {
-        isu: 123456,
-        username: 'Jane Smith1',
-        logo: 'https://steamuserimages-a.akamaihd.net/ugc/1844789643806854188/FB581EAD503907F56A009F85371F6FB09A467FEC/?imw=512&imh=497&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true',
-        photos: [
-            'https://randomwordgenerator.com/img/picture-generator/54e7d7404853a914f1dc8460962e33791c3ad6e04e507440752972d29e4bc3_640.jpg',
-            'https://randomwordgenerator.com/img/picture-generator/54e2d34b4a52aa14f1dc8460962e33791c3ad6e04e507749742c78d59e45cc_640.jpg',
+jest.mock('../../src/stores/MatchesStore', () => ({
+    matchesStore: {
+        matches: [
+            {
+                isu: 123456,
+                username: 'Jane Smith1',
+                logo: 'https://example.com/logo1.jpg',
+                photos: ['https://example.com/photo1.jpg', 'https://example.com/photo2.jpg'],
+                mainFeatures: [{ text: '170 cm', icon: '📏' }],
+                interests: [{ text: 'Music', icon: '🎵' }],
+            },
+            {
+                isu: 789852,
+                username: 'Jane Smith2',
+                logo: 'https://example.com/logo2.jpg',
+                photos: ['https://example.com/photo3.jpg'],
+                mainFeatures: [{ text: '165 cm', icon: '📏' }],
+                interests: [{ text: 'Traveling', icon: '✈️' }],
+            },
         ],
-        mainFeatures: [
-            { text: '170 cm', icon: <span>📏</span> },
-            { text: 'Atheism', icon: <span>🛐</span> },
-        ],
-        interests: [
-            { text: 'Music', icon: <span>🎵</span> },
-            { text: 'GYM', icon: <span>🏋️</span> },
-        ],
+        loadMatches: jest.fn(),
     },
-    {
-        isu: 789852,
-        username: 'Jane Smith2',
-        logo: 'https://i.pinimg.com/736x/56/21/7b/56217b1ef6a69a2583ff13655d48bc53.jpg',
-        photos: [
-            'https://randomwordgenerator.com/img/picture-generator/53e9d7444b50b10ff3d8992cc12c30771037dbf852547849752678d5964e_640.jpg',
-        ],
-        mainFeatures: [
-            { text: '165 cm', icon: <span>📏</span> },
-            { text: 'Catholicism', icon: <span>🛐</span> },
-        ],
-        interests: [
-            { text: 'Traveling', icon: <span>✈️</span> },
-        ],
-    },
-];
+}));
 
 describe('MatchesPage', () => {
     beforeEach(() => {
@@ -55,7 +44,7 @@ describe('MatchesPage', () => {
         render(
             <MemoryRouter>
                 <PremiumContext.Provider value={{ isPremium, setPremium: jest.fn() }}>
-                    <MatchesPage people={mockPeople} />
+                    <MatchesPage />
                 </PremiumContext.Provider>
             </MemoryRouter>
         );
@@ -84,22 +73,28 @@ describe('MatchesPage', () => {
 
     test('opens and closes the match list', async () => {
         renderWithPremium(true);
-
+    
+        // Поиск кнопки с актуальным текстом
         const openListButton = screen.getByRole('button', { name: /open match list/i });
         fireEvent.click(openListButton);
-
-        const matchList = screen.getByText('Match list');
+    
+        // Проверяем, что список мэтчей отобразился
+        const matchList = screen.getByText(/Список мэтчей/i);
         expect(matchList).toBeInTheDocument();
-
+    
+        // Поиск кнопки для закрытия списка
         const closeListButton = screen.getByRole('button', { name: /close match list/i });
         fireEvent.click(closeListButton);
-
+    
+        // Проверяем, что список закрылся
         await waitFor(() => {
-            expect(screen.queryByText('Match list')).not.toBeInTheDocument();
+            expect(screen.queryByText(/Список мэтчей/i)).not.toBeInTheDocument();
         });
-
+    
         expect(logPageView).toHaveBeenCalledWith('/matches');
     });
+    
+    
 
     test('selects a match from the list', async () => {
         renderWithPremium(true);
@@ -118,6 +113,7 @@ describe('MatchesPage', () => {
 
         expect(logPageView).toHaveBeenCalledWith('/matches');
     });
+    
 
     test('navigates between matches', async () => {
         renderWithPremium(true);

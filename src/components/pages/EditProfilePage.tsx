@@ -56,10 +56,10 @@ import { urlToFile } from '../../utils';
 
 
 const relationshipIds = [
-    { id: "672b44eab151637e969889bb", label: 'Dates', icon: <WineBarIcon /> },
-    { id: "672b44eab151637e969889bc", label: 'Romantic relationships', icon: <FavoriteBorderIcon /> },
-    { id: "672b44eab151637e969889bd", label: 'Friendship', icon: <PeopleIcon /> },
-    { id: "672b44eab151637e969889be", label: 'Casual Chat', icon: <ChatBubbleOutlineIcon /> },
+    { id: "672b44eab151637e969889bb", label: 'Свидания', icon: <WineBarIcon /> },
+    { id: "672b44eab151637e969889bc", label: 'Отношения', icon: <FavoriteBorderIcon /> },
+    { id: "672b44eab151637e969889bd", label: 'Дружба', icon: <PeopleIcon /> },
+    { id: "672b44eab151637e969889be", label: 'Общение', icon: <ChatBubbleOutlineIcon /> },
 ];
 
 
@@ -69,29 +69,31 @@ const EditProfilePage: React.FC = observer(() => {
     const navigate = useNavigate();
     const [isModalOpen, setModalOpen] = useState(false);
 
-    const relation = relationshipIds.find(p => p.id === userData.getRelationshipPreference())
-    const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>(relation ? relation : relationshipIds[0]);
+    const initRelation = relationshipIds.find(p => p.id === userData.getRelationshipPreference()) || relationshipIds[0];
+    const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>();
     const [, setSelectedFeatures] = useState<{ [key: string]: string | string[] }>({});
     const [allTags, setAllTags] = useState<Tag[]>([]);
-    const [selectedTags, setSelectedTags] = useState<string[]>(userData.getInterests() || []);
+
+    const initTags = userData.getInterestIDs() || [];
+    const [selectedTags, setSelectedTags] = useState<string[]>();
     const [loadingTags, setLoadingTags] = useState<boolean>(true);
 
     const targetOptions = [
-        { ...relationshipIds[0], description: 'Looking for dates', onClick: () => handleTargetSelect(relationshipIds[0]) },
-        { ...relationshipIds[1], description: 'Looking for romantic relationships', onClick: () => handleTargetSelect(relationshipIds[1]) },
-        { ...relationshipIds[2], description: 'Looking for friendship', onClick: () => handleTargetSelect(relationshipIds[2]) },
-        { ...relationshipIds[3], description: 'Looking for casual chat', onClick: () => handleTargetSelect(relationshipIds[3]) },
+        { ...relationshipIds[0], description: 'Ищу свидания', onClick: () => handleTargetSelect(relationshipIds[0]) },
+        { ...relationshipIds[1], description: 'Ищу отношения', onClick: () => handleTargetSelect(relationshipIds[1]) },
+        { ...relationshipIds[2], description: 'Ищу дружбу', onClick: () => handleTargetSelect(relationshipIds[2]) },
+        { ...relationshipIds[3], description: 'Ищу общение', onClick: () => handleTargetSelect(relationshipIds[3]) },
     ];
 
     const categoriesConfig: CategoryOption[] = [
-        { label: 'Height', type: 'slider', min: 100, max: 250, onConfirm: v => userData.setHeight(v), selectedValue: userData.getHeight() },
-        { label: 'Weight', type: 'slider', min: 40, max: 200, onConfirm: v => userData.setWeight(v), selectedValue: userData.getWeight() },
-        { label: 'Worldview', type: 'select', options: ['Buddhism', 'Jewry', 'Hinduism', 'Islam', 'Catholicism', 'Confucianism', 'Orthodoxy', 'Protestantism', 'Secular humanism', 'Atheism', 'Agnosticism'], onConfirm: v => userData.setWorldview(v), selectedValue: userData.getWorldview() },
-        { label: 'Zodiac Sign', type: 'buttonSelect', options: ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces', 'None'], onConfirm: v => userData.setZodiac(v), selectedValue: userData.getZodiac() },
-        { label: 'Children', type: 'buttonSelect', options: ['No and not planning', 'No but would like', 'Already have'], onConfirm: v => userData.setChildren(v), selectedValue: userData.getChildren() },
-        { label: 'Languages', type: 'languageSelect', onConfirm: v => userData.setLanguages(v), selectedValue: userData.getLanguages() },
-        { label: 'Alcohol', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'], onConfirm: v => userData.setAlcohol(v), selectedValue: userData.getAlcohol() },
-        { label: 'Smoking', type: 'buttonSelect', options: ['Strongly Negative', 'Neutral', 'Positive'], onConfirm: v => userData.setSmoking(v), selectedValue: userData.getSmoking() },
+        { label: 'Рост', type: 'slider', min: 100, max: 250, onConfirm: v => userData.setHeight(v), selectedValue: userData.getHeight() },
+        { label: 'Вес', type: 'slider', min: 40, max: 200, onConfirm: v => userData.setWeight(v), selectedValue: userData.getWeight() },
+        { label: 'Мировоззрение', type: 'select', options: ['Буддизм', 'Иудаизм', 'Индуизм', 'Ислам', 'Католицизм', 'Конфуцианство', 'Православие', 'Протестантизм', 'Секулярный гуманизм', 'Атеизм', 'Агностицизм'], onConfirm: v => userData.setWorldview(v), selectedValue: userData.getWorldview() },
+        { label: 'Знак зодиака', type: 'buttonSelect', options: ['Овен', 'Телец', 'Близнецы', 'Рак', 'Лев', 'Дева', 'Весы', 'Скорпион', 'Стрелец', 'Козерог', 'Водолей', 'Рыбы', 'Нет'], onConfirm: v => userData.setZodiac(v), selectedValue: userData.getZodiac() },
+        { label: 'Дети', type: 'buttonSelect', options: ['Нет и не планирую', 'Нет, но хотел бы', 'Уже есть'], onConfirm: v => userData.setChildren(v), selectedValue: userData.getChildren() },
+        { label: 'Языки', type: 'languageSelect', onConfirm: v => userData.setLanguages(v), selectedValue: userData.getLanguages() },
+        { label: 'Алкоголь', type: 'buttonSelect', options: ['Негативное', 'Нейтральное', 'Позитивное'], onConfirm: v => userData.setAlcohol(v), selectedValue: userData.getAlcohol() },
+        { label: 'Курение', type: 'buttonSelect', options: ['Негативное', 'Нейтральное', 'Позитивное'], onConfirm: v => userData.setSmoking(v), selectedValue: userData.getSmoking() },
     ];
 
     //logo
@@ -274,13 +276,17 @@ const EditProfilePage: React.FC = observer(() => {
     }
 
     const handleInterestSelect = (tagId: string) => {
-        setSelectedTags((prev) =>
-            prev.includes(tagId) ? prev.filter(t => t !== tagId) : [...prev, tagId]
+        setSelectedTags((prev) => {
+                const p = prev || initTags;
+                const newP = p.includes(tagId) ? p.filter(t => t !== tagId) : [...p, tagId];
+                userData.setInterests(newP);
+                return newP;
+            }
         );
     };
 
     const applyInterests = () => {
-        userData.setInterests(selectedTags);
+        // userData.setInterests(selectedTags || []);
         setModalOpen(false);
     };
 
@@ -292,7 +298,12 @@ const EditProfilePage: React.FC = observer(() => {
         <Box position="relative" minHeight="100vh" display="flex" flexDirection="column">
             {/* Header */}
             <Box width="100%" color="white" display="flex" alignItems="center" p={2}>
-                <IconButton data-testid="BackToProfile" onClick={() => navigate('/profile')} sx={{ color: 'grey.800' }}>
+                <IconButton data-testid="BackToProfile" onClick={() => navigate('/profile')} 
+                    sx={{ '&:active': {
+                        backgroundColor: '#6a8afc', // Цвет при нажатии
+                        },
+                        borderRadius: '50%', // Круглая форма
+                        color: 'grey.800' }}>
                     <WestIcon />
                 </IconButton>
             </Box>
@@ -314,20 +325,20 @@ const EditProfilePage: React.FC = observer(() => {
             >
                 {/* Bio Section */}
                 <Box display="flex" flexDirection="column">
-                    <EditableField label="Username" initialValue={userData.getUsername()} onSave={(v) => userData.setUsername(v)} />
-                    <Typography variant="h6" sx={{ mb: 1 }}>Age: {userData.getAge()} yo</Typography>
+                    <EditableField label="Логин" initialValue={userData.getUsername()} onSave={(v) => userData.setUsername(v)} />
+                    <Typography variant="h6" sx={{ mb: 1 }}>Возраст: {userData.getAge()} лет</Typography>
                 </Box>
-                <EditableField label="Bio" initialValue={userData.getBio()} onSave={(v) => userData.setBio(v)} />
+                <EditableField label="Краткая информация" initialValue={userData.getBio()} onSave={(v) => userData.setBio(v)} />
 
                 {/* Target Section */}
                 <Box mt={2} width="100%">
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>Target</Typography>
-                    <TargetSheetButton label={selectedTarget.label} icon={selectedTarget.icon} options={targetOptions} onSelect={handleTargetSelect} />
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>Цель</Typography>
+                    <TargetSheetButton label={selectedTarget?.label || initRelation.label} icon={selectedTarget?.icon || initRelation.icon} options={targetOptions} onSelect={handleTargetSelect} />
                 </Box>
 
                 {/* Main Features Section */}
                 <Box mt={2} width="100%">
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>Main Features</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>Основные характеристики</Typography>
                     {categoriesConfig.map((category, index) => (
                         <Box key={index} sx={{ mb: 1 }}>
                             <MultiCategorySheetButton
@@ -358,14 +369,14 @@ const EditProfilePage: React.FC = observer(() => {
                             '&:hover': { backgroundColor: 'grey.100' },
                         }}
                     >
-                        {Object.keys(selectedTags).length === 0 ? (
+                        {Object.keys(selectedTags || initTags).length === 0 ? (
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold' }}>Добавьте свои интересы</Typography>
                                 <Typography sx={{ color: 'grey.600' }}>Расскажите, чем вы увлекаетесь и что вам нравится</Typography>
                             </Box>
                         ) : (
                             <Box display="flex" flexWrap="wrap" gap={1}>
-                                {selectedTags.map(tagId => {
+                                {(selectedTags || initTags).map(tagId => {
                                     const foundTag = allTags.find(t => t.id === tagId);
                                     if (!foundTag) return null;
 
@@ -411,7 +422,7 @@ const EditProfilePage: React.FC = observer(() => {
                                         <Button
                                             key={tag.id}
                                             variant={
-                                                selectedTags.includes(tag.id) ? 'contained' : 'outlined'
+                                                (selectedTags || initTags).includes(tag.id) ? 'contained' : 'outlined'
                                             }
                                             onClick={() => handleInterestSelect(tag.id)}
                                         >
@@ -434,7 +445,7 @@ const EditProfilePage: React.FC = observer(() => {
                 {/*Logo*/}
                 <Box mt={3}>
                     <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                        Logo
+                        Лого
                     </Typography>
 
                     <Box
@@ -495,7 +506,7 @@ const EditProfilePage: React.FC = observer(() => {
 
                     <Box mt={2} display="flex" justifyContent="center">
                         <RoundButton onClick={handleSubmitLogo}>
-                            Save Logo
+                            Сохранить лого
                         </RoundButton>
                     </Box>
                 </Box>
@@ -503,7 +514,7 @@ const EditProfilePage: React.FC = observer(() => {
                 {/*Gallery*/}
                 <Box mt={3}>
                     <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                        Additional Photos
+                    Дополнительные фотографии
                     </Typography>
 
                     <Gallery
@@ -518,7 +529,7 @@ const EditProfilePage: React.FC = observer(() => {
 
                     <Box mt={2} display="flex" justifyContent="center">
                         <RoundButton onClick={handleSubmitPhotos}>
-                            Save Additional Photos
+                            Сохранить дополнительные фотографии
                         </RoundButton>
                     </Box>
                 </Box>
@@ -547,7 +558,7 @@ const EditProfilePage: React.FC = observer(() => {
 
                 {/* Premium Button Section */}
                 <Box mt={4} width="100%" display="flex" justifyContent="center" pb={8}>
-                    <RoundButton onClick={handlePremiumClick}>Premium</RoundButton>
+                    <RoundButton onClick={handlePremiumClick}>Премиум</RoundButton>
                 </Box>
             </Box>
         </Box>

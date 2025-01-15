@@ -59,4 +59,9 @@ jobs:
             docker pull archont/itmo-meet-frontend:latest
             docker stop frontend || true
             docker rm frontend || true
-            docker run -d --name frontend -p 80:80 archont/itmo-meet-frontend:latest
+            docker run -d \
+              --name frontend \
+              -p 80:80 \
+              -p 443:443 \
+              -v /docker-volumes/letsencrypt:/etc/letsencrypt:ro \
+              archont/itmo-meet-frontend:latest

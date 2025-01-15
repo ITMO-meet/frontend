@@ -17,7 +17,7 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ isu, onNext }) => {
 
     const handleSubmit = async () => {
         if (!username.trim()) {
-            showError('Please enter a username');
+            showError('Введите логин');
             return;
         }
         try {
@@ -32,9 +32,9 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ isu, onNext }) => {
 
     return (
         <Box padding="20px">
-            <Typography variant="h5" align="center" mb={2}>Choose a username</Typography>
+            <Typography variant="h5" align="center" mb={2}>Введите логин</Typography>
             <InputText
-                label="Username"
+                label="Логин"
                 onChange={(e) => setUsername(e.target.value)} // Обновляем состояние при изменении текста
                 sx={{ width: "100%", marginY: "20px" }} // Стили для компонента ввода
             />
@@ -43,7 +43,7 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ isu, onNext }) => {
                 onClick={handleSubmit} // Обработчик клика по кнопке
                 sx={{ width: "100%" }} // Стили для кнопки
             >
-                Next
+                Продолжить
             </RoundButton>
         </Box>
     );

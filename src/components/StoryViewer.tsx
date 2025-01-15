@@ -4,14 +4,11 @@ import CloseIcon from '@mui/icons-material/Close';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { logEvent } from '../analytics';
+import { Profile } from '../api/profile';
 
 interface StoryViewerProps {
   storiesWithContent: Array<{
-    person: {
-      isu: number;
-      username: string;
-      logo: string;
-    };
+    person: Profile;
     story: {
       id: string;
       url: string;

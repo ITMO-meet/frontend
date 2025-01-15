@@ -6,7 +6,7 @@ import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
 
 // eslint-disable-next-line react/display-name
-jest.mock('../../src/components/basic/NavBar', () => () => <div data-testid="mocked-navbar"/>);
+jest.mock('../../src/components/basic/NavBar', () => () => <div data-testid="mocked-navbar" />);
 
 describe('ChatsPage', () => {
     it('renders the ChatsPage correctly', () => {
@@ -16,7 +16,8 @@ describe('ChatsPage', () => {
             </MemoryRouter>
         );
 
-        expect(screen.getByText(/Chats/i)).toBeInTheDocument();
+        // Обновлено с учетом фактического текста "Чаты"
+        expect(screen.getByText(/Чаты/i)).toBeInTheDocument();
         expect(screen.getByTestId('mocked-navbar')).toBeInTheDocument();
     });
 });

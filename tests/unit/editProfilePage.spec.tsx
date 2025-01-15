@@ -34,6 +34,7 @@ jest.mock('../../src/stores/UserDataStore', () => ({
         getAlcohol: jest.fn().mockReturnValue("Ok"),
         getSmoking: jest.fn().mockReturnValue("Ok"),
         getInterests: jest.fn().mockReturnValue({}),
+        getInterestIDs: jest.fn().mockReturnValue([""]),
         // Добавьте другие методы по мере необходимости
         setInterests: jest.fn(),
         setRelationshipPreference: jest.fn(),
@@ -64,23 +65,29 @@ describe('EditProfilePage', () => {
                 </MemoryRouter>
             </PremiumProvider>
         );
-
+    
         // Проверка наличия заголовка
         expect(screen.getByText('Alisa Pipisa')).toBeInTheDocument();
-        expect(screen.getByText('Age: 20 yo')).toBeInTheDocument();
-
+    
+        // Гибкая проверка текста возраста
+        expect(
+            screen.getByText((content) => content.includes('Возраст: 20 лет'))
+        ).toBeInTheDocument();
+    
         // Проверка наличия секций
-        expect(screen.getByText('Bio')).toBeInTheDocument();
-        expect(screen.getByText('Target')).toBeInTheDocument();
-        expect(screen.getByText('Main Features')).toBeInTheDocument();
+        expect(screen.getByText('Краткая информация')).toBeInTheDocument();
+        expect(screen.getByText('Цель')).toBeInTheDocument();
+        expect(screen.getByText('Основные характеристики')).toBeInTheDocument();
         expect(screen.getByText((content) => content.includes('Интересы'))).toBeInTheDocument();
-        expect(screen.getByText('Logo')).toBeInTheDocument();
-        expect(screen.getByText('Additional Photos')).toBeInTheDocument();
-        expect(screen.getByText('Premium')).toBeInTheDocument();
-
+        expect(screen.getByText('Лого')).toBeInTheDocument();
+        expect(screen.getByText('Дополнительные фотографии')).toBeInTheDocument();
+        expect(screen.getByText('Премиум')).toBeInTheDocument();
+    
         // Проверка вызова logPageView
         expect(logPageView).toHaveBeenCalledWith('/edit-profile');
     });
+    
+    
 
     test('opens and selects target option', async () => {
         render(
@@ -92,10 +99,10 @@ describe('EditProfilePage', () => {
         );
 
         // Открытие TargetSheetButton
-        fireEvent.click(screen.getByText('Romantic relationships'));
+        fireEvent.click(screen.getByText('Отношения'));
 
         // Выбор опции и сохранение
-        fireEvent.click(screen.getByText('Dates'));
+        fireEvent.click(screen.getByText('Свидания'));
         fireEvent.click(screen.getByText('Сохранить'));
 
         // Проверка, что выбранная опция отображается
@@ -111,11 +118,14 @@ describe('EditProfilePage', () => {
             </PremiumProvider>
         );
 
-        const chooseHeightButton = screen.getByRole('button', { name: "Height 100" });
+        const chooseHeightButton = screen.getByRole('button', { name: "Рост 100" });
         await userEvent.click(chooseHeightButton);
 
-        const heightText = await screen.findByText('100');
-        expect(heightText).toBeInTheDocument();
+        const countOfHundred = screen.getAllByText('100');
+        expect(countOfHundred.length).toBe(2);
+
+        const saveText = await screen.findByText('Сохранить');
+        expect(saveText).toBeInTheDocument();
     });
 
     test('edits and deletes gallery images', async () => {
@@ -167,7 +177,7 @@ describe('EditProfilePage', () => {
         );
     
         // На��атие на кнопку Premium
-        fireEvent.click(screen.getByText('Premium'));
+        fireEvent.click(screen.getByText('Премиум'));
     
         // Проверка, что навигация выполнена
         await waitFor(() => {

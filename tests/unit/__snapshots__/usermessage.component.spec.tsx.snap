@@ -6,9 +6,13 @@ exports[`UserMessage Component matches the snapshot for sender "me" 1`] = `
     class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-vxkaue-MuiListItem-root"
   >
     <div
-      class="MuiBox-root css-1s5swuj"
+      class="MuiBox-root css-qk89ki"
     >
-      Snapshot test for me.
+      <div
+        class="MuiBox-root css-156rzia"
+      >
+        Snapshot test for me.
+      </div>
     </div>
   </li>
 </DocumentFragment>
@@ -20,9 +24,13 @@ exports[`UserMessage Component matches the snapshot for sender "them" 1`] = `
     class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-8lquas-MuiListItem-root"
   >
     <div
-      class="MuiBox-root css-1wkdbaz"
+      class="MuiBox-root css-imrmwn"
     >
-      Snapshot test for them.
+      <div
+        class="MuiBox-root css-156rzia"
+      >
+        Snapshot test for them.
+      </div>
     </div>
   </li>
 </DocumentFragment>
