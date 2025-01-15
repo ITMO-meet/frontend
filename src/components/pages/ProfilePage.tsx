@@ -83,7 +83,14 @@ const ProfilePage: React.FC = observer(() => {
         <Box display="flex" flexDirection="column" minHeight="100vh">
             {/* Заголовок с кнопкой настроек поверх фотографии */}
             <Box width="100%" bgcolor="transparent" display="flex" justifyContent="space-between" alignItems="center" p={2} position="absolute" top={0} zIndex={2}>
-                <Typography variant="h5" color="white">Profile</Typography>
+                <Typography variant="h4"
+                align="center"
+                gutterBottom
+                sx={{
+                    color: "white", 
+                    fontFamily: "'Poppins', Arial, sans-serif",
+                    fontWeight: 600,
+                }}>Профиль</Typography>
                 <ImageButton onClick={() => navigate('/settings')} >
                     <SettingsIcon sx={{ color: 'rgba(52, 87, 169)' }} />
                 </ImageButton>
@@ -113,7 +120,7 @@ const ProfilePage: React.FC = observer(() => {
                 {/* Секция Bio */}
                 <Box mt={2} width="100%">
                     <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                        Bio
+                        Краткая информация
                     </Typography>
                     <Box sx={{ border: '1px solid #ddd', borderRadius: '8px', padding: 2 }}>
                         <Typography variant="body1" textAlign="left">
@@ -125,7 +132,7 @@ const ProfilePage: React.FC = observer(() => {
                 {/* Секция Main Features */}
                 <Box mt={2} width="100%">
                     <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                        Main Features
+                        Основные характеристики
                     </Typography>
                     <Box display="flex" gap={1} flexWrap="wrap">
                         {mainFeatures.map((item, index) => (
@@ -151,7 +158,7 @@ const ProfilePage: React.FC = observer(() => {
                 {/* Секция Interests */}
                 <Box mt={2} width="100%">
                     <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                        Interests
+                        Интересы
                     </Typography>
                     <Box display="flex" gap={1} flexWrap="wrap">
                         {userData.getInterests().map((interestName, index) => (
@@ -175,7 +182,7 @@ const ProfilePage: React.FC = observer(() => {
                 {/* Секция Languages */}
                 <Box mt={2} width="100%">
                     <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                        Languages
+                        Языки
                     </Typography>
                     <Box display="flex" gap={1} flexWrap="wrap">
                         {(userData.getLanguages() || []).map((language, index) => (
@@ -199,7 +206,7 @@ const ProfilePage: React.FC = observer(() => {
 
                 {/* Кнопка Premium */}
                 <Box mt={4} width="100%" display="flex" justifyContent="center" pb={8}>
-                    <RoundButton onClick={handlePremiumClick}>Premium</RoundButton>
+                    <RoundButton onClick={handlePremiumClick}>Премиум</RoundButton>
                 </Box>
             </Box>
 

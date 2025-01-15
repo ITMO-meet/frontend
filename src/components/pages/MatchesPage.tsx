@@ -86,7 +86,7 @@ const MatchesPage: React.FC = observer(() => {
         return (
             <Box mt={2}>
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                    Main Features
+                    Основные характеристики
                 </Typography>
                 <Box display="flex" gap={1} flexWrap="wrap">
                     {features.map((feature, index) => (
@@ -122,7 +122,7 @@ const MatchesPage: React.FC = observer(() => {
         return (
             <Box mt={2}>
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                    Languages
+                    Языки
                 </Typography>
                 <Box display="flex" gap={1} flexWrap="wrap">
                     {languages.map((language: { text: string; icon: string }, index: number) => (
@@ -148,7 +148,7 @@ const MatchesPage: React.FC = observer(() => {
     const renderInterests = (profile: Profile) => (
         <Box mt={2}>
             <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                Interests
+                Интересы
             </Typography>
             <Box display="flex" gap={1} flexWrap="wrap">
                 {profile.interests.map((interest, index) => (
@@ -200,17 +200,29 @@ const MatchesPage: React.FC = observer(() => {
                 p={2}>
                 <Typography variant='h5' sx={{
                     mb: 2,
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
+                    color: "#4a4a4a"
                 }}>
                     Метчи разблокируются после покупки премиума.
                 </Typography>
-                <Typography sx={{ mb: 4 }}>
+                <Typography variant='h6' sx={{ mb: 4, color: "#4a4a4a" }}>
                     Оформить премиум можно в лично кабинете или по кнопке ниже. Премиум позволит просматривать метчи и многое другое.
                 </Typography>
                 <Button
-                    variant='contained'
-                    color="primary"
+                    variant="contained"
                     onClick={() => navigate('/premium')}
+                    sx={{
+                        backgroundColor: '#4d60bf', // Цвет кнопки
+                        color: 'white', // Цвет текста
+                        borderRadius: '30px', // Скруглённые края
+                        textTransform: 'none', // Убрать CAPS
+                        fontSize: '1.1rem', // Увеличенный размер текста
+                        fontWeight: 700, // Жирный текст
+                        fontFamily: "'Poppins', Arial, sans-serif",
+                        letterSpacing: '0.05em', // Расширение текста
+                        padding: '10px 20px', // Пространство внутри кнопки
+                        '&:hover': { backgroundColor: '#1e4dc7' }, // Тёмный оттенок при наведении
+                    }}
                 >
                     Просмотреть план
                 </Button>
@@ -251,7 +263,7 @@ const MatchesPage: React.FC = observer(() => {
                                     position: 'absolute',
                                 }}
                             >
-                                Match list
+                                Список мэтчей
                             </Typography>
 
                             <IconButton
@@ -328,6 +340,10 @@ const MatchesPage: React.FC = observer(() => {
                                 aria-label="Previous Photo"
                                 onClick={handlePrevPhoto}
                                 sx={{
+                                    '&:active': {
+                                        backgroundColor: '#6a8afc', // Цвет при нажатии
+                                    },
+                                    borderRadius: '50%', // Круглая форма
                                     position: 'absolute',
                                     left: '-40px',
                                     top: '50%',
@@ -387,7 +403,7 @@ const MatchesPage: React.FC = observer(() => {
                     }}
                     onClick={() => navigate(`/user-profile/${currentMatch.isu}`)}
                 >
-                    View Profile
+                    Просмотреть профиль
                 </Button>
             </Box>
 
@@ -402,7 +418,7 @@ const MatchesPage: React.FC = observer(() => {
                     <ArrowBackIosIcon />
                 </IconButton>
                 <Typography>
-                    Match {currentMatchIndex + 1} of {matches.length}
+                    Мэтч {currentMatchIndex + 1} из {matches.length}
                 </Typography>
                 <IconButton aria-label="Next match" onClick={handleNextMatch}>
                     <ArrowForwardIosIcon />

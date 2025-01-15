@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, LinearProgress } from '@mui/material';
+import { Box, Typography, LinearProgress, Button, Modal } from '@mui/material';
 import { QuestionMark, Close } from '@mui/icons-material';
 import QuestionChoice from '../basic/QuestionChoice';
 import ImageButton from '../basic/ImageButton';
@@ -12,129 +12,210 @@ interface QuizProps {
     onExit: () => void; // Функция для выхода из теста
 }
 
+const ResultModal: React.FC<{ open: boolean, score: number, onClose: () => void }> = ({ open, score, onClose }) => {
+    const radius = 100; // Радиус кружка
+    const circumference = 2 * Math.PI * radius; // Длина окружности
+    const strokeDashoffset = circumference - (score / 100) * circumference; // Смещение для заполнения
+
+    return (
+        <Modal open={open} onClose={onClose}>
+            <Box sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                bgcolor: 'background.paper',
+                boxShadow: 24,
+                p: 4,
+                borderRadius: 2,
+                textAlign: 'center'
+            }}>
+                <Typography variant='h5' sx={{
+                    mb: 2,
+                    fontWeight: 'bold',
+                    color: "#4a4a4a"
+                }}>
+                    Ваш результат
+                </Typography>
+                <svg width="240" height="240">
+                    <circle cx="120" cy="120" r={radius} fill="none" stroke="#e0e0e0" strokeWidth="10" />
+                    <circle
+                        cx="120"
+                        cy="120"
+                        r={radius}
+                        fill="none"
+                        stroke="#3f51b5"
+                        strokeWidth="10"
+                        strokeDasharray={circumference}
+                        strokeDashoffset={strokeDashoffset}
+                        style={{ transition: 'stroke-dashoffset 0.5s ease-in-out' }}
+                    />
+                </svg>
+                <Typography variant="body1">{score} из 100</Typography>
+                <Button
+                    variant="contained"
+                    onClick={onClose}
+                    sx={{
+                        backgroundColor: '#4d60bf', // Цвет кнопки
+                        color: 'white', // Цвет текста
+                        borderRadius: '30px', // Скруглённые края
+                        textTransform: 'none', // Убрать CAPS
+                        fontSize: '1.1rem', // Увеличенный размер текста
+                        fontWeight: 700, // Жирный текст
+                        fontFamily: "'Poppins', Arial, sans-serif",
+                        letterSpacing: '0.05em', // Расширение текста
+                        padding: '10px 20px', // Пространство внутри кнопки
+                        '&:hover': { backgroundColor: '#1e4dc7' }, // Тёмный оттенок при наведении
+                    }}
+                >
+                    Завершить
+                </Button>
+            </Box>
+        </Modal>
+    );
+};
+
 export const Quiz: React.FC<QuizProps> = ({ onExit }) => {
     const navigate = useNavigate();
-
-    const test_id = useParams().id || "default"
+    const test_id = useParams().id || "default";
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [currentQuestion, setCurrentQuestion] = useState("Вопрос загружается");
     const [resultId, setResultId] = useState("");
     const [questionCount, setQuestionCount] = useState(1);
+    const [isExiting, setIsExiting] = useState(false);
+    const delay = 500;
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [score, setScore] = useState(0);
 
-    const [isExiting, setIsExiting] = useState(false); // Состояние для управления анимацией выхода
-    const delay = 500; // Задержка для анимаций
-
-
-    // load question count and resultId
-    useEffect(() => {        
-        if (test_id == "default") {
+    useEffect(() => {
+        if (test_id === "default") {
             console.warn("Wrong test_id!");
             return;
         }
 
         const fetchTest = async () => {
-            const test = await getTest(test_id);
-            setQuestionCount(test.questions_count);
-        }
+            try {
+                const test = await getTest(test_id);
+                setQuestionCount(test.questions_count);
+            } catch (err) {
+                console.error("Не удалось загрузить тест", err);
+            }
+        };
+
         const start = async () => {
-            const resultId = await startTest(test_id, userData.getIsu());
-            setResultId(resultId.result_id);
-        }
-        
+            try {
+                const resultId = await startTest(test_id, userData.getIsu());
+                setResultId(resultId.result_id);
+            } catch (err) {
+                console.error("Не удалось начать тест", err);
+            }
+        };
+
         fetchTest();
         start();
-    }, []);
+    }, [test_id]);
 
-    // load current question
     useEffect(() => {
-        if (test_id == "default") {
+        if (test_id === "default") {
             console.warn("Wrong test_id!");
             return;
         }
 
         const fetchQuestion = async () => {
-            const question = await getQuestion(test_id, currentQuestionIndex);
-            setCurrentQuestion(question.description);
-        }
-        
-        fetchQuestion();
-    }, [currentQuestionIndex]);
-
-    const handleConfirm = (ansIndex: number) => {
-        setIsExiting(true); // Устанавливаем состояние выхода
-        answerQuestion(resultId, currentQuestionIndex, ansIndex);
-
-        // Задержка перед переходом к следующему вопросу
-        setTimeout(() => {
-            setIsExiting(false); // Сбрасываем состояние выхода
-            setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-            
-            // Завершение теста, если это последний вопрос
-            if (currentQuestionIndex === questionCount - 1) {
-                completeTest(resultId);
-                navigate("/tests");
+            try {
+                const question = await getQuestion(test_id, currentQuestionIndex);
+                setCurrentQuestion(question.description);
+            } catch (err) {
+                console.error("Не удалось загрузить вопрос", err);
             }
-        }, delay); // Задержка, равная длительности анимации
+        };
+
+        fetchQuestion();
+    }, [test_id, currentQuestionIndex]);
+
+    const handleConfirm = async (ansIndex: number) => {
+        if (resultId === "") {
+            return;
+        }
+
+        setIsExiting(true);
+        try {
+            await answerQuestion(resultId, currentQuestionIndex, ansIndex);
+        } catch (err) {
+            console.error("Не удалось отправить ответ", err);
+        }
+
+        setTimeout(async () => {
+            setIsExiting(false);
+            setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+
+            if (currentQuestionIndex === questionCount - 1) {
+                const finalScore = Math.round((await completeTest(resultId)).score); // Подсчет финального результата
+                setScore(finalScore);
+                setIsModalOpen(true); // Открываем модальное окно
+            }
+        }, delay);
     };
 
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        navigate("/tests"); // Переход на страницу тестов после закрытия модального окна
+    };
 
     return (
-        <Box sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            height: '90vh', // Занять всю высоту экрана
-            justifyContent: 'space-between', // Разделить пространство между элементами
-            padding: 2, // Добавить отступы
+        <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '90vh',
+            justifyContent: 'space-between',
+            padding: 2,
         }}>
             <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
-                {/* Кнопка закрытия теста */}
                 <ImageButton className="quiz-close" onClick={onExit}><Close /></ImageButton>
-                {/* Прогресс-бар */}
-                <LinearProgress 
-                    variant="determinate" 
-                    value={(currentQuestionIndex / questionCount) * 100} 
-                    sx={{ flexGrow: 1, marginLeft: 2 }} // Занять оставшееся пространство
+                <LinearProgress
+                    variant="determinate"
+                    value={(currentQuestionIndex / questionCount) * 100}
+                    sx={{ flexGrow: 1, marginLeft: 2 }}
                 />
             </Box>
 
-            <Box key={currentQuestionIndex} sx={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
-                justifyContent: 'center', 
-                alignItems: 'center', // Центрирование по горизонтали
-                flexGrow: 1 // Занять оставшееся пространство
+            <Box key={currentQuestionIndex} sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexGrow: 1
             }}>
-                {/* Анимация текста вопроса */}
-                <motion.div 
-                    initial={{ opacity: 0, y: -20 }} // Начальное состояние
-                    animate={{ opacity: isExiting ? 0 : 1, y: isExiting ? -20 : 0 }} // Конечное состояние
-                    exit={{ opacity: 0, y: 20 }} // Состояние при выходе
-                    transition={{ duration: 0.5 }} // Длительность анимации
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: isExiting ? 0 : 1, y: isExiting ? -20 : 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ duration: 0.5 }}
                 >
-                    <Typography variant="h6"    
-                        sx={{ 
-                            marginBottom: 2, 
-                            textAlign: 'center', // Центрирование текста
-                            lineHeight: 1.5, // Увеличение междустрочного интервала для лучшей читаемости
-                            color: 'text.primary', // Цвет текста, можно изменить на любой другой
-                            padding: 2 // Добавление отступов, если нужно
+                    <Typography variant="h6"
+                        sx={{
+                            marginBottom: 2,
+                            textAlign: 'center',
+                            lineHeight: 1.5,
+                            color: 'text.primary',
+                            padding: 2
                         }}>
                         {currentQuestion}
                     </Typography>
                 </motion.div>
 
-                {/* Анимация иконки вопроса */}
-                <motion.div 
-                    initial={{ scale: 0 }} // Начальное состояние
-                    animate={{ scale: isExiting ? 0 : 1 }} // Конечное состояние
-                    exit={{ scale: 0 }} // Состояние при выходе
-                    transition={{ duration: delay / 1000 }} // Длительность анимации
+                <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: isExiting ? 0 : 1 }}
+                    exit={{ scale: 0 }}
+                    transition={{ duration: delay / 1000 }}
                 >
                     <QuestionMark sx={{ fontSize: "100px" }} />
                 </motion.div>
             </Box>
-            {/* Выбор ответа */}
             <QuestionChoice onFinish={handleConfirm} />
+
+            <ResultModal open={isModalOpen} score={score} onClose={handleCloseModal} />
         </Box>
     );
 };

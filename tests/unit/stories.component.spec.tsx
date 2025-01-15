@@ -75,15 +75,16 @@ describe('Stories Component', () => {
 
     it('renders "Your Story" and contacts with stories', () => {
         renderWithRouter(<Stories people={mockContacts} stories={mockStories} onAddStory={mockOnAddStory} />);
-
+    
         // Check "Your Story" is rendered
-        expect(screen.getByText('Your Story')).toBeInTheDocument();
-
+        expect(screen.getByText('Ваша история')).toBeInTheDocument();
+    
         // Only contacts with stories should be rendered
         expect(screen.getByText('Alice')).toBeInTheDocument();
         expect(screen.getByText('Bob')).toBeInTheDocument();
         expect(screen.queryByText('Charlie')).not.toBeInTheDocument(); // No story for Charlie
     });
+    
 
     it('navigates to "/add-story" when "Your Story" is clicked', () => {
         renderWithRouter(<Stories people={mockContacts} stories={mockStories} onAddStory={mockOnAddStory} />);

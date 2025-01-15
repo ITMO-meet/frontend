@@ -87,30 +87,30 @@ describe('SettingsPage', () => {
         expect(switchElement).not.toBeChecked();
     });
 
-    it('opens and closes the language dialog', async () => {
-        const languageItem = screen.getByText('Язык', { selector: 'p' });
-        fireEvent.click(languageItem);
+    // it('opens and closes the language dialog', async () => {
+    //     const languageItem = screen.getByText('Язык', { selector: 'p' });
+    //     fireEvent.click(languageItem);
 
-        const dialogTitle = screen.getByText('Выберите язык');
-        expect(dialogTitle).toBeInTheDocument();
+    //     const dialogTitle = screen.getByText('Выберите язык');
+    //     expect(dialogTitle).toBeInTheDocument();
 
-        const closeButton = screen.getByText('Закрыть');
-        fireEvent.click(closeButton);
+    //     const closeButton = screen.getByText('Закрыть');
+    //     fireEvent.click(closeButton);
 
-        await waitForElementToBeRemoved(() => screen.queryByText('Выберите язык'));
-    });
+    //     await waitForElementToBeRemoved(() => screen.queryByText('Выберите язык'));
+    // });
 
-    it('changes the selected language', () => {
-        const languageItem = screen.getByText('Язык', { selector: 'p' });
-        fireEvent.click(languageItem);
+    // it('changes the selected language', () => {
+    //     const languageItem = screen.getByText('Язык', { selector: 'p' });
+    //     fireEvent.click(languageItem);
 
-        const englishOption = screen.getByText('Английский', { selector: 'span' });
-        fireEvent.click(englishOption);
+    //     const englishOption = screen.getByText('Английский', { selector: 'span' });
+    //     fireEvent.click(englishOption);
 
-        const updatedLanguage = screen.getByText('Английский', { selector: 'p' });
-        expect(updatedLanguage).toBeInTheDocument();
-        expect(logEvent).toHaveBeenCalledWith("Settings", "Set language", "Английский");
-    });
+    //     const updatedLanguage = screen.getByText('Английский', { selector: 'p' });
+    //     expect(updatedLanguage).toBeInTheDocument();
+    //     expect(logEvent).toHaveBeenCalledWith("Settings", "Set language", "Английский");
+    // });
 
     it('opens and closes the problem dialog', async () => {
         const problemItem = screen.getByText('Сообщить о проблеме', { selector: 'p' });

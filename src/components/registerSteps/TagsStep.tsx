@@ -29,7 +29,7 @@ const TagsStep: React.FC<TagsStepProps> = ({ isu, onNext }) => {
                 /* eslint-disable @typescript-eslint/no-explicit-any */
             } catch (err: any) {
                 console.error("Error fetching tags:", err);
-                showError(err.message || "Failed to load tags");
+                showError(err.message || "Ошибка при загрузке тегов");
             } finally {
                 setLoading(false);
             }
@@ -46,7 +46,7 @@ const TagsStep: React.FC<TagsStepProps> = ({ isu, onNext }) => {
 
     const handleSubmit = async () => {
         if (selectedTags.length === 0) {
-            showError('Please select at least one tag');
+            showError('Выберите хотя бы один тег');
             return;
         }
         try {
@@ -54,21 +54,21 @@ const TagsStep: React.FC<TagsStepProps> = ({ isu, onNext }) => {
             onNext({ tags: selectedTags });
             /* eslint-disable @typescript-eslint/no-explicit-any */
         } catch(e: any) {
-            showError(e.message || "Failed to select tags");
+            showError(e.message || "Ошибка при загрузке тегов");
         }
     };
 
     if (loading) {
         return (
             <Box padding="20px" textAlign="center">
-                <Typography variant="h6">Loading tags...</Typography>
+                <Typography variant="h6">Загрузка тегов...</Typography>
             </Box>
         );
     }
 
     return (
         <Box padding="20px">
-            <Typography variant="h5" align="center" mb={2}>Select Tags</Typography>
+            <Typography variant="h5" align="center" mb={2}>Выберите теги</Typography>
             <Box display="flex" flexWrap="wrap" gap={1} justifyContent="center">
                 {allTags.map(tag => (
                     <Button
@@ -85,7 +85,7 @@ const TagsStep: React.FC<TagsStepProps> = ({ isu, onNext }) => {
                 disabled={selectedTags.length === 0} // Кнопка отключена, если нет выбранных тегов
                 sx={{ width: "100%", marginTop: "20px" }} // Стили для кнопки
             >
-                Next
+                Продолжить
             </RoundButton>
         </Box>
     );

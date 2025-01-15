@@ -52,7 +52,7 @@ describe('TagsStep', () => {
   });
 
   it('renders the component and fetches tags', () => {
-    expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /продолжить/i })).toBeInTheDocument();
     // The tags “music” & “gym” were fetched & rendered
     expect(screen.getByText(/music/i)).toBeInTheDocument();
     expect(screen.getByText(/gym/i)).toBeInTheDocument();
@@ -67,7 +67,7 @@ describe('TagsStep', () => {
     fireEvent.click(screen.getByText(/music/i));
     fireEvent.click(screen.getByText(/gym/i));
     await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /next/i }));
+      fireEvent.click(screen.getByRole('button', { name: /продолжить/i }));
     });
     expect(mockShowError).toHaveBeenCalledWith('Tags server error');
     expect(mockOnNext).not.toHaveBeenCalled();

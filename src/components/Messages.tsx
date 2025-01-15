@@ -10,7 +10,7 @@ import {
   List,
   Paper,
   Modal,
-  Grid2,
+  Grid,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -433,7 +433,12 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
           backgroundColor: '#fff',
         }}
       >
-        <IconButton onClick={() => navigate(-1)} data-testid="back-button">
+        <IconButton onClick={() => navigate(-1)} data-testid="back-button" sx={{
+      '&:active': {
+        backgroundColor: '#6a8afc', // Цвет при нажатии
+      },
+      borderRadius: '50%', // Круглая форма
+    }}>
           <ArrowBackIosIcon />
         </IconButton>
         <Box
@@ -481,7 +486,7 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
       >
         <TextField
           fullWidth
-          placeholder="Type a message"
+          placeholder="Введите сообщение"
           variant="outlined"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
@@ -521,12 +526,12 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
         {/* Optional small text indicators */}
         {isRecording && (
           <Typography variant="caption" color="error" sx={{ display: 'block', mt: 1 }}>
-            Recording audio...
+            Запись аудио...
           </Typography>
         )}
         {isRecordingVideo && (
           <Typography variant="caption" color="error" sx={{ display: 'block', mt: 1 }}>
-            Recording video...
+            Запись видео...
           </Typography>
         )}
       </Box>
@@ -557,65 +562,72 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
             id="picker-modal-title"
             variant="h6"
             sx={{ mb: 3, fontWeight: 'bold' }}
-          >
-            Select an Option
-          </Typography>
-          <Grid2 container spacing={3} justifyContent="center">
-            <Grid2 component="div">
-              <Box
-                sx={{
-                  width: 100,
-                  height: 100,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  bgcolor: '#f9f9f9',
-                  borderRadius: '50%',
-                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                  '&:hover': {
-                    transform: 'scale(1.1)',
-                    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)',
-                  },
-                }}
-                onClick={handleOpenGallery}
-              >
-                <ImageIcon sx={{ fontSize: 40, color: '#616161' }} />
-              </Box>
-              <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
-                Gallery
-              </Typography>
-            </Grid2>
-            <Grid2 component="div">
-              <Box
-                sx={{
-                  width: 100,
-                  height: 100,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  bgcolor: '#f9f9f9',
-                  borderRadius: '50%',
-                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                  '&:hover': {
-                    transform: 'scale(1.1)',
-                    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)',
-                  },
-                }}
-                onClick={handleOpenFileManager}
-              >
-                <FolderIcon sx={{ fontSize: 40, color: '#616161' }} />
-              </Box>
-              <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
-                File
-              </Typography>
-            </Grid2>
-          </Grid2>
-        </Box>
-      </Modal>
+          />
+            <Typography
+              id="picker-modal-title" // Match the aria-labelledby
+              variant="h6"
+              sx={{ mb: 3, fontWeight: 'bold' }}
+            >
+              Выбрать опцию
+            </Typography>
+            <Grid container spacing={3} justifyContent="center">
+              <Grid item>
+                <Box
+                  sx={{
+                    width: 100,
+                    height: 100,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    bgcolor: '#f9f9f9',
+                    borderRadius: '50%',
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    '&:hover': {
+                      transform: 'scale(1.1)',
+                      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)',
+                    },
+                  }}
+                  onClick={handleOpenGallery}
+                >
+                  <ImageIcon sx={{ fontSize: 40, color: '#616161' }} />
+                </Box>
+                <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
+                  Галлерея
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Box
+                  sx={{
+                    width: 100,
+                    height: 100,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    bgcolor: '#f9f9f9',
+                    borderRadius: '50%',
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    '&:hover': {
+                      transform: 'scale(1.1)',
+                      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)',
+                    },
+                  }}
+                  onClick={handleOpenFileManager}
+                >
+                  <FolderIcon sx={{ fontSize: 40, color: '#616161' }} />
+                </Box>
+                <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
+                  Файл
+                </Typography>
+              </Grid>
+            </Grid>
+          </Box>
+        </Modal>
+
+
     </Box>
   );
 };

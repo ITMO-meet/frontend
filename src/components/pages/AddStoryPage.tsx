@@ -125,7 +125,7 @@ const AddStoryPage: React.FC = () => {
       }}
     >
       <Typography variant="h5" sx={{ fontWeight: "bold", marginBottom: "16px" }}>
-        Add a Story
+        Добавить историю
       </Typography>
 
       {!isEditing && (
@@ -154,9 +154,20 @@ const AddStoryPage: React.FC = () => {
               variant="contained"
               color="secondary"
               onClick={handleCancel}
-              sx={{ marginRight: "8px" }}
+              sx={{
+                backgroundColor: '#4d60bf', // Цвет кнопки
+                color: 'white', // Цвет текста
+                borderRadius: '30px', // Скруглённые края
+                textTransform: 'none', // Убрать CAPS
+                fontSize: '1.1rem', // Увеличенный размер текста
+                fontWeight: 700, // Жирный текст
+                fontFamily: "'Poppins', Arial, sans-serif",
+                letterSpacing: '0.05em', // Расширение текста
+                padding: '10px 20px', // Пространство внутри кнопки
+                '&:hover': { backgroundColor: '#1e4dc7' }, // Тёмный оттенок при наведении
+            }}
             >
-              Cancel
+              Отменить
             </Button>
             {imageToEdit && (
               <Button
@@ -164,7 +175,7 @@ const AddStoryPage: React.FC = () => {
                 color="primary"
                 onClick={() => setIsEditing(true)}
               >
-                Edit Image
+                Редактировать изображение
               </Button>
             )}
           </Box>

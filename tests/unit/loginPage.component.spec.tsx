@@ -43,35 +43,35 @@ describe('LoginPage', () => {
     });
 
     it('renders LoginPage with correct title', () => {
-        expect(screen.getByText(/login with itmo.id/i)).toBeInTheDocument();
+        expect(screen.getByText(/Вход через ITMO.ID/i)).toBeInTheDocument();
     });
 
     it('shows alert when ID is not 6 characters', () => {
-        const idInput = screen.getByLabelText(/id/i);
-        const passwordInput = screen.getByLabelText(/password/i);
-        const button = screen.getByText(/continue/i);
+        const idInput = screen.getByLabelText(/ISU/i);
+        const passwordInput = screen.getByLabelText(/пароль/i);
+        const button = screen.getByText(/Продолжить/i);
 
         fireEvent.change(idInput, {target: {value: '123'}});
         fireEvent.change(passwordInput, {target: {value: 'password'}});
         fireEvent.click(button);
 
-        expect(screen.getByText(/ID must be exactly 6 symbols/i)).toBeInTheDocument();
+        expect(screen.getByText(/ISU должен быть ровно 6 символов/i)).toBeInTheDocument();
     });
 
     it('shows alert when password is empty', () => {
-        const idInput = screen.getByLabelText(/id/i);
-        const button = screen.getByText(/continue/i);
+        const idInput = screen.getByLabelText(/ISU/i);
+        const button = screen.getByText(/Продолжить/i);
 
         fireEvent.change(idInput, {target: {value: '123456'}});
         fireEvent.click(button);
 
-        expect(screen.getByText(/Password must not be empty/i)).toBeInTheDocument();
+        expect(screen.getByText(/Пароль не должен быть пустым/i)).toBeInTheDocument();
     });
 
     it('navigates to /chats when ID and password are valid', async () => {
-        const idInput = screen.getByLabelText(/id/i);
-        const passwordInput = screen.getByLabelText(/password/i);
-        const button = screen.getByText(/continue/i);
+        const idInput = screen.getByLabelText(/ISU/i);
+        const passwordInput = screen.getByLabelText(/пароль/i);
+        const button = screen.getByText(/Продолжить/i);
 
         fireEvent.change(idInput, {target: {value: '123456'}});
         fireEvent.change(passwordInput, {target: {value: 'password'}});

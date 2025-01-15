@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 import '@testing-library/jest-dom';
 import ChatPage from '../../src/components/pages/ChatPage';
-import { logPageView } from '../../src/analytics'
+import { logPageView } from '../../src/analytics';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -96,14 +96,13 @@ describe('ChatPage Component', () => {
         <ChatPage people={mockContacts} stories={mockStories} messages={mockMessages} />
       </MemoryRouter>
     );
-    expect(screen.getByText('Chats')).toBeInTheDocument();
-    expect(screen.getByLabelText('Search Contacts')).toBeInTheDocument();
-    expect(screen.getByText('Activities')).toBeInTheDocument();
-    expect(screen.getByText('Messages')).toBeInTheDocument();
+    expect(screen.getByText('Чаты')).toBeInTheDocument(); // Локализованный текст
+    expect(screen.getByLabelText('Поиск контактов')).toBeInTheDocument(); // Локализованный текст
+    expect(screen.getByText('Истории')).toBeInTheDocument(); // Локализованный текст
+    expect(screen.getByText('Сообщения')).toBeInTheDocument(); // Локализованный текст
     expect(screen.getByText('John Doe')).toBeInTheDocument();
     expect(screen.getByText('Jane Smith')).toBeInTheDocument();
     expect(logPageView).toHaveBeenCalledWith('/chats');
-
   });
 
   it('filters contacts based on search query', () => {
@@ -112,22 +111,23 @@ describe('ChatPage Component', () => {
         <ChatPage people={mockContacts} stories={mockStories} messages={mockMessages} />
       </MemoryRouter>
     );
-    const searchInput = screen.getByLabelText('Search Contacts');
+    const searchInput = screen.getByLabelText('Поиск контактов'); // Локализованный текст
     fireEvent.change(searchInput, { target: { value: 'John' } });
     expect(screen.getByText('John Doe')).toBeInTheDocument();
     expect(screen.queryByText('Jane Smith')).not.toBeInTheDocument();
   });
 
-  it('displays "No contacts found" when search yields no results', () => {
+  it('displays "Контакты не найдены." when search yields no results', () => {
     render(
       <MemoryRouter>
         <ChatPage people={mockContacts} stories={mockStories} messages={mockMessages} />
       </MemoryRouter>
     );
-    const searchInput = screen.getByLabelText('Search Contacts');
+    const searchInput = screen.getByLabelText('Поиск контактов'); // Локализованный текст
     fireEvent.change(searchInput, { target: { value: 'Alice' } });
-    expect(screen.getByText('No contacts found.')).toBeInTheDocument();
+    expect(screen.getByText('Контакты не найдены.')).toBeInTheDocument(); // Локализованный текст
   });
+  
 
   it('navigates to correct chat when a contact is clicked', () => {
     render(

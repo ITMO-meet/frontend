@@ -123,7 +123,7 @@ export const QuestionChoice: React.FC<QuestionChoiceProps> = ({ options = defaul
       </Box>
       {/* Кнопка */}
       <Box sx={styles.button(selectedOption !== null)}>
-        <RoundButton disabled={selectedOption === null} width="80%" onClick={handleFinish}>Continue</RoundButton>
+        <RoundButton disabled={selectedOption === null} width="80%" onClick={handleFinish}>Продолжить</RoundButton>
       </Box>
     </Box>
   );

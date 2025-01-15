@@ -67,10 +67,10 @@ const Stories: React.FC<StoriesProps> = ({ stories, people}) => {
               height: 70,
               borderRadius: '50%',
               border: '2px solid transparent',
-              background: 'linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
+              background: 'linear-gradient(135deg, #2d8dfa 0%, #2d34fa 25%, #b92dfa 50%, #d12dfa 75%, #fa2d2d 100%)',
               padding: 0,
               '&:hover': {
-                background: 'linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
+                background: 'linear-gradient(135deg, #2d8dfa 0%, #2d34fa 25%, #b92dfa 50%, #d12dfa 75%, #fa2d2d 100%)',
               },
             }}
           >
@@ -95,7 +95,7 @@ const Stories: React.FC<StoriesProps> = ({ stories, people}) => {
             />
           </IconButton>
           <Typography variant="caption" align="center" display="block">
-            Your Story
+            Ваша история
           </Typography>
         </Box>
 
@@ -111,7 +111,7 @@ const Stories: React.FC<StoriesProps> = ({ stories, people}) => {
                 width: 70,
                 height: 70,
                 borderRadius: '50%',
-                background: 'linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
+                background: 'linear-gradient(135deg, #2d8dfa 0%, #2d34fa 25%, #b92dfa 50%, #d12dfa 75%, #fa2d2d 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
