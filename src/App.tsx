@@ -412,8 +412,8 @@ function AppContent() {
             <Route path="/user-profile/:id" element={<UserProfilePage />} />
             <Route path="/schedule" element={<CalendarPage />} />
             <Route path="/premium" element={<PremiumPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/login" element={<LoginPage />} />
+            {/* <Route path="/register" element={<RegisterPage />} /> */}
+            {/* <Route path="/login" element={<LoginPage />} /> */}
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </AnimatePresence>

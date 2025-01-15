@@ -74,7 +74,12 @@ const SettingsPage: React.FC = () => {
     return (
         <Box sx={{ px: 2, py: 1 }}>
             <Box display="flex" alignItems="center" mb={2}>
-                <IconButton data-testid="BackToProfile" onClick={() => navigate('/profile')}>
+                <IconButton data-testid="BackToProfile" onClick={() => navigate('/profile')} sx={{
+                    '&:active': {
+                        backgroundColor: '#6a8afc', // Цвет при нажатии
+                    },
+                    borderRadius: '50%', // Круглая форма
+                    }}>
                     <ArrowBackIosIcon />
                 </IconButton>
                 <Typography variant="h6" fontWeight="bold">

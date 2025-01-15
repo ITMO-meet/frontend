@@ -46,7 +46,7 @@ const UserProfilePage: React.FC = observer(() => {
     if (!currentUser) {
         return (
             <Typography variant="h6" textAlign="center">
-                Profile not found.
+                Профиль не найден.
             </Typography>
         );
     }
@@ -105,7 +105,7 @@ const UserProfilePage: React.FC = observer(() => {
         return (
             <Box mt={2}>
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                    Main Features
+                    Основные характеристики
                 </Typography>
                 <Box display="flex" gap={1} flexWrap="wrap">
                     {features.map((feature, index) => (
@@ -141,7 +141,7 @@ const UserProfilePage: React.FC = observer(() => {
         return (
             <Box mt={2}>
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                    Languages
+                    Языки
                 </Typography>
                 <Box display="flex" gap={1} flexWrap="wrap">
                     {languages.map((language: { text: string; icon: string }, index: number) => (
@@ -167,7 +167,7 @@ const UserProfilePage: React.FC = observer(() => {
     const renderInterests = (profile: Profile) => (
         <Box mt={2}>
             <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                Interests
+                Интересы
             </Typography>
             <Box display="flex" gap={1} flexWrap="wrap">
                 {profile.interests.map((interest, index) => (
@@ -225,11 +225,24 @@ const UserProfilePage: React.FC = observer(() => {
         <PageWrapper direction={1}>
             <Box display="flex" flexDirection="column" minHeight="100vh" p={2}>
                 <Box display="flex" alignItems="center" mb={2}>
-                    <IconButton onClick={handleGoBack} sx={{ mr: 2 }} aria-label="Go back">
+                    <IconButton onClick={handleGoBack} sx={{
+                        mr: 2,
+                    '&:active': {
+                        backgroundColor: '#6a8afc', // Цвет при нажатии
+                    },
+                    borderRadius: '50%', // Круглая форма
+                    }} aria-label="Go back">
                         <ArrowBackIosIcon />
                     </IconButton>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                        Profile
+                    <Typography variant="h4"
+                            align="center"
+                            gutterBottom
+                            sx={{
+                                color: '#4a4a4a', // Тёмно-серый цвет заголовка
+                                fontFamily: "'Poppins', Arial, sans-serif",
+                                fontWeight: 600,
+                            }}>
+                        Профиль
                     </Typography>
                 </Box>
 
@@ -254,6 +267,10 @@ const UserProfilePage: React.FC = observer(() => {
                         aria-label="Previous Photo"
                         onClick={handlePrevPhoto}
                         sx={{
+                            '&:active': {
+                                backgroundColor: '#6a8afc', // Цвет при нажатии
+                            },
+                            borderRadius: '50%', // Круглая форма
                             position: 'absolute',
                             left: '-40px',
                             top: '50%',
@@ -281,6 +298,10 @@ const UserProfilePage: React.FC = observer(() => {
                         aria-label="Next Photo"
                         onClick={handleNextPhoto}
                         sx={{
+                            '&:active': {
+                                backgroundColor: '#6a8afc', // Цвет при нажатии
+                            },
+                            borderRadius: '50%', // Круглая форма
                             position: 'absolute',
                             right: '-40px',
                             top: '50%',
@@ -304,7 +325,7 @@ const UserProfilePage: React.FC = observer(() => {
                     }}
                 >
                     <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                        Bio
+                        Био
                     </Typography>
                     <Typography
                         sx={{
@@ -340,7 +361,7 @@ const UserProfilePage: React.FC = observer(() => {
                         renderItmo(currentUser)
                     ) : (
                         <Typography variant="h6" textAlign="center">
-                            This person is not a student.
+                            Этот человек не является студентом.
                         </Typography>
                     )}
                     {currentUser.isStudent && (
@@ -350,7 +371,7 @@ const UserProfilePage: React.FC = observer(() => {
                                 color="secondary"
                                 onClick={handleViewSchedule}
                             >
-                                View Schedule
+                                Просмотр расписания
                             </Button>
                         </Box>
                     )}
@@ -370,7 +391,7 @@ const UserProfilePage: React.FC = observer(() => {
                             padding: '10px 20px',
                         }}
                     >
-                        Block User
+                        Заблокировать пользователя
                     </Button>
                 </Box>
 
@@ -409,7 +430,7 @@ const UserProfilePage: React.FC = observer(() => {
                                 color="error"
                                 onClick={handleBlock}
                             >
-                                Block
+                                Заблокировать
                             </Button>
                         </Box>
                     </Paper>

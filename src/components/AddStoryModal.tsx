@@ -45,7 +45,7 @@ const AddStoryModal: React.FC<AddStoryModalProps> = ({ open, onClose }) => {
         }}
       >
         <Typography id="add-story-modal-title" variant="h6" component="h2" gutterBottom>
-          Add New Story
+          Добавить новую историю
         </Typography>
         <TextField
           fullWidth
@@ -56,7 +56,7 @@ const AddStoryModal: React.FC<AddStoryModalProps> = ({ open, onClose }) => {
           sx={{ mb: 2 }}
         />
         <Button variant="contained" color="primary" fullWidth onClick={handleSubmit}>
-          Add Story
+          Добавить историю
         </Button>
       </Box>
     </Modal>

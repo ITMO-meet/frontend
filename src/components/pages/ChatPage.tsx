@@ -51,14 +51,21 @@ const ChatPage: React.FC<ChatPageProps> = ({ people, stories, messages }) => {
 
   return (
     <Box sx={{ mt: 2, mx: 2 }}>
-      <Typography variant="h5" sx={{ textAlign: 'center', mb: 2 }}>
-        Chats
+      <Typography variant="h4"
+                align="center"
+                gutterBottom
+                sx={{
+                    color: '#4a4a4a', // Тёмно-серый цвет заголовка
+                    fontFamily: "'Poppins', Arial, sans-serif",
+                    fontWeight: 600,
+                }}>
+        Чаты
       </Typography>
 
       <Box sx={{ mb: 2 }}>
         <TextField
           fullWidth
-          label="Search Contacts"
+          label="Поиск контактов"
           variant="outlined"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -66,13 +73,13 @@ const ChatPage: React.FC<ChatPageProps> = ({ people, stories, messages }) => {
       </Box>
 
       <Typography variant="h6" sx={{ mb: 1 }}>
-        Activities
+      Истории
       </Typography>
 
       <Stories people={people} stories={stories} onAddStory={handleAddStory} />
 
       <Typography variant="h6" sx={{ mb: 1, mt: 2 }}>
-        Messages
+        Сообщения
       </Typography>
 
       {filteredContacts.map((person) => (
@@ -90,7 +97,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ people, stories, messages }) => {
 
       {filteredContacts.length === 0 && (
         <Typography variant="body1" sx={{ textAlign: 'center', mt: 2 }}>
-          No contacts found.
+          Контакты не найдены.
         </Typography>
       )}
 

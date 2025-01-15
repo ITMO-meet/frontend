@@ -151,21 +151,37 @@ const FeedPage: React.FC = observer(() => {
         <Box sx={{ height: '90vh', display: 'flex', flexDirection: 'column' }}>
             <AppBar position="static">
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', background: "white" }}>
-                    <Typography color="primary" fontSize="36px">Search</Typography> {/* Заголовок приложения */}
+                <Typography
+                    variant="h4"
+                    align="center"
+                    gutterBottom
+                    sx={{
+                        color: '#4a4a4a', // Тёмно-серый цвет заголовка
+                        fontFamily: "'Poppins', Arial, sans-serif",
+                        fontWeight: 600,
+                    }}
+                >
+                    Поиск
+                </Typography>
+ {/* Заголовок приложения */}
                     {/* Кнопка для открытия модального окна */}
                     <Button
                         variant="contained"
                         onClick={openModal}
                         sx={{
-                            borderRadius: '50px',
+                            borderRadius: '30px',
                             textTransform: 'none',
-                            backgroundColor: '#4469a6', // Голубой цвет (MUI Blue 500)
+                            backgroundColor: '#4469a6', // Синий цвет кнопки
+                            fontSize: '16px', // Размер текста кнопки
+                            fontWeight: 'bold', // Жирный текст
+                            padding: '10px 20px', // Пространство внутри кнопки
                             color: 'white',
-                            '&:hover': { backgroundColor: '#283e61' }, // Более тёмный оттенок голубого при наведении
+                            '&:hover': { backgroundColor: '#283e61' }, // Более тёмный оттенок на hover
                         }}
                     >
                         Фильтры
                     </Button>
+
                 </Toolbar>
             </AppBar>
 

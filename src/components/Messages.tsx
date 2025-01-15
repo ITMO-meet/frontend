@@ -39,7 +39,7 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
   const contact = people.find((person) => person.isu === Number(id));
 
 
-  
+
   // Audio recorder state
   const [, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
@@ -242,7 +242,12 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
           backgroundColor: '#fff',
         }}
       >
-        <IconButton onClick={() => navigate(-1)} data-testid="back-button">
+        <IconButton onClick={() => navigate(-1)} data-testid="back-button" sx={{
+      '&:active': {
+        backgroundColor: '#6a8afc', // Цвет при нажатии
+      },
+      borderRadius: '50%', // Круглая форма
+    }}>
           <ArrowBackIosIcon />
         </IconButton>
         <Box
@@ -352,7 +357,7 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
               variant="h6"
               sx={{ mb: 3, fontWeight: 'bold' }}
             >
-              Select an Option
+              Выбрать опцию
             </Typography>
             <Grid container spacing={3} justifyContent="center">
               <Grid item>
@@ -378,7 +383,7 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
                   <ImageIcon sx={{ fontSize: 40, color: '#616161' }} />
                 </Box>
                 <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
-                  Gallery
+                  Галлерея
                 </Typography>
               </Grid>
               <Grid item>
@@ -404,7 +409,7 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
                   <FolderIcon sx={{ fontSize: 40, color: '#616161' }} />
                 </Box>
                 <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
-                  File
+                  Файл
                 </Typography>
               </Grid>
             </Grid>

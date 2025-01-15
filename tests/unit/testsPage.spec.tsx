@@ -37,7 +37,7 @@ describe('TestsPage', () => {
     expect(screen.getByText(/обо всем на свете/i)).toBeInTheDocument();
 
     // Проверка отображения тестов
-    expect(screen.getByAltText('Мечты')).toBeInTheDocument();
+    expect(screen.getByAltText('Фетиши')).toBeInTheDocument();
     expect(screen.getByAltText('Психология')).toBeInTheDocument();
     expect(screen.getByAltText('Бытовуха')).toBeInTheDocument();
     expect(screen.getByAltText('Будущее')).toBeInTheDocument();
@@ -52,10 +52,10 @@ describe('TestsPage', () => {
       </BrowserRouter>
     );
 
-    const testCard = screen.getByAltText('Мечты');
+    const testCard = screen.getByAltText('Фетиши');
     fireEvent.click(testCard);
 
-    expect(navigateMock).toHaveBeenCalledWith('/tests/dreams');
+    expect(navigateMock).toHaveBeenCalledWith('/tests/fetishes');
   });
 
   test('shows alert for completed test', () => {
@@ -65,7 +65,7 @@ describe('TestsPage', () => {
       </BrowserRouter>
     );
 
-    const testCard = screen.getByAltText('Мечты');
+    const testCard = screen.getByAltText('Фетиши');
 
     // Имитация завершенного теста
     fireEvent.click(testCard);

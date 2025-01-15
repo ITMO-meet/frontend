@@ -42,7 +42,7 @@ const CalendarPage: React.FC = () => {
         return (
             <Box p={2}>
                 <Typography variant="h6" textAlign="center">
-                    ITMO ID is missing ;c
+                    ITMO ID отсутствует ;c
                 </Typography>
             </Box>
         );
@@ -88,7 +88,7 @@ const CalendarPage: React.FC = () => {
         return (
             <Box p={2}>
                 <Typography variant="h6" textAlign="center">
-                    Error occurred: {error}
+                Произошла ошибка: {error}
                 </Typography>
             </Box>
         );
@@ -97,7 +97,7 @@ const CalendarPage: React.FC = () => {
     return (
         <Box p={2}>
             <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2, textAlign: 'center' }}>
-                Student Schedule
+            Расписание студентов
             </Typography>
             {loading ? (
                 <Box display="flex" justifyContent="center" alignItems="center" height="60vh">
