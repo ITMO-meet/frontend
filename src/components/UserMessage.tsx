@@ -12,14 +12,29 @@ const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // For audio
+  // Generate URLs for media content
+  const imageURL = useMemo(() => {
+    if (message.image && message.image instanceof Blob) {
+      return URL.createObjectURL(message.image);
+    }
+    return undefined;
+  }, [message.image]);
+
+  const videoURL = useMemo(() => {
+    if (message.video && message.video instanceof Blob) {
+      return URL.createObjectURL(message.video);
+    }
+    return undefined;
+  }, [message.video]);
+
   const audioURL = useMemo(() => {
-    if (message.audio) {
+    if (message.audio && message.audio instanceof Blob) {
       return URL.createObjectURL(message.audio);
     }
     return undefined;
   }, [message.audio]);
 
+  // Handle play/pause for audio
   const handlePlayPause = () => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -49,14 +64,6 @@ const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
     }
   };
 
-  // For video
-  const videoURL = useMemo(() => {
-    if (message.video) {
-      return URL.createObjectURL(message.video);
-    }
-    return undefined;
-  }, [message.video]);
-
   return (
     <ListItem
       sx={{
@@ -77,9 +84,31 @@ const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
           wordBreak: 'break-word',
           boxShadow: 1,
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
         }}
       >
+        {/* IMAGE MESSAGE */}
+        {imageURL && (
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: 250,
+              borderRadius: 2,
+              overflow: 'hidden',
+            }}
+          >
+            <img
+              src={imageURL}
+              style={{
+                width: '100%',
+                height: 'auto',
+                borderRadius: '8px',
+              }}
+            />
+          </Box>
+        )}
+
         {/* VIDEO MESSAGE */}
         {videoURL && (
           <Box
@@ -94,6 +123,7 @@ const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
           >
             <video
               src={videoURL}
+              data-testid="video-element" // Добавьте data-testid для тестов
               style={{
                 width: '100%',
                 height: '100%',
@@ -104,9 +134,42 @@ const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
           </Box>
         )}
 
+
+        {/* FILE MESSAGE */}
+        {message.file && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              maxWidth: 250,
+              padding: '8px',
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              backgroundColor: '#f9f9f9',
+              wordBreak: 'break-word',
+            }}
+          >
+            <a
+              href={URL.createObjectURL(message.file)}
+              download={message.file.name}
+              style={{ textDecoration: 'none', color: '#000' }}
+            >
+              {message.file.name}
+            </a>
+          </Box>
+        )}
+
         {/* AUDIO MESSAGE */}
-        {!videoURL && message.audio && (
-          <>
+        {audioURL && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              width: '100%',
+            }}
+          >
             <IconButton onClick={handlePlayPause} size="small">
               {isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
             </IconButton>
@@ -125,11 +188,20 @@ const UserMessage: React.FC<UserMessageProps> = ({ message }) => {
             >
               Voice message
             </Box>
-          </>
+          </Box>
         )}
 
-        {/* TEXT MESSAGE (if no audio/video) */}
-        {!videoURL && !message.audio && message.text}
+        {/* TEXT MESSAGE */}
+        {!imageURL && !videoURL && !audioURL && message.text && (
+          <Box
+            sx={{
+              wordBreak: 'break-word',
+              textAlign: 'left',
+            }}
+          >
+            {message.text}
+          </Box>
+        )}
       </Box>
     </ListItem>
   );

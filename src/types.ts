@@ -12,6 +12,13 @@ export interface Contact {
     stories: Story[];
 }
 
+export interface Person {
+    isu: number
+    bio: string
+    logo: string
+    username: string
+}
+
 export interface Message {
     sender: 'me' | 'them';
     text: string;
@@ -45,8 +52,12 @@ export interface RawMessage {
 }
 
 export interface MessageType {
+    // image(image: any): string | undefined;
+    image?: Blob;
     sender: 'me' | 'them';
     text: string;
     audio?: Blob;
     video?: Blob;
+    file?: File;
+    fileName?: string;
 }
