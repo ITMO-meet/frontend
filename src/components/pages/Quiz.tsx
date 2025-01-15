@@ -33,17 +33,25 @@ export const Quiz: React.FC<QuizProps> = ({ onExit }) => {
         }
 
         const fetchTest = async () => {
-            const test = await getTest(test_id);
-            setQuestionCount(test.questions_count);
+            try {
+                const test = await getTest(test_id);
+                setQuestionCount(test.questions_count);
+            } catch (err) {
+                console.error("Не удалось загрузить тест", err);
+            }
         }
         const start = async () => {
-            const resultId = await startTest(test_id, userData.getIsu());
-            setResultId(resultId.result_id);
+            try {
+                const resultId = await startTest(test_id, userData.getIsu());
+                setResultId(resultId.result_id);
+            } catch (err) {
+                console.error("Не удалось начать тест", err);
+            }
         }
         
         fetchTest();
         start();
-    }, []);
+    }, [test_id]);
 
     // load current question
     useEffect(() => {
@@ -53,16 +61,28 @@ export const Quiz: React.FC<QuizProps> = ({ onExit }) => {
         }
 
         const fetchQuestion = async () => {
-            const question = await getQuestion(test_id, currentQuestionIndex);
-            setCurrentQuestion(question.description);
+            try {
+                const question = await getQuestion(test_id, currentQuestionIndex);
+                setCurrentQuestion(question.description);
+            } catch (err) {
+                console.error("Не удалось загрузить вопрос", err);
+            }
         }
         
         fetchQuestion();
-    }, [currentQuestionIndex]);
+    }, [test_id, currentQuestionIndex]);
 
     const handleConfirm = (ansIndex: number) => {
+        if (resultId === "") {
+            return;
+        }
+
         setIsExiting(true); // Устанавливаем состояние выхода
-        answerQuestion(resultId, currentQuestionIndex, ansIndex);
+        try {
+            answerQuestion(resultId, currentQuestionIndex, ansIndex);
+        } catch (err) {
+            console.error("Не удалось отправить ответ", err);
+        }
 
         // Задержка перед переходом к следующему вопросу
         setTimeout(() => {

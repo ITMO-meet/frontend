@@ -51,34 +51,34 @@ export const RegisterPage: React.FC = () => {
         setCurrentStep((prev) => Math.max(prev - 1, 0));
     };
 
-    const handleFinish = () => {
-        // After registration, navigate to tests
-        const initialTestId = 1;
-        navigate(`/tests/${initialTestId}`);
-    };
+	const handleFinish = () => {
+		// After registration, navigate to tests
+		const initialTestId = "6787db67c35a41da41946133";
+		navigate(`/tests/${initialTestId}`);
+	};
 
-    const renderStep = () => {
-        switch (steps[currentStep]) {
-            case 'username':
-                return <UsernameStep isu={isu} onNext={handleNext} />;
-            case 'bio':
-                return <BioStep isu={isu} onNext={handleNextBio} />;
-            case 'main-feats':
-                return <MainFeaturesStep isu={isu} bio={bio} onNext={handleNext} />;
-            case 'gender':
-                return <GenderStep isu={isu} onNext={handleNext} />;
-            case 'tags':
-                return <TagsStep isu={isu} onNext={handleNext} />;
-            case 'photo':
-                return <PhotoStep isu={isu} onNext={handleNext} />;
-            case 'additional-photos':
-                return <AdditionalPhotosStep isu={isu} onNext={handleNext} />;
-            case 'goal':
-                return <GoalStep isu={isu} onNext={handleNext} />;
-            default:
-                return null;
-        }
-    };
+	const renderStep = () => {
+		switch (steps[currentStep]) {
+			case 'username':
+				return <UsernameStep isu={isu} onNext={handleNext} />;
+			case 'bio':
+				return <BioStep onNext={handleNextBio} />;
+			case 'main-feats':
+				return <MainFeaturesStep isu={isu} bio={bio} onNext={handleNext} />;
+			case 'gender':
+				return <GenderStep isu={isu} onNext={handleNext} />;
+			case 'tags':
+				return <TagsStep isu={isu} onNext={handleNext} />;
+			case 'photo':
+				return <PhotoStep isu={isu} onNext={handleNext} />;
+			case 'additional-photos':
+				return <AdditionalPhotosStep isu={isu} onNext={handleNext} />;
+			case 'goal':
+				return <GoalStep isu={isu} onNext={handleNext} />;
+			default:
+				return null;
+		}
+	};
 
     return (
         <Container maxWidth="sm" style={{ marginTop: '50px' }}>
