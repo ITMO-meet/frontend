@@ -8,8 +8,7 @@ describe('Matches page', function() {
         await page.click("text=Мэтчи"); 
 
         // check url
-        let url = await page.url(); 
-        await expect(url).toContain("/matches");
+        await expect(await page.url()).toContain("/matches");
     });
 
     it('Test matches and premium', async function() {

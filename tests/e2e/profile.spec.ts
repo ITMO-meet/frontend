@@ -8,8 +8,7 @@ describe('Profile', function() {
         await page.click("text=Профиль", {timeout: 5000}); 
 
         // check url
-        let url = await page.url(); 
-        await expect(url).toContain("/profile");
+        await expect(await page.url()).toContain("/profile");
     });
     
     it('Profile settings', async function() {       

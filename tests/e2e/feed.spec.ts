@@ -7,8 +7,7 @@ describe('Feed page', function() {
         await makeLogin(page);
         await page.click("text=Лента"); 
 
-        let url = await page.url(); 
-        await expect(url).toContain("/feed");
+        await expect(await page.url()).toContain("/feed");
     });
 
     it('Test Render', async function() {

@@ -26,7 +26,7 @@ describe('Register page', function() {
         await page.locator("text=Продолжить").click({timeout: 5000}); 
         try {
             await expect(await page.locator("text=Предоставьте краткую информацию о себе")).toHaveCount(1, {timeout: FAST_TIMEOUT});
-        } catch (error) {
+        } catch {
             await expect(await page.locator("text=Введите логин")).toHaveCount(1);
             await page.fill('input[type="text"]', "username2");
             await page.locator("text=Продолжить").click({timeout: 5000}); 
@@ -38,7 +38,7 @@ describe('Register page', function() {
         await page.locator("text=Продолжить").click({timeout: 5000});
         try {
             await expect(await page.locator("text=Введите основную информацию")).toHaveCount(1, {timeout: FAST_TIMEOUT});
-        } catch (error) {
+        } catch {
             await expect(await page.locator("text=Предоставьте краткую информацию о себе")).toHaveCount(1);
             await page.fill('textarea', "bio2...");
             await page.locator("text=Продолжить").click({timeout: 5000});
@@ -51,7 +51,7 @@ describe('Register page', function() {
         await page.locator("text=Продолжить").click({timeout: 5000});
         try {
             await expect(await page.locator("text=Настройки знакомств")).toHaveCount(1, {timeout: FAST_TIMEOUT});
-        } catch (error) {
+        } catch {
             await expect(await page.locator("text=Введите основную информацию")).toHaveCount(1);
             await page.click("text=Рак", {timeout: 5000});
             await page.click("text=Лев", {timeout: 5000});
@@ -64,7 +64,7 @@ describe('Register page', function() {
         await page.locator("text=Продолжить").click({timeout: 5000});
         try {
             await expect(await page.locator("text=Выберите теги")).toHaveCount(1, {timeout: FAST_TIMEOUT});
-        } catch (error) {
+        } catch {
             await expect(await page.locator("text=Настройки знакомств")).toHaveCount(1);
             await page.click("text=Женщины", {timeout: 5000});
             await page.locator("text=Продолжить").click({timeout: 5000});
@@ -76,7 +76,7 @@ describe('Register page', function() {
         await page.locator("text=Продолжить").click({timeout: 5000});
         try {
             await expect(await page.locator("text=Выберите основное фото")).toHaveCount(1, {timeout: FAST_TIMEOUT});
-        } catch (error) {
+        } catch {
             await expect(await page.locator("text=Выберите теги")).toHaveCount(1);
             await page.click("text=Музыка", {timeout: 5000});
             await page.locator("text=Продолжить").click({timeout: 5000});
@@ -106,7 +106,7 @@ describe('Register page', function() {
         await page.locator("text=Продолжить").click({timeout: 5000}); 
         try {
             await expect(await page.locator("text=Предоставьте краткую информацию о себе")).toHaveCount(1, {timeout: FAST_TIMEOUT});
-        } catch (error) {
+        } catch {
             await expect(await page.locator("text=Введите логин")).toHaveCount(1);
             await page.fill('input[type="text"]', "username2");
             await page.locator("text=Продолжить").click({timeout: 5000}); 

@@ -1,6 +1,6 @@
-import { expect } from '@playwright/test';
-import { makeLogin } from './utils';
-import { page } from './setup';
+// import { expect } from '@playwright/test';
+// import { makeLogin } from './utils';
+// import { page } from './setup';
 
 describe('Chats page', function() {
     // beforeEach(async function() {
