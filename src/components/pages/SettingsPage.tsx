@@ -121,13 +121,13 @@ const SettingsPage: React.FC = () => {
                     <Typography color="text.secondary">{notificationsEnabled ? 'Включены' : 'Выключены'}</Typography>
                 </Box>
                 <Divider />
-                <Box display="flex" justifyContent="space-between" alignItems="center" py={1} onClick={handleOpenLanguageDialog}>
+                {/* <Box display="flex" justifyContent="space-between" alignItems="center" py={1} onClick={handleOpenLanguageDialog}>
                     <Box display="flex" alignItems="center">
                         <LanguageIcon sx={{ mr: 1 }} />
                         <Typography>Язык</Typography>
                     </Box>
                     <Typography color="text.secondary">{selectedLanguage}</Typography>
-                </Box>
+                </Box> */}
                 <Divider />
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1} onClick={handleOpenProblemDialog}>
                     <Box display="flex" alignItems="center">
