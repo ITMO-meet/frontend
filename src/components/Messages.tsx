@@ -376,7 +376,7 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
             id="picker-modal-title"
             variant="h6"
             sx={{ mb: 3, fontWeight: 'bold' }}
-          >
+          />
             <Typography
               id="picker-modal-title" // Match the aria-labelledby
               variant="h6"

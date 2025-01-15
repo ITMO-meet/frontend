@@ -114,15 +114,16 @@ describe('CalendarPage', () => {
 
     test('handles missing ITMO ID gracefully', async () => {
         mockUseLocation.mockReturnValueOnce({ state: {} });
-
+    
         render(
             <MemoryRouter>
                 <CalendarPage />
             </MemoryRouter>
         );
-
-        expect(screen.getByText('ITMO ID is missing ;c')).toBeInTheDocument();
+    
+        expect(screen.getByText('ITMO ID отсутствует ;c')).toBeInTheDocument(); // Локализованный текст
     });
+    
 
     test('displays error message if API call fails', async () => {
         global.fetch = jest.fn(() =>
@@ -130,16 +131,18 @@ describe('CalendarPage', () => {
                 ok: false,
             })
         ) as jest.Mock;
-
+    
         render(
             <MemoryRouter>
                 <CalendarPage />
             </MemoryRouter>
         );
-
+    
         await waitFor(() => {
             expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
         });
-        expect(screen.getByText('Error occurred: Error fetching schedule')).toBeInTheDocument();
+    
+        expect(screen.getByText('Произошла ошибка: Error fetching schedule')).toBeInTheDocument(); // Локализованный текст
     });
+    
 });

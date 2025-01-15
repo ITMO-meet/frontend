@@ -29,7 +29,8 @@ describe('TestsPage', () => {
     );
 
     // Проверка заголовка
-    expect(screen.getByRole('heading', { name: /tests/i })).toBeInTheDocument();
+// Измените тест на:
+    expect(screen.getByRole('heading', { name: /тесты/i })).toBeInTheDocument();
 
     // Проверка заголовков разделов
     expect(screen.getByText(/о личном/i)).toBeInTheDocument();

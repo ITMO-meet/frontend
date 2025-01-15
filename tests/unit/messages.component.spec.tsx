@@ -118,7 +118,7 @@ describe('Messages Component', () => {
     const attachmentButton = screen.getByTestId('attachment-button');
     fireEvent.click(attachmentButton);
 
-    expect(screen.getByText('Select an Option')).toBeInTheDocument();
+    expect(screen.getByText('Выбрать опцию')).toBeInTheDocument();
   });
 
   it('closes the picker modal when the modal is dismissed', () => {
