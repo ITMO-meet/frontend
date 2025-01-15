@@ -39,6 +39,7 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
   const contact = people.find((person) => person.isu === Number(id));
 
 
+  
   // Audio recorder state
   const [, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
