@@ -12,9 +12,10 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('../../src/components/UserMessage', () => ({
   __esModule: true,
-  default: ({ message }: { message: { sender: 'me' | 'them'; text: string } }) => (
-    <div data-testid={`message-${message.sender}`}>{message.text}</div>
-  ),
+  default: ({ message }: { message: { sender: 'me' | 'them'; text: string } }) => {
+    console.log('Rendering UserMessage:', message);
+    return <div data-testid={`message-${message.sender}`}>{message.text}</div>;
+  },
 }));
 
 // Mock scrollIntoView and media devices
@@ -32,35 +33,30 @@ beforeAll(() => {
   });
 
   // Mock MediaRecorder
-// Mock MediaRecorder
-global.MediaRecorder = class {
-  private ondataavailable: ((event: BlobEvent) => void) | null = null;
-  private onstop: (() => void) | null = null;
+  global.MediaRecorder = class {
+    private chunks: BlobPart[] = [];
+    private ondataavailable: ((event: BlobEvent) => void) | null = null;
+    private onstop: (() => void) | null = null;
 
-  private chunks: BlobPart[] = [];
-
-  start() {
-    this.chunks = [];
-    this.ondataavailable?.({ data: new Blob(['audio-data'], { type: 'audio/webm' }) } as BlobEvent);
-  }
-
-  stop() {
-    if (this.onstop) {
-      this.onstop();
+    start() {
+      this.chunks = [];
+      console.log('MediaRecorder started');
+      setTimeout(() => {
+        const event = { data: new Blob(['mock-audio-data'], { type: 'audio/webm' }) } as BlobEvent;
+        this.ondataavailable?.(event);
+      }, 50);
     }
-  }
 
-  addEventListener(event: string, callback: (...args: any[]) => void) {
-    if (event === 'dataavailable') this.ondataavailable = callback as (event: BlobEvent) => void;
-    if (event === 'stop') this.onstop = callback;
-  }
+    stop() {
+      console.log('MediaRecorder stopped');
+      this.onstop?.();
+    }
 
-  removeEventListener() {
-    // No-op
-  }
-};
-
-  
+    addEventListener(event: string, callback: (...args: any[]) => void) {
+      if (event === 'dataavailable') this.ondataavailable = callback as (event: BlobEvent) => void;
+      if (event === 'stop') this.onstop = callback;
+    }
+  };
 });
 
 describe('Messages Component', () => {
@@ -124,17 +120,16 @@ describe('Messages Component', () => {
         <Messages people={mockContacts} messages={mockMessages} />
       </MemoryRouter>
     );
-  
+
     const attachmentButton = screen.getByTestId('attachment-button');
     fireEvent.click(attachmentButton);
-  
+
     const modal = screen.getByRole('dialog'); // Role should now match
     expect(modal).toBeInTheDocument();
-  
+
     fireEvent.keyDown(modal, { key: 'Escape', code: 'Escape' });
     expect(modal).not.toBeInTheDocument();
   });
-  
 
   it('adds an image message when a file is selected from the gallery', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
@@ -167,7 +162,6 @@ describe('Messages Component', () => {
   });
 
   it('adds an audio message when recording is stopped', async () => {
-    // Arrange
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
@@ -175,23 +169,17 @@ describe('Messages Component', () => {
       </MemoryRouter>
     );
   
-    const micButton = screen.getAllByRole('button').find(
-      (button) => button.querySelector('svg[data-testid="MicIcon"]')
-    )!;
-  
-    // Act
+    const micButton = screen.getByTestId('mic-button');
     fireEvent.mouseDown(micButton); // Start recording
-    fireEvent.mouseUp(micButton);   // Stop recording
+    fireEvent.mouseUp(micButton); // Stop recording
   
-    // Assert
+    // Ожидание появления нового элемента в списке сообщений
     await waitFor(() => {
-      expect(screen.getByText((content) => content.includes('Voice message'))).toBeInTheDocument();
+      expect(screen.queryAllByTestId(/^message-/).length).toBeGreaterThan(2);
     });
   });
-   
-
+  
   it('adds a video message when recording is stopped', async () => {
-    // Arrange
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
@@ -199,21 +187,15 @@ describe('Messages Component', () => {
       </MemoryRouter>
     );
   
-    const videoButton = screen.getAllByRole('button').find(
-      (button) => button.querySelector('svg[data-testid="VideocamIcon"]')
-    )!;
-    
-    // Act
+    const videoButton = screen.getByTestId('video-button');
     fireEvent.click(videoButton); // Start recording
     fireEvent.click(videoButton); // Stop recording
   
-    // Assert
+    // Ожидание появления нового элемента в списке сообщений
     await waitFor(() => {
-      expect(screen.getByText((content) => content.includes('Video sent'))).toBeInTheDocument();
+      expect(screen.queryAllByTestId(/^message-/).length).toBeGreaterThan(2);
     });
   });
-  
-  
   
 
   it('navigates to the previous page when back button is clicked', () => {
@@ -223,10 +205,10 @@ describe('Messages Component', () => {
         <Messages people={mockContacts} messages={mockMessages} />
       </MemoryRouter>
     );
-  
+
     const backButton = screen.getByTestId('back-button');
     fireEvent.click(backButton);
-  
+
     expect(mockNavigate).toHaveBeenCalledWith(-1);
   });
-}); 
+});

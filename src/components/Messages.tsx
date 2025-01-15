@@ -152,15 +152,18 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
     recorder.ondataavailable = (e) => chunks.push(e.data);
     recorder.onstop = () => {
       const blob = new Blob(chunks, { type: 'audio/webm' });
-      setChatMessages((prev) => [...prev, { sender: 'me', text: 'Voice message', audio: blob }]);
-      stream.getTracks().forEach((track) => track.stop());
+      console.log('Audio blob created:', blob);
+      setChatMessages((prev) => {
+        console.log('Updating messages with audio:', [...prev, { sender: 'me', text: 'Voice message', audio: blob }]);
+        return [...prev, { sender: 'me', text: 'Voice message', audio: blob }];
+      });
     };
-    
   
     setMediaRecorder(recorder);
     recorder.start();
     setIsRecording(true);
   };
+  
   
 
   const stopRecordingAudio = () => {
@@ -181,9 +184,15 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
     recorder.ondataavailable = (e) => chunks.push(e.data);
     recorder.onstop = () => {
       const blob = new Blob(chunks, { type: 'video/webm' });
-      setChatMessages((prev) => [...prev, { sender: 'me', text: 'Video sent', video: blob, image: new Blob() }]);
-      stream.getTracks().forEach((track) => track.stop());
+      console.log('Video blob created:', blob);
+      setChatMessages((prev) => {
+        console.log('Previous messages:', prev);
+        console.log('Adding Video sent');
+        return [...prev, { sender: 'me', text: 'Video sent', video: blob }];
+      });
     };
+    
+    
 
     setVideoStream(stream);
     setIsRecordingVideo(true);
@@ -297,11 +306,12 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
                 <IconButton onClick={handleSendText}>
                   <SendIcon />
                 </IconButton>
-                <IconButton onMouseDown={handleMicMouseDown} onMouseUp={handleMicMouseUp}>
+                <IconButton onMouseDown={handleMicMouseDown} onMouseUp={handleMicMouseUp} data-testid="mic-button">
                   <MicIcon />
                 </IconButton>
                 <IconButton
                   onClick={isRecordingVideo ? stopRecordingVideo : startRecordingVideo}
+                  data-testid="video-button"
                 >
                   {isRecordingVideo ? <StopIcon /> : <VideocamIcon />}
                 </IconButton>
