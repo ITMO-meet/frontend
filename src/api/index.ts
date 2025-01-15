@@ -3,11 +3,11 @@
 // Возвращаем JSON или бросаем ошибку. Вызовы делаются из других модулей.
 
 
-// const AUTH_BASE_URL = 'http://185.178.47.42:3000'
-const AUTH_BASE_URL = 'http://127.0.0.1:8000'
+const AUTH_BASE_URL = 'http://185.178.47.42:3000'
+// const AUTH_BASE_URL = 'http://127.0.0.1:8000'
 // const TEST_BASE_URL = 'http://185.178.47.42:7000'
-// const BASE_URL = 'http://185.178.47.42:7000';
-const BASE_URL = 'http://127.0.0.1:8000';
+const BASE_URL = 'http://185.178.47.42:8000';
+// const BASE_URL = 'http://127.0.0.1:8000';
 // const BASE_URL = 'http://127.0.0.1:28000';
 
 
