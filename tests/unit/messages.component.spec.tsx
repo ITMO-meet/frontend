@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { act } from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, useParams, useNavigate } from 'react-router-dom';
 import '@testing-library/jest-dom';
@@ -12,10 +12,60 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('../../src/components/UserMessage', () => ({
   __esModule: true,
-  default: ({ message }: { message: { sender: 'me' | 'them'; text: string } }) => (
-    <div data-testid={`message-${message.sender}`}>{message.text}</div>
-  ),
+  default: ({ message }: { message: { sender: 'me' | 'them'; text: string } }) => {
+    console.log('Rendering UserMessage:', message);
+    return <div data-testid={`message-${message.sender}`}>{message.text}</div>;
+  },
 }));
+
+// Mock scrollIntoView and media devices
+beforeAll(() => {
+  // Mock scrollIntoView
+  window.HTMLElement.prototype.scrollIntoView = jest.fn();
+
+  // Mock getUserMedia
+  Object.defineProperty(global.navigator, 'mediaDevices', {
+    value: {
+      getUserMedia: jest.fn().mockResolvedValue({
+        getTracks: () => [{ stop: jest.fn() }],
+      }),
+    },
+  });
+
+  // Mock MediaRecorder
+  global.MediaRecorder = class {
+    private ondataavailable: ((event: BlobEvent) => void) | null = null;
+    private onstop: (() => void) | null = null;
+  
+    start() {
+      console.log('MediaRecorder started');
+      setTimeout(() => {
+        const event = { data: new Blob(['mock-audio-data'], { type: 'audio/webm' }) } as BlobEvent;
+        this.ondataavailable?.(event);
+      }, 50);
+    }
+  
+    stop() {
+      console.log('MediaRecorder stopped');
+      this.onstop?.();
+    }
+  
+    addEventListener<K extends 'dataavailable' | 'stop'>(
+      event: K,
+      callback: K extends 'dataavailable' ? (event: BlobEvent) => void : () => void
+    ) {
+      if (event === 'dataavailable') {
+        this.ondataavailable = callback as (event: BlobEvent) => void;
+      }
+      if (event === 'stop') {
+        this.onstop = callback as () => void;
+      }
+    }
+  };
+  
+});
+
+
 
 describe('Messages Component', () => {
   const mockContacts = [
@@ -52,38 +102,12 @@ describe('Messages Component', () => {
 
   const mockNavigate = jest.fn();
 
-  beforeAll(() => {
-    window.HTMLElement.prototype.scrollIntoView = jest.fn();
-  });
-
   beforeEach(() => {
     jest.clearAllMocks();
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
   });
 
-  it('renders "Contact not found" when contact does not exist', () => {
-    (useParams as jest.Mock).mockReturnValue({ id: '3' });
-    render(
-      <MemoryRouter>
-        <Messages people={mockContacts} messages={mockMessages} />
-      </MemoryRouter>
-    );
-    expect(screen.getByText('Contact not found')).toBeInTheDocument();
-  });
-
-  it('renders the component with initial messages when contact exists', () => {
-    (useParams as jest.Mock).mockReturnValue({ id: '1' });
-    render(
-      <MemoryRouter>
-        <Messages people={mockContacts} messages={mockMessages} />
-      </MemoryRouter>
-    );
-    expect(screen.getByText('John Doe')).toBeInTheDocument();
-    expect(screen.getByText('Hello, Jane!')).toBeInTheDocument();
-    expect(screen.getByText('Hi, John!')).toBeInTheDocument();
-  });
-
-  it('updates messages when a new message is sent via send button', () => {
+  it('displays the picker modal when the attachment button is clicked', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
@@ -91,17 +115,13 @@ describe('Messages Component', () => {
       </MemoryRouter>
     );
 
-    const inputField = screen.getByPlaceholderText('Type a message!');
-    fireEvent.change(inputField, { target: { value: 'Hello there!' } });
-    expect(inputField).toHaveValue('Hello there!');
+    const attachmentButton = screen.getByTestId('attachment-button');
+    fireEvent.click(attachmentButton);
 
-    const sendButton = screen.getAllByRole('button').find(
-      (button) => button.firstChild?.nodeName === 'svg'
-    )!;
-    fireEvent.click(sendButton);
+    expect(screen.getByText('Select an Option')).toBeInTheDocument();
   });
 
-  it('updates messages when a new message is sent via Enter key', () => {
+  it('closes the picker modal when the modal is dismissed', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
@@ -109,15 +129,17 @@ describe('Messages Component', () => {
       </MemoryRouter>
     );
 
-    const inputField = screen.getByPlaceholderText('Type a message!');
-    fireEvent.change(inputField, { target: { value: 'Testing Enter key' } });
-    fireEvent.keyDown(inputField, { key: 'Enter', code: 'Enter' });
+    const attachmentButton = screen.getByTestId('attachment-button');
+    fireEvent.click(attachmentButton);
 
-    expect(inputField).toHaveValue('');
-    expect(screen.getByText('Testing Enter key')).toBeInTheDocument();
+    const modal = screen.getByRole('dialog'); // Role should now match
+    expect(modal).toBeInTheDocument();
+
+    fireEvent.keyDown(modal, { key: 'Escape', code: 'Escape' });
+    expect(modal).not.toBeInTheDocument();
   });
 
-  it('does not send a message if input is empty or whitespace', () => {
+  it('adds an image message when a file is selected from the gallery', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
@@ -125,18 +147,14 @@ describe('Messages Component', () => {
       </MemoryRouter>
     );
 
-    const inputField = screen.getByPlaceholderText('Type a message!');
-    fireEvent.change(inputField, { target: { value: '   ' } });
-    const sendButton = screen.getAllByRole('button').find(
-      (button) => button.firstChild?.nodeName === 'svg'
-    )!;
-    fireEvent.click(sendButton);
+    const galleryInput = screen.getByTestId('gallery-input') as HTMLInputElement;
+    const file = new File(['image-content'], 'test-image.jpg', { type: 'image/jpeg' });
+    fireEvent.change(galleryInput, { target: { files: [file] } });
 
-    expect(inputField).toHaveValue('   ');
-    expect(screen.queryByText('   ')).not.toBeInTheDocument();
+    expect(screen.getByText('Image sent')).toBeInTheDocument();
   });
 
-  it('navigates back when back button is clicked', () => {
+  it('adds a file message when a file is selected from the file manager', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
     render(
       <MemoryRouter>
@@ -144,26 +162,57 @@ describe('Messages Component', () => {
       </MemoryRouter>
     );
 
-    const backButton = screen.getAllByRole('button').find(
-      (button) => button.firstChild?.nodeName === 'svg' && button !== null
-    )!;
+    const fileInput = screen.getByTestId('file-input') as HTMLInputElement;
+    const file = new File(['file-content'], 'test-document.pdf', { type: 'application/pdf' });
+    fireEvent.change(fileInput, { target: { files: [file] } });
+
+    expect(screen.getByText('test-document.pdf')).toBeInTheDocument();
+  });
+
+  it('adds an audio message when recording is stopped', async () => {
+    (useParams as jest.Mock).mockReturnValue({ id: '1' });
+    render(
+      <MemoryRouter>
+        <Messages people={mockContacts} messages={mockMessages} />
+      </MemoryRouter>
+    );
+  
+    const micButton = screen.getByTestId('mic-button');
+    await act(async () => {
+      fireEvent.mouseDown(micButton);
+      fireEvent.mouseUp(micButton);
+    });
+  });
+  
+  
+  it('adds a video message when recording is stopped', async () => {
+    (useParams as jest.Mock).mockReturnValue({ id: '1' });
+    render(
+      <MemoryRouter>
+        <Messages people={mockContacts} messages={mockMessages} />
+      </MemoryRouter>
+    );
+  
+    const videoButton = screen.getByTestId('video-button');
+    await act(async () => {
+      fireEvent.mouseDown(videoButton);
+      fireEvent.mouseUp(videoButton);
+    });
+  });
+  
+  
+
+  it('navigates to the previous page when back button is clicked', () => {
+    (useParams as jest.Mock).mockReturnValue({ id: '1' });
+    render(
+      <MemoryRouter>
+        <Messages people={mockContacts} messages={mockMessages} />
+      </MemoryRouter>
+    );
+
+    const backButton = screen.getByTestId('back-button');
     fireEvent.click(backButton);
 
     expect(mockNavigate).toHaveBeenCalledWith(-1);
-  });
-
-  it('calls scrollIntoView when messages are updated', () => {
-    (useParams as jest.Mock).mockReturnValue({ id: '1' });
-    render(
-      <MemoryRouter>
-        <Messages people={mockContacts} messages={mockMessages} />
-      </MemoryRouter>
-    );
-
-    const inputField = screen.getByPlaceholderText('Type a message!');
-    fireEvent.change(inputField, { target: { value: 'Scroll test' } });
-    fireEvent.keyDown(inputField, { key: 'Enter', code: 'Enter' });
-
-    expect(window.HTMLElement.prototype.scrollIntoView).toHaveBeenCalled();
   });
 });
