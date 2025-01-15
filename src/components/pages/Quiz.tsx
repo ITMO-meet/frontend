@@ -37,7 +37,7 @@ export const Quiz: React.FC<QuizProps> = ({ onExit }) => {
                 const test = await getTest(test_id);
                 setQuestionCount(test.questions_count);
             } catch (err) {
-                console.error("Не удалось загрузить тест");
+                console.error("Не удалось загрузить тест", err);
             }
         }
         const start = async () => {
@@ -45,7 +45,7 @@ export const Quiz: React.FC<QuizProps> = ({ onExit }) => {
                 const resultId = await startTest(test_id, userData.getIsu());
                 setResultId(resultId.result_id);
             } catch (err) {
-                console.error("Не удалось начать тест");
+                console.error("Не удалось начать тест", err);
             }
         }
         
@@ -65,7 +65,7 @@ export const Quiz: React.FC<QuizProps> = ({ onExit }) => {
                 const question = await getQuestion(test_id, currentQuestionIndex);
                 setCurrentQuestion(question.description);
             } catch (err) {
-                console.error("Не удалось загрузить вопрос");
+                console.error("Не удалось загрузить вопрос", err);
             }
         }
         
@@ -81,7 +81,7 @@ export const Quiz: React.FC<QuizProps> = ({ onExit }) => {
         try {
             answerQuestion(resultId, currentQuestionIndex, ansIndex);
         } catch (err) {
-            console.error("Не отправить ответ");
+            console.error("Не удалось отправить ответ", err);
         }
 
         // Задержка перед переходом к следующему вопросу

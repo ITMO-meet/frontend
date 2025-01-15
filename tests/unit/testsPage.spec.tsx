@@ -55,7 +55,7 @@ describe('TestsPage', () => {
     const testCard = screen.getByAltText('Мечты');
     fireEvent.click(testCard);
 
-    expect(navigateMock).toHaveBeenCalledWith('/tests/dreams');
+    expect(navigateMock).toHaveBeenCalledWith('/tests/6787dc30c35a41da41946137');
   });
 
   test('shows alert for completed test', () => {
