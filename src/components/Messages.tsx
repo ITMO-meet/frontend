@@ -63,10 +63,10 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
         .map((message) => ({
           sender: message.sender_id === contact.isu ? 'them' : 'me',
           text: message.text,
-          image: undefined,
-          video: undefined,
-          audio: undefined,
-          file: undefined,
+          image: message.image,
+          video: message.video,
+          audio: message.audio,
+          file: message.file,
         }));
       setChatMessages(initialMessages);
     }

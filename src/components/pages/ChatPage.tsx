@@ -6,6 +6,7 @@ import Stories from '../Stories';
 import AddStoryModal from '../AddStoryModal';
 import { logEvent, logPageView } from '../../analytics';
 import { Profile } from '../../api/profile';
+import { RawMessage } from '../../types';
 
 interface ChatPageProps {
   people: Profile[];
@@ -15,14 +16,7 @@ interface ChatPageProps {
     url: string;
     expiration_date: number;
   }>;
-  messages: Array<{
-    id: string;
-    chat_id: string;
-    sender_id: number;
-    receiver_id: number;
-    text: string;
-    timestamp: string;
-  }>;
+  messages: RawMessage[];
 }
 
 const ChatPage: React.FC<ChatPageProps> = ({ people, stories, messages }) => {
