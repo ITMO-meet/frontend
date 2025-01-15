@@ -5,6 +5,19 @@ import '@testing-library/jest-dom';
 import { logEvent, logPageView } from '../../src/analytics'
 import { PremiumProvider } from '../../src/contexts/PremiumContext';
 import { feedStore } from '../../src/stores/FeedStore';
+import { likePerson, dislikePerson, superLikePerson } from '../../src/api/feed';
+
+jest.mock('../../src/api/feed', () => ({
+    likePerson: jest.fn(() => Promise.resolve({ message: 'ok' })),
+    dislikePerson: jest.fn(() => Promise.resolve({ message: 'ok' })),
+    superLikePerson: jest.fn(() => Promise.resolve({ message: 'ok' })),
+}));
+
+jest.mock('../../src/contexts/PremiumContext', () => ({
+    usePremium: () => ({ isPremium: true }),
+    PremiumProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 
 jest.mock('../../src/analytics', () => ({
     logEvent: jest.fn(),
@@ -71,9 +84,6 @@ jest.mock('../../src/stores/UserDataStore', () => ({
 }));
 
 describe('FeedPage', () => {
-    const mockOnLike = jest.fn();
-    const mockOnSuperLike = jest.fn();
-    const mockOnDislike = jest.fn();
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -82,11 +92,8 @@ describe('FeedPage', () => {
 
     it('renders the component correctly', () => {
         render(
-            <PremiumProvider>  
+            <PremiumProvider>
                 <FeedPage
-                    onLike={mockOnLike}
-                    onSuperLike={mockOnSuperLike}
-                    onDislike={mockOnDislike}
                 />
             </PremiumProvider>
         );
@@ -102,11 +109,8 @@ describe('FeedPage', () => {
 
     it('calls onLike when swiped right', async () => {
         render(
-            <PremiumProvider>  
+            <PremiumProvider>
                 <FeedPage
-                    onLike={mockOnLike}
-                    onSuperLike={mockOnSuperLike}
-                    onDislike={mockOnDislike}
                 />
             </PremiumProvider>
         );
@@ -114,23 +118,20 @@ describe('FeedPage', () => {
         const button = screen.getByTestId("FavoriteIcon");
         fireEvent.click(button);
 
-        expect(mockOnLike).toHaveBeenCalledWith(person1);
         await waitFor(() => {
             expect(feedStore.loadNewPerson).toHaveBeenCalledTimes(1);
             expect(screen.getByText('John Doe2')).toBeInTheDocument();
             expect(screen.getByText('A sample person2')).toBeInTheDocument();
         });
-        
+
+        expect(likePerson).toHaveBeenCalledWith(1, person1.isu);
         expect(logEvent).toHaveBeenCalledWith('Feed', 'User pressed/swiped like', '');
     });
 
     it('calls onDislike when swiped left', async () => {
         render(
-            <PremiumProvider>  
+            <PremiumProvider>
                 <FeedPage
-                    onLike={mockOnLike}
-                    onSuperLike={mockOnSuperLike}
-                    onDislike={mockOnDislike}
                 />
             </PremiumProvider>
         );
@@ -139,23 +140,20 @@ describe('FeedPage', () => {
         const button = screen.getByTestId("CloseIcon");
         fireEvent.click(button);
 
-        expect(mockOnDislike).toHaveBeenCalledWith(person1);
         await waitFor(() => {
             expect(feedStore.loadNewPerson).toHaveBeenCalledTimes(1);
             expect(screen.getByText('John Doe2')).toBeInTheDocument();
             expect(screen.getByText('A sample person2')).toBeInTheDocument();
         });
 
+        expect(dislikePerson).toHaveBeenCalledWith(1, person1.isu);
         expect(logEvent).toHaveBeenCalledWith('Feed', 'User pressed/swiped dislike', '');
     });
 
     it('calls onSuperLike when swiped up', async () => {
         render(
-            <PremiumProvider>  
+            <PremiumProvider>
                 <FeedPage
-                    onLike={mockOnLike}
-                    onSuperLike={mockOnSuperLike}
-                    onDislike={mockOnDislike}
                 />
             </PremiumProvider>
         );
@@ -163,13 +161,13 @@ describe('FeedPage', () => {
         const button = screen.getByTestId("StarIcon");
         fireEvent.click(button);
 
-        expect(mockOnSuperLike).toHaveBeenCalledWith(person1);
         await waitFor(() => {
             expect(feedStore.loadNewPerson).toHaveBeenCalledTimes(1);
             expect(screen.getByText('John Doe2')).toBeInTheDocument();
             expect(screen.getByText('A sample person2')).toBeInTheDocument();
         });
 
+        expect(superLikePerson).toHaveBeenCalledWith(1, person1.isu);
         expect(logEvent).toHaveBeenCalledWith('Feed', 'User pressed/swiped superlike', '');
     });
 });

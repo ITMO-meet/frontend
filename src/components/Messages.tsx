@@ -298,36 +298,35 @@ const Messages: React.FC<MessagesProps> = ({ people, messages }) => {
           variant="outlined"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          // We can use MUI's startAdornment/endAdornment props directly.
-          // MUI 5 -> use `InputProps`; MUI 6 -> use `slotProps`.
-          // Adjust if you're on MUI 5.
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <IconButton onClick={handleOpenPicker} data-testid="attachment-button">
-                  <AttachmentIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={handleSendText}>
-                  <SendIcon />
-                </IconButton>
-                <IconButton
-                  onClick={toggleAudioRecording}
-                  color={isRecording ? 'error' : 'default'}
-                >
-                  {isRecording ? <StopIcon /> : <MicIcon />}
-                </IconButton>
-                <IconButton
-                  onClick={isRecordingVideo ? stopRecordingVideo : startRecordingVideo}
-                  color={isRecordingVideo ? 'error' : 'default'}
-                >
-                  {isRecordingVideo ? <StopIcon /> : <VideocamIcon />}
-                </IconButton>
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <IconButton onClick={handleOpenPicker} data-testid="attachment-button">
+                    <AttachmentIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleSendText}>
+                    <SendIcon />
+                  </IconButton>
+                  <IconButton
+                    onClick={toggleAudioRecording}
+                    color={isRecording ? 'error' : 'default'}
+                  >
+                    {isRecording ? <StopIcon /> : <MicIcon />}
+                  </IconButton>
+                  <IconButton
+                    onClick={isRecordingVideo ? stopRecordingVideo : startRecordingVideo}
+                    color={isRecordingVideo ? 'error' : 'default'}
+                  >
+                    {isRecordingVideo ? <StopIcon /> : <VideocamIcon />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
           }}
         />
         {/* Optional small text indicator for audio recording */}
