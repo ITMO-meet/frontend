@@ -2,11 +2,6 @@ import { getProfile } from "./profile";
 import { RawMessage } from "../types";
 import { getJson, postJson, request } from ".";
 
-export interface UserChat {
-    chat_id: string;
-    isu_1: number;
-    isu_2: number;
-}
 
 interface UserMessage {
     message_id: string;
@@ -18,11 +13,33 @@ interface UserMessage {
     timestamp: string;
 }
 
+export interface UserChat {
+    chat_id: string;
+    isu_1: number;
+    isu_2: number;
+}
 
 export async function getUserContacts(isu: number, return_profiles: boolean) {
     const userChats = (await getJson<{ chats: UserChat[] }>(`/chats/user_chats/${isu}`)).chats;
-    if (return_profiles) return await Promise.all(userChats.map(chat => getProfile(chat.isu_2)));
-    else return userChats;
+
+    const processedChats = userChats.map(chat => {
+        const isUserIsu1 = chat.isu_1 === isu;
+        const isUserIsu2 = chat.isu_2 === isu;
+
+        if (isUserIsu1) {
+            return { ...chat, userIsu: "isu_1", otherIsu: chat.isu_2 };
+        } else if (isUserIsu2) {
+            return { ...chat, userIsu: "isu_2", otherIsu: chat.isu_1 };
+        } else {
+            throw new Error(`Unexpected: User ISU ${isu} not found in chat ${chat.chat_id}`);
+        }
+    });
+
+    if (return_profiles) {
+        return await Promise.all(processedChats.map(chat => getProfile(chat.otherIsu)));
+    } else {
+        return processedChats;
+    }
 }
 
 export async function getUserMessages(UserContacts: UserChat[]) {

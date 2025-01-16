@@ -19,7 +19,7 @@ interface ChatPageProps {
   messages: RawMessage[];
 }
 
-const ChatPage: React.FC<ChatPageProps> = ({ people, stories, messages }) => {
+const ChatPage: React.FC<ChatPageProps> = ({ people, stories, messages }: ChatPageProps) => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddStoryOpen, setIsAddStoryOpen] = useState(false);
