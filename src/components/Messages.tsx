@@ -33,11 +33,7 @@ interface MessagesProps {
   messages: RawMessage[];
 }
 
-const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
-  /**
-   * In a real app, you'd probably get the current user's ISU
-   * from a global store or context. For now, let's just hard-code:
-   */
+const Messages: React.FC<MessagesProps> = ({ people, chats, messages }: MessagesProps) => {
   const currentUserIsu = userData.getIsu();
 
   const [chatMessages, setChatMessages] = useState<MessageType[]>([]);
@@ -50,10 +46,18 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
   // Identify the contact from the URL param
   const contact = people.find((person) => person.isu === Number(id));
 
-  // Identify the chat from the URL param
-  const chat = chats.find((chat) => chat.isu_2 === Number(id));
+  // Identify the chat from the URL param and determine user role
+  const chat = chats.find((chat) => {
+    const isUserIsu1 = chat.isu_1 === currentUserIsu;
 
-  // This is how we'll get the chat_id from the messages array
+    if (isUserIsu1) {
+      return chat.isu_2 === Number(id);
+    } else {
+      return chat.isu_1 === Number(id);
+    }
+  });
+
+  // get the chat_id
   const chatId = React.useMemo(() => {
     if (!chat) return undefined;
     return chat.chat_id;
@@ -447,11 +451,11 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
         }}
       >
         <IconButton onClick={() => navigate(-1)} data-testid="back-button" sx={{
-      '&:active': {
-        backgroundColor: '#6a8afc', // Цвет при нажатии
-      },
-      borderRadius: '50%', // Круглая форма
-    }}>
+          '&:active': {
+            backgroundColor: '#6a8afc', // Цвет при нажатии
+          },
+          borderRadius: '50%', // Круглая форма
+        }}>
           <ArrowBackIosIcon />
         </IconButton>
         <Box
@@ -576,69 +580,69 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
             variant="h6"
             sx={{ mb: 3, fontWeight: 'bold' }}
           />
-            <Typography
-              id="picker-modal-title" // Match the aria-labelledby
-              variant="h6"
-              sx={{ mb: 3, fontWeight: 'bold' }}
-            >
-              Выбрать опцию
-            </Typography>
-            <Grid container spacing={3} justifyContent="center">
-              <Grid item>
-                <Box
-                  sx={{
-                    width: 100,
-                    height: 100,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    bgcolor: '#f9f9f9',
-                    borderRadius: '50%',
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                    cursor: 'pointer',
-                    transition: 'transform 0.2s, box-shadow 0.2s',
-                    '&:hover': {
-                      transform: 'scale(1.1)',
-                      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)',
-                    },
-                  }}
-                  onClick={handleOpenGallery}
-                >
-                  <ImageIcon sx={{ fontSize: 40, color: '#616161' }} />
-                </Box>
-                <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
-                  Галлерея
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Box
-                  sx={{
-                    width: 100,
-                    height: 100,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    bgcolor: '#f9f9f9',
-                    borderRadius: '50%',
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                    cursor: 'pointer',
-                    transition: 'transform 0.2s, box-shadow 0.2s',
-                    '&:hover': {
-                      transform: 'scale(1.1)',
-                      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)',
-                    },
-                  }}
-                  onClick={handleOpenFileManager}
-                >
-                  <FolderIcon sx={{ fontSize: 40, color: '#616161' }} />
-                </Box>
-                <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
-                  Файл
-                </Typography>
-              </Grid>
+          <Typography
+            id="picker-modal-title" // Match the aria-labelledby
+            variant="h6"
+            sx={{ mb: 3, fontWeight: 'bold' }}
+          >
+            Выбрать опцию
+          </Typography>
+          <Grid container spacing={3} justifyContent="center">
+            <Grid item>
+              <Box
+                sx={{
+                  width: 100,
+                  height: 100,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  bgcolor: '#f9f9f9',
+                  borderRadius: '50%',
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                  cursor: 'pointer',
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                  '&:hover': {
+                    transform: 'scale(1.1)',
+                    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)',
+                  },
+                }}
+                onClick={handleOpenGallery}
+              >
+                <ImageIcon sx={{ fontSize: 40, color: '#616161' }} />
+              </Box>
+              <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
+                Галлерея
+              </Typography>
             </Grid>
-          </Box>
-        </Modal>
+            <Grid item>
+              <Box
+                sx={{
+                  width: 100,
+                  height: 100,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  bgcolor: '#f9f9f9',
+                  borderRadius: '50%',
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                  cursor: 'pointer',
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                  '&:hover': {
+                    transform: 'scale(1.1)',
+                    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)',
+                  },
+                }}
+                onClick={handleOpenFileManager}
+              >
+                <FolderIcon sx={{ fontSize: 40, color: '#616161' }} />
+              </Box>
+              <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
+                Файл
+              </Typography>
+            </Grid>
+          </Grid>
+        </Box>
+      </Modal>
 
 
     </Box>
