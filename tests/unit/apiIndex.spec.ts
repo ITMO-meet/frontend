@@ -13,7 +13,7 @@ describe('api/index', () => {
             json: () => Promise.resolve({ success: true })
         });
         const result = await postJson<{ success: boolean }>('/test', { foo: 'bar' });
-        expect(fetch).toHaveBeenCalledWith('http://185.178.47.42:8000/test', expect.objectContaining({
+        expect(fetch).toHaveBeenCalledWith('/api/test', expect.objectContaining({
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ foo: 'bar' })
@@ -26,7 +26,7 @@ describe('api/index', () => {
         const formData = new FormData();
         formData.append('file', new File(['dummy'], 'test.png'));
         await postForm('/upload', formData);
-        expect(fetch).toHaveBeenCalledWith('http://185.178.47.42:8000/upload', {
+        expect(fetch).toHaveBeenCalledWith('/api/upload', {
             method: 'POST',
             body: formData
         });
@@ -38,7 +38,7 @@ describe('api/index', () => {
             json: () => Promise.resolve({ some: 'data' })
         });
         const result = await getJson<{ some: string }>('/something');
-        expect(fetch).toHaveBeenCalledWith('http://185.178.47.42:8000/something', { method: 'GET' });
+        expect(fetch).toHaveBeenCalledWith('/api/something', { method: 'GET' });
         expect(result).toEqual({ some: 'data' });
     });
 
@@ -50,7 +50,7 @@ describe('api/index', () => {
     
         const result = await putJson<{ success: boolean }>('/test', { foo: 'bar' });
     
-        expect(fetch).toHaveBeenCalledWith('http://185.178.47.42:8000/test', expect.objectContaining({
+        expect(fetch).toHaveBeenCalledWith('/api/test', expect.objectContaining({
             method: 'PUT',
             body: JSON.stringify({ foo: 'bar' })
         }));
