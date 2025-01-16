@@ -63,5 +63,6 @@ jobs:
               --name frontend \
               -p 80:80 \
               -p 443:443 \
+              --network itmomeet-network \
               -v /docker-volumes/letsencrypt:/etc/letsencrypt:ro \
               archont/itmo-meet-frontend:latest
