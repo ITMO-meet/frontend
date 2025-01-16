@@ -40,7 +40,7 @@ describe('profile API', () => {
 
         mockGetJson.mockResolvedValue({ profile: mockPerson });
         const result = await getFilteredPerson(userIsu, gender, ageRange, heightRange, relPrefs);
-        expect(mockGetJson).toHaveBeenCalledWith('/matches/random_persona?user_id=123456&gender=Everyone&min_age=0&max_age=100&min_height=0&max_height=100');
+        expect(mockGetJson).toHaveBeenCalledWith('/matches/random_person?user_id=123456&gender=Everyone&min_age=0&max_age=100&min_height=0&max_height=100');
         expect(result).toEqual({ profile: mockPerson });
     });
 
