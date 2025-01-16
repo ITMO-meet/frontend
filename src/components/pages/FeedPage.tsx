@@ -99,7 +99,12 @@ const FeedPage: React.FC<FeedProps> = observer(({ chats }) => {
                 break;
             case "right":
                 likePerson(user_id, target_id)
-                    .then(response => console.log('Like response:', response))
+                    .then(response => {
+                        if (response.matched) {
+                            chats.push({ chat_id: response.chat_id || "", isu_1: user_id, isu_2: target_id });
+                        }
+                        console.log('Like response:', response)
+                    })
                     .catch(error => console.error('Like error:', error));
                 logEvent("Feed", "User pressed/swiped like", "");
                 break;
