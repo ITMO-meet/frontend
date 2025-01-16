@@ -18,4 +18,4 @@ export async function setIsu(page: Page, isu: string) {
 }
 
 // export const BASE_FRONT_URL = "http://localhost:3070"
-export const BASE_FRONT_URL = "http://185.178.47.42"
+export const BASE_FRONT_URL = "https://itmomeet.ru"
