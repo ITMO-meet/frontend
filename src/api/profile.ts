@@ -58,6 +58,7 @@ interface UserProfile {
 
 export async function getProfile(isu: number) {
     const profile = await getJson<UserProfile>(`/profile/get_profile/${isu}`);
+    profile.profile.photos = profile.profile.photos.map(photo => photo.replace("http://185.178.47.42:9000", "itmomeet.ru"));
     return profile.profile
 }
 
