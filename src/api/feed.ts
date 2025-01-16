@@ -31,7 +31,7 @@ export async function getFilteredPerson(
         params.append("relationship_preferences", relPref);
     });
 
-    return await getJson<{ profile: Profile }>(`/matches/random_persona?${params.toString()}`);
+    return await getJson<{ profile: Profile }>(`/matches/random_person?${params.toString()}`);
 }
 
 export async function likePerson(user_id: number, target_id: number): Promise<LikeResponse> {
