@@ -83,15 +83,16 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }: Messages
    * -------------- Populate local state with existing messages --------------
    */
   useEffect(() => {
-    if (contact) {
+    if (contact && currentUserIsu) {
       const initialMessages: MessageType[] = messages
         .filter(
           (message) =>
-            message.sender_id === contact.isu || message.receiver_id === contact.isu
+            (message.sender_id === currentUserIsu && message.receiver_id === contact.isu) ||
+            (message.sender_id === contact.isu && message.receiver_id === currentUserIsu)
         )
         .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
         .map((message) => ({
-          sender: message.sender_id === contact.isu ? 'them' : 'me',
+          sender: message.sender_id === currentUserIsu ? 'me' : 'them',
           text: message.text ?? '',
           image: message.image,
           video: message.video,
@@ -101,7 +102,7 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }: Messages
         }));
       setChatMessages(initialMessages);
     }
-  }, [contact, messages]);
+  }, [contact, messages, currentUserIsu]);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
