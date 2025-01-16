@@ -69,7 +69,7 @@ const EditProfilePage: React.FC = observer(() => {
     const navigate = useNavigate();
     const [isModalOpen, setModalOpen] = useState(false);
 
-    const initRelation = relationshipIds.find(p => p.id === userData.getRelationshipPreference()) || relationshipIds[0];
+    const initRelation = relationshipIds.find(p => p.id === userData.getRelationshipPreferenceId()) || relationshipIds[0];
     const [selectedTarget, setSelectedTarget] = useState<{ label: string; icon: JSX.Element }>();
     const [, setSelectedFeatures] = useState<{ [key: string]: string | string[] }>({});
     const [allTags, setAllTags] = useState<Tag[]>([]);
@@ -258,7 +258,7 @@ const EditProfilePage: React.FC = observer(() => {
         setSelectedTarget(option);
         const prefId = relationshipIds.find(p => p.label == option.label);
         if (prefId) {
-            userData.setRelationshipPreference(prefId.id);
+            userData.setRelationshipPreferenceId(prefId.id);
         }
     };
 
@@ -279,7 +279,7 @@ const EditProfilePage: React.FC = observer(() => {
         setSelectedTags((prev) => {
                 const p = prev || initTags;
                 const newP = p.includes(tagId) ? p.filter(t => t !== tagId) : [...p, tagId];
-                userData.setInterests(newP);
+                userData.setInterestIDs(newP);
                 return newP;
             }
         );

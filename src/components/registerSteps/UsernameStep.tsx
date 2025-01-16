@@ -5,6 +5,7 @@ import { selectUsername } from '../../api/register';
 import { useError } from '../../contexts/ErrorContext';
 import RoundButton from "../basic/RoundButton";
 import InputText from "../basic/InputText";
+import { userData } from '../../stores/UserDataStore';
 
 interface UsernameStepProps {
     isu: number;
@@ -21,7 +22,10 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ isu, onNext }) => {
             return;
         }
         try {
-            await selectUsername({ isu, username: username.trim() });
+            if (username != userData.getUsername()) {
+                await selectUsername({ isu, username: username.trim() });
+                userData.setUsername(username, false);
+            }
             // Pass the object so the test can verify
             onNext({ username: username.trim() });
             /* eslint-disable @typescript-eslint/no-explicit-any */

@@ -6,6 +6,7 @@ import { selectTags, fetchTags} from '../../api/register'; // Import Tag
 import { useError } from '../../contexts/ErrorContext';
 import {Tag} from "../../types";
 import RoundButton from "../basic/RoundButton";
+import { userData } from '../../stores/UserDataStore';
 
 interface TagsStepProps {
     isu: number;
@@ -50,7 +51,12 @@ const TagsStep: React.FC<TagsStepProps> = ({ isu, onNext }) => {
             return;
         }
         try {
-            await selectTags({ isu, tags: selectedTags });
+            const isEqual = userData.getInterestIDs().sort().every((val, idx) => val === selectedTags.sort()[idx]) && 
+                            selectedTags.sort().every((val, idx) => val === userData.getInterestIDs().sort()[idx]);
+            if (!isEqual) {
+                await selectTags({ isu, tags: selectedTags });
+                userData.setInterestIDs(selectedTags, false);
+            }
             onNext({ tags: selectedTags });
             /* eslint-disable @typescript-eslint/no-explicit-any */
         } catch(e: any) {
