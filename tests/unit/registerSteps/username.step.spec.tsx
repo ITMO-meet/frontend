@@ -1,6 +1,6 @@
 // tests/unit/registerSteps/username.step.spec.tsx
 import React from 'react';
-import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import UsernameStep from '../../../src/components/registerSteps/UsernameStep';
 import '@testing-library/jest-dom';
 import { ErrorProvider } from "../../../src/contexts/ErrorContext";
