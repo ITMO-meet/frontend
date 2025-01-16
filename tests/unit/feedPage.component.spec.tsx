@@ -67,7 +67,7 @@ jest.mock('../../src/stores/UserDataStore', () => ({
         getHeight: jest.fn().mockReturnValue(100),
         getZodiac: jest.fn().mockReturnValue("Capricorn"),
         getGenderPreference: jest.fn().mockReturnValue("Everyone"),
-        getRelationshipPreference: jest.fn().mockReturnValue("672b44eab151637e969889bc"),
+        getRelationshipPreferenceId: jest.fn().mockReturnValue("672b44eab151637e969889bc"),
         getWorldview: jest.fn().mockReturnValue("World"),
         getChildren: jest.fn().mockReturnValue("Children"),
         getLanguages: jest.fn().mockReturnValue(["Russian"]),
@@ -76,7 +76,7 @@ jest.mock('../../src/stores/UserDataStore', () => ({
         getInterests: jest.fn().mockReturnValue(["Reading", "Traveling", "Cooking"]),
         // Добавьте другие методы по мере необходимости
         setInterests: jest.fn(),
-        setRelationshipPreference: jest.fn(),
+        setRelationshipPreferenceId: jest.fn(),
         getPhoto: jest.fn(),
         getAdditionalPhotos: jest.fn().mockReturnValue(["https://example.com/photo1.png", "https://example.com/photo2.png"]),
         getGender: jest.fn()

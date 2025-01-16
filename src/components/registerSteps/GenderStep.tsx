@@ -5,6 +5,7 @@ import { selectPreferences } from '../../api/register';
 import { useError } from '../../contexts/ErrorContext';
 import RoundButton from "../basic/RoundButton";
 import HorizontalButtonGroup from "../basic/HorizontalButtonGroup";
+import { userData } from '../../stores/UserDataStore';
 
 interface GenderStepProps {
     isu: number;
@@ -29,7 +30,10 @@ const GenderStep: React.FC<GenderStepProps> = ({ isu, onNext }) => {
             return;
         }
         try {
-            await selectPreferences({ isu, gender_preference: gender });
+            if (gender != userData.getGenderPreference()) {
+                await selectPreferences({ isu, gender_preference: gender });
+                userData.setGenderPreference(gender, false);
+            }
             onNext({ gender: gender });
             /* eslint-disable @typescript-eslint/no-explicit-any */
         } catch(e: any) {
