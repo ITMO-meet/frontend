@@ -31,7 +31,10 @@ export async function getFilteredPerson(
         params.append("relationship_preferences", relPref);
     });
 
-    return await getJson<{ profile: Profile }>(`/matches/random_persona?${params.toString()}`);
+    const profile = await getJson<{ profile: Profile }>(`/matches/random_persona?${params.toString()}`);
+    profile.profile.photos = profile.profile.photos.map(photo => photo.replace("http://", "").replace("185.178.47.42:9000", "https://itmomeet.ru"));
+    profile.profile.logo = profile.profile.logo.replace("http://", "").replace("185.178.47.42:9000", "https://itmomeet.ru");
+    return profile;
 }
 
 export async function likePerson(user_id: number, target_id: number): Promise<LikeResponse> {
