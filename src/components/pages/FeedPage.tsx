@@ -28,6 +28,8 @@ import { observer } from 'mobx-react-lite';
 import { usePremium } from '../../contexts/PremiumContext';
 import { feedStore } from '../../stores/FeedStore';
 import { dislikePerson, likePerson, superLikePerson } from '../../api/feed';
+import { UserChat } from '../../api/chats';
+import { SuperLikeResponse } from '../../types';
 
 
 // Функция для создания стилей иконок
@@ -43,8 +45,12 @@ const icons = {
     star: <StarIcon sx={iconStyles(30, "green")} />, // Иконка суперлайка
 };
 
+interface FeedProps {
+    chats: UserChat[];
+}
+
 // Основной компонент SwipeableCard
-const FeedPage: React.FC = observer(() => {
+const FeedPage: React.FC<FeedProps> = observer(({ chats }) => {
     const DURATION = 300; // Длительность анимации в миллисекундах
     const [swipeDirection, setSwipeDirection] = useState<string | null>(null); // Направление свайпа
     const [iconVisible, setIconVisible] = useState(false); // Видимость иконки
@@ -68,11 +74,13 @@ const FeedPage: React.FC = observer(() => {
     // Эффект для получения следующего человека при монтировании компонента
     useEffect(() => {
         logPageView("/feed"); // GA log on page open
-    }, []); // Зависимость от функции получения следующего человека
-
+        feedStore.loadNewPerson(isPremium); // Передаем флаг в метод стора
+    }, [isPremium]); // Зависимость от функции получения следующего человека
 
     // Обработчик свайпа
     const handleSwipe = (dir: string) => {
+        if (!person) return; // Если вообще нет человека (например, notFound), то игнорируем
+
         if (dir === "up" && !isPremium) {
             setPremiumModalOpen(true);
             return;
@@ -93,14 +101,22 @@ const FeedPage: React.FC = observer(() => {
                 break;
             case "right":
                 likePerson(user_id, target_id)
-                    .then(response => console.log('Like response:', response))
+                    .then(response => {
+                        if (response.matched) {
+                            chats.push({ chat_id: response.chat_id || "", isu_1: user_id, isu_2: target_id });
+                        }
+                        console.log('Like response:', response)
+                    })
                     .catch(error => console.error('Like error:', error));
                 logEvent("Feed", "User pressed/swiped like", "");
                 break;
             case "up":
                 superLikePerson(user_id, target_id)
-                    .then(response => console.log('SuperLike person:', response))
-                    .catch(error => console.error('SuperLike error:', error));
+                .then((response: SuperLikeResponse) => {
+                    console.log('SuperLike person:', response);
+                    chats.push({ chat_id: response.chat_id || "", isu_1: user_id, isu_2: target_id });
+                })
+                .catch(error => console.error('SuperLike error:', error));
                 logEvent("Feed", "User pressed/swiped superlike", "");
                 break;
         }
@@ -108,7 +124,7 @@ const FeedPage: React.FC = observer(() => {
         // Сброс состояния после завершения свайпа
         setTimeout(async () => {
             setSwipeDirection(null); // Сброс направления свайпа
-            await feedStore.loadNewPerson(); // Получение следующего человека
+            await feedStore.loadNewPerson(isPremium); // Получение следующего человека
             setIconVisible(false); // Скрытие иконки
         }, DURATION); // Задержка по длительности анимации
     };
@@ -143,27 +159,24 @@ const FeedPage: React.FC = observer(() => {
     const handlePremiumModalOpen = () => setPremiumModalOpen(true);
     const handlePremiumModalClose = () => setPremiumModalOpen(false);
 
-    if (userData.loading || feedStore.loading) {
-        return <CircularProgress />; // Show a loading spinner while data is being fetched
-    }
 
     return (
         <Box sx={{ height: '90vh', display: 'flex', flexDirection: 'column' }}>
             <AppBar position="static">
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', background: "white" }}>
-                <Typography
-                    variant="h4"
-                    align="center"
-                    gutterBottom
-                    sx={{
-                        color: '#4a4a4a', // Тёмно-серый цвет заголовка
-                        fontFamily: "'Poppins', Arial, sans-serif",
-                        fontWeight: 600,
-                    }}
-                >
-                    Поиск
-                </Typography>
- {/* Заголовок приложения */}
+                    <Typography
+                        variant="h4"
+                        align="center"
+                        gutterBottom
+                        sx={{
+                            color: '#4a4a4a', // Тёмно-серый цвет заголовка
+                            fontFamily: "'Poppins', Arial, sans-serif",
+                            fontWeight: 600,
+                        }}
+                    >
+                        Поиск
+                    </Typography>
+                    {/* Заголовок приложения */}
                     {/* Кнопка для открытия модального окна */}
                     <Button
                         variant="contained"
@@ -186,53 +199,71 @@ const FeedPage: React.FC = observer(() => {
             </AppBar>
 
             {/* Основная область для отображения карточки с человеком */}
-            <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }} {...handlers}>
-                <Card sx={{
-                    width: "80%", // Ширина карточки
-                    height: "80%", // Высота карточки
-                    borderRadius: '16px',
-                    transform: swipeDirection === 'left' ? 'rotateZ(-20deg)' : swipeDirection === 'right' ? 'rotateZ(20deg)' : swipeDirection === 'up' ? 'translate(0, -200px)' : "none", // Применение трансформации в зависимости от направления свайпа
-                    transition: swipeDirection === null ? 'none' : `transform ${DURATION / 1000}s`, // Плавный переход
-                    transformOrigin: "bottom center", // Точка поворота для трансформации
-                    position: 'absolute', // Позиционирование карточки
-                    display: 'flex', // Flexbox для внутреннего содержимого карточки
-                    flexDirection: "column", // Вертикальная ориентация
-                    justifyContent: "space-between", // Распределение пространства между элементами
-                }}>
-                    <CardMedia component="img" image={person.logo || '/images/placeholder.png'} alt={person.username}
-                        sx={{
-                            width: '100%',
-                            height: '100%',
-                            backgroundColor: '#fff',
-                            objectFit: 'contain',
-                        }}
-                    /> {/* Изображение человека */}
-                    {iconVisible && (
-                        <Box sx={{
-                            position: 'absolute',
-                            top: '50%', // Центрирование по вертикали
-                            left: '50%', // Центрирование по горизонтали
-                            transform: 'translate(-50%, -50%)', // Сдвиг для центрирования
-                            zIndex: 10, // Установка z-индекса для отображения над карточкой
+            {feedStore.loading || userData.loading ? (
+                <Box sx={{ textAlign: 'center', mt: 4 }}>
+                    <CircularProgress /> {/* Show a loading spinner while data is being fetched */}
+                </Box>
+            ) : feedStore.notFound ? (
+                <Box sx={{ textAlign: "center", mt: 4 }}>
+                    <Typography variant="h6">
+                        К сожалению, никого не нашли под данные фильтры.
+                    </Typography>
+                </Box>
+            ) : !person ? (
+                <Box sx={{ textAlign: "center", mt: 4 }}>
+                    <Typography variant="h6">Произошла ошибка при получении профиля, попробуйте позже.</Typography>
+                </Box>
+            ) : (
+                <>
+                    <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }} {...handlers}>
+                        <Card sx={{
+                            width: "80%", // Ширина карточки
+                            height: "80%", // Высота карточки
+                            borderRadius: '16px',
+                            transform: swipeDirection === 'left' ? 'rotateZ(-20deg)' : swipeDirection === 'right' ? 'rotateZ(20deg)' : swipeDirection === 'up' ? 'translate(0, -200px)' : "none", // Применение трансформации в зависимости от направления свайпа
+                            transition: swipeDirection === null ? 'none' : `transform ${DURATION / 1000}s`, // Плавный переход
+                            transformOrigin: "bottom center", // Точка поворота для трансформации
+                            position: 'absolute', // Позиционирование карточки
+                            display: 'flex', // Flexbox для внутреннего содержимого карточки
+                            flexDirection: "column", // Вертикальная ориентация
+                            justifyContent: "space-between", // Распределение пространства между элементами
                         }}>
-                            <ImageButton radius="100px">
-                                {icons[swipeDirection === 'left' ? 'close' : swipeDirection === 'right' ? 'favorite' : 'star']} {/* Отображение соответствующей иконки в зависимости от направления свайпа */}
-                            </ImageButton>
-                        </Box>
-                    )}
-                    <CardContent>
-                        <Typography variant="h5">{person.username}</Typography> {/* Имя человека */}
-                        <Typography variant="body2">{person.bio}</Typography> {/* Описание человека */}
-                    </CardContent>
-                </Card>
-            </Box>
+                            <CardMedia component="img" image={person.logo || '/images/placeholder.png'} alt={person.username}
+                                sx={{
+                                    width: '100%',
+                                    height: '100%',
+                                    backgroundColor: '#fff',
+                                    objectFit: 'contain',
+                                }}
+                            /> {/* Изображение человека */}
+                            {iconVisible && (
+                                <Box sx={{
+                                    position: 'absolute',
+                                    top: '50%', // Центрирование по вертикали
+                                    left: '50%', // Центрирование по горизонтали
+                                    transform: 'translate(-50%, -50%)', // Сдвиг для центрирования
+                                    zIndex: 10, // Установка z-индекса для отображения над карточкой
+                                }}>
+                                    <ImageButton radius="100px">
+                                        {icons[swipeDirection === 'left' ? 'close' : swipeDirection === 'right' ? 'favorite' : 'star']} {/* Отображение соответствующей иконки в зависимости от направления свайпа */}
+                                    </ImageButton>
+                                </Box>
+                            )}
+                            <CardContent>
+                                <Typography variant="h5">{person.username}</Typography> {/* Имя человека */}
+                                <Typography variant="body2">{person.bio}</Typography> {/* Описание человека */}
+                            </CardContent>
+                        </Card>
+                    </Box>
 
-            {/* Кнопки для управления свайпами */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-around', padding: 4 }}>
-                <ImageButton onClick={() => handleSwipe("left")} radius='70px'>{icons.close}</ImageButton> {/* Кнопка "не понравилось" */}
-                <ImageButton onClick={() => handleSwipe("right")} radius='100px'>{icons.favorite}</ImageButton> {/* Кнопка лайка */}
-                <ImageButton onClick={() => handleSwipe("up")} radius='70px'>{icons.star}</ImageButton> {/* Кнопка суперлайка */}
-            </Box>
+                    {/* Кнопки для управления свайпами */}
+                    <Box sx={{ display: 'flex', justifyContent: 'space-around', padding: 4 }}>
+                        <ImageButton onClick={() => handleSwipe("left")} radius='70px'>{icons.close}</ImageButton> {/* Кнопка "не понравилось" */}
+                        <ImageButton onClick={() => handleSwipe("right")} radius='100px'>{icons.favorite}</ImageButton> {/* Кнопка лайка */}
+                        <ImageButton onClick={() => handleSwipe("up")} radius='70px'>{icons.star}</ImageButton> {/* Кнопка суперлайка */}
+                    </Box>
+                </>
+            )}
 
             {/* Модальное окно */}
             <Modal open={isModalOpen} onClose={closeModal}>
@@ -299,7 +330,7 @@ const FeedPage: React.FC = observer(() => {
                         <ToggleButtonGroup
                             disabled={!isPremium}
                             value={relationshipType}
-                            onClick={isPremium ? () => {} : handlePremiumModalOpen} // Открытие премиум-сообщения
+                            onClick={isPremium ? () => { } : handlePremiumModalOpen} // Открытие премиум-сообщения
                             onChange={(e, value) => {
                                 setRelationshipType(value);
                                 feedStore.setRelationshipPreference(value);
@@ -315,7 +346,10 @@ const FeedPage: React.FC = observer(() => {
                     </Box>
 
                     {/* Кнопка подтверждения */}
-                    <Button variant="contained" fullWidth sx={{ mt: 3 }} onClick={closeModal}>
+                    <Button variant="contained" fullWidth sx={{ mt: 3 }} onClick={() => {
+                        closeModal();
+                        feedStore.loadNewPerson(isPremium);
+                    }}>
                         Применить
                     </Button>
                 </Paper>

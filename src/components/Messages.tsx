@@ -85,6 +85,7 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
           (message) =>
             message.sender_id === contact.isu || message.receiver_id === contact.isu
         )
+        .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
         .map((message) => ({
           sender: message.sender_id === contact.isu ? 'them' : 'me',
           text: message.text ?? '',
@@ -92,12 +93,11 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
           video: message.video,
           audio: message.audio,
           file: message.file,
+          timestamp: message.timestamp,
         }));
-      console.log("initialMessages: ", initialMessages)
       setChatMessages(initialMessages);
     }
   }, [contact, messages]);
-
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -191,7 +191,7 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
       ]);
       scrollToBottom();
 
-      var media_type;
+      let media_type;
       if (file.type.startsWith('image/')) {
         media_type = "image";
       } else if (file.type.startsWith('video/')) {

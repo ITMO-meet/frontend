@@ -3,6 +3,7 @@ import React, { useState } from 'react'; // Импортируем React и ху
 import RoundButton from '../basic/RoundButton'; // Импортируем компонент круглой кнопки
 import { useError } from '../../contexts/ErrorContext';
 import { profileDetails } from '../../api/register';
+import { userData } from '../../stores/UserDataStore';
 
 // Определяем интерфейс для пропсов компонента
 interface MainFeaturesStepProps {
@@ -21,7 +22,13 @@ const MainFeaturesStep: React.FC<MainFeaturesStepProps> = ({ isu, bio, onNext })
     // Функция для обработки отправки данных
     const handleSubmit = async () => {
         try {
-            await profileDetails({ isu, bio, weight, height, zodiac_sign: zodiac });
+            if (bio != userData.getBio() || weight != userData.getWeight() || height != userData.getHeight() || zodiac != userData.getZodiac()) {
+                await profileDetails({ isu, bio, weight, height, zodiac_sign: zodiac });
+                userData.setBio(bio, false);
+                userData.setWeight(weight, false);
+                userData.setHeight(height, false);
+                userData.setZodiac(zodiac, false);
+            }
             // Pass the object so the test can verify
             onNext({ weight, height, zodiac }); // Вызываем функцию onNext с введенными данными          
             /* eslint-disable @typescript-eslint/no-explicit-any */
