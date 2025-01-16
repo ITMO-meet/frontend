@@ -28,6 +28,8 @@ import { observer } from 'mobx-react-lite';
 import { usePremium } from '../../contexts/PremiumContext';
 import { feedStore } from '../../stores/FeedStore';
 import { dislikePerson, likePerson, superLikePerson } from '../../api/feed';
+import { UserChat } from '../../api/chats';
+import { SuperLikeResponse } from '../../types';
 
 
 // Функция для создания стилей иконок
@@ -43,8 +45,12 @@ const icons = {
     star: <StarIcon sx={iconStyles(30, "green")} />, // Иконка суперлайка
 };
 
+interface FeedProps {
+    chats: UserChat[];
+}
+
 // Основной компонент SwipeableCard
-const FeedPage: React.FC = observer(() => {
+const FeedPage: React.FC<FeedProps> = observer(({ chats }) => {
     const DURATION = 300; // Длительность анимации в миллисекундах
     const [swipeDirection, setSwipeDirection] = useState<string | null>(null); // Направление свайпа
     const [iconVisible, setIconVisible] = useState(false); // Видимость иконки
@@ -99,8 +105,11 @@ const FeedPage: React.FC = observer(() => {
                 break;
             case "up":
                 superLikePerson(user_id, target_id)
-                    .then(response => console.log('SuperLike person:', response))
-                    .catch(error => console.error('SuperLike error:', error));
+                .then((response: SuperLikeResponse) => {
+                    console.log('SuperLike person:', response);
+                    chats.push({ chat_id: response.chat_id || "", isu_1: user_id, isu_2: target_id });
+                })
+                .catch(error => console.error('SuperLike error:', error));
                 logEvent("Feed", "User pressed/swiped superlike", "");
                 break;
         }
@@ -151,19 +160,19 @@ const FeedPage: React.FC = observer(() => {
         <Box sx={{ height: '90vh', display: 'flex', flexDirection: 'column' }}>
             <AppBar position="static">
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', background: "white" }}>
-                <Typography
-                    variant="h4"
-                    align="center"
-                    gutterBottom
-                    sx={{
-                        color: '#4a4a4a', // Тёмно-серый цвет заголовка
-                        fontFamily: "'Poppins', Arial, sans-serif",
-                        fontWeight: 600,
-                    }}
-                >
-                    Поиск
-                </Typography>
- {/* Заголовок приложения */}
+                    <Typography
+                        variant="h4"
+                        align="center"
+                        gutterBottom
+                        sx={{
+                            color: '#4a4a4a', // Тёмно-серый цвет заголовка
+                            fontFamily: "'Poppins', Arial, sans-serif",
+                            fontWeight: 600,
+                        }}
+                    >
+                        Поиск
+                    </Typography>
+                    {/* Заголовок приложения */}
                     {/* Кнопка для открытия модального окна */}
                     <Button
                         variant="contained"
@@ -299,7 +308,7 @@ const FeedPage: React.FC = observer(() => {
                         <ToggleButtonGroup
                             disabled={!isPremium}
                             value={relationshipType}
-                            onClick={isPremium ? () => {} : handlePremiumModalOpen} // Открытие премиум-сообщения
+                            onClick={isPremium ? () => { } : handlePremiumModalOpen} // Открытие премиум-сообщения
                             onChange={(e, value) => {
                                 setRelationshipType(value);
                                 feedStore.setRelationshipPreference(value);
