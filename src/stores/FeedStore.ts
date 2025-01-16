@@ -51,7 +51,6 @@ class FeedStore {
             profile = await getRandomPerson(userData.getIsu());
             attempt++;
 
-
             let genderOk = true;
             if (preferredGender.trim().toLowerCase() !== "everyone") {
                 const profileGenderFeature = profile.mainFeatures.find(f => f.icon === "gender");
