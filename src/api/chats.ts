@@ -81,7 +81,7 @@ export async function uploadMedia(sender_id: number, chat_id: string, file: File
 }
 export async function sendMessage(chat_id: string, sender_id: number, receiver_id: number, text: string, media?: Blob, media_type?: string) {
     if (media) {
-        var media_id;
+        let media_id;
         if (media_type) {
             media_id = await uploadMedia(sender_id, chat_id.toString(), new File([media], "media"), media_type);
         }

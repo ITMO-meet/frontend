@@ -191,7 +191,7 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
       ]);
       scrollToBottom();
 
-      var media_type;
+      let media_type;
       if (file.type.startsWith('image/')) {
         media_type = "image";
       } else if (file.type.startsWith('video/')) {
