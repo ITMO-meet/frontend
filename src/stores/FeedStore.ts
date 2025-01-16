@@ -38,7 +38,7 @@ class FeedStore {
                 : [100, 300];
 
             const relPref = isPremium
-                ? this.getRelationshipPreference()
+                ? this.getRelationshipPreference() || []
                 : [];
 
             const response = await getFilteredPerson(

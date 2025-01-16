@@ -71,11 +71,9 @@ const FeedPage: React.FC = observer(() => {
         feedStore.loadNewPerson(isPremium); // Передаем флаг в метод стора
     }, [isPremium]); // Зависимость от функции получения следующего человека
 
-
     // Обработчик свайпа
     const handleSwipe = (dir: string) => {
         if (!person) return; // Если вообще нет человека (например, notFound), то игнорируем
-
 
         if (dir === "up" && !isPremium) {
             setPremiumModalOpen(true);
