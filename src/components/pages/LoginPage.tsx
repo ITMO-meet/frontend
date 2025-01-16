@@ -23,7 +23,13 @@ export const LoginPage: React.FC = () => {
             return;
         }
 
-        const { redirectUrl, isu } = await loginUser(userId, password);
+        const response = await loginUser(userId, password);
+        if (response.detail || !response.isu || !response.redirectUrl) {
+            showError("Неверный логин или пароль");
+            return;
+        }
+        const isu = response.isu;
+        const redirectUrl = response.redirectUrl;
 
         localStorage.setItem('isu', isu.toString());
 

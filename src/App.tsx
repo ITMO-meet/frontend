@@ -98,6 +98,15 @@ function AppContent() {
     const fetchData = async () => {
       try {
         const user_id = userData.getIsu();
+        // Do not load if not logged in
+        if (user_id == -1) {
+          setContacts([]);
+          setChats([]);
+          setMessages([]);
+          setStories([]);
+          return;
+        }
+
         const fetchedContacts = await getUserContacts(user_id, true) as Profile[];
         const fetchedChats = await getUserContacts(user_id, false) as UserChat[];
         const fetchedMessages = await getUserMessages(fetchedChats);

@@ -27,7 +27,7 @@ jest.mock('../../src/stores/UserDataStore', () => ({
         getHeight: jest.fn().mockReturnValue(100),
         getZodiac: jest.fn().mockReturnValue("Capricorn"),
         getGenderPreference: jest.fn().mockReturnValue("Everyone"),
-        getRelationshipPreference: jest.fn().mockReturnValue("672b44eab151637e969889bc"),
+        getRelationshipPreferenceId: jest.fn().mockReturnValue("672b44eab151637e969889bc"),
         getWorldview: jest.fn().mockReturnValue("World"),
         getChildren: jest.fn().mockReturnValue("Children"),
         getLanguages: jest.fn().mockReturnValue(["Russian"]),
@@ -37,7 +37,7 @@ jest.mock('../../src/stores/UserDataStore', () => ({
         getInterestIDs: jest.fn().mockReturnValue([""]),
         // Добавьте другие методы по мере необходимости
         setInterests: jest.fn(),
-        setRelationshipPreference: jest.fn(),
+        setRelationshipPreferenceId: jest.fn(),
         getPhoto: jest.fn().mockReturnValue("https://example.com/photo.jpg"),
         getAdditionalPhotos: jest.fn().mockReturnValue([
             "https://example.com/photo1.jpg",
@@ -106,7 +106,7 @@ describe('EditProfilePage', () => {
         fireEvent.click(screen.getByText('Сохранить'));
 
         // Проверка, что выбранная опция отображается
-        await waitFor(() => expect(userData.setRelationshipPreference).toHaveBeenCalledWith("672b44eab151637e969889bb"));
+        await waitFor(() => expect(userData.setRelationshipPreferenceId).toHaveBeenCalledWith("672b44eab151637e969889bb"));
     });
 
     test('opens and selects main feature option', async () => {

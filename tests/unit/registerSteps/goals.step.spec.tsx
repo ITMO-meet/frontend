@@ -30,7 +30,34 @@ jest.mock('../../../src/api/register', () => ({
   ]),
   selectRelationship: jest.fn().mockResolvedValue({}),
 }));
-
+jest.mock('../../../src/stores/UserDataStore', () => ({
+  userData: {
+      loading: false,
+      getIsu: jest.fn().mockReturnValue(1),
+      getUsername: jest.fn().mockReturnValue("Alisa Pipisa"),
+      getBio: jest.fn().mockReturnValue("Test Bio"),
+      getBirthdate: jest.fn().mockReturnValue("2000-01-01"),
+      getAge: jest.fn().mockReturnValue(20),
+      getWeight: jest.fn().mockReturnValue(70),
+      getHeight: jest.fn().mockReturnValue(100),
+      getZodiac: jest.fn().mockReturnValue("Capricorn"),
+      getGenderPreference: jest.fn().mockReturnValue("Everyone"),
+      getRelationshipPreferenceId: jest.fn().mockReturnValue("672b44eab151637e969889bd"),
+      getWorldview: jest.fn().mockReturnValue("World"),
+      getChildren: jest.fn().mockReturnValue("Children"),
+      getLanguages: jest.fn().mockReturnValue(["Russian"]),
+      getAlcohol: jest.fn().mockReturnValue("Ok"),
+      getSmoking: jest.fn().mockReturnValue("Ok"),
+      getInterests: jest.fn().mockReturnValue(["Reading", "Traveling", "Cooking"]),
+      getInterestIDs: jest.fn().mockReturnValue([""]),
+      // Добавьте другие методы по мере необходимости
+      setInterests: jest.fn(),
+      setRelationshipPreferenceId: jest.fn(),
+      getPhoto: jest.fn(),
+      getAdditionalPhotos: jest.fn().mockReturnValue(["https://example.com/photo1.png", "https://example.com/photo2.png"]),
+      getGender: jest.fn()
+  }
+}));
 
 const mockFetchPreferences = fetchPreferences as jest.Mock;
 const mockSelectRelationship = selectRelationship as jest.Mock;

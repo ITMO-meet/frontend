@@ -7,6 +7,7 @@ import { useError } from '../../contexts/ErrorContext';
 import theme from '../theme';
 import { Preference } from "../../types";
 import RoundButton from "../basic/RoundButton"; // If needed
+import { userData } from '../../stores/UserDataStore';
 
 interface GoalStepProps {
     isu: number;
@@ -43,7 +44,11 @@ const GoalStep: React.FC<GoalStepProps> = ({ isu, onNext }) => {
             return;
         }
         try {
-            await selectRelationship({ isu, relationship_preference: [selectedGoalId] });
+            console.log(selectedGoalId, userData.getRelationshipPreferenceId())
+            if (selectedGoalId != userData.getRelationshipPreferenceId()) {
+                await selectRelationship({ isu, relationship_preference: [selectedGoalId] });
+                userData.setRelationshipPreferenceId(selectedGoalId, false);
+            }
             onNext({ goal: selectedGoalId }); // Sending the goal ID
             /* eslint-disable @typescript-eslint/no-explicit-any */
         } catch (e: any) {
