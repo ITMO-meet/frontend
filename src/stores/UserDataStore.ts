@@ -1,6 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import { getProfile, updateBio, updateHeight, updateGenderPreference, updateWeight, updateZodiac, updateRelationshipPreferences, updateUsername, updateWorldview, updateChildren, updateLanguages, updateAlcohol, updateSmoking, updateTags } from "../api/profile";
 import { calculateAge } from "../utils";
+import { fetchTags } from "../api/register";
 
 class UserData {
     public loading: boolean = false;
@@ -21,8 +22,8 @@ class UserData {
     private additionalPhotos: string[] | undefined
     private alcohol: string | undefined
     private smoking: string | undefined
-    private interestIDs: string[] | null = null;
-    private interests: string[] = [];
+    private interestIDs: string[] | undefined;
+    private interests: string[] | undefined;
     private children: string | null | undefined
     private languages: string[] | null | undefined
 
@@ -76,57 +77,69 @@ class UserData {
         this.photo = profile.logo
         this.additionalPhotos = profile.photos
 
-        this.interests = (profile.interests || []).map(item => item.text);
+        await this.loadInterestsByName(profile.interests.map(i => i.text));
 
         this.setLoading(false);
     }
 
+    private async loadInterestsByName(interests: string[]) {
+        const tags = await fetchTags();
+        this.interests = (interests || []);
+        this.interestIDs = (interests || []).map(i => tags.find(t => t.text == i)?.id || "");
+    }
+
+    private async loadInterestsById(interestIDs: string[]) {
+        const tags = await fetchTags();
+        this.interestIDs = interestIDs;
+        this.interests = (interestIDs || []).map(i_id => tags.find(t => t.id == i_id)?.text || "");
+    }
+
     // сеттеры.
-    setUsername(username: string) {
+    setUsername(username: string, send: boolean = true) {
         this.username = username;
-        if (this.isu) {
+        if (this.isu && send) {
             updateUsername(this.isu, username);
         }
     }
 
-    setBio(bio: string) {
+    setBio(bio: string, send: boolean = true) {
         this.bio = bio;
-        if (this.isu) {
+        if (this.isu && send) {
             updateBio(this.isu, bio);
         };
     }
 
-    setWeight(weight: number) {
+    setWeight(weight: number, send: boolean = true) {
         this.weight = weight;
-        if (this.isu) {
+        if (this.isu && send) {
             updateWeight(this.isu, weight);
         };
     }
 
-    setHeight(height: number) {
+    setHeight(height: number, send: boolean = true) {
         this.height = height;
-        if (this.isu) {
+        if (this.isu && send) {
             updateHeight(this.isu, height);
         };
     }
 
-    setZodiac(zodiac: string) {
+    setZodiac(zodiac: string, send: boolean = true) {
         this.zodiac = zodiac;
-        if (this.isu) {
+        if (this.isu && send) {
             updateZodiac(this.isu, zodiac);
         };
     }
 
-    setGenderPreference(genderPreference: string) {
+    setGenderPreference(genderPreference: string, send: boolean = true) {
         this.genderPreference = genderPreference;
-        if (this.isu) {
+        if (this.isu && send) {
             updateGenderPreference(this.isu, genderPreference);
         }
     }
 
-    setRelationshipPreference(preferenceId: string) {
+    setRelationshipPreferenceId(preferenceId: string, send: boolean = true) {
         this.relationshipPreferenceId = preferenceId;
-        if (this.isu) {
+        if (this.isu && send) {
             updateRelationshipPreferences(this.isu, [preferenceId]);
         }
     }
@@ -166,11 +179,9 @@ class UserData {
         }
     }
 
-    setInterests(newIDs: string[]) {
+    setInterestIDs(newIDs: string[], send: boolean = true) {
         this.interestIDs = newIDs;
-        localStorage.setItem("interestIDs", JSON.stringify(newIDs));
-
-        if (this.isu) {
+        if (this.isu && send) {
             updateTags(this.isu, newIDs)
                 .then(() => {
                     this.loadUserData();
@@ -179,6 +190,7 @@ class UserData {
                     console.error("Failed to update tags in DB: ", err);
                 });
         }
+        this.loadInterestsById(newIDs);
     }
 
 
@@ -297,7 +309,7 @@ class UserData {
         return this.genderPreference;
     }
 
-    getRelationshipPreference() {
+    getRelationshipPreferenceId() {
         if (this.relationshipPreferenceId === undefined) {
             if (!this.loading) {
                 this.loadUserData();
@@ -364,17 +376,23 @@ class UserData {
     }
 
     getInterests() {
+        if (this.interests === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
+            }
+            console.warn("Interests is undefined. Returning default value.");
+            return []; // Значение по умолчанию
+        }
         return this.interests;
     }
 
     getInterestIDs() {
-        if (!this.interestIDs) {
-            const local = localStorage.getItem("interestIDs");
-            if (local) {
-                this.interestIDs = JSON.parse(local);
-            } else {
-                this.interestIDs = [];
+        if (this.interestIDs === undefined) {
+            if (!this.loading) {
+                this.loadUserData();
             }
+            console.warn("InterestsIDs is undefined. Returning default value.");
+            return []; // Значение по умолчанию
         }
         return this.interestIDs;
     }
