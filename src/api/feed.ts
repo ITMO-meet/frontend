@@ -4,8 +4,8 @@ import { Profile } from "./profile";
 
 export async function getRandomPerson(isu: number) {
     const response = await getJson<{ profile: Profile }>(`/matches/random_person?user_id=${isu}`);
-    response.profile.photos = response.profile.photos.map(photo => photo.replace("http://", "").replace("185.178.47.42:9000", "itmomeet.ru"));
-    response.profile.logo = response.profile.logo.replace("http://", "").replace("185.178.47.42:9000", "itmomeet.ru");
+    response.profile.photos = response.profile.photos.map(photo => photo.replace("http://", "").replace("185.178.47.42:9000", "https://itmomeet.ru"));
+    response.profile.logo = response.profile.logo.replace("http://", "").replace("185.178.47.42:9000", "https://itmomeet.ru");
     return response.profile;
 }
 

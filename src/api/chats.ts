@@ -45,7 +45,7 @@ export async function getUserMessages(UserContacts: UserChat[]) {
 
             if (message.media_id) {
                 const media = await getJson<{ url: string }>(`/chats/get_media?media_id=${message.media_id}`);
-                media.url = media.url.replace("http://185.178.47.42:9000", "itmomeet.ru");
+                media.url = media.url.replace("http://185.178.47.42:9000", "https://itmomeet.ru");
                 const response = await fetch(media.url);
                 const contentType = response.headers.get("Content-Type") || "";
                 if (contentType.startsWith("image/")) {
