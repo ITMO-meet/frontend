@@ -191,6 +191,15 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
       ]);
       scrollToBottom();
 
+      var media_type;
+      if (file.type.startsWith('image/')) {
+        media_type = "image";
+      } else if (file.type.startsWith('video/')) {
+        media_type = "video";
+      } else {
+        media_type = "file";
+      }
+
       // Send to the backend
       try {
         const message_id = await sendMessage(
@@ -198,7 +207,8 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
           currentUserIsu,
           contact.isu,
           '', // no text
-          file // pass the file as media
+          file, // pass the file as media
+          media_type
         );
         console.log('Message sent:', file);
 
@@ -245,7 +255,8 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
           currentUserIsu,
           contact.isu,
           '', // no text
-          file
+          file,
+          'file'
         );
 
         messages.push({
@@ -290,7 +301,8 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
               currentUserIsu,
               contact.isu,
               '', // no text
-              file
+              file,
+              'audio'
             );
             console.log('Audio sent:', file);
 
@@ -361,7 +373,8 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }) => {
               currentUserIsu,
               contact.isu,
               '', // no text
-              file
+              file,
+              'video'
             );
 
             messages.push({
