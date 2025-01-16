@@ -81,6 +81,7 @@ export interface MessageType {
     video?: Blob;
     file?: File;
     fileName?: string;
+    timestamp?: string;
 }
 
 export interface Test {

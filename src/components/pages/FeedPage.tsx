@@ -28,6 +28,8 @@ import { observer } from 'mobx-react-lite';
 import { usePremium } from '../../contexts/PremiumContext';
 import { feedStore } from '../../stores/FeedStore';
 import { dislikePerson, likePerson, superLikePerson } from '../../api/feed';
+import { UserChat } from '../../api/chats';
+import { SuperLikeResponse } from '../../types';
 
 
 // Функция для создания стилей иконок
@@ -43,8 +45,12 @@ const icons = {
     star: <StarIcon sx={iconStyles(30, "green")} />, // Иконка суперлайка
 };
 
+interface FeedProps {
+    chats: UserChat[];
+}
+
 // Основной компонент SwipeableCard
-const FeedPage: React.FC = observer(() => {
+const FeedPage: React.FC<FeedProps> = observer(({ chats }) => {
     const DURATION = 300; // Длительность анимации в миллисекундах
     const [swipeDirection, setSwipeDirection] = useState<string | null>(null); // Направление свайпа
     const [iconVisible, setIconVisible] = useState(false); // Видимость иконки
@@ -95,14 +101,22 @@ const FeedPage: React.FC = observer(() => {
                 break;
             case "right":
                 likePerson(user_id, target_id)
-                    .then(response => console.log('Like response:', response))
+                    .then(response => {
+                        if (response.matched) {
+                            chats.push({ chat_id: response.chat_id || "", isu_1: user_id, isu_2: target_id });
+                        }
+                        console.log('Like response:', response)
+                    })
                     .catch(error => console.error('Like error:', error));
                 logEvent("Feed", "User pressed/swiped like", "");
                 break;
             case "up":
                 superLikePerson(user_id, target_id)
-                    .then(response => console.log('SuperLike person:', response))
-                    .catch(error => console.error('SuperLike error:', error));
+                .then((response: SuperLikeResponse) => {
+                    console.log('SuperLike person:', response);
+                    chats.push({ chat_id: response.chat_id || "", isu_1: user_id, isu_2: target_id });
+                })
+                .catch(error => console.error('SuperLike error:', error));
                 logEvent("Feed", "User pressed/swiped superlike", "");
                 break;
         }
