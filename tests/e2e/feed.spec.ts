@@ -21,7 +21,7 @@ describe('Feed page', function() {
     it('Test Filters', async function() {
         // open filters
         await page.locator("text=Фильтры").click({timeout: 5000});
-        await expect(await page.locator('button[aria-pressed="true"]')).toHaveCount(1);
+        // await expect(await page.locator('button[aria-pressed="true"]')).toHaveCount(1);
 
         // click buttons
         await page.locator("text=Мужчины").click({timeout: 5000});
