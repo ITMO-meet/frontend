@@ -44,15 +44,15 @@ export async function getUserMessages(UserContacts: UserChat[]) {
             };
 
             if (message.media_id) {
-                const media = await getJson<{ url: string }>(`/chats/get_media?media_id=${message.media_id}`);
+                const media = await getJson<{ url: string, media_type: string }>(`/chats/get_media?media_id=${message.media_id}`);
                 media.url = media.url.replace("http://185.178.47.42:9000", "https://itmomeet.ru");
                 const response = await fetch(media.url);
                 const contentType = response.headers.get("Content-Type") || "";
-                if (contentType.startsWith("image/")) {
+                if (media.media_type == "image") {
                     rawMessage.image = await response.blob();
-                } else if (contentType.startsWith("audio/")) {
+                } else if (media.media_type == "audio") {
                     rawMessage.audio = await response.blob();
-                } else if (contentType.startsWith("video/")) {
+                } else if (media.media_type == "video") {
                     rawMessage.video = await response.blob();
                 } else {
                     rawMessage.file = new File([await response.blob()], "media", { type: contentType });
