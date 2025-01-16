@@ -79,6 +79,7 @@ export async function uploadMedia(sender_id: number, chat_id: string, file: File
     })).json();
     return media_id;
 }
+
 export async function sendMessage(chat_id: string, sender_id: number, receiver_id: number, text: string, media?: Blob, media_type?: string) {
     if (media) {
         let media_id;
