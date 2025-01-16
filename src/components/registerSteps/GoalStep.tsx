@@ -44,6 +44,7 @@ const GoalStep: React.FC<GoalStepProps> = ({ isu, onNext }) => {
             return;
         }
         try {
+            console.log(selectedGoalId, userData.getRelationshipPreferenceId())
             if (selectedGoalId != userData.getRelationshipPreferenceId()) {
                 await selectRelationship({ isu, relationship_preference: [selectedGoalId] });
                 userData.setRelationshipPreferenceId(selectedGoalId, false);
