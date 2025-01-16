@@ -64,8 +64,11 @@ export async function getUserMessages(UserContacts: UserChat[]) {
     return raw_messages;
 }
 
-export async function uploadMedia(sender_id: number, chat_id: string, file: File) {
+export async function uploadMedia(sender_id: number, chat_id: string, file: File, media_type?: string) {
     const formData = new FormData();
+    if (media_type) formData.append("media_type", media_type);
+    else formData.append("media_type", file.type.split("/")[0]);
+
     formData.append("isu", sender_id.toString());
     formData.append("file", file);
     formData.append("chat_id", chat_id);
@@ -76,10 +79,15 @@ export async function uploadMedia(sender_id: number, chat_id: string, file: File
     })).json();
     return media_id;
 }
-
-export async function sendMessage(chat_id: string, sender_id: number, receiver_id: number, text: string, media?: Blob) {
+export async function sendMessage(chat_id: string, sender_id: number, receiver_id: number, text: string, media?: Blob, media_type?: string) {
     if (media) {
-        const media_id = await uploadMedia(sender_id, chat_id.toString(), new File([media], "media"));
+        var media_id;
+        if (media_type) {
+            media_id = await uploadMedia(sender_id, chat_id.toString(), new File([media], "media"), media_type);
+        }
+        else {
+            media_id = await uploadMedia(sender_id, chat_id.toString(), new File([media], "media"));
+        }
 
         console.log("media_id:", media_id);
 
