@@ -272,7 +272,7 @@ const EditProfilePage: React.FC = observer(() => {
     const handlePremiumClick = () => {
         logEvent("Profile", "To premium click", "Premium Button")
         navigate('/premium');
-        console.log('Premium button clicked from edit');
+        // console.log('Premium button clicked from edit');
     }
 
     const handleInterestSelect = (tagId: string) => {

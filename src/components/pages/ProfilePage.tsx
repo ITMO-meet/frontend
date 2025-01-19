@@ -58,7 +58,7 @@ const ProfilePage: React.FC = observer(() => {
     const handlePremiumClick = () => {
         logEvent("Profile", "To premium click", "Premium Button")
         navigate('/premium');
-        console.log('Premium button clicked');
+        // console.log('Premium button clicked');
     };
 
     // Массив фотографий профиля

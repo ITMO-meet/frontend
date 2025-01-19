@@ -58,7 +58,7 @@ const SettingsPage: React.FC = () => {
 
     const handleSendProblem = () => {
         logEvent("Settings", "Problem submit", problemText);
-        console.log('Problem submitted:', problemText);
+        // console.log('Problem submitted:', problemText);
         setProblemText('');
         setProblemDialogOpen(false);
     };
