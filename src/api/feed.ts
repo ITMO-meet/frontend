@@ -32,8 +32,14 @@ export async function getFilteredPerson(
     });
 
     const profile = await getJson<{ profile: Profile }>(`/matches/random_person?${params.toString()}`);
-    profile.profile.photos = profile.profile.photos.map(photo => photo.replace("http://", "").replace("185.178.47.42:9000", "https://itmomeet.ru"));
-    profile.profile.logo = profile.profile.logo.replace("http://", "").replace("185.178.47.42:9000", "https://itmomeet.ru");
+    if (profile && profile.profile) {
+        if (profile.profile.photos) {
+            profile.profile.photos = profile.profile.photos.map(photo => photo.replace("http://", "").replace("185.178.47.42:9000", "https://itmomeet.ru"));
+        }
+        if (profile.profile.logo) {
+            profile.profile.logo = profile.profile.logo.replace("http://", "").replace("185.178.47.42:9000", "https://itmomeet.ru");
+        }
+    }
     return profile;
 }
 

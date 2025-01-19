@@ -1,6 +1,6 @@
-import { expect } from '@playwright/test';
-import { makeLogin } from './utils';
-import { page } from './setup';
+// import { expect } from '@playwright/test';
+// import { makeLogin } from './utils';
+// import { page } from './setup';
 
 describe('Navigation', function() {
     // it('Test navigation', async function() {

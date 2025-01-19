@@ -1,6 +1,6 @@
-import { BASE_FRONT_URL } from './utils';
-import { page } from './setup';
-import { expect } from '@playwright/test';
+// import { BASE_FRONT_URL } from './utils';
+// import { page } from './setup';
+// import { expect } from '@playwright/test';
 
 describe('Login page', function() {
     // it('Test login', async function() {

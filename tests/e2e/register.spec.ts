@@ -1,8 +1,8 @@
-import { expect } from '@playwright/test';
-import { page } from './setup';
-import { BASE_FRONT_URL } from './utils';
+// import { expect } from '@playwright/test';
+// import { page } from './setup';
+// import { BASE_FRONT_URL } from './utils';
 
-const FAST_TIMEOUT = 2000;
+// const FAST_TIMEOUT = 2000;
 
 describe('Register page', function() {
     // beforeEach(async function() {
