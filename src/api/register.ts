@@ -6,6 +6,7 @@
 import {postJson, postForm, getJson} from './index';
 import {Preference, Tag} from "../types";
 import { userData } from '../stores/UserDataStore';
+import { compressImage } from '../utils';
 
 interface UsernameData {
     isu: number,
@@ -48,7 +49,8 @@ export async function selectTags(data: TagsData) {
 
 export async function uploadLogo(isu: number, file: File) {
     const formData = new FormData();
-    formData.append('file', file);
+    const compImage = await compressImage(file);
+    formData.append('file', compImage);
     await postForm(`/auth/register/upload_logo?isu=${isu}`, formData);
     userData.updatePhotos();
 }
@@ -56,7 +58,8 @@ export async function uploadLogo(isu: number, file: File) {
 export async function uploadCarousel(isu: number, files: File[]) {
     const formData = new FormData();
     for (const f of files) {
-        formData.append('files', f);
+        const compImage = await compressImage(f);
+        formData.append('files', compImage);
     }
     await postForm(`/auth/register/upload_carousel?isu=${isu}`, formData);
     userData.updatePhotos();

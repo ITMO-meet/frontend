@@ -1,3 +1,5 @@
+import imageCompression from "browser-image-compression";
+
 export function calculateAge(birthdate: string) {
     const birthDateObj = new Date(birthdate);
     const today = new Date();
@@ -29,4 +31,20 @@ export function dataURLtoFile(dataURL: string, filename: string): File {
     }
 
     return new File([u8arr], filename, { type: mime });
+}
+
+export async function compressImage(file: File, maxSizeMB: number = 1, maxRes: number = 1920) {
+    const options = {
+        maxSizeMB: maxSizeMB,
+        maxWidthOrHeight: maxRes, 
+        useWebWorker: true,
+    };
+
+    try {
+        const compressedFile = await imageCompression(file, options);
+        return new File([compressedFile], compressImage.name, { type: compressedFile.type });
+    } catch (error) {
+        console.error('Ошибка сжатия изображения:', error);
+        throw error;
+    }
 }
