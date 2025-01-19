@@ -21,7 +21,7 @@
  */
 
 import React, { useEffect } from 'react';
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SettingsIcon from '@mui/icons-material/Settings';
 import StraightenIcon from '@mui/icons-material/Straighten';
@@ -74,10 +74,6 @@ const ProfilePage: React.FC = observer(() => {
         { text: `${userData.getAlcohol()}`, icon: <LocalBarIcon /> },
         { text: `${userData.getSmoking()}`, icon: <SmokingRoomsIcon /> },
     ];
-
-    if (userData.loading) {
-        return <CircularProgress />; // Show a loading spinner while data is being fetched
-    }
 
     return (
         <Box display="flex" flexDirection="column" minHeight="100vh">

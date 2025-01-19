@@ -13,8 +13,7 @@ import {
     TextField,
     List,
     ListItemText,
-    ListItemButton,
-    CircularProgress
+    ListItemButton
 } from '@mui/material';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -66,11 +65,7 @@ const SettingsPage: React.FC = () => {
     function handleExit(): void {
         navigate('/login');
     }
-
-    if (userData.loading) {
-        return <CircularProgress  />; // Show a loading spinner while data is being fetched
-    }
-
+    
     return (
         <Box sx={{ px: 2, py: 1 }}>
             <Box display="flex" alignItems="center" mb={2}>

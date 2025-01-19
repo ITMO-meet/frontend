@@ -193,6 +193,10 @@ class UserData {
         this.loadInterestsById(newIDs);
     }
 
+    updatePhotos() {
+        this.loadUserData();
+    }
+
 
     // геттеры
     getIsu() {

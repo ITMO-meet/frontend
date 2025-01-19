@@ -30,7 +30,7 @@
 */
 
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Paper, IconButton, Chip, Button, Modal, CircularProgress } from '@mui/material';
+import { Box, Typography, Paper, IconButton, Chip, Button, Modal } from '@mui/material';
 import WestIcon from '@mui/icons-material/West';
 import EditIcon from '@mui/icons-material/Edit';
 import UploadIcon from '@mui/icons-material/Upload';
@@ -136,7 +136,6 @@ const EditProfilePage: React.FC = observer(() => {
             }
 
             await uploadLogo(userData.getIsu(), finalFile);
-            window.location.reload();
         } catch (error: unknown) {
             console.error('Error uploading logo:', error);
         }
@@ -217,7 +216,6 @@ const EditProfilePage: React.FC = observer(() => {
             }
 
             await uploadCarousel(userData.getIsu(), finalFiles);
-            window.location.reload();
         } catch (error: unknown) {
             console.error('Error:', error);
         }
@@ -286,13 +284,8 @@ const EditProfilePage: React.FC = observer(() => {
     };
 
     const applyInterests = () => {
-        // userData.setInterests(selectedTags || []);
         setModalOpen(false);
     };
-
-    if (userData.loading) {
-        return <CircularProgress />; // Show a loading spinner while data is being fetched
-    }
 
     return (
         <Box position="relative" minHeight="100vh" display="flex" flexDirection="column">
