@@ -94,6 +94,11 @@ class UserData {
         this.interests = (interestIDs || []).map(i_id => tags.find(t => t.id == i_id)?.text || "");
     }
 
+    updatePhotos() {
+        this.loadUserData();
+    }
+
+
     // сеттеры.
     setUsername(username: string, send: boolean = true) {
         this.username = username;
@@ -192,7 +197,6 @@ class UserData {
         }
         this.loadInterestsById(newIDs);
     }
-
 
     // геттеры
     getIsu() {

@@ -58,8 +58,14 @@ interface UserProfile {
 
 export async function getProfile(isu: number) {
     const profile = await getJson<UserProfile>(`/profile/get_profile/${isu}`);
-    profile.profile.photos = profile.profile.photos.map(photo => photo.replace("http://", "").replace("185.178.47.42:9000", "https://itmomeet.ru"));
-    profile.profile.logo = profile.profile.logo.replace("http://", "").replace("185.178.47.42:9000", "https://itmomeet.ru");
+    if (profile && profile.profile) {
+        if (profile.profile.photos) {
+            profile.profile.photos = profile.profile.photos.map(photo => photo.replace("http://", "").replace("185.178.47.42:9000", "https://itmomeet.ru"));
+        }
+        if (profile.profile.logo) {
+            profile.profile.logo = profile.profile.logo.replace("http://", "").replace("185.178.47.42:9000", "https://itmomeet.ru");
+        }
+    }
     return profile.profile
 }
 

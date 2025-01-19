@@ -118,9 +118,9 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }: Messages
    * -------------- Sending a text message --------------
    */
   const handleSendText = async () => {
-    console.log('Sending message:', inputValue);
-    console.log('Contact:', contact);
-    console.log('chatId:', chatId);
+    // console.log('Sending message:', inputValue);
+    // console.log('Contact:', contact);
+    // console.log('chatId:', chatId);
     if (inputValue.trim() === '' || !contact || !chatId) return;
 
     // Optimistically update local state
@@ -137,7 +137,7 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }: Messages
         contact.isu,          // receiver_id
         tempText              // text
       );
-      console.log('Message sent:', tempText);
+      // console.log('Message sent:', tempText);
 
       messages.push({
         id: message_id,
@@ -215,7 +215,7 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }: Messages
           file, // pass the file as media
           media_type
         );
-        console.log('Message sent:', file);
+        // console.log('Message sent:', file);
 
         messages.push({
           id: message_id,
@@ -309,7 +309,7 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }: Messages
               file,
               'audio'
             );
-            console.log('Audio sent:', file);
+            // console.log('Audio sent:', file);
 
             messages.push({
               id: message_id,

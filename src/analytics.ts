@@ -1,5 +1,5 @@
 import ReactGA from 'react-ga4';
-console.log("Analytics loaded");
+// console.log("Analytics loaded");
 
 export const initGA = () => {
 

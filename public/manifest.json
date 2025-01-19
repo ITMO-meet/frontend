@@ -1,14 +1,19 @@
 {
-    "short_name": "MDN",
-    "name": "MDN Web Docs",
+    "short_name": "itmomeet",
+    "name": "ITMO.MEET",
+    "description": "App for finding your soulmate",
     "icons": [
         {
-            "src": "/favicon.png",
-            "type": "image/png"
+            "sizes": "256x256",
+            "src": "/favicon.ico",
+            "type": "image/png",
+            "purpose": "any"
         }
     ],
     "start_url": ".",
+    "lang": "ru",
     "display": "standalone",
+    "orientation": "portrait",
     "theme_color": "#000000",
     "background_color": "#ffffff"
 }
