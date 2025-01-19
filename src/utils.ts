@@ -45,6 +45,6 @@ export async function compressImage(file: File, maxSizeMB: number = 1, maxRes: n
         return new File([compressedFile], compressImage.name, { type: compressedFile.type });
     } catch (error) {
         console.error('Ошибка сжатия изображения:', error);
-        throw error;
+        return file;
     }
 }
