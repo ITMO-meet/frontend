@@ -5,7 +5,7 @@ import PremiumPage from '../../src/components/pages/PremiumPage';
 import { MemoryRouter } from 'react-router-dom';
 import { PremiumProvider } from '../../src/contexts/PremiumContext';
 import { useLocation } from 'react-router-dom';
-import { logEvent, logPageView } from '../../src/analytics'
+import { logPageView } from '../../src/analytics'
 
 jest.mock('../../src/analytics', () => ({
     logEvent: jest.fn(),
