@@ -11,7 +11,7 @@ const AUTH_BASE_URL = '/auth-api'
 // const BASE_URL = 'http://185.178.47.42:8000';
 const BASE_URL = '/api';
 //const BASE_URL = 'http://127.0.0.1:8000';
-// const BASE_URL = 'https://itmomeet.ru/api';
+//const BASE_URL = 'https://itmomeet.ru/api';
 // const BASE_URL = 'http://127.0.0.1:28000';
 
 

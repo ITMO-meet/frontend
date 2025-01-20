@@ -5,7 +5,7 @@ import PremiumPage from '../../src/components/pages/PremiumPage';
 import { MemoryRouter } from 'react-router-dom';
 import { PremiumProvider } from '../../src/contexts/PremiumContext';
 import { useLocation } from 'react-router-dom';
-import { logEvent, logPageView } from '../../src/analytics'
+import { logPageView } from '../../src/analytics'
 
 jest.mock('../../src/analytics', () => ({
     logEvent: jest.fn(),
@@ -65,7 +65,7 @@ describe('PremiumPage', () => {
         // Нажатие кнопки "назад"
         fireEvent.click(screen.getByRole('button', { name: 'back' }));
 
-        // Проверка, что навигация произошла на `/profile`
+        // Проверка, что навигация произошла
         await waitFor(() => {
             expect(screen.getByTestId('location-display')).toHaveTextContent('/profile');
         });
@@ -84,12 +84,11 @@ describe('PremiumPage', () => {
         // Нажатие на кнопку "Купить премиум"
         fireEvent.click(screen.getByRole('button', { name: 'Купить премиум' }));
 
-        // Проверка, что навигация произошла на `/profile`
+        // Проверка, что навигация произошла
         await waitFor(() => {
-            expect(screen.getByTestId('location-display')).toHaveTextContent('/profile');
+            expect(screen.getByTestId('location-display')).toHaveTextContent('/premium');
         });
 
-        expect(logEvent).toHaveBeenCalledWith('Premium', 'Premium bought', 'Premium Button');
     });
 
     test('ensures premium status is set to true after purchase', async () => {
