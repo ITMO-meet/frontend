@@ -3,7 +3,7 @@ import { Box, Typography, Button, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { usePremium } from '../../contexts/PremiumContext';
 import WestIcon from '@mui/icons-material/West'
-import { logEvent, logPageView } from '../../analytics';
+import { logPageView } from '../../analytics';
 import PageWrapper from '../../PageWrapper';
 
 const PremiumPage: React.FC = () => {
