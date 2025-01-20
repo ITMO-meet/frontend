@@ -39,6 +39,7 @@ export const PremiumProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     try {
       await buyPremium(isu);
+      logEvent('Premium', 'Premium bought', 'Premium Button');
       await refreshPremium();
     } catch (error) {
       console.error("failed to buy premium:", error);
