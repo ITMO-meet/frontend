@@ -19,7 +19,7 @@ const AddStoryModal: React.FC<AddStoryModalProps> = ({ open, onClose }) => {
   const [storyUrl, setStoryUrl] = useState('');
 
   const handleSubmit = () => {
-    console.log('New story URL:', storyUrl);
+    // console.log('New story URL:', storyUrl);
     setStoryUrl('');
     onClose();
   };

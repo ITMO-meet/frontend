@@ -24,7 +24,6 @@ const GoalStep: React.FC<GoalStepProps> = ({ isu, onNext }) => {
         const fetchAndSetGoals = async () => {
             try {
                 const preferences = await fetchPreferences();
-                console.log("Fetched preferences:", preferences); // Debugging
                 setAllGoals(preferences);
                 /* eslint-disable @typescript-eslint/no-explicit-any */
             } catch (err: any) {
@@ -44,7 +43,6 @@ const GoalStep: React.FC<GoalStepProps> = ({ isu, onNext }) => {
             return;
         }
         try {
-            console.log(selectedGoalId, userData.getRelationshipPreferenceId())
             if (selectedGoalId != userData.getRelationshipPreferenceId()) {
                 await selectRelationship({ isu, relationship_preference: [selectedGoalId] });
                 userData.setRelationshipPreferenceId(selectedGoalId, false);

@@ -3,18 +3,13 @@ import { Box, Typography, Button, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { usePremium } from '../../contexts/PremiumContext';
 import WestIcon from '@mui/icons-material/West'
-import { logEvent, logPageView } from '../../analytics';
+import { logPageView } from '../../analytics';
 import PageWrapper from '../../PageWrapper';
 
 const PremiumPage: React.FC = () => {
-    const { setPremium } = usePremium();
+    const { isPremium, handleBuy } = usePremium();
     const navigate = useNavigate();
     useEffect(() => { logPageView("/premium") }, []);
-    const handleBuy = () => {
-        setPremium(true); // update profile
-        logEvent("Premium", "Premium bought", "Premium Button");
-        navigate('/profile');
-    };
 
     const handleBackClick = () => {
         navigate('/profile');
@@ -26,10 +21,10 @@ const PremiumPage: React.FC = () => {
                 {/* Кнопка назад */}
                 <Box display="flex" justifyContent="flex-start" mb={3}>
                     <IconButton onClick={handleBackClick} aria-label="back" sx={{
-                    '&:active': {
-                        backgroundColor: '#6a8afc', // Цвет при нажатии
-                    },
-                    borderRadius: '50%', // Круглая форма
+                        '&:active': {
+                            backgroundColor: '#6a8afc', // Цвет при нажатии
+                        },
+                        borderRadius: '50%', // Круглая форма
                     }}>
                         <WestIcon />
                     </IconButton>
@@ -50,17 +45,18 @@ const PremiumPage: React.FC = () => {
                 {/* Преимущества */}
                 <Box textAlign="left" p={3} borderRadius="12px" bgcolor="#f5f5f5">
                     <Typography variant="h6" fontWeight="bold" mb={2} textAlign="center" sx={{
-                    color: '#4a4a4a', // Тёмно-серый цвет заголовка
-                    fontFamily: "'Poppins', Arial, sans-serif",
-                    fontWeight: 600,
-                }}>
+                        color: '#4a4a4a', // Тёмно-серый цвет заголовка
+                        fontFamily: "'Poppins', Arial, sans-serif",
+                        fontWeight: 600,
+                    }}>
                         Получи доступ к эксклюзивным функциям:
                     </Typography>
-                    <ul style={{ listStyle: 'none', paddingLeft: 0,
-                    color: '#4a4a4a', // Тёмно-серый цвет заголовка
-                    fontFamily: "'Poppins', Arial, sans-serif",
-                    fontWeight: 600,
-                }}>
+                    <ul style={{
+                        listStyle: 'none', paddingLeft: 0,
+                        color: '#4a4a4a', // Тёмно-серый цвет заголовка
+                        fontFamily: "'Poppins', Arial, sans-serif",
+                        fontWeight: 600,
+                    }}>
                         <li>Суперлайк</li>
                         <li>Просмотр своих лайков</li>
                         <li>Больше фильтров</li>
@@ -84,8 +80,9 @@ const PremiumPage: React.FC = () => {
                         '&:hover': { backgroundColor: '#1e4dc7' }, // Тёмный оттенок при наведении
                     }}
                     onClick={handleBuy}
+                    disabled={isPremium}
                 >
-                    Купить премиум
+                    {isPremium ? 'Премиум активен' : 'Купить премиум'}
                 </Button>
             </Box>
         </PageWrapper>

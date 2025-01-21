@@ -95,8 +95,8 @@ const FeedPage: React.FC<FeedProps> = observer(({ chats }) => {
         switch (dir) {
             case "left":
                 dislikePerson(user_id, target_id)
-                    .then(response => console.log('Dislike response:', response))
-                    .catch(error => console.error('Dislike error:', error));
+                    // .then(response => console.log('Dislike response:', response))
+                    // .catch(error => console.error('Dislike error:', error));
                 logEvent("Feed", "User pressed/swiped dislike", "");
                 break;
             case "right":
@@ -105,7 +105,7 @@ const FeedPage: React.FC<FeedProps> = observer(({ chats }) => {
                         if (response.matched) {
                             chats.push({ chat_id: response.chat_id || "", isu_1: user_id, isu_2: target_id });
                         }
-                        console.log('Like response:', response)
+                        // console.log('Like response:', response)
                     })
                     .catch(error => console.error('Like error:', error));
                 logEvent("Feed", "User pressed/swiped like", "");
@@ -113,7 +113,7 @@ const FeedPage: React.FC<FeedProps> = observer(({ chats }) => {
             case "up":
                 superLikePerson(user_id, target_id)
                 .then((response: SuperLikeResponse) => {
-                    console.log('SuperLike person:', response);
+                    // console.log('SuperLike person:', response);
                     chats.push({ chat_id: response.chat_id || "", isu_1: user_id, isu_2: target_id });
                 })
                 .catch(error => console.error('SuperLike error:', error));

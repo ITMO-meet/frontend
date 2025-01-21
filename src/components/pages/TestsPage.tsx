@@ -27,7 +27,6 @@ const TestsPage: React.FC = () => {
 
   const handleTestClick = (testId: string) => {
     if (completedTests.includes(testId)) {
-      console.log('Test already completed'); // Add this line for debugging
       alert('Тест уже пройден. Показываем результат.');
     } else {
       setCompletedTests([...completedTests, testId]);

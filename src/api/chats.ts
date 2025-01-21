@@ -47,8 +47,6 @@ export async function getUserMessages(UserContacts: UserChat[]) {
         UserContacts.map(contact => getJson<{ messages: UserMessage[] }>(`/chats/get_messages/${contact.chat_id}`))
     );
 
-    console.log(messages)
-
     const raw_messages = await Promise.all(messages.flatMap(messageGroup =>
         messageGroup.messages.map(async message => {
             const rawMessage: RawMessage = {
@@ -62,7 +60,9 @@ export async function getUserMessages(UserContacts: UserChat[]) {
 
             if (message.media_id) {
                 const media = await getJson<{ url: string, media_type: string }>(`/chats/get_media?media_id=${message.media_id}`);
-                media.url = media.url.replace("http://185.178.47.42:9000", "https://itmomeet.ru");
+                if (media.url) {
+                    media.url = media.url.replace("http://185.178.47.42:9000", "https://itmomeet.ru");
+                }
                 const response = await fetch(media.url);
                 const contentType = response.headers.get("Content-Type") || "";
                 if (media.media_type == "image") {
@@ -106,8 +106,6 @@ export async function sendMessage(chat_id: string, sender_id: number, receiver_i
         else {
             media_id = await uploadMedia(sender_id, chat_id.toString(), new File([media], "media"));
         }
-
-        console.log("media_id:", media_id);
 
         return (await postJson<{ message_id: string }>("/chats/send_message", { chat_id, sender_id, receiver_id, text, media_id })).message_id;
     } else {

@@ -22,12 +22,10 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ isu, onNext }) => {
             return;
         }
         try {
-            console.log(username)
             if (username.trim() != userData.getUsername()) {
                 await selectUsername({ isu, username: username.trim() });
                 userData.setUsername(username, false);
             }
-            console.log(username)
             onNext({ username: username.trim() });
             /* eslint-disable @typescript-eslint/no-explicit-any */
         } catch(e: any) {

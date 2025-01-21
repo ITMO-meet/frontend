@@ -18,9 +18,9 @@ const HMRProvider = ({ children }: Props) => {
                 }
             });
 
-            eventSource.onerror = (error) => {
-                console.error('EventSource error:', error);
-            };
+            // eventSource.onerror = (error) => {
+            //     console.error('EventSource error:', error);
+            // };
 
             return () => {
                 eventSource.close();
