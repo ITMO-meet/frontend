@@ -24,7 +24,7 @@ import UserMessage from './UserMessage';
 import PageWrapper from '../PageWrapper';
 import { MessageType, RawMessage } from '../types';
 import { Profile } from '../api/profile';
-import { sendMessage, UserChat } from '../api/chats';
+import {getChatMessages, sendMessage, UserChat} from '../api/chats';
 import { userData } from '../stores/UserDataStore';
 
 interface MessagesProps {
@@ -414,6 +414,42 @@ const Messages: React.FC<MessagesProps> = ({ people, chats, messages }: Messages
       setIsRecordingVideo(false);
     }
   };
+
+  // Polling: каждую секунду запрашиваем обновлённый список сообщений для текущего чата
+  useEffect(() => {
+    if (!chatId) return;
+    const pollMessages = async () => {
+      try {
+        
+        const fetchedMessages = await getChatMessages(chatId);
+        // Преобразуем полученные сообщения в формат MessageType
+        const formattedMessages = fetchedMessages
+            .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+            .map(message => ({
+              sender: message.sender_id === currentUserIsu ? 'me' : 'them',
+              text: message.text || '',
+              image: message.image,
+              video: message.video,
+              audio: message.audio,
+              file: message.file,
+              timestamp: message.timestamp
+            }));
+        // Если число сообщений изменилось – обновляем состояние
+        if (formattedMessages.length !== chatMessages.length) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          setChatMessages(formattedMessages);
+          scrollToBottom();
+        }
+      } catch (error) {
+        console.error('Ошибка при опросе сообщений:', error);
+      }
+    };
+    const interval = setInterval(pollMessages, 1000);
+    return () => clearInterval(interval);
+  }, [chatId, currentUserIsu, chatMessages.length]);
+
+
 
   /**
    * -------------- Render --------------

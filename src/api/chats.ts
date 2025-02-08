@@ -112,3 +112,41 @@ export async function sendMessage(chat_id: string, sender_id: number, receiver_i
         return (await postJson<{ message_id: string }>("/chats/send_message", { chat_id, sender_id, receiver_id, text })).message_id;
     }
 }
+
+// Функция для получения сообщений конкретного чата
+export async function getChatMessages(chat_id: string, limit: number = 150, offset: number = 0): Promise<RawMessage[]> {
+    // Получаем данные с сервера через существующий getJson
+    const data = await getJson<{ messages: UserMessage[] }>(`/chats/get_messages/${chat_id}?limit=${limit}&offset=${offset}`);
+    // Преобразуем каждое сообщение в RawMessage (аналогично тому, как это делается в getUserMessages)
+    const messages: RawMessage[] = await Promise.all(
+        data.messages.map(async (message: UserMessage) => {
+            const rawMessage: RawMessage = {
+                id: message.message_id,
+                chat_id: message.chat_id,
+                sender_id: message.sender_id,
+                receiver_id: message.receiver_id,
+                text: message.text,
+                timestamp: message.timestamp
+            };
+            if (message.media_id) {
+                const media = await getJson<{ url: string, media_type: string }>(`/chats/get_media?media_id=${message.media_id}`);
+                if (media.url) {
+                    media.url = media.url.replace("http://185.178.47.42:9000", "https://itmomeet.ru");
+                }
+                const response = await fetch(media.url);
+                const contentType = response.headers.get("Content-Type") || "";
+                if (media.media_type === "image") {
+                    rawMessage.image = await response.blob();
+                } else if (media.media_type === "audio") {
+                    rawMessage.audio = await response.blob();
+                } else if (media.media_type === "video") {
+                    rawMessage.video = await response.blob();
+                } else {
+                    rawMessage.file = new File([await response.blob()], "media", { type: contentType });
+                }
+            }
+            return rawMessage;
+        })
+    );
+    return messages;
+}
