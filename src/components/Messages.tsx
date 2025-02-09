@@ -26,7 +26,6 @@ import {MessageType, RawMessage} from '../types';
 import {Profile} from '../api/profile';
 import {getChatMessages, sendMessage, UserChat} from '../api/chats';
 import {userData} from '../stores/UserDataStore';
-import {useNotification} from '../contexts/NotificationContext';
 
 
 interface MessagesProps {
