@@ -5,6 +5,7 @@ import App from './App';
 import HMRProvider from "./contexts/HMRContext";
 import { HashRouter as Router } from 'react-router-dom';
 import { postJson } from "./api/index";
+import {userData} from "./stores/UserDataStore";
 
 async function registerServiceWorkerAndSubscribe() {
     try {
@@ -27,8 +28,11 @@ async function registerServiceWorkerAndSubscribe() {
             });
         }
         console.log('[index] Subscription:', subscription.toJSON());
-        await postJson('/push/subscribe', subscription);
-        console.log('[index] Подписка отправлена на сервер');
+        const userId = userData.getIsu();
+        await postJson('/push/subscribe', {
+            subscription: subscription.toJSON(),  // или просто subscription, если объект уже сериализуемый
+            user_id: userId,
+        });        console.log('[index] Подписка отправлена на сервер');
     } catch (err) {
         console.error('[index] Ошибка при подписке на push-уведомления:', err);
     }
