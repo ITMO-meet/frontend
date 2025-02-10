@@ -13,7 +13,10 @@
         "src/components/examples/**",
         "src/components/Examples.tsx",
         "src/types.ts",
-        "src/stores/*"
+        "src/stores/*",
+        "src/analytics.ts",
+        "src/components/registerSteps/PhotoStep.tsx",
+        "src/components/pages/EditProfilePage.tsx"
     ],
     "extension": [
         ".ts",

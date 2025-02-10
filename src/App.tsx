@@ -34,42 +34,31 @@ import { Profile } from './api/profile';
 import { getUserContacts, getUserMessages, UserChat } from './api/chats';
 import { userData } from './stores/UserDataStore';
 import { RawMessage } from './types';
-import {
-  getStory,
-  getUserStories,
-  GetStoryResponse,
-} from './api/stories';
-
+import { getStory, getUserStories, GetStoryResponse } from './api/stories';
+import { NotificationProvider, useNotification } from './contexts/NotificationContext';
 
 const shouldHideNav = (pathname: string): boolean => {
   const hiddenRoutes = ['/login', '/register', '/edit-profile', '/settings'];
   const hiddenRoutesRegex = /^\/.+\/[^/]+$/;
-
-  if (hiddenRoutes.includes(pathname)) {
-    return true;
-  }
-
-  if (hiddenRoutesRegex.test(pathname)) {
-    return true;
-  }
-
-  return false;
+  return hiddenRoutes.includes(pathname) || hiddenRoutesRegex.test(pathname);
 };
 
 function App() {
   return (
-    <Provider config={rollbarConfig}>
-      <ErrorBoundary level={"error"} fallbackUI={FallbackUI}>
-        <ErrorProvider>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <PremiumProvider>
-              <AppContent />
-            </PremiumProvider>
-          </ThemeProvider>
-        </ErrorProvider>
-      </ErrorBoundary>
-    </Provider>
+      <Provider config={rollbarConfig}>
+        <ErrorBoundary level="error" fallbackUI={FallbackUI}>
+          <ErrorProvider>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <PremiumProvider>
+                <NotificationProvider>
+                  <AppContent />
+                </NotificationProvider>
+              </PremiumProvider>
+            </ThemeProvider>
+          </ErrorProvider>
+        </ErrorBoundary>
+      </Provider>
   );
 }
 
@@ -82,6 +71,7 @@ function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
   const hideNav = shouldHideNav(location.pathname);
+  const { addNotification } = useNotification();
 
   // Initialize GA once
   useEffect(() => {
@@ -93,7 +83,23 @@ function AppContent() {
     logPageView(location.pathname);
   }, [location.pathname]);
 
-  // Fetch data asynchronously
+  // Прослушка сообщений от Service Worker
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('message', event => {
+        console.log('[App] Received message from SW:', event.data);
+        const data = event.data;
+        if (data && data.senderName && data.senderPhoto) {
+          addNotification({
+            senderName: data.senderName,
+            senderPhoto: data.senderPhoto,
+            text: data.body || data.text || ''
+          });
+        }
+      });
+    }
+  }, [addNotification]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -106,9 +112,8 @@ function AppContent() {
           setStories([]);
           return;
         }
-
-        const fetchedContacts = await getUserContacts(user_id, true) as Profile[];
-        const fetchedChats = await getUserContacts(user_id, false) as UserChat[];
+        const fetchedContacts = (await getUserContacts(user_id, true)) as Profile[];
+        const fetchedChats = (await getUserContacts(user_id, false)) as UserChat[];
         const fetchedMessages = await getUserMessages(fetchedChats);
 
         setContacts(fetchedContacts);
@@ -121,7 +126,7 @@ function AppContent() {
 
         // For each story ID, fetch the story details
         const fetchedStories = await Promise.all(
-          storyIds.map((storyId) => getStory(storyId))
+            storyIds.map((storyId) => getStory(storyId))
         );
         setStories(fetchedStories);
 
@@ -135,41 +140,41 @@ function AppContent() {
 
   // Show a loading screen or skeleton UI while data is being fetched
   if (
-    contacts === null ||
-    chats === null ||
-    messages === null ||
-    stories === null
+      contacts === null ||
+      chats === null ||
+      messages === null ||
+      stories === null
   ) {
     return <div>Loading...</div>;
   }
 
   // Once data is loaded, render the real UI
   return (
-    <>
-      <Box sx={{ pb: 7, position: 'relative', overflow: 'hidden' }}>
-        <AnimatePresence mode="wait">
-          <Routes>
-            <Route path="/chats" element={<ChatPage people={contacts} stories={stories} messages={messages} />} />
-            <Route path="/add-story" element={<AddStoryPage />} />
-            <Route path="/chat/:id" element={<Messages people={contacts} chats={chats} messages={messages} />} />
-            <Route path="/matches" element={<MatchesPage />} />
-            <Route path="/feed" element={<FeedPage />} />
-            <Route path="/tests" element={<TestsPage />} />
-            <Route path="/tests/:id" element={<Quiz onExit={() => navigate("/tests")} />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/edit-profile" element={<EditProfilePage />} />
-            <Route path="/user-profile/:id" element={<UserProfilePage />} />
-            <Route path="/schedule" element={<CalendarPage />} />
-            <Route path="/premium" element={<PremiumPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </Routes>
-        </AnimatePresence>
-      </Box>
-      {!hideNav && <Nav />}
-    </>
+      <>
+        <Box sx={{ pb: 7, position: 'relative', overflow: 'hidden' }}>
+          <AnimatePresence mode="wait">
+            <Routes>
+              <Route path="/chats" element={<ChatPage people={contacts} stories={stories} messages={messages} />} />
+              <Route path="/add-story" element={<AddStoryPage />} />
+              <Route path="/chat/:id" element={<Messages people={contacts} chats={chats} messages={messages} />} />
+              <Route path="/matches" element={<MatchesPage />} />
+              <Route path="/feed" element={<FeedPage />} />
+              <Route path="/tests" element={<TestsPage />} />
+              <Route path="/tests/:id" element={<Quiz onExit={() => navigate("/tests")} />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/edit-profile" element={<EditProfilePage />} />
+              <Route path="/user-profile/:id" element={<UserProfilePage />} />
+              <Route path="/schedule" element={<CalendarPage />} />
+              <Route path="/premium" element={<PremiumPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="*" element={<Navigate to="/login" replace />} />
+            </Routes>
+          </AnimatePresence>
+        </Box>
+        {!hideNav && <Nav />}
+      </>
   );
 }
 
