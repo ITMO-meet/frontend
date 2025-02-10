@@ -1,5 +1,5 @@
 // tests/unit/apiIndex.spec.ts
-import { postJson, postForm, getJson, putJson } from '../../src/api/index';
+import { postJson,  getJson, putJson } from '../../src/api/index';
 
 describe('api/index', () => {
     beforeEach(() => {

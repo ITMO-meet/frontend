@@ -7,7 +7,6 @@ import {
     getChatMessages,
     UserChat
 } from '../../src/api/chats';
-import { RawMessage } from '../../src/types';
 import { getJson, postJson, request } from '../../src/api/index';
 import { getProfile } from '../../src/api/profile';
 
