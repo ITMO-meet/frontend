@@ -8,3 +8,9 @@ describe('Test internet connection', function() {
     await expect(title).toEqual('Example Domain');
   });
 });
+
+describe('Fail', function() {
+  it('should have the correct title', async function() {
+    expect("123").to.equal('Example Domain');
+  });
+});
